@@ -1,294 +1,120 @@
-#!/usr/bin/env python3
-"""
-Research Tracker Updater for Open Source Medicine Foundation
-Queries PubMed daily via pymed and updates per-condition JSON files in data/.
-"""
-
 import json
 import os
-import re
-import time
-from datetime import datetime, date, timezone
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+import requests
+from datetime import datetime, timedelta
+from pymed import PubMed
 
-try:
-    from pymed import PubMed
-except ImportError:
-    print("ERROR: pymed not installed. Run: pip install pymed")
-    raise
+# ================== CONFIG ==================
+EMAIL = "contact@opensourcemed.info"
+TOOL_NAME = "OpenSourceMed_Research_Tracker"
+DAYS_BACK = 30
+MAX_RESULTS = 50
+DATA_DIR = "data"
+POSTED_FILE = "posted_pmids.json"
 
-# Output directory
-DATA_DIR = Path(__file__).parent / "data"
-DATA_DIR.mkdir(exist_ok=True)
+# Make.com Webhook URL (set this as GitHub Secret)
+MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL")
+# ============================================
 
-# PubMed configuration
-PUBMED_TOOL = "OSMF-ResearchTracker"
-PUBMED_EMAIL = "research@opensourcemed.info"  # Update if needed; public use only
+os.makedirs(DATA_DIR, exist_ok=True)
 
-# Max results per condition (keep reasonable to avoid huge files + rate limits)
-MAX_RESULTS = 75
-
-# Condition definitions: filename stem -> config
 CONDITIONS = {
     "pacvs": {
-        "display_name": "PACVS – Post-Acute COVID-19 Vaccination Syndrome",
-        "short_name": "PACVS",
-        "query": (
-            '(PACVS OR "post-acute COVID-19 vaccination syndrome" OR "post COVID vaccination syndrome" OR '
-            '("COVID-19 vaccination" AND ("chronic" OR "post-acute" OR sequelae OR "post-vaccination" OR "long term")) AND (syndrome OR fatigue OR illness))'
-        ),
-        "description": "Peer-reviewed studies on Post-Acute COVID-19 Vaccination Syndrome and related post-vaccination chronic sequelae.",
-    },
-    "me-cfs": {
-        "display_name": "ME/CFS – Myalgic Encephalomyelitis / Chronic Fatigue Syndrome",
-        "short_name": "ME/CFS",
-        "query": (
-            '("myalgic encephalomyelitis" OR "chronic fatigue syndrome" OR "ME/CFS" OR '
-            '"myalgic encephalomyelitis/chronic fatigue syndrome")'
-        ),
-        "description": "Studies on Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS), including diagnostic criteria, mechanisms, and treatments.",
+        "name": "PACVS",
+        "query": '(("post-acute covid vaccination syndrome" OR PACVS OR PCVS) OR ("COVID-19 Vaccines/adverse effects"[Mesh] AND (persistent OR chronic OR syndrome)))'
     },
     "long-covid": {
-        "display_name": "Long COVID – Post-Acute Sequelae of COVID-19",
-        "short_name": "Long COVID",
-        "query": (
-            '("long covid" OR "long-covid" OR "post-acute sequelae of COVID-19" OR PASC OR '
-            '"post-acute COVID-19 syndrome" OR "long hauler" OR ("post-COVID" AND (syndrome OR fatigue OR sequelae)))'
-        ),
-        "description": "Research on Long COVID (PASC), the post-acute sequelae following SARS-CoV-2 infection.",
+        "name": "Long COVID",
+        "query": '("long covid" OR PACS OR "post-acute sequelae of covid")'
+    },
+    "me-cfs": {
+        "name": "ME/CFS",
+        "query": '("myalgic encephalomyelitis" OR "chronic fatigue syndrome" OR ME/CFS)'
     },
     "lyme": {
-        "display_name": "Chronic Lyme / PTLDS – Post-Treatment Lyme Disease Syndrome",
-        "short_name": "Chronic Lyme / PTLDS",
-        "query": (
-            '("post-treatment Lyme disease syndrome" OR PTLDS OR "chronic Lyme disease" OR '
-            '("Lyme disease" AND ("post-treatment" OR "post treatment" OR chronic)))'
-        ),
-        "description": "Studies on Chronic Lyme disease and Post-Treatment Lyme Disease Syndrome (PTLDS).",
+        "name": "Chronic Lyme / PTLDS",
+        "query": '("Lyme disease" OR borreliosis) AND (chronic OR persistent OR "post-treatment" OR PTLDS)'
     },
     "gulf-war-illness": {
-        "display_name": "Gulf War Illness – Gulf War Illness (GWI)",
-        "short_name": "Gulf War Illness",
-        "query": (
-            '("gulf war illness" OR "gulf war syndrome" OR GWI OR '
-            '("Persian Gulf" AND (war OR veteran) AND (illness OR syndrome)))'
-        ),
-        "description": "Peer-reviewed literature on Gulf War Illness (GWI) affecting veterans of the 1990-91 Gulf War.",
+        "name": "Gulf War Illness",
+        "query": '("gulf war illness" OR "gulf war syndrome" OR GWI)'
     },
     "other-post-viral": {
-        "display_name": "Other Post-Viral & Post-Infectious Syndromes",
-        "short_name": "Other Post-Viral",
-        "query": (
-            '(("post-viral" OR "post viral" OR "post-infectious" OR "post infectious") AND '
-            '(syndrome OR fatigue OR illness OR encephalomyelitis OR "chronic fatigue")) NOT '
-            '(COVID OR "SARS-CoV-2" OR "SARS CoV" OR coronavirus OR "long covid" OR PASC OR '
-            '"gulf war" OR lyme OR "gulf war illness")'
-        ),
-        "description": "Research on other post-viral and post-infectious syndromes (non-COVID, non-Lyme, non-GWI).",
-    },
+        "name": "Other Post-Viral Illnesses",
+        "query": '("post-viral" OR "post viral" OR "post-infectious") AND (fatigue OR syndrome) NOT covid'
+    }
 }
 
+def load_posted_pmids():
+    if os.path.exists(POSTED_FILE):
+        with open(POSTED_FILE, "r") as f:
+            return set(json.load(f))
+    return set()
 
-def parse_pub_date(pub_date: Any) -> Optional[str]:
-    """Convert various pymed pub date formats to YYYY-MM-DD or YYYY-MM."""
-    if not pub_date:
-        return None
-    if isinstance(pub_date, (date, datetime)):
-        return pub_date.isoformat()[:10]
-    if isinstance(pub_date, str):
-        # Try common formats
-        for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y-%m", "%Y/%m", "%b %Y", "%B %Y", "%Y"):
-            try:
-                dt = datetime.strptime(pub_date.strip(), fmt)
-                return dt.strftime("%Y-%m-%d") if "%d" in fmt else dt.strftime("%Y-%m")
-            except ValueError:
-                continue
-        # Fallback: extract year at minimum
-        match = re.search(r"\b(19|20)\d{2}\b", pub_date)
-        if match:
-            return match.group(0)
-    return None
+def save_posted_pmids(pmids):
+    with open(POSTED_FILE, "w") as f:
+        json.dump(list(pmids), f, indent=2)
 
-
-def get_authors_string(authors: Any, max_authors: int = 4) -> str:
-    """Format authors list into a readable string, truncating long lists."""
-    if not authors:
-        return "Authors not listed"
-    names = []
-    for a in authors:
-        if isinstance(a, dict):
-            last = a.get("lastname") or a.get("last_name") or ""
-            fore = a.get("firstname") or a.get("fore_name") or ""
-            name = f"{last}, {fore}".strip(", ").strip()
-            if name:
-                names.append(name)
-        elif isinstance(a, str):
-            names.append(a)
-    if not names:
-        return "Authors not listed"
-    if len(names) > max_authors:
-        return ", ".join(names[:max_authors]) + " et al."
-    return ", ".join(names)
-
-
-def extract_article_data(article: Any) -> Optional[Dict[str, Any]]:
-    """Extract normalized fields from a pymed Article object."""
-    try:
-        raw_pmid = str(getattr(article, "pubmed_id", "")).strip()
-        # pymed occasionally returns multiple ids separated by newlines or spaces for some records.
-        # Take the first clean numeric PMID.
-        pmid = ""
-        for part in re.split(r'[\s\n,]+', raw_pmid):
-            part = part.strip()
-            if part.isdigit():
-                pmid = part
-                break
-        if not pmid:
-            return None
-
-        title = (getattr(article, "title", "") or "").strip()
-        if not title:
-            return None
-
-        journal = (getattr(article, "journal", "") or "Unknown Journal").strip()
-
-        pub_date_raw = getattr(article, "publication_date", None)
-        pub_date = parse_pub_date(pub_date_raw) or "Unknown date"
-
-        authors_raw = getattr(article, "authors", None) or []
-        authors_str = get_authors_string(authors_raw)
-
-        abstract = (getattr(article, "abstract", "") or "").strip()
-        if not abstract:
-            abstract = "No abstract available."
-
-        # Clean up abstract a bit
-        abstract = re.sub(r"\s+", " ", abstract).strip()
-
-        url = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
-
-        return {
-            "pmid": pmid,
-            "title": title,
-            "pub_date": pub_date,
-            "journal": journal,
-            "authors": authors_str,
-            "abstract": abstract,
-            "url": url,
-        }
-    except Exception as e:
-        print(f"  Warning: failed to parse one article: {e}")
-        return None
-
-
-def fetch_for_condition(pubmed: PubMed, condition_key: str, config: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Run query for one condition and return cleaned list of studies."""
-    query = config["query"]
-    print(f"[{condition_key}] Querying PubMed: {query[:80]}...")
-
-    articles = []
-    try:
-        results = pubmed.query(query, max_results=MAX_RESULTS)
-        for article in results:
-            data = extract_article_data(article)
-            if data:
-                articles.append(data)
-        print(f"  → {len(articles)} valid studies fetched")
-
-        # Post-filter for PACVS to increase relevance (the term is new/emerging)
-        if condition_key == "pacvs":
-            def is_relevant_pacvs(s):
-                text = (s.get("title", "") + " " + s.get("abstract", "")).lower()
-                return ("vaccin" in text and ("pacvs" in text or "post-acute" in text or "post vaccination" in text or ("chronic" in text and "syndrome" in text)))
-            filtered = [s for s in articles if is_relevant_pacvs(s)]
-            if filtered:
-                articles = filtered[:MAX_RESULTS]
-                print(f"    PACVS post-filter reduced to {len(articles)} more relevant studies")
-    except Exception as e:
-        print(f"  ERROR fetching {condition_key}: {e}")
-        # Return empty on error so we don't overwrite good data accidentally? 
-        # For daily run, better to return what we have or keep previous. 
-        # Here we will return [] and let caller decide.
-        return []
-
-    # Sort by pub_date descending (newest first). Handle partial dates.
-    def sort_key(item: Dict[str, Any]):
-        d = item.get("pub_date", "")
-        # Prefer full dates; fallback to string reverse for rough recency
-        if re.match(r"\d{4}-\d{2}-\d{2}", d):
-            return d
-        if re.match(r"\d{4}-\d{2}", d):
-            return d + "-31"  # approximate end of month
-        if re.match(r"\d{4}", d):
-            return d + "-12-31"
-        return "0000-00-00"
-
-    articles.sort(key=sort_key, reverse=True)
-    return articles
-
-
-def save_json(key: str, studies: List[Dict[str, Any]], display_name: str):
-    """Write the JSON file with metadata wrapper."""
-    payload = {
-        "condition": display_name,
-        "key": key,
-        "last_updated": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "count": len(studies),
-        "source": "PubMed (NCBI)",
-        "studies": studies,
-    }
-    out_path = DATA_DIR / f"{key}.json"
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2, ensure_ascii=False)
-    print(f"  Saved {len(studies)} studies → {out_path}")
-
-
-def load_existing(key: str) -> Optional[Dict[str, Any]]:
-    """Load previous data so we can fall back on failure."""
-    path = DATA_DIR / f"{key}.json"
-    if path.exists():
+def search_papers(config):
+    pubmed = PubMed(tool=TOOL_NAME, email=EMAIL)
+    results = pubmed.query(config["query"], max_results=MAX_RESULTS)
+    cutoff = datetime.now() - timedelta(days=DAYS_BACK)
+    
+    papers = []
+    for article in results:
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return None
+            pub_date = datetime.strptime(str(article.publication_date), "%Y-%m-%d")
+            if pub_date >= cutoff:
+                papers.append({
+                    "pmid": article.pubmed_id,
+                    "title": article.title,
+                    "journal": article.journal or "",
+                    "pub_date": str(pub_date.date()),
+                    "url": f"https://pubmed.ncbi.nlm.nih.gov/{article.pubmed_id}/",
+                    "condition": config["name"]
+                })
+        except:
+            continue
+    return papers
 
+def send_to_make(papers):
+    if not MAKE_WEBHOOK_URL or not papers:
+        return
+    try:
+        response = requests.post(MAKE_WEBHOOK_URL, json={"studies": papers}, timeout=30)
+        if response.status_code == 200:
+            print(f"Sent {len(papers)} new studies to Make.com")
+        else:
+            print(f"Make.com error: {response.status_code}")
+    except Exception as e:
+        print(f"Error sending to Make.com: {e}")
 
 def main():
-    print("=" * 60)
-    print("Open Source Medicine Foundation – Research Tracker Updater")
-    print(f"Started: {datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')}")
-    print("=" * 60)
-
-    pubmed = PubMed(tool=PUBMED_TOOL, email=PUBMED_EMAIL)
-
-    # Small delay to be polite
-    time.sleep(0.5)
+    posted_pmids = load_posted_pmids()
+    new_studies = []
 
     for key, config in CONDITIONS.items():
-        existing = load_existing(key)
-        studies = fetch_for_condition(pubmed, key, config)
+        print(f"Checking {config['name']}...")
+        papers = search_papers(config)
+        
+        new_papers = [p for p in papers if p["pmid"] not in posted_pmids]
+        
+        if new_papers:
+            print(f"  → {len(new_papers)} new studies")
+            new_studies.extend(new_papers)
+        
+        # Save JSON for website
+        json_path = os.path.join(DATA_DIR, f"{key}.json")
+        with open(json_path, "w") as f:
+            json.dump(papers, f, indent=2)
 
-        if not studies:
-            print(f"[{key}] No new studies fetched – keeping previous data if available.")
-            if existing:
-                # Touch last_updated? or leave as-is
-                pass
-            else:
-                # Seed empty payload
-                save_json(key, [], config["display_name"])
-            continue
-
-        save_json(key, studies, config["display_name"])
-
-        # Be gentle to NCBI – sleep between conditions
-        time.sleep(1.2)
-
-    print("\nAll conditions processed.")
-    print("Done.")
-
+    if new_studies:
+        send_to_make(new_studies)
+        for study in new_studies:
+            posted_pmids.add(study["pmid"])
+        save_posted_pmids(posted_pmids)
+    else:
+        print("No new studies today.")
 
 if __name__ == "__main__":
     main()
