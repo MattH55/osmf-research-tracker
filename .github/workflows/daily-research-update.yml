@@ -1,0 +1,30 @@
+# Daily Research Tracker Update - Open Source Medicine Foundation
+
+name: Daily Research Tracker Update
+
+on:
+  schedule:
+    - cron: '0 10 * * *'     # Runs every day at 10:00 UTC
+  workflow_dispatch:          # Manual trigger button
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install pymed
+
+      - run: python update_research_tracker.py
+
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: .
+          clean: false
