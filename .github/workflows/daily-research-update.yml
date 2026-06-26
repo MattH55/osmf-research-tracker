@@ -1,30 +1,94 @@
-# Daily Research Tracker Update - Open Source Medicine Foundation
-
 name: Daily Research Tracker Update
 
 on:
   schedule:
-    - cron: '0 10 * * *'     # Runs every day at 10:00 UTC
-  workflow_dispatch:          # Manual trigger button
+    # Run daily at 04:15 UTC (~late night / early morning US)
+    - cron: '15 4 * * *'
+  workflow_dispatch:
+    inputs:
+      condition:
+        description: 'Condition key to update (leave blank for day-of-year rotation)'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - pacvs
+          - me-cfs
+          - long-covid
+          - lyme
+          - gulf-war-illness
+          - other-post-viral
 
 jobs:
-  update:
+  update-data:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write   # needed to commit the updated JSON files
+
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          python-version: '3.12'
+          fetch-depth: 0   # full history so we can commit cleanly
 
-      - run: pip install pymed
-
-      - run: python update_research_tracker.py
-
-      - uses: JamesIves/github-pages-deploy-action@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          branch: gh-pages
-          folder: .
-          clean: false
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pymed
+
+      - name: Run research tracker updater
+        run: python update_research_tracker.py
+        env:
+          PYTHONUNBUFFERED: "1"
+          TRACKER_CONDITION: ${{ github.event.inputs.condition }}
+
+      - name: Commit and push updated data (if any changes)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data/*.json
+
+          # Only commit if something actually changed
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Data files are up to date."
+          else
+            git commit -m "chore: daily research tracker update [$(date +%Y-%m-%d)]"
+            git push
+            echo "Committed updated JSON files."
+          fi
+
+  # Optional: separate deploy job using GitHub Pages
+  deploy:
+    needs: update-data
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repo root (index.html + data/ + other .html)
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
