@@ -79,19 +79,53 @@ python -m http.server 8000
 # Open http://localhost:8000
 ```
 
-## Enabling GitHub Pages
+## Deploying to GitHub Pages (Recommended)
 
-1. Go to your repository **Settings → Pages**.
-2. Under "Build and deployment":
-   - **Source**: GitHub Actions (recommended)
-3. The workflow file already contains a `deploy` job that uses the official `actions/deploy-pages` + artifact upload. No extra configuration is needed.
-4. After the first successful run of the workflow, the site will be live at:
-   - `https://<your-username>.github.io/research-tracker/`
-   - Or, if using a custom domain like `opensourcemed.info`, configure the custom domain in the repo settings + add the appropriate `CNAME` file / DNS record pointing the `/research-tracker` subpath (or use a dedicated repo and custom path).
+This is a **pure static site** (HTML + CSS + JS + JSON). It works great on GitHub Pages with zero build step.
 
-**Tip**: To host at exactly `https://opensourcemed.info/research-tracker/`, the main site can either:
-- Submodule this repo
-- Or serve the built static assets under a `/research-tracker/` folder from the main site repo.
+### Easiest Method (Deploy from Branch)
+
+1. Make sure everything is committed and pushed:
+   - All `.html` files in the root
+   - `tracker.css`
+   - The entire `data/` folder (including `therapeutic_agents.json`)
+   - The `clinical_trials/data/clinical_trials_current.json` file
+
+2. Go to your GitHub repository → **Settings → Pages**.
+
+3. Under "Build and deployment":
+   - **Source**: select **Deploy from a branch**
+   - **Branch**: `main` (or `master`)
+   - **Folder**: `/ (root)`
+   - Click **Save**
+
+4. GitHub will publish the site. It usually takes 30–60 seconds.
+
+5. Your site will be live at:
+   ```
+   https://<your-username>.github.io/<repo-name>/
+   ```
+   Example: `https://matth.github.io/research-tracker/`
+
+### Using GitHub Actions (Advanced)
+
+If you already have a workflow that builds and deploys (see `.github/workflows/`), you can set Source to **GitHub Actions** instead. The Actions method is useful if you want to run the daily PubMed updater + deploy in one pipeline.
+
+### Important Notes for This Project
+
+- All `fetch()` calls use relative paths (`./data/...`, `./clinical_trials/data/...`). These work automatically on GitHub Pages.
+- Links between `index.html` ↔ `agents.html` ↔ `clinical_trials.html` are relative → they work at any subpath.
+- The `-local.html` files (agents-local.html, clinical_trials-local.html) are for offline/local double-click use only. You can keep them in the repo or add them to `.gitignore`.
+- If deploying under a subfolder (e.g. `https://example.com/research-tracker/`), relative links still work fine.
+
+### Custom Domain (e.g. opensourcemed.info)
+
+1. In repo Settings → Pages, add your custom domain.
+2. Create a `CNAME` file in the root of the repo containing your domain.
+3. Configure DNS (usually a CNAME record pointing to `<username>.github.io`).
+4. For a subpath like `/research-tracker/`, you may need to handle routing on the main site or use a dedicated Pages repo.
+
+After deploying, the therapeutic agents page and clinical trials page should load their JSON data instantly over HTTPS. No local server required.
 
 ## Customization
 
@@ -135,3 +169,17 @@ Visit: [https://opensourcemed.info](https://opensourcemed.info)
 ---
 
 **Built with ❤️ for patients and researchers by the Open Source Medicine Foundation.**
+
+## Modules
+
+### 1. Research Tracker (Literature)
+- Daily PubMed updates for PACVS, Long COVID, ME/CFS, etc.
+- See update_research_tracker.py and HTML pages.
+
+### 2. Clinical Trials Card Agent (New)
+- Weekly extraction of interventional trials
+- Therapeutic agent identification
+- Structured Markdown cards + change detection
+- Location: clinical_trials/
+- Run with: python clinical_trials/clinical_trials_agent.py
+- See clinical_trials/README.md for details

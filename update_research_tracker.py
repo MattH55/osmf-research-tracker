@@ -71,8 +71,8 @@ CONDITIONS = {
         "display_name": "Gulf War Illness – Gulf War Illness (GWI)",
         "short_name": "Gulf War Illness",
         "query": (
-            '("gulf war illness" OR "gulf war syndrome" OR GWI OR '
-            '("Persian Gulf" AND (war OR veteran) AND (illness OR syndrome)))'
+            '("gulf war illness" OR "gulf war syndrome" OR "gulf war veteran illness" OR '
+            '("Persian Gulf" AND veteran AND (illness OR syndrome OR "unexplained illness")))'
         ),
         "description": "Peer-reviewed literature on Gulf War Illness (GWI) affecting veterans of the 1990-91 Gulf War.",
     },
