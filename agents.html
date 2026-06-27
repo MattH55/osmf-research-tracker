@@ -18,6 +18,7 @@
   <meta name="twitter:title" content="Post-Viral Therapeutic Agents Evidence Tracker | Open Source Medicine">
   <meta name="twitter:description" content="Evidence tracker for Long COVID, PACVS, ME/CFS therapeutics — mechanisms, key studies, clinical trials.">
   <meta name="twitter:image" content="https://opensourcemed.info/favicon.png">
+  <link rel="stylesheet" href="tracker.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -42,14 +43,7 @@
   }
   </script>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; max-width: 820px; margin: 40px auto; padding: 0 20px; color: #222; background: #fff; }
-    h1 { font-size: 2.1rem; margin: 0.3rem 0 0.5rem; }
-    h2 { font-size: 1.3rem; margin-top: 1.8rem; }
-    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
-    th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-size: 0.9rem; }
-    th { background: #f8f9fa; }
-    a { color: #0d9488; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    /* Component styles for Therapeutic Agents content (site layout from tracker.css) */
     .stat { background: #f8fafc; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; display: inline-block; margin-right: 8px; }
     .agent { border: 1px solid #eee; padding: 12px; margin-bottom: 12px; }
     .meta { font-size: 0.85rem; color: #555; margin: 3px 0; }
@@ -66,20 +60,32 @@
 </head>
 <body>
 
-<p style="font-weight:600; font-size:1.05rem; margin-bottom:0.2rem;">Open Source Medicine Foundation</p>
-<h1>Therapeutic Agents</h1>
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">All Conditions</a></li>
+      <li><a href="pacvs.html">PACVS</a></li>
+      <li><a href="long-covid.html">Long COVID</a></li>
+      <li><a href="me-cfs.html">ME/CFS</a></li>
+      <li><a href="clinical_trials.html">Clinical Trials</a></li>
+      <li><a href="agents.html">Agents</a></li>
+      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support Our Work</a></li>
+    </ul>
+  </div>
+</nav>
 
-<p style="max-width:700px;">Focused tracker of agents under study for PACVS, Long COVID/PASC, ME/CFS, POTS/Dysautonomia, and MCAS. Data drawn from peer-reviewed literature and registered clinical trials.</p>
+<section class="page-hero">
+  <div class="hero-eyebrow">Evidence Synthesis</div>
+  <h1>Therapeutic <span>Agents</span></h1>
+  <p>Cross-condition synthesis of therapeutic agents under study for PACVS, Long COVID/PASC, ME/CFS, POTS/Dysautonomia, and MCAS. Data drawn from peer-reviewed literature and registered clinical trials.</p>
+</section>
 
-
-
-<p>
-  <a href="index.html">← Literature Tracker</a> &nbsp;|&nbsp;
-  <a href="clinical_trials.html">Clinical Trials</a> &nbsp;|&nbsp;
-  <a href="https://opensourcemed.info">Main Site</a>
-</p>
-
-<hr style="margin: 1rem 0; border-color:#e5e7eb;">
+<main class="main-section">
+  <div class="section-inner">
 
 <!-- EXECUTIVE SUMMARY + STATS (dynamic) -->
 <h2>Executive Summary</h2>
@@ -113,11 +119,28 @@
 
 <div id="list"></div>
 
-<div style="margin-top:2.5rem; font-size:0.9rem; color:#555; border-top:1px solid #eee; padding-top:1rem;">
-  <p>The research patients need, made open source to advance science and treatment of chronic diseases.</p>
-  <p>Every contribution goes directly to research, open-access publication costs, and building the evidence base for underserved conditions.</p>
-  <p><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C">♥ Support Our Work</a></p>
 </div>
+</main>
+
+<div class="donate-section">
+  <div class="donate-eyebrow">Support the Mission</div>
+  <h2>The research patients need, made open source</h2>
+  <p>Every contribution goes directly to research, open-access publication costs, and building the evidence base for underserved conditions.</p>
+  <div class="donate-btns">
+    <a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="btn-donate">♥ Support Our Work</a>
+    <a href="index.html" class="btn-ghost">All Conditions</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">Open Source Medicine Foundation</div>
+  <div class="footer-links">
+    <a href="index.html">All Conditions</a>
+    <a href="clinical_trials.html">Clinical Trials</a>
+    <a href="https://opensourcemed.info">opensourcemed.info</a>
+  </div>
+  <div class="footer-note">Data from literature and ClinicalTrials.gov. Not medical advice.</div>
+</footer>
 
 <script>
 let allAgents = [];
@@ -145,7 +168,7 @@ async function load() {
     // populate filters
     const condSet = new Set(), tagSet = new Set();
     allAgents.forEach(a => {
-      (a.PrimaryConditions || a['Primary Conditions'] || a.conditions || []).forEach(c => condSet.add(c));
+      (a.PrimaryConditions || a['Primary Conditions'] || a.conditions || []).forEach(c => condSet.add(collapseCondition(c)));
       (a.types || []).forEach(t => tagSet.add(t));
       (a.mechanisms || []).forEach(m => tagSet.add(m));
       (a.trial_types || []).forEach(tt => tagSet.add(tt));
@@ -180,6 +203,19 @@ function getEvClass(level) {
   return 'ev-Preliminary';
 }
 
+function collapseCondition(c) {
+  const r = (c || '').toLowerCase();
+  if (r.includes('long covid') || r.includes('pasc')) return 'Long COVID';
+  if (r.includes('pacvs') || r.includes('pacs')) return 'PACVS';
+  if (r.includes('me/cfs') || r.includes('chronic fatigue') || r.includes('myalgic')) return 'ME/CFS';
+  if (r.includes('gulf')) return 'Gulf War Illness';
+  if (r.includes('lyme') || r.includes('ptlds')) return 'Lyme';
+  if (r.includes('mcas') || r.includes('mast cell')) return 'MCAS';
+  if (r.includes('pots') || r.includes('dysautonomia') || r.includes('orthostatic')) return 'POTS';
+  if (r.includes('post-infectious') || r.includes('q-fever') || r.includes('dengue') || r.includes('chikungunya') || r.includes('parvovirus') || r.includes('mycoplasma') || r.includes('herpes') || r.includes('rime')) return 'Other Post-Viral';
+  return c;
+}
+
 function renderSummary(data) {
   const agents = data.agents || [];
   const total = agents.length;
@@ -200,7 +236,10 @@ function renderSummary(data) {
     agentTrialInfo.push({name, tcount, ev});
 
     const conds = a['Primary Conditions'] || a.conditions || [];
-    conds.forEach(c => { condCounts[c] = (condCounts[c] || 0) + 1; });
+    conds.forEach(c => { 
+      const norm = collapseCondition(c);
+      condCounts[norm] = (condCounts[norm] || 0) + 1; 
+    });
   });
 
   // exec text
@@ -252,7 +291,7 @@ function filter() {
     const conds = (a['Primary Conditions'] || a.conditions || []).join(' ').toLowerCase();
     const hay = (name + ' ' + conds + ' ' + (a.types||[]).join(' ') + ' ' + (a.mechanisms||[]).join(' ')).toLowerCase();
     const mTerm = !term || hay.includes(term);
-    const mCond = !cond || (a['Primary Conditions'] || a.conditions || []).includes(cond);
+    const mCond = !cond || (a['Primary Conditions'] || a.conditions || []).some(c => collapseCondition(c) === cond);
     const mTag = !tag || 
       (a.types||[]).includes(tag) || (a.mechanisms||[]).includes(tag) || 
       (a.trial_types||[]).includes(tag) || (a.trial_sizes||[]).includes(tag);
@@ -271,13 +310,17 @@ function render(list) {
     div.className = 'agent';
 
     const name = a['Therapeutic Agent'] || a.name || 'Unknown';
-    const conds = (a['Primary Conditions'] || a.conditions || []).join(', ');
+    const rawConds = a['Primary Conditions'] || a.conditions || [];
+    const conds = [...new Set(rawConds.map(collapseCondition))].join(', ');
     const mech = a['Proposed Mechanism'] || '';
     const ev = a['Evidence Level'] || 'Preliminary';
     const refs = Array.isArray(a['Key Studies / References']) ? a['Key Studies / References'].join(' | ') : (a['Key Studies / References'] || '');
     const ongoing = a['Ongoing Research'] || 'None listed';
     const notes = a['Clinical Notes'] || '';
     const updated = a['Last Updated'] || '';
+    const pubchem = a['PubChem'] || '';
+    const safety = a['Safety'] || '';
+    const dosing = a['Dosing'] || '';
 
     const evPill = `<span class="ev-pill ${getEvClass(ev)}">${escape(ev)}</span>`;
 
@@ -309,6 +352,9 @@ function render(list) {
       <div class="meta"><strong>Conditions:</strong> ${escape(conds)}</div>
       <div class="meta"><strong>Mechanism:</strong> ${escape(mech)}</div>
       <div class="meta"><strong>Evidence Level:</strong> ${evPill}</div>
+      ${pubchem ? `<div class="meta"><strong>PubChem:</strong> <a href="${pubchem}" target="_blank" rel="noopener">View on PubChem ↗</a></div>` : ''}
+      ${safety ? `<div class="meta"><strong>Safety:</strong> ${escape(safety)}</div>` : ''}
+      ${dosing ? `<div class="meta"><strong>Dosing / Duration (from studies/trials):</strong> ${escape(dosing)}</div>` : ''}
       <div class="meta"><strong>Key Refs:</strong> ${escape(refs)}</div>
       <div class="meta"><strong>Ongoing:</strong> ${escape(ongoing)}</div>
       <div class="meta" style="background:#f8fafc; padding:4px;"><strong>Clinical Notes:</strong> ${escape(notes)}</div>

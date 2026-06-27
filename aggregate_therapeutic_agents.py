@@ -29,13 +29,117 @@ DATA_DIR = BASE_DIR / "data"
 CLINICAL_DIR = BASE_DIR / "clinical_trials" / "data"
 OUT_FILE = DATA_DIR / "therapeutic_agents.json"
 
-# Focused scope: only these 5 conditions
+# Canonical condition categories (collapse synonyms)
+CANONICAL_CATEGORIES = [
+    "Long COVID",
+    "PACVS",
+    "ME/CFS",
+    "Gulf War Illness",
+    "Lyme",
+    "MCAS",
+    "POTS",
+    "Other Post-Viral (Post-infectious cough, Q-fever fatigue syndrome, Post-dengue fatigue, Chikungunya post-infectious, Parvovirus B19 GBS, Mycoplasma pneumoniae neurological, Herpes encephalitis sequelae, RIME, etc.)"
+]
+
+CONDITION_NORMALIZE_MAP = {
+    "Long COVID": ["long covid", "pasc", "post-acute sequelae", "long covid / pasc", "pasc / long covid", "long covid fatigue", "long covid treatment", "long covid prevention", "long covid cognition", "long covid / me-cfs"],
+    "PACVS": ["pacvs", "pacs", "post-acute covid vaccination", "vax", "longvax", "pacvs / longvax", "pacs/pacvs", "post vaccine syndrome"],
+    "ME/CFS": ["me/cfs", "myalgic encephalomyelitis", "chronic fatigue syndrome", "me-cfs"],
+    "Gulf War Illness": ["gulf war", "gwi", "gulf war illness"],
+    "Lyme": ["lyme", "ptlds", "post-treatment lyme", "chronic lyme"],
+    "MCAS": ["mcas", "mast cell activation", "mastocytosis", "mcas phenotype", "mast cell"],
+    "POTS": ["pots", "dysautonomia", "orthostatic", "pots / long", "pots (hyperadrenergic)", "postural orthostatic tachycardia"],
+    "Other Post-Viral (Post-infectious cough, Q-fever fatigue syndrome, Post-dengue fatigue, Chikungunya post-infectious, Parvovirus B19 GBS, Mycoplasma pneumoniae neurological, Herpes encephalitis sequelae, RIME, etc.)": ["post-infectious", "q-fever", "chikungunya", "dengue", "parvovirus", "mycoplasma", "herpes", "ebv", "cmv", "rime", "guillain", "hemophagocytic"]
+}
+
+def normalize_condition(raw: str) -> str:
+    if not raw:
+        return "Other Post-Viral (Post-infectious cough, Q-fever fatigue syndrome, Post-dengue fatigue, Chikungunya post-infectious, Parvovirus B19 GBS, Mycoplasma pneumoniae neurological, Herpes encephalitis sequelae, RIME, etc.)"
+    r = raw.lower().strip()
+    for canon, keywords in CONDITION_NORMALIZE_MAP.items():
+        if any(kw in r for kw in keywords):
+            return canon
+    # fallback bucket
+    if any(x in r for x in ["post", "infectious", "viral"]):
+        return "Other Post-Viral (Post-infectious cough, Q-fever fatigue syndrome, Post-dengue fatigue, Chikungunya post-infectious, Parvovirus B19 GBS, Mycoplasma pneumoniae neurological, Herpes encephalitis sequelae, RIME, etc.)"
+    return raw
+
+# Enrichment for therapeutic agents (PubChem, safety, dosing from studies/trials)
+# Expand this map for more agents as data is reviewed. Fallbacks use name-based PubChem search + note.
+AGENT_ENRICH = {
+    "Paxlovid (Nirmatrelvir/Ritonavir)": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/155903259",
+        "Safety": "Strong CYP3A4 inhibitor (ritonavir component) → many drug interactions. Renal dose adjustment required. Common: dysgeusia, diarrhea. Not recommended in severe hepatic impairment.",
+        "Dosing": "Nirmatrelvir 300 mg + ritonavir 100 mg BID for 5 days (standard); some Long COVID trials used similar 5-day courses."
+    },
+    "N-Acetylcysteine (NAC)": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/12035",
+        "Safety": "Excellent safety profile. GI upset (nausea, vomiting, diarrhea) at high doses. Rare bronchospasm with inhalation. Safe in pregnancy at standard doses.",
+        "Dosing": "600–1800 mg/day divided doses (e.g. 600 mg TID); durations in studies 4–12 weeks."
+    },
+    "Low-dose naltrexone (LDN)": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/5360515",
+        "Safety": "Very safe at 1–4.5 mg. Avoid with opioids (blocks effect, may precipitate withdrawal). Start low (0.5 mg) and titrate to minimize vivid dreams/insomnia.",
+        "Dosing": "1–4.5 mg at bedtime; titrate from 0.5 mg over weeks; ongoing trials use 4.5 mg for 8–16+ weeks."
+    },
+    "Metformin": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/4091",
+        "Safety": "GI side effects (diarrhea, nausea) common initially. Risk of B12 deficiency long-term; lactic acidosis rare (avoid in severe renal/hepatic disease, contrast).",
+        "Dosing": "500–2000 mg/day (extended release often better tolerated); prevention trials used during acute infection ~14 days; treatment studies 8–12+ weeks."
+    },
+    "Fluvoxamine": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/3406",
+        "Safety": "Nausea, insomnia, somnolence; significant CYP1A2 and CYP2C19 interactions. Avoid in combination with thioridazine, pimozide. Monitor for serotonin syndrome if combined with other serotonergics.",
+        "Dosing": "50–100 mg/day (often 100 mg); short courses (10–15 days) in early studies; some PASC protocols 4–8 weeks."
+    },
+    "Rituximab": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/5104",
+        "Safety": "Infusion reactions, serious infections (including PML risk), hepatitis B reactivation, hypogammaglobulinemia. Requires specialist oversight, screening, monitoring.",
+        "Dosing": "Typical rheumatology regimens 1000 mg IV x2 (2 weeks apart) or 375 mg/m² weekly x4; ME/CFS trials used similar; repeat as needed."
+    },
+    "Creatine monohydrate": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/586",
+        "Safety": "Generally safe. Possible weight gain (water), GI upset, muscle cramps. Caution in renal disease; ensure hydration.",
+        "Dosing": "5 g daily (some protocols 20 g/day loading 5–7 days then 5 g); 8–24 weeks in cognitive/fatigue RCTs."
+    },
+    "Ivabradine": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/132999",
+        "Safety": "Bradycardia, visual phosphenes (luminous phenomena), headache. Contraindicated in sick sinus, severe hypotension, acute decompensated HF. Monitor HR.",
+        "Dosing": "2.5–7.5 mg twice daily; titrate to HR; durations in POTS/autonomic studies 4–12 weeks or longer."
+    },
+    "Pyridostigmine": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/4991",
+        "Safety": "Cholinergic side effects (GI cramping, diarrhea, salivation, sweating, bradycardia). Avoid in asthma, mechanical obstruction. Overdose risk cholinergic crisis.",
+        "Dosing": "30–60 mg TID (sometimes 30 mg); titrate; study durations often 4–8 weeks for hemodynamic assessment."
+    },
+    "Coenzyme Q10 (CoQ10)": {
+        "PubChem": "https://pubchem.ncbi.nlm.nih.gov/compound/5281915",
+        "Safety": "Very safe; mild GI upset rare. May interact with warfarin (monitor INR). Ubiquinol form preferred for absorption.",
+        "Dosing": "100–300 mg/day (often 200 mg); 8–12+ weeks in fatigue studies."
+    }
+}
+
+def enrich_agent(name: str) -> dict:
+    base = AGENT_ENRICH.get(name, {})
+    if not base:
+        safe_name = name.split('(')[0].strip().replace(' ', '%20')
+        base = {
+            "PubChem": f"https://pubchem.ncbi.nlm.nih.gov/#query={safe_name}",
+            "Safety": "Limited specific safety data in these populations. Review full prescribing information and consult specialist. Many agents used off-label or investigational.",
+            "Dosing": "See linked studies/trials for reported doses and durations; typical protocols vary widely."
+        }
+    return base
+
+# Focused scope for literature/trial loading (expanded)
 TARGET_CONDITIONS = [
     "PACVS – Post-Acute COVID-19 Vaccination Syndrome",
     "Long COVID – Post-Acute Sequelae of COVID-19",
     "ME/CFS – Myalgic Encephalomyelitis / Chronic Fatigue Syndrome",
     "POTS / Dysautonomia",
-    "MCAS (Mast Cell Activation Syndrome)"
+    "MCAS (Mast Cell Activation Syndrome)",
+    "Gulf War Illness",
+    "Lyme / PTLDS",
+    "Other Post-Viral"
 ]
 
 CONDITION_KEYWORDS = {
@@ -43,7 +147,10 @@ CONDITION_KEYWORDS = {
     "Long COVID – Post-Acute Sequelae of COVID-19": ["long covid", "pasc", "post-acute sequelae of sars-cov-2", "post acute covid syndrome"],
     "ME/CFS – Myalgic Encephalomyelitis / Chronic Fatigue Syndrome": ["me/cfs", "myalgic encephalomyelitis", "chronic fatigue syndrome"],
     "POTS / Dysautonomia": ["pots", "postural orthostatic tachycardia syndrome", "dysautonomia"],
-    "MCAS (Mast Cell Activation Syndrome)": ["mcas", "mast cell activation syndrome", "mast cell activation"]
+    "MCAS (Mast Cell Activation Syndrome)": ["mcas", "mast cell activation syndrome", "mast cell activation"],
+    "Gulf War Illness": ["gulf war", "gwi", "gulf war illness"],
+    "Lyme / PTLDS": ["lyme", "ptlds", "post-treatment lyme"],
+    "Other Post-Viral": ["post-infectious", "q-fever", "chikungunya", "dengue post", "parvovirus", "mycoplasma post", "herpes encephalitis", "rime"]
 }
 
 # Filter out non-therapeutic "agents"
@@ -262,7 +369,7 @@ def load_trials() -> List[Dict[str, Any]]:
 
 def load_pacvs_evidence_csv() -> List[Dict[str, Any]]:
     """Load high-quality PACVS evidence map as additional source for agents."""
-    csv_path = CLINICAL_DIR / 'PACVS_Evidence_Map.csv'
+    csv_path = BASE_DIR / 'clinical_trials' / 'PACVS_Evidence_Map.csv'
     entries = []
     if csv_path.exists():
         import csv
@@ -363,7 +470,8 @@ def aggregate(llm_prepare: bool = False, llm_results_file: str = None):
                 rec = agent_map[agent]
                 rec["canonical_name"] = agent
                 rec["aliases"].add(agent)
-                rec["conditions"].update(study.get("conditions", []))
+                for c in study.get("conditions", []):
+                    rec["conditions"].add(normalize_condition(c))
                 rec["studies"].append({
                     "pmid": study["pmid"],
                     "title": study["title"][:140],
@@ -426,7 +534,7 @@ def aggregate(llm_prepare: bool = False, llm_results_file: str = None):
             print(f"   Failed to ingest LLM results: {e}")
 
     # Process trials (these have pre-extracted agents)
-    skip_agents = {"wait-list", "blood sample", "patient questionnaires", "control group", "classical treatment", "atmospheric air", "education and strategies intervention", "mindfulness skills intervention", "structured pacing", "multimodal intervention", "mind body intervention", "active control", "usual care"}
+    skip_agents = set(NON_THERAPEUTIC) | {"wait-list", "blood sample", "patient questionnaires", "control group", "classical treatment", "atmospheric air", "education and strategies intervention", "mindfulness skills intervention", "structured pacing", "multimodal intervention", "mind body intervention", "active control", "usual care", "exercise", "acupuncture", "beet", "nitrate", "pet/ct", "ml per", "course", "intention", "protocol"}
     for t in trials:
         for raw_agent in t.get("agents", []):
             if raw_agent.lower().strip() in skip_agents:
@@ -434,7 +542,8 @@ def aggregate(llm_prepare: bool = False, llm_results_file: str = None):
             agent = normalize_agent(raw_agent)
             rec = agent_map[agent]
             rec["canonical_name"] = agent
-            rec["conditions"].update(t.get("mapped_conditions", []))
+            for c in t.get("mapped_conditions", []):
+                rec["conditions"].add(normalize_condition(c))
             rec["trials"].append({
                 "nct_id": t["nct_id"],
                 "title": t["title"][:140],
@@ -486,7 +595,7 @@ def aggregate(llm_prepare: bool = False, llm_results_file: str = None):
         # Primary condition from CSV
         pc = entry.get('Primary Condition', '')
         if pc:
-            rec["conditions"].add(pc)
+            rec["conditions"].add(normalize_condition(pc))
         # Evidence Level from CSV
         ev = entry.get('Evidence Level', '')
         if ev:
@@ -526,15 +635,25 @@ def aggregate(llm_prepare: bool = False, llm_results_file: str = None):
         # Basic clinical notes (can be expanded manually later)
         notes = "Review full texts and consult specialists. Many agents are off-label or experimental in these conditions."
 
+        # Normalize conditions into canonical buckets (collapse synonyms)
+        norm_conditions = sorted({normalize_condition(c) for c in rec["conditions"]})
+
+        # Enrich with PubChem, safety, dosing
+        enrich = enrich_agent(rec["canonical_name"])
+
         results.append({
             "Therapeutic Agent": rec["canonical_name"],
-            "Primary Conditions": sorted(rec["conditions"]),
+            "Primary Conditions": norm_conditions,
             "Proposed Mechanism": ", ".join(sorted(rec["mechanisms"])[:4]) or "Not specified",
             "Evidence Level": evidence,
             "Key Studies / References": key_refs or ["See linked studies"],
             "Ongoing Research": ongoing_str,
             "Clinical Notes": notes,
             "Last Updated": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            # New enriched fields for agents page
+            "PubChem": enrich.get("PubChem", ""),
+            "Safety": enrich.get("Safety", ""),
+            "Dosing": enrich.get("Dosing", ""),
             # Keep internal for UI
             "aliases": sorted(rec["aliases"]),
             "studies": rec["studies"][:5],
