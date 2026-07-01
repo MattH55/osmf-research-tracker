@@ -343,6 +343,7 @@ def parse_study(study: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         conditions_mod = proto.get("conditionsModule", {})
         desc = proto.get("descriptionModule", {})
         sponsor_mod = proto.get("sponsorCollaboratorsModule", {})
+        outcomes_mod = proto.get("outcomesModule", {})
 
         nct_id = ident.get("nctId", "")
         title = ident.get("briefTitle", "Untitled Trial")
@@ -378,6 +379,24 @@ def parse_study(study: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         agents = extract_agents(interventions)
         mapped_conditions = map_conditions(conditions)
 
+        def _outcome_rows(module_key: str, outcome_type: str) -> List[Dict[str, str]]:
+            rows = []
+            for o in outcomes_mod.get(module_key, []) or []:
+                measure = (o.get("measure") or "").strip()
+                if not measure:
+                    continue
+                rows.append({
+                    "type": outcome_type,
+                    "measure": measure,
+                    "description": (o.get("description") or "").strip(),
+                    "time_frame": (o.get("timeFrame") or "").strip(),
+                })
+            return rows
+
+        primary_outcomes = _outcome_rows("primaryOutcomes", "primary")
+        secondary_outcomes = _outcome_rows("secondaryOutcomes", "secondary")
+        outcome_measures = primary_outcomes + secondary_outcomes
+
         full_text = f"{title} {brief_summary} {' '.join(conditions)}"
         tags = generate_relevance_tags(full_text)
 
@@ -412,6 +431,9 @@ def parse_study(study: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "sponsor_type": sponsor_type,
             "primary_purpose": primary_purpose,
             "brief_summary": brief_summary,
+            "primary_outcomes": primary_outcomes,
+            "secondary_outcomes": secondary_outcomes,
+            "outcome_measures": outcome_measures,
             "relevance_tags": tags,
             "enrollment": enrollment,
             "enrollment_type": enrollment_type,
