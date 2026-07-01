@@ -1,0 +1,220 @@
+/**
+ * SEO keyword strategy — VitalScan4PACVS
+ * Tier 1: high-intent condition + biomarker queries
+ * Tier 2: symptom/mechanism queries (PEM, POTS, dysautonomia)
+ * Tier 3: site/trial branded queries
+ */
+
+const GLOBAL_SITE = [
+  'VitalScan4PACVS',
+  'post-acute COVID vaccination syndrome',
+  'PACVS research',
+  'decentralized clinical trial',
+  'chronic illness research',
+];
+
+const GLOBAL_BIOMARKER = [
+  'biomarker atlas',
+  'biomarker database',
+  'peer-reviewed biomarkers',
+  'chronic illness biomarkers',
+  'blood test alterations',
+  'searchable biomarker reference',
+];
+
+const PAGES = {
+  index: {
+    title: 'COVID Vaccine Side Effects Research | Post-Vaccine Syndrome Trial — VitalScan4PACVS',
+    description: 'Research for persistent COVID vaccine side effects and post-vaccine syndrome (PACVS). Join a decentralized home-based study or explore peer-reviewed biomarker atlases — including long COVID overlap and spike protein pathology.',
+    keywords: [
+      'covid vaccine side effects',
+      'post vaccine syndrome',
+      'post vaccination syndrome',
+      'post acute COVID vaccination syndrome',
+      'PACVS clinical trial',
+      'how long do vaccine side effects last',
+      'persistent covid vaccine side effects',
+      'long covid treatment research',
+      'spike protein pathology',
+      'spike protein persistence',
+      'vaccine injury research study',
+      'post vaccination syndrome treatment',
+      'COVID vaccine long term side effects research',
+      'decentralized clinical trial PACVS',
+      'home-based clinical study',
+      'supplement protocol PACVS',
+      'post exertional malaise treatment research',
+      'POTS clinical trial',
+      ...GLOBAL_SITE,
+    ],
+    ogTitle: 'COVID Vaccine Side Effects & Post-Vaccine Syndrome Research | VitalScan4PACVS',
+    ogDescription: 'Persistent COVID vaccine side effects? Explore PACVS research — a fully remote 90-day study plus peer-reviewed biomarker atlases. Register interest.',
+  },
+  'the-science': {
+    title: 'What is PACVS? Science, Symptoms & FAQ | Post-Vaccination Syndrome',
+    description: 'What is PACVS? Learn about Post-Acute COVID-19 Vaccination Syndrome — symptoms, causes, diagnosis, overlap with long COVID and ME/CFS, treatment research, and FAQ. Peer-reviewed biomarker atlases linked.',
+    keywords: [
+      'what is PACVS',
+      'what is post vaccination syndrome',
+      'post acute COVID vaccination syndrome symptoms',
+      'PACVS vs long COVID',
+      'PACVS vs vaccine side effects',
+      'PACVS diagnostic test',
+      'PACVS treatment',
+      'PACVS science',
+      'post vaccination syndrome mechanism',
+      'nitric oxide dysregulation PACVS',
+      'mitochondrial dysfunction vaccine injury',
+      'POTS post vaccination',
+      'post exertional malaise PACVS',
+      'spike protein pathology',
+      'long COVID overlap PACVS',
+      'GPCR autoantibodies',
+      'biomarker atlas PACVS',
+      ...GLOBAL_SITE.slice(0, 3),
+    ],
+    ogTitle: 'The Science Behind PACVS | ViTAL SCAN',
+    ogDescription: 'Mechanistic research on PACVS — NO pathway, mitochondria, autonomic dysfunction, and biomarker evidence.',
+  },
+  'the-protocol': {
+    title: 'PACVS Supplement Protocol | 10-Ingredient Metabolic Stack — Evidence & Rationale',
+    description: 'Evidence-based supplement protocol for Post-Acute COVID Vaccination Syndrome (PACVS): L-arginine, citrulline, NAC, carnitine, creatine, and more. Mechanistic rationale for nitric oxide and mitochondrial support in the VitalScan4PACVS trial.',
+    keywords: [
+      'PACVS supplement protocol',
+      'post vaccination syndrome supplements',
+      'arginine citrulline PACVS',
+      'NAC long COVID PACVS',
+      'mitochondrial supplement protocol',
+      'nitric oxide supplement stack',
+      'ME/CFS supplement research',
+      'metabolic modulation chronic illness',
+      ...GLOBAL_SITE.slice(0, 3),
+    ],
+    ogTitle: 'The Protocol | VitalScan4PACVS Supplement Rationale',
+    ogDescription: '10-ingredient metabolic protocol targeting NO bioavailability and mitochondrial function in PACVS.',
+  },
+  'biomarker-atlas': {
+    title: 'Biomarker Atlas Hub | Long COVID, PACVS, ME/CFS, Lyme & Gulf War Illness Blood Tests',
+    description: 'Free searchable biomarker atlases for Long COVID (PASC), PACVS, ME/CFS, Lyme disease, and Gulf War Illness. Peer-reviewed blood test, cytokine, metabolite, and CSF alterations with DOI citations and LOINC codes.',
+    keywords: [
+      ...GLOBAL_BIOMARKER,
+      'long COVID biomarkers',
+      'PACVS biomarkers',
+      'ME/CFS blood tests',
+      'chronic fatigue syndrome biomarkers',
+      'Lyme disease blood test',
+      'Gulf War Syndrome biomarkers',
+      'PASC blood tests',
+      'post exertional malaise biomarkers',
+      'POTS biomarkers',
+      'dysautonomia blood tests',
+      'cytokine panel chronic illness',
+      'IL-6 long COVID',
+      'D-dimer long COVID',
+      'spike protein persistence biomarker',
+      'GPCR autoantibody test',
+      'two-tier Lyme test',
+      'chronic illness lab markers',
+    ],
+    ogTitle: 'Biomarker Atlas Hub — Chronic Illness Literature Databases',
+    ogDescription: 'Searchable peer-reviewed biomarker databases for five chronic illness conditions.',
+  },
+  'long-covid': {
+    keywords: [
+      'long COVID biomarkers',
+      'PASC biomarkers',
+      'post-acute sequelae of COVID-19 blood tests',
+      'long COVID cytokines',
+      'long COVID metabolomics',
+      'long COVID blood work',
+      'D-dimer long COVID',
+      'microclots long COVID',
+      'IL-6 long COVID',
+      'brain fog biomarkers',
+      'long COVID immune exhaustion',
+      'ceramides long COVID',
+      'autoantibodies long COVID',
+      'complement activation PASC',
+      ...GLOBAL_BIOMARKER.slice(0, 4),
+    ],
+  },
+  pacvs: {
+    keywords: [
+      'PACVS biomarkers',
+      'post-vaccination syndrome blood tests',
+      'post COVID vaccine syndrome markers',
+      'spike protein persistence',
+      'spike protein in blood after vaccine',
+      'GPCR autoantibodies',
+      'anti-spike antibodies PACVS',
+      'vaccine injury biomarkers',
+      'post vaccination fatigue blood tests',
+      'mitochondrial dysfunction PACVS',
+      'amyloid fibrin microclots',
+      'POTS post vaccination biomarkers',
+      ...GLOBAL_BIOMARKER.slice(0, 4),
+    ],
+  },
+  'me-cfs': {
+    keywords: [
+      'ME/CFS biomarkers',
+      'myalgic encephalomyelitis biomarkers',
+      'chronic fatigue syndrome blood tests',
+      'CFS lab markers',
+      'PEM biomarkers',
+      'post exertional malaise blood test',
+      'acylcarnitines ME/CFS',
+      'cytokines ME/CFS',
+      'mitochondrial dysfunction CFS',
+      'HRV ME/CFS',
+      'RNase L chronic fatigue',
+      'NK cell function ME/CFS',
+      'CPET ME/CFS biomarkers',
+      'GPCR autoantibodies ME/CFS',
+      ...GLOBAL_BIOMARKER.slice(0, 4),
+    ],
+  },
+  lyme: {
+    keywords: [
+      'Lyme disease biomarkers',
+      'Lyme disease blood test',
+      'two-tier Lyme test',
+      'Lyme Western blot',
+      'C6 peptide ELISA',
+      'VisE C6 Lyme test',
+      'neuroborreliosis CSF markers',
+      'CXCL13 Lyme CSF',
+      'chronic Lyme biomarkers',
+      'post-treatment Lyme disease syndrome',
+      'PTLDS blood tests',
+      'Borrelia burgdorferi serology',
+      'Lyme co-infection panel',
+      ...GLOBAL_BIOMARKER.slice(0, 4),
+    ],
+  },
+  'gulf-war-illness': {
+    keywords: [
+      'Gulf War Illness biomarkers',
+      'Gulf War Syndrome blood tests',
+      'GWI inflammation markers',
+      'chronic multisymptom illness veterans',
+      'homocysteine Gulf War',
+      'Gulf War veterans health biomarkers',
+      'pesticide exposure biomarkers GWI',
+      'cholinergic autoantibodies GWI',
+      'PON1 Gulf War Illness',
+      'CRP Gulf War Syndrome',
+      ...GLOBAL_BIOMARKER.slice(0, 4),
+    ],
+  },
+};
+
+function keywordsToMeta(arr) {
+  return [...new Set(arr.map((k) => k.trim()).filter(Boolean))].join(', ');
+}
+
+function escapeAttr(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+
+module.exports = { GLOBAL_SITE, GLOBAL_BIOMARKER, PAGES, keywordsToMeta, escapeAttr };
