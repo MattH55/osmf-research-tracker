@@ -95,7 +95,7 @@ const PAGES = {
   },
   'biomarker-atlas': {
     title: 'Biomarker Atlas Hub | Long COVID, PACVS, ME/CFS, Lyme & Gulf War Illness Blood Tests',
-    description: 'Free searchable biomarker atlases for Long COVID (PASC), PACVS, ME/CFS, Lyme disease, and Gulf War Illness. Peer-reviewed blood test, cytokine, metabolite, and CSF alterations with DOI citations and LOINC codes.',
+    description: 'Searchable peer-reviewed biomarker databases with DOI citations and LOINC codes — curated literature syntheses by condition.',
     keywords: [
       ...GLOBAL_BIOMARKER,
       'long COVID biomarkers',
@@ -117,7 +117,7 @@ const PAGES = {
       'chronic illness lab markers',
     ],
     ogTitle: 'Biomarker Atlas Hub — Chronic Illness Literature Databases',
-    ogDescription: 'Searchable peer-reviewed biomarker databases for five chronic illness conditions.',
+    ogDescription: 'Searchable peer-reviewed biomarker databases with DOI citations and LOINC codes — curated literature syntheses by condition.',
   },
   'long-covid': {
     keywords: [
