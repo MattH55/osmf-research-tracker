@@ -16,23 +16,6 @@ const FOOTER_NEW = `    <a href="biomarker-atlas.html">Biomarker Atlases</a>
     <a href="clinical_trials.html">Clinical Trials</a>
     <a href="agents.html">Therapeutic Agents</a>`;
 
-const BIOMARKER_HUB_CARD = `
-      <div class="tracker-hub-card">
-        <div class="hub-card-icon">🧬</div>
-        <div class="hub-card-label">Biomarkers</div>
-        <h3>Biomarker Atlases</h3>
-        <p>Searchable peer-reviewed biomarker databases with DOI citations and LOINC codes — curated literature syntheses by condition.</p>
-        <ul class="condition-links">
-          <li><a href="biomarker-atlas.html">All atlases →</a></li>
-          <li><a href="long-covid-biomarkers.html">Long COVID →</a></li>
-          <li><a href="pacvs-biomarkers.html">PACVS →</a></li>
-          <li><a href="me-cfs-biomarkers.html">ME/CFS →</a></li>
-          <li><a href="lyme-biomarkers.html">Lyme / PTLDS →</a></li>
-          <li><a href="gulf-war-illness-biomarkers.html">Gulf War Illness →</a></li>
-        </ul>
-      </div>
-`;
-
 const CONDITION_BIOMARKER_LINKS = {
   'long-covid.html': { href: 'long-covid-biomarkers.html', label: 'Long COVID Biomarker Atlas' },
   'pacvs.html': { href: 'pacvs-biomarkers.html', label: 'PACVS Biomarker Atlas' },
@@ -65,14 +48,7 @@ function patchNavAndFooter(html) {
 }
 
 function patchIndex(html) {
-  let out = patchNavAndFooter(html);
-  if (!out.includes('hub-card-label">Biomarkers')) {
-    out = out.replace(
-      /(<div class="tracker-hub-card">[\s\S]*?agents\.html[\s\S]*?<\/div>\s*)\n(\s*<\/div>)/,
-      `$1\n${BIOMARKER_HUB_CARD}$2`
-    );
-  }
-  return out;
+  return patchNavAndFooter(html);
 }
 
 function patchConditionPage(html, filename) {
