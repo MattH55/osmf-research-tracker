@@ -24,6 +24,8 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
+
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -364,6 +366,7 @@ def build_page(
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+{GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title} — Biomarkers &amp; Therapeutic Agents | OSMF</title>
@@ -679,6 +682,7 @@ def _build_index(rows: list[dict]) -> None:
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+{GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chronic Disease Interventions | OSMF Biomarker Pipeline</title>

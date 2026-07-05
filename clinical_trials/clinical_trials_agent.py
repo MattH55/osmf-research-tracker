@@ -24,6 +24,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
+from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
+
 import requests
 
 # =============================================================================
@@ -532,7 +534,9 @@ def generate_html_report(trials: List[Dict[str, Any]], new_ids: Set[str], update
         """
 
     html = f"""<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Clinical Trials Report - {date_str}</title>
+<html><head>
+{GOOGLE_ANALYTICS_SNIPPET}
+<meta charset="UTF-8"><title>Clinical Trials Report - {date_str}</title>
 <style>body{{font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; line-height: 1.5;}}</style>
 </head><body>
 <h1>Clinical Trials Card Agent — {date_str}</h1>

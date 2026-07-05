@@ -7,6 +7,16 @@ from pathlib import Path
 
 SITE_LINKS_PATH = Path(__file__).parent / "seeds" / "site_links.json"
 FAVICON_URL = "https://opensourcemed.info/favicon.png"
+GOOGLE_ANALYTICS_ID = "G-XRCGK1QTB5"
+GOOGLE_ANALYTICS_SNIPPET = f"""  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={GOOGLE_ANALYTICS_ID}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){{dataLayer.push(arguments);}}
+    gtag('js', new Date());
+
+    gtag('config', '{GOOGLE_ANALYTICS_ID}');
+  </script>"""
 
 SITE_NAV_LINKS = [
     ("../index.html", "Research Tracker"),

@@ -27,4 +27,15 @@ function mirrorUrl(filename) {
   return `${MIRROR.origin}/${filename}`;
 }
 
-module.exports = { CANONICAL, MIRROR, canonicalUrl, mirrorUrl };
+const GOOGLE_ANALYTICS_ID = 'G-XRCGK1QTB5';
+const GOOGLE_ANALYTICS_SNIPPET = `  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '${GOOGLE_ANALYTICS_ID}');
+  </script>`;
+
+module.exports = { CANONICAL, MIRROR, canonicalUrl, mirrorUrl, GOOGLE_ANALYTICS_SNIPPET };

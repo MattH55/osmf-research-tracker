@@ -23,6 +23,8 @@ import json
 import logging
 from pathlib import Path
 
+from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
+
 log = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "biomarkers"
@@ -67,6 +69,7 @@ def render_atlas_html(atlas: dict) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+{GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>

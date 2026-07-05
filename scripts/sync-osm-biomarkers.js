@@ -3,7 +3,7 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { CANONICAL, canonicalUrl } = require('./lib/site-config');
+const { CANONICAL, canonicalUrl, GOOGLE_ANALYTICS_SNIPPET } = require('./lib/site-config');
 const { escapeAttr } = require('./lib/seo-keywords');
 const { patchTrackerPages } = require('./patch-tracker-integration');
 
@@ -237,6 +237,7 @@ function writeRootRedirect(filename) {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
+${GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="${canonical}">

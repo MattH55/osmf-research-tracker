@@ -5,7 +5,7 @@ import html
 import json
 from pathlib import Path
 
-from ..site_nav import FAVICON_URL, related_links, render_nav
+from ..site_nav import FAVICON_URL, GOOGLE_ANALYTICS_SNIPPET, related_links, render_nav
 
 TIER_COLOUR = {"A": "#22c55e", "B": "#4a9eff", "C": "#f59e0b"}
 TYPE_COLOUR = {"A": "#7c6af7", "B": "#4a9eff", "C": "#f59e0b", "D": "#ef4444", "E": "#22c55e"}
@@ -286,6 +286,7 @@ def build_html(data: dict) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+{GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{_esc(page['title'])}</title>
@@ -460,6 +461,7 @@ def build_index_html(pages: list[dict]) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+{GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Disease Intelligence Index | OSMF</title>
