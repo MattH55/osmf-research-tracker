@@ -1,0 +1,48 @@
+name: Clinical Trials Card Agent - Daily Update (manual)
+
+on:
+  workflow_dispatch:  # Manual trigger only
+  # Daily automation is handled by daily-research-update.yml which runs the
+  # clinical trials agent + therapeutic agents aggregator in sequence with literature updates.
+
+jobs:
+  update-trials:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Clinical Trials Card Agent
+        run: |
+          python clinical_trials/clinical_trials_agent.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Commit and push updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add clinical_trials/reports/ clinical_trials/data/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: daily clinical trials card update [$(date +%Y-%m-%d)]"
+            git push
+            echo "Pushed updated reports and data."
+          fi

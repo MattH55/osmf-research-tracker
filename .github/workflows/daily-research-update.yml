@@ -1,0 +1,110 @@
+name: Daily Research Tracker Update
+
+on:
+  schedule:
+    # Run daily at 04:15 UTC (~late night / early morning US)
+    - cron: '15 4 * * *'
+  workflow_dispatch:
+    inputs:
+      condition:
+        description: 'Condition key to update (leave blank for day-of-year rotation)'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - pacvs
+          - me-cfs
+          - long-covid
+          - lyme
+          - gulf-war-illness
+          - other-post-viral
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit the updated JSON files
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so we can commit cleanly
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pymed  # ensure for literature updater
+
+      - name: Run research tracker updater
+        run: python update_research_tracker.py
+        env:
+          PYTHONUNBUFFERED: "1"
+          TRACKER_CONDITION: ${{ github.event.inputs.condition }}
+
+      - name: Run Clinical Trials Card Agent (daily)
+        run: python clinical_trials/clinical_trials_agent.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Run Therapeutic Agents Aggregator (daily)
+        run: python aggregate_therapeutic_agents.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Enhance Therapeutic Agents Clinical Notes (daily)
+        run: python generate_detailed_notes.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Commit and push updated data (if any changes)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data/*.json clinical_trials/data/ clinical_trials/reports/
+
+          # Only commit if something actually changed
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Data files are up to date."
+          else
+            git commit -m "chore: daily research + clinical trials + therapeutic agents update [$(date +%Y-%m-%d)]"
+            git push
+            echo "Committed updated JSON files and reports."
+          fi
+
+  # Optional: separate deploy job using GitHub Pages
+  deploy:
+    needs: update-data
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repo root (index.html + data/ + other .html)
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

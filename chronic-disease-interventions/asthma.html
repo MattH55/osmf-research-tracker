@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asthma — Biomarkers &amp; Therapeutic Agents | OSMF</title>
+  <meta name="description" content="Pharmacologically actionable biomarkers and therapeutic agents for Asthma, with evidence tiers from DGIdb, Open Targets, ChEMBL, and peer-reviewed literature. Clinical trials from ClinicalTrials.gov.">
+  <link rel="canonical" href="https://research.opensourcemed.info/chronic-disease-interventions/asthma.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Asthma — Biomarkers &amp; Therapeutic Agents | OSMF">
+  <meta property="og:url" content="https://research.opensourcemed.info/chronic-disease-interventions/asthma.html">
+  <meta property="og:site_name" content="Open Source Medicine Foundation">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e1a; --surface: #141828; --card: #1a1f35;
+      --border: #2a3050; --text: #e1e4e8; --muted: #8892a4;
+      --accent: #4a9eff; --accent2: #7c6af7;
+      --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #2a3050; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+
+    /* Nav */
+    nav { background: rgba(10,14,26,0.97); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-brand { color: var(--text); font-weight: 700; font-size: 0.95rem; line-height: 1.2; display: flex; flex-direction: column; }
+    .nav-brand span { color: var(--accent); }
+    .nav-brand-sub { color: var(--muted); font-size: 0.7rem; font-weight: 400; }
+    .nav-links { list-style: none; display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; }
+    .nav-links a { color: var(--muted); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; transition: all 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--card); text-decoration: none; }
+    .nav-support { background: var(--accent) !important; color: #fff !important; font-weight: 600; }
+
+    /* Hero */
+    .page-hero { background: linear-gradient(135deg, #0d1230 0%, #1a1f45 100%); border-bottom: 1px solid var(--border); padding: 3rem 1.5rem 2.5rem; text-align: center; }
+    .hero-eyebrow { color: var(--accent); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .page-hero h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700; margin-bottom: 0.75rem; }
+    .page-hero p { color: var(--muted); max-width: 700px; margin: 0 auto; font-size: 1rem; }
+
+    /* Main layout */
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* Breadcrumb */
+    .breadcrumb { display: flex; gap: 0.5rem; font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--muted); }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb span { color: var(--border); }
+
+    /* Disease overview card */
+    .overview-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 2.5rem; }
+    .overview-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: var(--accent); }
+    .remission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .rem-cell { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .rem-cell .label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+    .rem-cell .value { font-size: 0.9rem; color: var(--text); line-height: 1.4; }
+    .barrier-note { background: rgba(74,158,255,0.06); border: 1px solid rgba(74,158,255,0.2); border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.9rem; color: var(--muted); }
+    .barrier-note strong { color: var(--text); }
+
+    /* Section headings */
+    .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .section-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* Gene index */
+    .gene-index { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+    .gene-chip { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 0.3rem 0.9rem; font-size: 0.82rem; font-weight: 600; color: var(--text); transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .gene-chip:hover { border-color: var(--accent); text-decoration: none; background: rgba(74,158,255,0.08); }
+    .chip-count { background: var(--accent); color: #fff; border-radius: 10px; padding: 0 6px; font-size: 0.72rem; }
+
+    /* Gene cards */
+    .gene-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; scroll-margin-top: 80px; }
+    .gene-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); background: rgba(74,158,255,0.04); }
+    .gene-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+    .ext-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .ext-link { font-size: 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--muted) !important; }
+    .ext-link:hover { color: var(--accent) !important; border-color: var(--accent); text-decoration: none !important; }
+
+    /* Agents table */
+    .table-wrap { overflow-x: auto; padding: 0.5rem 0; }
+    table.agents-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+    .agents-table th { padding: 0.6rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .agents-table td { padding: 0.55rem 1rem; border-bottom: 1px solid rgba(42,48,80,0.5); vertical-align: middle; }
+    .agents-table tbody tr:last-child td { border-bottom: none; }
+    .agents-table tbody tr:hover { background: rgba(74,158,255,0.04); }
+    .agent-name { font-weight: 600; }
+    .direction { font-size: 0.9rem; }
+    .dir-text { color: var(--muted); font-size: 0.8rem; }
+    .tier-badge { display: inline-block; color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; }
+    .potency { color: var(--muted); font-size: 0.82rem; font-family: monospace; }
+    .source-link a { font-size: 0.8rem; color: var(--muted); }
+    .source-link a:hover { color: var(--accent); }
+    .more-note { font-size: 0.8rem; color: var(--muted); padding: 0.6rem 1.5rem; border-top: 1px solid var(--border); }
+    .no-data { color: var(--muted); font-size: 0.9rem; padding: 1.5rem; }
+    .no-data.pending { font-style: italic; }
+
+    /* Clinical trials */
+    .trial-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; margin-bottom: 0.85rem; }
+    .trial-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+    .trial-title { font-size: 0.92rem; font-weight: 600; color: var(--text); line-height: 1.4; flex: 1; }
+    .trial-title:hover { color: var(--accent); }
+    .trial-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .trial-nct { font-family: monospace; color: var(--accent); }
+    .trial-summary { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+
+    /* Divider between sections */
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* Footer */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .remission-grid { grid-template-columns: 1fr; }
+      .trial-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">All Conditions</a></li>
+      <li><a href="../biomarker-atlas.html">Biomarker Atlas</a></li>
+      <li><a href="../clinical_trials.html">Clinical Trials</a></li>
+      <li><a href="../agents.html">Agents</a></li>
+      <li><a href="https://opensourcemed.info/campaign.html" class="nav-support">Support Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="hero-eyebrow">Biomarker &amp; Intervention Discovery</div>
+  <h1>Asthma</h1>
+  <p>Pharmacologically actionable gene targets, therapeutic agents ranked by evidence tier, and active clinical trials.</p>
+</section>
+
+<main>
+  <div class="breadcrumb">
+    <a href="../index.html">Research Tracker</a>
+    <span>/</span>
+    <a href="index.html">Chronic Disease Interventions</a>
+    <span>/</span>
+    <span>Asthma</span>
+    <span>/</span>
+    <a href="../asthma-biomarkers.html">Biomarker Atlas &rarr;</a>
+  </div>
+
+  <!-- Disease overview -->
+  <div class="overview-card">
+    <h2>Disease Overview</h2>
+    <div class="remission-grid">
+      <div class="rem-cell">
+        <div class="label">Spontaneous remission</div>
+        <div class="value">Not established</div>
+      </div>
+      <div class="rem-cell">
+        <div class="label">Best-intervention remission</div>
+        <div class="value">—</div>
+      </div>
+      <div class="rem-cell">
+        <div class="label">Gap size</div>
+        <div class="value">—</div>
+      </div>
+      <div class="rem-cell">
+        <div class="label">Primary barrier</div>
+        <div class="value">—</div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- Biomarker targets -->
+  <div class="section-title">Biomarker Targets &amp; Therapeutic Agents</div>
+  <p class="section-sub">
+    Gene targets queried against DGIdb, Open Targets, ChEMBL, PubMed, and Europe PMC.
+    Agents ranked: <span style="color:#22c55e">&#9679; Clinical</span> &gt;
+    <span style="color:#4a9eff">&#9679; Mechanistic</span> &gt;
+    <span style="color:#f59e0b">&#9679; Correlative</span>.
+  </p>
+
+  <div class="gene-index"><a href="#gene-ADRB2" class="gene-chip">ADRB2 <span class="chip-count">148</span></a><a href="#gene-ALOX5" class="gene-chip">ALOX5 <span class="chip-count">181</span></a><a href="#gene-CYSLTR1" class="gene-chip">CYSLTR1 <span class="chip-count">189</span></a><a href="#gene-FCER1A" class="gene-chip">FCER1A <span class="chip-count">17</span></a><a href="#gene-GATA3" class="gene-chip">GATA3 <span class="chip-count">19</span></a><a href="#gene-IL13" class="gene-chip">IL13 <span class="chip-count">11</span></a><a href="#gene-IL13RA1" class="gene-chip">IL13RA1 <span class="chip-count">2</span></a><a href="#gene-IL1RL1" class="gene-chip">IL1RL1 <span class="chip-count">1</span></a><a href="#gene-IL33" class="gene-chip">IL33 <span class="chip-count">6</span></a><a href="#gene-IL4" class="gene-chip">IL4 <span class="chip-count">4</span></a><a href="#gene-IL4R" class="gene-chip">IL4R <span class="chip-count">6</span></a><a href="#gene-IL5" class="gene-chip">IL5 <span class="chip-count">9</span></a><a href="#gene-IL5RA" class="gene-chip">IL5RA <span class="chip-count">1</span></a><a href="#gene-MS4A2" class="gene-chip">MS4A2 <span class="chip-count">31</span></a><a href="#gene-TSLP" class="gene-chip">TSLP <span class="chip-count">2</span></a></div>
+
+  
+    <div class="gene-card" id="gene-ADRB2">
+      <div class="gene-header">
+        <h3>ADRB2</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P07550" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000169252" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000169252" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">CARVEDILOL</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL1257092</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SODIUM CHLORIDE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PENBUTOLOL SULFATE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DESIPRAMINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">METIPRANOLOL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL531322</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">NADOLOL</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PIRBUTEROL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">FENOTEROL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TIMOLOL</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ABEDITEROL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PINDOLOL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BRONCHODILATOR</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TULOBUTEROL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PHENYLEPHRINE HYDROCHLORIDE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">GSK159802</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PRILOCAINE HYDROCHLORIDE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CLENBUTEROL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PROPRANOLOL HYDROCHLORIDE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">INDACATEROL MALEATE</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">VILANTEROL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TERTATOLOL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ARFORMOTEROL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">INDACATEROL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">FORMOTEROL FUMARATE</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL111201</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RITODRINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RISPERIDONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL599896</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">VILANTEROL TRIFENATATE</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RITODRINE HYDROCHLORIDE</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DISULFIRAM</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BUCINDOLOL HYDROCHLORIDE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LEVALBUTEROL TARTRATE</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LAS190792</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ALPRENOLOL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CELIPROLOL</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ALBUTEROL SULFATE</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CARTEOLOL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ADRB2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      <p class="more-note">Showing top 40 of 148 agents ranked by evidence tier.</p>
+    </div>
+
+    <div class="gene-card" id="gene-ALOX5">
+      <div class="gene-header">
+        <h3>ALOX5</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P09917" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000012779" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000012779" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">BALSALAZIDE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MASOPROCOL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DARBUFELONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MECLOFENAMATE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CGP 47656</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TEPOXALIN</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MESALAMINE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL416038</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PF-4191834</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PTC299</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MELATONIN</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MECLOFENAMATE SODIUM</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">THERAPEUTIC GLUCOCORTICOID</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MONTELUKAST SODIUM</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BALSALAZIDE DISODIUM</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LESOGABERAN</td>
+            <td class="direction">↑ <span class="dir-text">activates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ATRELEUTON</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RILOPIROX</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">6BIO</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ZILEUTON</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">3300.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL502496</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TENIDAP</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SULFASALAZINE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DIETHYLCARBAMAZINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SELENIUM</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">OLSALAZINE SODIUM</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ACACETIN</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LICOFELONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TIPELUKAST</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">5-OXO-ETE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">METHOTREXATE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SILYMARIN</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ANACARDIC ACID</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/ALOX5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MECLOFENAMIC ACID</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://platform.opentargets.org/target/ENSG00000012779" target="_blank" rel="noopener">Open Targets</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">OLSALAZINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://platform.opentargets.org/target/ENSG00000012779" target="_blank" rel="noopener">Open Targets</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL26083</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">2500.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL215/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL25790</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">6000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL215/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL38172</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">90.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL215/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL444315</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">30.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL215/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL29874</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">39000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL215/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      <p class="more-note">Showing top 40 of 181 agents ranked by evidence tier.</p>
+    </div>
+
+    <div class="gene-card" id="gene-CYSLTR1">
+      <div class="gene-header">
+        <h3>CYSLTR1</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/Q9Y271" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000173198" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000173198" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">PRANLUKAST</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.8 nM (IC50)</td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">NEDOCROMIL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CR-3465</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CINALUKAST</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL:CHEMBL314115</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RECOMBINANT TRANSFORMING GROWTH FACTOR-BETA 1</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MASILUKAST</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LY-2300559</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ZAFIRLUKAST</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">1.731 nM (IC50)</td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MONTELUKAST SODIUM</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">IRALUKAST</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/CYSLTR1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MONTELUKAST</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.5 nM (IC50)</td>
+            <td class="source-link"><a href="https://platform.opentargets.org/target/ENSG00000173198" target="_blank" rel="noopener">Open Targets</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SR-2640</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">23.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL89340</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">3.1 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ABLUKAST</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">4000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">FPL-55712</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">4000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL89768</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">3.1 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">VERLUKAST</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">8.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">POBILUKAST</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">10.0 nM (Ki)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL97356</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">11.0 nM (Ki)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL313177</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">6.42 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL316170</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">1.06 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL82790</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">4.7 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL84707</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">1.91 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL86264</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">8.49 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL87528</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">3.36 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL314340</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">1.16 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL314237</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.76 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL83233</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">15.7 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL86063</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.72 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL86302</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">1.63 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL313195</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.47 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL85572</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">2.43 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL85633</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">2.01 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL84841</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">8.67 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL313187</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.38 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL414885</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.65 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL87696</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">2.16 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL87337</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">0.55 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL315973</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">1.05 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL1798/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      <p class="more-note">Showing top 40 of 189 agents ranked by evidence tier.</p>
+    </div>
+
+    <div class="gene-card" id="gene-FCER1A">
+      <div class="gene-header">
+        <h3>FCER1A</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P12319" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000179639" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000179639" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">BENZYLPENICILLOYL POLYLYSINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 27D [PMID: 28231433]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">OPAGANIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PF-543</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SKI II</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ROME</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MP-A08</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 55 [PMID: 30889352]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 49 [PMID: 30889352]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">OMALIZUMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SLC4101431</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 60 [PMID: 30889352]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SLM6071469</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 59 [PMID: 30889352]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/FCER1A" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL275575</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">71000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL2248/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL412391</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">25000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL2248/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL267118</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">82000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL2248/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-GATA3">
+      <div class="gene-header">
+        <h3>GATA3</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P23771" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000107485" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000107485" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">PREDNISOLONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DEXAMETHASONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">METHOTREXATE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ASPARAGINASE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RIBAVIRIN</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MYCOPHENOLATE MOFETIL</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PEGASPARGASE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MYCOPHENOLATE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CYCLOPHOSPHAMIDE ANHYDROUS</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">VINCRISTINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CYTARABINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PREDNISONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LEUCOVORIN CALCIUM</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DOXORUBICIN HYDROCHLORIDE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">THIOGUANINE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MERIMEPODIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">GLUCARPIDASE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DAUNORUBICIN LIPOSOMAL</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MERCAPTOPURINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/GATA3" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL13">
+      <div class="gene-header">
+        <h3>IL13</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P35225" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000169194" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000169194" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">DECTREKUMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TRALOKINUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">QAX-576</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ROMILKIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CENDAKIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ADALIMUMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TNX-650</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">USTEKINUMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">LEBRIKIZUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CNTO-5825</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ANRUKINZUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL13RA1">
+      <div class="gene-header">
+        <h3>IL13RA1</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P78552" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000131724" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL13RA1" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000131724" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">CINTREDEKIN BESUDOTOX</td>
+            <td class="direction">~ <span class="dir-text">modulates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13RA1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">EBLASAKIMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL13RA1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL1RL1">
+      <div class="gene-header">
+        <h3>IL1RL1</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/Q01638" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000115602" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL1RL1" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000115602" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">ASTEGOLIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL1RL1" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL33">
+      <div class="gene-header">
+        <h3>IL33</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/O95760" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000137033" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL33" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000137033" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">ASTEGOLIMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL33" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TORUDOKIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL33" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ETOKIMAB</td>
+            <td class="direction">~ <span class="dir-text">modulates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL33" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ITEPEKIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL33" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL5270750</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">43000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL4630890/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CHEMBL5276831</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency">42000.0 nM (IC50)</td>
+            <td class="source-link"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL4630890/" target="_blank" rel="noopener">ChEMBL</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL4">
+      <div class="gene-header">
+        <h3>IL4</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P05112" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000113520" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL4" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000113520" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">PASCOLIZUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TEPOXALIN</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ROMILKIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ASPIRIN</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL4R">
+      <div class="gene-header">
+        <h3>IL4R</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P24394" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000077238" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000077238" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">SUNITINIB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CINTREDEKIN BESUDOTOX</td>
+            <td class="direction">~ <span class="dir-text">modulates</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PITRAKINRA</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DUPILUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BIZAXOFUSP</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ROMILKIMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL4R" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL5">
+      <div class="gene-header">
+        <h3>IL5</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/P05113" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000113525" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000113525" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">METHYLPREDNISOLONE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ADENOVIRUS VECTOR</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BENRALIZUMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">RESLIZUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DEPEMOKIMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CYCLOPHOSPHAMIDE ANHYDROUS</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">INTERLEUKIN-3</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CYCLOSPORINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MEPOLIZUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-IL5RA">
+      <div class="gene-header">
+        <h3>IL5RA</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/Q01344" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000091181" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/IL5RA" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000091181" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">BENRALIZUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/IL5RA" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-MS4A2">
+      <div class="gene-header">
+        <h3>MS4A2</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/Q01362" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000149534" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000149534" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">TIRBANIBULIN</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CCT196969</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">N-(5-METHYL-1H-PYRAZOL-3-YL)-2-PHENYLQUINAZOLIN-4-AMINE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">KX2-361</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">(3Z)-N,N-DIMETHYL-2-OXO-3-(4,5,6,7-TETRAHYDRO-1H-INDOL-2-YLMETHYLIDENE)-2,3-DIHYDRO-1H-INDOLE-5-SULFONAMIDE</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PD166285</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 36 [PMID: 21958547]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">GEMCITABINE</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 25 [PMID: 31260299]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ELZOVANTINIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SYK INHIBITOR III</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 8H [PMID: 22765894]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">MAX-40279</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ACALABRUTINIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SI306</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 19A [PMID: 30503936]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">NG-25</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DASATINIB ANHYDROUS</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ECF506</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">CCT241161</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">COMPOUND 2 [PMID: 15546730]</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">PP-121</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">SARACATINIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BOSUTINIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">DORSOMORPHIN</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">BALAMAPIMOD</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">IBRUTINIB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">TAK-020</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">ENMD-2076</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">WH-4-023</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">OMALIZUMAB</td>
+            <td class="direction">? <span class="dir-text">unclear</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/MS4A2" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+    <div class="gene-card" id="gene-TSLP">
+      <div class="gene-header">
+        <h3>TSLP</h3>
+        <div class="ext-links"><a href="https://www.uniprot.org/uniprot/Q969D9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://www.ensembl.org/id/ENSG00000145777" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://dgidb.org/genes/TSLP" target="_blank" rel="noopener" class="ext-link">DGIdb</a> <a href="https://platform.opentargets.org/target/ENSG00000145777" target="_blank" rel="noopener" class="ext-link">Open Targets</a></div>
+      </div>
+      <div class="table-wrap">
+        <table class="agents-table">
+          <thead>
+            <tr>
+              <th>Therapeutic Agent</th>
+              <th>Effect Direction</th>
+              <th>Evidence Tier</th>
+              <th>Potency</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="agent-name">TEZEPELUMAB</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/TSLP" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr>
+          <tr>
+            <td class="agent-name">AMG-157</td>
+            <td class="direction">↓ <span class="dir-text">inhibits</span></td>
+            <td><span class="tier-badge" style="background:#4a9eff">Mechanistic</span></td>
+            <td class="potency"></td>
+            <td class="source-link"><a href="https://dgidb.org/genes/TSLP" target="_blank" rel="noopener">DGIdb</a></td>
+          </tr></tbody>
+        </table>
+      </div>
+      
+    </div>
+
+  <hr class="section-divider">
+
+  <!-- Clinical trials -->
+  <div class="section-title">Clinical Trials</div>
+  <p class="section-sub">
+    Recruiting and recently completed trials from <a href="https://clinicaltrials.gov" target="_blank" rel="noopener">ClinicalTrials.gov</a>.
+    Data retrieved 2026-07-03.
+  </p>
+  
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT04609904" target="_blank" rel="noopener" class="trial-title">Study to Assess PT010 in Adult and Adolescent Participants With Inadequately Controlled Asthma (LOGOS)</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT04609904</span>
+            <span class="trial-phase">Phase: PHASE3</span>
+            <span class="trial-start">Started: 2021-03-01</span>
+          </div>
+          <p class="trial-summary">This is a variable length study to evaluate the efficacy and safety of budesonide/glycopyrronium/formoterol inhaler in adults and adolescents with severe asthma inadequately controlled with standard of care.</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06376045" target="_blank" rel="noopener" class="trial-title">A Phase 2, Dose Ranging Study Assessing Rocatinlimab in Moderate-to-severe Asthma</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06376045</span>
+            <span class="trial-phase">Phase: PHASE2</span>
+            <span class="trial-start">Started: 2024-05-24</span>
+          </div>
+          <p class="trial-summary">The primary objective of this study is to describe the efficacy of rocatinlimab in reducing asthma exacerbations.</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT05251402" target="_blank" rel="noopener" class="trial-title">Addressing Quality of Life, Clinical Outcomes, and Mechanisms in Uncontrolled Asthma Following the DASH Dietary Pattern</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT05251402</span>
+            <span class="trial-phase">Phase: PHASE2, PHASE3</span>
+            <span class="trial-start">Started: 2022-03-09</span>
+          </div>
+          <p class="trial-summary">The goal of the ALOHA trial is to investigate the efficacy of improved diet quality following a DASH behavioral intervention that has shown promising results in adults with uncontrolled asthma. DASH stands for Dietary Approaches to Stop Hypertension. This healthy diet is known to help people with hi...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT01780142" target="_blank" rel="noopener" class="trial-title">Longitudinal Observational Study of Severe Asthma</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT01780142</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2013-03-01</span>
+          </div>
+          <p class="trial-summary">Background:  \- Asthma is a lung condition that causes difficulty breathing and decreased lung function. Some people with asthma have more severe disease symptoms. They may be less responsive to standard treatments such as steroids. Researchers want to compare severe asthmatics with mild or moderate...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT01224691" target="_blank" rel="noopener" class="trial-title">TGF-(Beta) and Susceptibility to RSV</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT01224691</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2012-03-19</span>
+          </div>
+          <p class="trial-summary">Background:  * Human respiratory syncytial virus (RSV) is a virus that causes respiratory tract infections, and is frequently responsible for hospital visits in infants and children. It can also trigger severe breathing problems for individuals who have asthma, but these infections are generally bet...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT05531370" target="_blank" rel="noopener" class="trial-title">Implementation of Evidence-based Breathing Retraining for Patients With Asthma in Region Zealand</a>
+            <span style="background:#4a9eff;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Active Not Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT05531370</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2022-06-30</span>
+          </div>
+          <p class="trial-summary">This study aims to implement the evidence-based intervention breathing retraining into clinical care of patients with symptomatic asthma irrespective of asthma severity or comorbidities, and in a diverse multicentre setting to evaluate implementation outcomes. This will meet patients' needs and impr...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06979323" target="_blank" rel="noopener" class="trial-title">Depemokimab Asthma Imaging and Bronchoscopy Sub-Study</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06979323</span>
+            <span class="trial-phase">Phase: PHASE3</span>
+            <span class="trial-start">Started: 2024-07-19</span>
+          </div>
+          <p class="trial-summary">Asthma is a chronic condition marked by narrowed and swollen airways due to inflammation leading to recurring symptoms that can vary and worsen unpredictably.\\xa0The purpose of this study is to assess how depemokimab, a monoclonal antibody, affects the structure and function of the lungs in asthmat...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06159127" target="_blank" rel="noopener" class="trial-title">SMART@Home Feasibility Trial</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06159127</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2024-09-09</span>
+          </div>
+          <p class="trial-summary">The proposed research addresses the limitations or lack of a digital platform to provide remote care of medically complex patients. Previous attempts have had poor clinical validity and suffered lack of patient engagement. The study team will deconstruct the previously implemented SMART platforms to...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT05819541" target="_blank" rel="noopener" class="trial-title">Treating Exacerbations of Asthma With Oral Montelukast in Children</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT05819541</span>
+            <span class="trial-phase">Phase: PHASE2</span>
+            <span class="trial-start">Started: 2023-10-20</span>
+          </div>
+          <p class="trial-summary">This research will establish a mg/kg dose for a future RCT to determine the efficacy of high-dose oral montelukast for children with moderate and severe acute asthma exacerbations.  Aim: Perform an adaptive, double-masked randomized controlled trial (RCT) of high-dose oral montelukast, with escalati...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT07330778" target="_blank" rel="noopener" class="trial-title">A Study of CDX-622 in Participants With Mild to Moderate Asthma</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT07330778</span>
+            <span class="trial-phase">Phase: PHASE1</span>
+            <span class="trial-start">Started: 2026-06-01</span>
+          </div>
+          <p class="trial-summary">This is a study to determine the safety, pharmacodynamics (PD), and pharmacokinetics (PK) of CDX-622 in adults with mild to moderate asthma.</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT00001406" target="_blank" rel="noopener" class="trial-title">Activation and Function of Eosinophils in Conditions With Blood or Tissue Eosinophilia</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT00001406</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 1997-04-21</span>
+          </div>
+          <p class="trial-summary">This study will investigate how, why and under what conditions eosinophils (a type of white blood cell) become activated and will examine their function in immune reactions. Eosinophil counts often rise in response to allergies, asthma, and parasitic worm infections. They can also go up in uncommon ...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT07679321" target="_blank" rel="noopener" class="trial-title">The Impact of Anxiety/Depression on the Efficacy of Asthma Control Drugs and the Construction of a Predictive Model for the Risk of Acute Asthma Attacks</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT07679321</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2024-12-01</span>
+          </div>
+          <p class="trial-summary">The goal of this clinical trial is to explore the impact of anxiety/depression on the efficacy of asthma controller medications and to develop a risk prediction model for asthma acute exacerbations in patients with asthma. It will also analyze the association between anxiety/depression severity and ...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06985225" target="_blank" rel="noopener" class="trial-title">Evaluation of Ventilation Defects Downstream of Mucus Plugs in Patients With Muco-Obstructive Lung Disease</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06985225</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2025-06-01</span>
+          </div>
+          <p class="trial-summary">In this study, xenon MRI will be used to evaluate regional functional consequences of mucus plugs in the lungs of patients with muco-obstructive pulmonary disease. Mucus plugs will be identified using CT imaging, and xenon MRI will be used to evaluate ventilation and gas exchange impairments in regi...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT04699604" target="_blank" rel="noopener" class="trial-title">A Histamine Pharmacodynamic Biomarker to Guide Treatment in Pediatric Asthma (HAS3)</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT04699604</span>
+            <span class="trial-phase">Phase: PHASE3</span>
+            <span class="trial-start">Started: 2021-04-28</span>
+          </div>
+          <p class="trial-summary">This is a randomized, double-blind, placebo-controlled, crossover study comparing asthma control post treatment in African American/Black and Caucasian/White children in both hyper and hypo responsive HILD (Histamine Lontophoresis with Laser Doppler monitoring) phenotypes with uncontrolled persisten...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06676319" target="_blank" rel="noopener" class="trial-title">Study of Lunsekimig (SAR443765) Compared With Placebo in Adults With High-risk Asthma</a>
+            <span style="background:#4a9eff;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Active Not Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06676319</span>
+            <span class="trial-phase">Phase: PHASE2</span>
+            <span class="trial-start">Started: 2024-11-07</span>
+          </div>
+          <p class="trial-summary">This is a parallel-group, Phase 2, randomized, double-blind, placebo-controlled, 2-arm study for the treatment of asthma.  The purpose of this study is to assess the efficacy, safety, and tolerability of add-on therapy with subcutaneous (SC) lunsekimig compared with placebo in male and female partic...</p>
+        </div>
+
+  <hr class="section-divider">
+
+  <!-- Disease-level agent search (not gene-first) -->
+  <div class="section-title">Agents Found By Disease-Level Search</div>
+  <p class="section-sub">
+    Searched directly from &ldquo;Asthma&rdquo; via ClinicalTrials.gov interventions and Open Targets'
+    disease&rarr;drug data &mdash; independent of the 15-gene target panel above.
+    This surfaces agents whose mechanism doesn't route through a curated gene (combination
+    therapies, standard-of-care drugs, targets outside the panel).
+  </p>
+  <p class="section-sub">60 agents shown (approved or with trial evidence) &mdash; 57 not found by the gene-target search above.</p>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Mometasone furoate<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 2 trials &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT00835094" target="_blank" rel="noopener" class="ext-link">NCT00835094</a> <a href="https://clinicaltrials.gov/study/NCT00835094" target="_blank" rel="noopener" class="ext-link">NCT00835094</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Fluticasone propionate<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 1 trial &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT01159912" target="_blank" rel="noopener" class="ext-link">NCT01159912</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Fluticasone furoate<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 1 trial &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT01159912" target="_blank" rel="noopener" class="ext-link">NCT01159912</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Spiriva<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT02489981" target="_blank" rel="noopener" class="ext-link">NCT02489981</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Fixed combination of budesonide and formoterol<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01676987" target="_blank" rel="noopener" class="ext-link">NCT01676987</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Budesonide<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 1 trial &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT01676987" target="_blank" rel="noopener" class="ext-link">NCT01676987</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Formoterol fumerate<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00460577" target="_blank" rel="noopener" class="ext-link">NCT00460577</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">fenoterol/ipratropium bromide<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00460577" target="_blank" rel="noopener" class="ext-link">NCT00460577</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">budesonide/formoterol Turbuhaler<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00235911" target="_blank" rel="noopener" class="ext-link">NCT00235911</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">CM310<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT05761028" target="_blank" rel="noopener" class="ext-link">NCT05761028</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">AMAZE™ Application<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT04868500" target="_blank" rel="noopener" class="ext-link">NCT04868500</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">AMAZE™ Dashboard<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT04868500" target="_blank" rel="noopener" class="ext-link">NCT04868500</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">CHF5993 pMDI with HFA-152a<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT07301736" target="_blank" rel="noopener" class="ext-link">NCT07301736</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">CHF5993 pMDI with HFA-134a<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT07301736" target="_blank" rel="noopener" class="ext-link">NCT07301736</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">CHF718 pMDI with HFA-134a<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT07301736" target="_blank" rel="noopener" class="ext-link">NCT07301736</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">IBI3002<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06213844" target="_blank" rel="noopener" class="ext-link">NCT06213844</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">SB010<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01470911" target="_blank" rel="noopener" class="ext-link">NCT01470911</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Educational Video and Question Prompt List<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT02498834" target="_blank" rel="noopener" class="ext-link">NCT02498834</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">SHARP program<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01625364" target="_blank" rel="noopener" class="ext-link">NCT01625364</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Open Airways for Schools<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01625364" target="_blank" rel="noopener" class="ext-link">NCT01625364</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">OXIMAX<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00975741" target="_blank" rel="noopener" class="ext-link">NCT00975741</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">ASMANEX TWISTHALER<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00975741" target="_blank" rel="noopener" class="ext-link">NCT00975741</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">IgE adsorber<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT02096237" target="_blank" rel="noopener" class="ext-link">NCT02096237</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Administration of inhaled tiotropium bromide<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00557700" target="_blank" rel="noopener" class="ext-link">NCT00557700</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Administration of placebo<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00557700" target="_blank" rel="noopener" class="ext-link">NCT00557700</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Formoterol Fumarate</h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 1 trial &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT00215371" target="_blank" rel="noopener" class="ext-link">NCT00215371</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">HEPA Air Cleaner<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00006565" target="_blank" rel="noopener" class="ext-link">NCT00006565</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Placebo Filtration Unit<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00006565" target="_blank" rel="noopener" class="ext-link">NCT00006565</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Single Inhalation technique<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT05428956" target="_blank" rel="noopener" class="ext-link">NCT05428956</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Tidal inhalation technique<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT05428956" target="_blank" rel="noopener" class="ext-link">NCT05428956</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Postcard and IVR Reminder Group<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01852656" target="_blank" rel="noopener" class="ext-link">NCT01852656</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Postcard Only Reminder Group<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01852656" target="_blank" rel="noopener" class="ext-link">NCT01852656</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">IVR Only Reminder Group<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01852656" target="_blank" rel="noopener" class="ext-link">NCT01852656</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Alfacalcidol<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT02747381" target="_blank" rel="noopener" class="ext-link">NCT02747381</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">AER 001<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT00535028" target="_blank" rel="noopener" class="ext-link">NCT00535028</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Smart inhaler<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT04810169" target="_blank" rel="noopener" class="ext-link">NCT04810169</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">PEF Interventional Session<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06612294" target="_blank" rel="noopener" class="ext-link">NCT06612294</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Control Sessions<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06612294" target="_blank" rel="noopener" class="ext-link">NCT06612294</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Control Booster<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06612294" target="_blank" rel="noopener" class="ext-link">NCT06612294</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Active booster<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06612294" target="_blank" rel="noopener" class="ext-link">NCT06612294</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Clinical Center Reference Endotoxin (CCRE)<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT03623022" target="_blank" rel="noopener" class="ext-link">NCT03623022</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Normal saline<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT03623022" target="_blank" rel="noopener" class="ext-link">NCT03623022</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">SHR-1703 Injection<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06441812" target="_blank" rel="noopener" class="ext-link">NCT06441812</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">BENRALIZUMAB</h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 1 trial &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT04742504" target="_blank" rel="noopener" class="ext-link">NCT04742504</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">QVM149<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT03158311" target="_blank" rel="noopener" class="ext-link">NCT03158311</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Salmeterol/fluticasone plus tiotropium<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT03158311" target="_blank" rel="noopener" class="ext-link">NCT03158311</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Ginger Extract<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT03705832" target="_blank" rel="noopener" class="ext-link">NCT03705832</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Resistive Flexibility and Strength Training<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT02370004" target="_blank" rel="noopener" class="ext-link">NCT02370004</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Halotherapy (Salt Therapy)<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06250452" target="_blank" rel="noopener" class="ext-link">NCT06250452</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Prick tests<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT07402200" target="_blank" rel="noopener" class="ext-link">NCT07402200</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Portable sensors<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT07402200" target="_blank" rel="noopener" class="ext-link">NCT07402200</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">FP 100<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01156792" target="_blank" rel="noopener" class="ext-link">NCT01156792</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">GSK2190915 100<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01156792" target="_blank" rel="noopener" class="ext-link">NCT01156792</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">GSK2190915 300<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01156792" target="_blank" rel="noopener" class="ext-link">NCT01156792</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">montelukast</h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+            <span style="color:#22c55e;font-weight:600">Approved</span> &middot; 1 trial &middot; source: ClinicalTrials.gov, Open Targets
+            <br><a href="https://clinicaltrials.gov/study/NCT01156792" target="_blank" rel="noopener" class="ext-link">NCT01156792</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">FP/SAL 100/50<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT01156792" target="_blank" rel="noopener" class="ext-link">NCT01156792</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Use of smart inhaler to enhance asthma inhaler proficiency<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06783101" target="_blank" rel="noopener" class="ext-link">NCT06783101</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Residential mechanical ventilation system (Exhaust)<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06098287" target="_blank" rel="noopener" class="ext-link">NCT06098287</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Residential mechanical ventilation system (CFIS) and air filtration upgrades<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06098287" target="_blank" rel="noopener" class="ext-link">NCT06098287</a>
+          </p>
+        </div>
+        <div class="gene-card" style="padding:0.9rem 1.2rem">
+          <div class="gene-header" style="margin-bottom:0.3rem">
+            <h3 style="font-size:1rem">Residential mechanical ventilation system (ERV) and air filtration upgrades<span style="background:#f59e0b;color:#1a1200;padding:2px 8px;border-radius:4px;font-size:0.72rem;font-weight:700;margin-left:0.4rem">NOT in gene-target list</span></h3>
+          </div>
+          <p style="font-size:0.82rem;color:#8892a4;margin:0">
+             &middot; 1 trial &middot; source: ClinicalTrials.gov
+            <br><a href="https://clinicaltrials.gov/study/NCT06098287" target="_blank" rel="noopener" class="ext-link">NCT06098287</a>
+          </p>
+        </div>
+
+</main>
+
+<footer>
+  <p>
+    Generated by the <a href="https://opensourcemed.info">Open Source Medicine Foundation</a>
+    Biomarker Pipeline &mdash; 2026-07-03.
+    Data sources: DGIdb, Open Targets, ChEMBL, PubMed, ClinicalTrials.gov.
+    Not medical advice.
+  </p>
+</footer>
+
+</body>
+</html>

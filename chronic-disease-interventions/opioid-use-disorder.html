@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opioid Use Disorder — Biomarkers &amp; Therapeutic Agents | OSMF</title>
+  <meta name="description" content="Pharmacologically actionable biomarkers and therapeutic agents for Opioid Use Disorder, with evidence tiers from DGIdb, Open Targets, ChEMBL, and peer-reviewed literature. Clinical trials from ClinicalTrials.gov.">
+  <link rel="canonical" href="https://research.opensourcemed.info/chronic-disease-interventions/opioid-use-disorder.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Opioid Use Disorder — Biomarkers &amp; Therapeutic Agents | OSMF">
+  <meta property="og:url" content="https://research.opensourcemed.info/chronic-disease-interventions/opioid-use-disorder.html">
+  <meta property="og:site_name" content="Open Source Medicine Foundation">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e1a; --surface: #141828; --card: #1a1f35;
+      --border: #2a3050; --text: #e1e4e8; --muted: #8892a4;
+      --accent: #4a9eff; --accent2: #7c6af7;
+      --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #2a3050; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+
+    /* Nav */
+    nav { background: rgba(10,14,26,0.97); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-brand { color: var(--text); font-weight: 700; font-size: 0.95rem; line-height: 1.2; display: flex; flex-direction: column; }
+    .nav-brand span { color: var(--accent); }
+    .nav-brand-sub { color: var(--muted); font-size: 0.7rem; font-weight: 400; }
+    .nav-links { list-style: none; display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; }
+    .nav-links a { color: var(--muted); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; transition: all 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--card); text-decoration: none; }
+    .nav-support { background: var(--accent) !important; color: #fff !important; font-weight: 600; }
+
+    /* Hero */
+    .page-hero { background: linear-gradient(135deg, #0d1230 0%, #1a1f45 100%); border-bottom: 1px solid var(--border); padding: 3rem 1.5rem 2.5rem; text-align: center; }
+    .hero-eyebrow { color: var(--accent); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .page-hero h1 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700; margin-bottom: 0.75rem; }
+    .page-hero p { color: var(--muted); max-width: 700px; margin: 0 auto; font-size: 1rem; }
+
+    /* Main layout */
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* Breadcrumb */
+    .breadcrumb { display: flex; gap: 0.5rem; font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .breadcrumb a { color: var(--muted); }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb span { color: var(--border); }
+
+    /* Disease overview card */
+    .overview-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 2.5rem; }
+    .overview-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: var(--accent); }
+    .remission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+    .rem-cell { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .rem-cell .label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+    .rem-cell .value { font-size: 0.9rem; color: var(--text); line-height: 1.4; }
+    .barrier-note { background: rgba(74,158,255,0.06); border: 1px solid rgba(74,158,255,0.2); border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.9rem; color: var(--muted); }
+    .barrier-note strong { color: var(--text); }
+
+    /* Section headings */
+    .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .section-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* Gene index */
+    .gene-index { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+    .gene-chip { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 0.3rem 0.9rem; font-size: 0.82rem; font-weight: 600; color: var(--text); transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .gene-chip:hover { border-color: var(--accent); text-decoration: none; background: rgba(74,158,255,0.08); }
+    .chip-count { background: var(--accent); color: #fff; border-radius: 10px; padding: 0 6px; font-size: 0.72rem; }
+
+    /* Gene cards */
+    .gene-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; scroll-margin-top: 80px; }
+    .gene-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); background: rgba(74,158,255,0.04); }
+    .gene-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+    .ext-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .ext-link { font-size: 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--muted) !important; }
+    .ext-link:hover { color: var(--accent) !important; border-color: var(--accent); text-decoration: none !important; }
+
+    /* Agents table */
+    .table-wrap { overflow-x: auto; padding: 0.5rem 0; }
+    table.agents-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+    .agents-table th { padding: 0.6rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .agents-table td { padding: 0.55rem 1rem; border-bottom: 1px solid rgba(42,48,80,0.5); vertical-align: middle; }
+    .agents-table tbody tr:last-child td { border-bottom: none; }
+    .agents-table tbody tr:hover { background: rgba(74,158,255,0.04); }
+    .agent-name { font-weight: 600; }
+    .direction { font-size: 0.9rem; }
+    .dir-text { color: var(--muted); font-size: 0.8rem; }
+    .tier-badge { display: inline-block; color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; }
+    .potency { color: var(--muted); font-size: 0.82rem; font-family: monospace; }
+    .source-link a { font-size: 0.8rem; color: var(--muted); }
+    .source-link a:hover { color: var(--accent); }
+    .more-note { font-size: 0.8rem; color: var(--muted); padding: 0.6rem 1.5rem; border-top: 1px solid var(--border); }
+    .no-data { color: var(--muted); font-size: 0.9rem; padding: 1.5rem; }
+    .no-data.pending { font-style: italic; }
+
+    /* Clinical trials */
+    .trial-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; margin-bottom: 0.85rem; }
+    .trial-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+    .trial-title { font-size: 0.92rem; font-weight: 600; color: var(--text); line-height: 1.4; flex: 1; }
+    .trial-title:hover { color: var(--accent); }
+    .trial-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .trial-nct { font-family: monospace; color: var(--accent); }
+    .trial-summary { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+
+    /* Divider between sections */
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* Footer */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .remission-grid { grid-template-columns: 1fr; }
+      .trial-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">All Conditions</a></li>
+      <li><a href="../biomarker-atlas.html">Biomarker Atlas</a></li>
+      <li><a href="../clinical_trials.html">Clinical Trials</a></li>
+      <li><a href="../agents.html">Agents</a></li>
+      <li><a href="https://opensourcemed.info/campaign.html" class="nav-support">Support Us</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="hero-eyebrow">Biomarker &amp; Intervention Discovery</div>
+  <h1>Opioid Use Disorder</h1>
+  <p>Pharmacologically actionable gene targets, therapeutic agents ranked by evidence tier, and active clinical trials.</p>
+</section>
+
+<main>
+  <div class="breadcrumb">
+    <a href="../index.html">Research Tracker</a>
+    <span>/</span>
+    <a href="index.html">Chronic Disease Interventions</a>
+    <span>/</span>
+    <span>Opioid Use Disorder</span>
+  </div>
+
+  <!-- Disease overview -->
+  <div class="overview-card">
+    <h2>Disease Overview</h2>
+    <div class="remission-grid">
+      <div class="rem-cell">
+        <div class="label">Spontaneous remission</div>
+        <div class="value">Not established</div>
+      </div>
+      <div class="rem-cell">
+        <div class="label">Best-intervention remission</div>
+        <div class="value">—</div>
+      </div>
+      <div class="rem-cell">
+        <div class="label">Gap size</div>
+        <div class="value">—</div>
+      </div>
+      <div class="rem-cell">
+        <div class="label">Primary barrier</div>
+        <div class="value">—</div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- Biomarker targets -->
+  <div class="section-title">Biomarker Targets &amp; Therapeutic Agents</div>
+  <p class="section-sub">
+    Gene targets queried against DGIdb, Open Targets, ChEMBL, PubMed, and Europe PMC.
+    Agents ranked: <span style="color:#22c55e">&#9679; Clinical</span> &gt;
+    <span style="color:#4a9eff">&#9679; Mechanistic</span> &gt;
+    <span style="color:#f59e0b">&#9679; Correlative</span>.
+  </p>
+
+  
+
+  <p class="no-data pending">Pipeline results not yet available. Run: <code>python -m biomarker_pipeline.run_for_diseases --skip-llm</code></p>
+
+  <hr class="section-divider">
+
+  <!-- Clinical trials -->
+  <div class="section-title">Clinical Trials</div>
+  <p class="section-sub">
+    Recruiting and recently completed trials from <a href="https://clinicaltrials.gov" target="_blank" rel="noopener">ClinicalTrials.gov</a>.
+    Data retrieved 2026-07-03.
+  </p>
+  
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06489535" target="_blank" rel="noopener" class="trial-title">Retention and Re-Engagement in Treatment for Addiction Following Serious Injection Related Infections (RETAIN)</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06489535</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2025-01-06</span>
+          </div>
+          <p class="trial-summary">This project is a pilot study of an adapted intervention of an existing Opioid Use Disorder (OUD) treatment retention intervention called Recovery Management Checkups (RMC). This intervention has been adapted to better fit the experiences and unique issues of those that have been hospitalized with s...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06323837" target="_blank" rel="noopener" class="trial-title">Mirtazapine for the Treatment of Methamphetamine Use in Opioid Use Disorder Patients Receiving Medication Assisted Treatment</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06323837</span>
+            <span class="trial-phase">Phase: PHASE2</span>
+            <span class="trial-start">Started: 2024-06-17</span>
+          </div>
+          <p class="trial-summary">This project will evaluate the ability of Mirtazapine (MZP), a pharmacologically unique medication with a growing body of evidence to support its efficacy and safety for the treatment of methamphetamine (MA) use among medication for opioid use disorder (MOUD) patients, to significantly decrease MA u...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT03745339" target="_blank" rel="noopener" class="trial-title">Outcome Inference in the Sensory Preconditioning Task in Opioid-Use Disorder</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT03745339</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2019-06-07</span>
+          </div>
+          <p class="trial-summary">Background:  People with addictions often find it hard to choose the long-term benefits of abstinence over the short-term effects of using drugs. Researchers think this is partly due to parts of the brain involved in certain types of learning and decision-making. Researchers want to test these basic...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT04738825" target="_blank" rel="noopener" class="trial-title">Promoting HIV Risk Reduction Among People Who Inject Drugs: A Stepped Care Approach Using Contingency Management With PrEP Adherence and Support Services</a>
+            <span style="background:#4a9eff;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Active Not Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT04738825</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2021-10-04</span>
+          </div>
+          <p class="trial-summary">The proposed study will be a 24-week intervention with a 12-month follow-up period to evaluate the impact of contingency management with stepped care to pre-exposure prophylaxis (PrEP) adherence and support services (CoMPASS) to promote HIV prevention among individuals with opioid use disorder who h...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT03958474" target="_blank" rel="noopener" class="trial-title">Neurobehavioral Mechanisms of Choice in Opioid Use Disorder</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT03958474</span>
+            <span class="trial-phase">Phase: EARLY_PHASE1</span>
+            <span class="trial-start">Started: 2019-08-16</span>
+          </div>
+          <p class="trial-summary">The objective of this protocol is to use probabilistic reinforcement learning choice tasks and magnetic resonance neuroimaging to demonstrate the impact of problematic opioid use and opioid withdrawal on dynamic decision-making and reveal the neurobehavioral and neurobiological processes underlying ...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT07232641" target="_blank" rel="noopener" class="trial-title">Impact of Federal and State Medications for Opioid Use Disorder (MOUD) Policy Changes During the Pandemic</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT07232641</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2026-06-30</span>
+          </div>
+          <p class="trial-summary">&quot;Gold-standard&quot; medications for opioid use disorder (MOUD) treatment combines FDA-approved medications, primarily methadone and buprenorphine, with behavioral therapies to provide &quot;whole-patient&quot; treatment. Prior to the pandemic, methadone and buprenorphine were subject to greater federal regulation...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT05589753" target="_blank" rel="noopener" class="trial-title">Sleep Disordered Breathing With Opioid Use</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT05589753</span>
+            <span class="trial-phase">Phase: PHASE1, PHASE2</span>
+            <span class="trial-start">Started: 2019-05-02</span>
+          </div>
+          <p class="trial-summary">There is an increased risk for sleep disordered breathing (SDB), sleep-related hypoventilation and irregular breathing in individuals on chronic prescription opioid medications. Almost 30% of a veteran sleep clinic population had opioid-associated central sleep apnea (CSA). The proposal aims to iden...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT07179614" target="_blank" rel="noopener" class="trial-title">Kentucky Women's Justice Community Overdose Innovation Network - Phase II</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT07179614</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2026-06-23</span>
+          </div>
+          <p class="trial-summary">This project continues our work with women in the Kentucky Women's Justice Community Overdose Innovation Network Phase II (WJCOIN-II) with the overall aim of reducing overdose risk during the transition from jail to rural communities. WJCOIN-II has potential for significant impact regarding the effe...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06679751" target="_blank" rel="noopener" class="trial-title">Infectious Disease (ID) Testing OUtreach in Carceral Hubs</a>
+            <span style="background:#4a9eff;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Active Not Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06679751</span>
+            <span class="trial-phase">Phase: N/A</span>
+            <span class="trial-start">Started: 2025-06-23</span>
+          </div>
+          <p class="trial-summary">This pilot feasibility study represents part 3 of a larger R61 study, where the investigators will follow a cohort about their experiences with human immunodeficiency virus (HIV) testing.  This project aims to assess the effectiveness of an intervention at two jail sites in the Boston area: South Ba...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06130501" target="_blank" rel="noopener" class="trial-title">tAN for PTSD and OUD in Buprenorphine Therapy</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06130501</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2024-07-01</span>
+          </div>
+          <p class="trial-summary">The goal of this research study supported by the HEAL Initiative (https://heal.nih.gov) is to investigate the effects transcutaneous auricular neurostimulation (tAN), as delivered through the Sparrow Ascent device, on helping people with co-occurring posttraumatic stress disorder (PTSD) and opioid u...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT07158853" target="_blank" rel="noopener" class="trial-title">Combined tDCS and Cognitive Training as an Adjunctive Treatment in Opioid Use Disorder</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT07158853</span>
+            <span class="trial-phase">Phase: PHASE1</span>
+            <span class="trial-start">Started: 2026-02-04</span>
+          </div>
+          <p class="trial-summary">The overall goal of this study is to investigate the added benefit of a neuromodulation intervention in individuals taking medication for treatment for Opioid Use Disorder(OUD).</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT04216719" target="_blank" rel="noopener" class="trial-title">Facilitating Opioid Care Connections</a>
+            <span style="background:#4a9eff;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Active Not Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT04216719</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2020-03-18</span>
+          </div>
+          <p class="trial-summary">In response to the opioid crisis in New York State (NYS), where the propose project will take place, the Unified Court System (UCS) developed a new treatment court model - the opioid court model (OCM) - designed around 10 practice guidelines to address the flaws of existing drug courts and reduce ov...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06609278" target="_blank" rel="noopener" class="trial-title">THRIVE: Culturally AdapTed Harm Reduction Intervention</a>
+            <span style="background:#94a3b8;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Completed</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06609278</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2025-04-02</span>
+          </div>
+          <p class="trial-summary">The goal of this study is to develop and test a culturally adapted harm reduction intervention among Black adults who misuse opioids and/or stimulants. The questions it aims to answer include: will the culturally adapted harm reduction educational intervention increase overall knowledge of overdose ...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT06432465" target="_blank" rel="noopener" class="trial-title">tDCS to Decrease Opioid Relapse (UH3)</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT06432465</span>
+            <span class="trial-phase">Phase: NA</span>
+            <span class="trial-start">Started: 2024-04-17</span>
+          </div>
+          <p class="trial-summary">Investigators will measure behavioral and brain responses following transcranial direct current stimulation (tDCS) to the dorsolateral prefrontal cortex (DLPFC) (anode on right DLPFC, cathode on the left DLPFC) delivered during cognitive control network (CCN) priming. In Phase I, the EEG provided va...</p>
+        </div>
+        <div class="trial-card">
+          <div class="trial-header">
+            <a href="https://clinicaltrials.gov/study/NCT07673380" target="_blank" rel="noopener" class="trial-title">Leveraging mHealth to Promote Opioid Use Recovery and Mental Health Among Residents of a Medium-Sized Midwestern City</a>
+            <span style="background:#22c55e;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600">Recruiting</span>
+          </div>
+          <div class="trial-meta">
+            <span class="trial-nct">NCT07673380</span>
+            <span class="trial-phase">Phase: PHASE2</span>
+            <span class="trial-start">Started: 2025-08-31</span>
+          </div>
+          <p class="trial-summary">The sequential trial compares recovery and mHealth engagement outcomes among Black participants who participated in the mHealth intervention uMAT-R or uMAT-R + enhanced community engagement. The mHealth intervention seeks to support people in various stages of recovery who are also seeking other for...</p>
+        </div>
+
+  <hr class="section-divider">
+
+  <!-- Disease-level agent search (not gene-first) -->
+  <div class="section-title">Agents Found By Disease-Level Search</div>
+  <p class="section-sub">
+    Searched directly from &ldquo;Opioid Use Disorder&rdquo; via ClinicalTrials.gov interventions and Open Targets'
+    disease&rarr;drug data &mdash; independent of the 0-gene target panel above.
+    This surfaces agents whose mechanism doesn't route through a curated gene (combination
+    therapies, standard-of-care drugs, targets outside the panel).
+  </p>
+  <p class="no-data pending">Not yet run. <code>python -m biomarker_pipeline.run_disease_agent_discovery --disease "..."</code></p>
+
+</main>
+
+<footer>
+  <p>
+    Generated by the <a href="https://opensourcemed.info">Open Source Medicine Foundation</a>
+    Biomarker Pipeline &mdash; 2026-07-03.
+    Data sources: DGIdb, Open Targets, ChEMBL, PubMed, ClinicalTrials.gov.
+    Not medical advice.
+  </p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+"""Output assembly for disease page records."""

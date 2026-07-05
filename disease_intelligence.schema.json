@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research.opensourcemed.info/disease_intelligence.schema.json",
+  "title": "DiseaseIntelligencePage",
+  "description": "Web-ready disease intelligence record: alterations, therapeutics, and metadata for OSMF disease intelligence pages",
+  "type": "object",
+  "required": ["schema_version", "slug", "id", "condition", "identifiers", "page", "summary", "categories", "filters", "alterations", "therapeutics"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "id": { "type": "string" },
+    "condition": {
+      "type": "object",
+      "required": ["name", "shortName", "alternateNames"],
+      "properties": {
+        "name": { "type": "string" },
+        "shortName": { "type": "string" },
+        "alternateNames": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "identifiers": {
+      "type": "object",
+      "properties": {
+        "mondo_id": { "type": ["string", "null"] },
+        "efo_id": { "type": ["string", "null"] },
+        "omim_id": { "type": ["string", "null"] },
+        "orpha_id": { "type": ["string", "null"] },
+        "mesh_id": { "type": ["string", "null"] },
+        "umls_cui": { "type": ["string", "null"] }
+      }
+    },
+    "page": {
+      "type": "object",
+      "required": ["title", "description", "canonical", "hero", "dateModified"],
+      "properties": {
+        "title": { "type": "string" },
+        "breadcrumbName": { "type": "string" },
+        "description": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "canonical": { "type": "string", "format": "uri" },
+        "hero": { "type": "string" },
+        "dateModified": { "type": "string", "format": "date" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["alteration_count", "therapeutic_counts", "alteration_counts_by_type", "sources_queried"],
+      "properties": {
+        "alteration_count": { "type": "integer" },
+        "therapeutic_counts": {
+          "type": "object",
+          "properties": {
+            "direct": { "type": "integer" },
+            "via_biomarker": { "type": "integer" },
+            "merged": { "type": "integer" }
+          }
+        },
+        "alteration_counts_by_type": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "sources_queried": { "type": "array", "items": { "type": "string" } },
+        "pipeline_phase": { "type": "integer" },
+        "build_time_seconds": { "type": "number" },
+        "generated_at": { "type": "string" }
+      }
+    },
+    "categories": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "filters": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["A", "B", "C", "D", "E", "direct", "via_biomarker", "repurposing"] }
+    },
+    "alterations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/alteration" }
+    },
+    "therapeutics": {
+      "type": "object",
+      "required": ["direct", "via_biomarker", "merged_ranked"],
+      "properties": {
+        "direct": { "type": "array", "items": { "$ref": "#/$defs/therapeutic" } },
+        "via_biomarker": { "type": "array", "items": { "$ref": "#/$defs/therapeutic" } },
+        "merged_ranked": { "type": "array", "items": { "$ref": "#/$defs/therapeutic" } }
+      }
+    },
+    "disclaimer": { "type": "string" }
+  },
+  "$defs": {
+    "alteration": {
+      "type": "object",
+      "required": ["id", "canonical_id", "name", "type", "type_label", "subtype", "subtype_label", "sources", "evidence_tier", "evidence_tier_label"],
+      "properties": {
+        "id": { "type": "string" },
+        "canonical_id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["A", "B", "C", "D", "E"] },
+        "type_label": { "type": "string" },
+        "subtype": { "type": "string" },
+        "subtype_label": { "type": "string" },
+        "direction": { "type": ["string", "null"], "enum": ["elevated", "reduced", "abnormal", null] },
+        "direction_label": { "type": ["string", "null"] },
+        "frequency_label": { "type": ["string", "null"] },
+        "frequency_pct": { "type": ["string", "null"] },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "source_ids": { "type": "object", "additionalProperties": { "type": "string" } },
+        "evidence_tier": { "type": "string", "enum": ["A", "B", "C"] },
+        "evidence_tier_label": { "type": "string" },
+        "pubmed_count": { "type": "integer" },
+        "definition": { "type": ["string", "null"] },
+        "external_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "properties": {
+              "label": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      }
+    },
+    "therapeutic": {
+      "type": "object",
+      "required": ["id", "canonical_id", "name", "drug_type", "drug_type_label", "max_phase", "phase_label", "source_type", "sources", "evidence_tier", "evidence_tier_label", "repurposing_signal", "score"],
+      "properties": {
+        "id": { "type": "string" },
+        "canonical_id": { "type": "string" },
+        "name": { "type": "string" },
+        "drug_type": { "type": "string" },
+        "drug_type_label": { "type": "string" },
+        "mechanism": { "type": ["string", "null"] },
+        "max_phase": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "phase_label": { "type": "string" },
+        "approved_indications": { "type": "array", "items": { "type": "string" } },
+        "source_type": { "type": "string", "enum": ["direct", "via_biomarker"] },
+        "via_alteration": { "type": ["string", "null"] },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "evidence_tier": { "type": "string", "enum": ["A", "B", "C"] },
+        "evidence_tier_label": { "type": "string" },
+        "repurposing_signal": { "type": "boolean" },
+        "pubmed_count": { "type": "integer" },
+        "score": { "type": "integer" },
+        "chembl_id": { "type": ["string", "null"] },
+        "external_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "properties": {
+              "label": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

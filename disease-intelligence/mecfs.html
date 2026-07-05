@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ME/CFS (Myalgic Encephalomyelitis / Chronic Fatigue Syndrome) — Disease Intelligence | OSMF</title>
+  <meta name="description" content="Structured alterations and therapeutics for ME/CFS (Myalgic Encephalomyelitis / Chronic Fatigue Syndrome): molecular targets, clinical biomarkers, phenotypes, and ranked drugs from Open Targets, HPO, ChEMBL, and DGIdb.">
+  <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/mecfs.html">
+  <link rel="icon" href="https://opensourcemed.info/favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;
+      --text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b}
+    body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    code{background:#2a3050;padding:2px 6px;border-radius:4px;font-size:.85em}
+    nav{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+    .nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .nav-brand{font-weight:700;font-size:.95rem;color:var(--text)} .nav-brand span{color:var(--accent)}
+    .nav-links{list-style:none;display:flex;gap:.5rem} .nav-links a{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}
+    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--card);text-decoration:none}
+    .page-hero{background:linear-gradient(135deg,#0d1230,#1a1f45);border-bottom:1px solid var(--border);padding:3rem 1.5rem 2.5rem;text-align:center}
+    .hero-eyebrow{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+    .page-hero h1{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}
+    .page-hero p{color:var(--muted);max-width:720px;margin:0 auto}
+    main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    .breadcrumb{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}
+    .overview-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem}
+    .overview-card h2{font-size:1.1rem;color:var(--accent);margin-bottom:1rem}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1rem}
+    .stat-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem}
+    .stat-cell .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .stat-cell .value{font-size:1.4rem;font-weight:700;margin-top:.25rem}
+    .meta-line,.section-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.25rem}
+    .section-title{font-size:1.25rem;font-weight:700;margin-bottom:.25rem}
+    .filter-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+    .filter-chip{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer}
+    .filter-chip.active,.filter-chip:hover{border-color:var(--accent);background:rgba(74,158,255,.1)}
+    .table-wrap{overflow-x:auto;margin-bottom:2rem}
+    .data-table{width:100%;border-collapse:collapse;font-size:.86rem}
+    .data-table th{text-align:left;padding:.6rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}
+    .data-table td{padding:.55rem 1rem;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:top}
+    .data-table tr:hover{background:rgba(74,158,255,.04)}
+    .name-cell strong{color:var(--text)} .sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+    .tier-badge{display:inline-block;color:#fff;border-radius:4px;padding:2px 8px;font-size:.72rem;font-weight:700}
+    .type-badge{display:inline-block;color:#fff;border-radius:4px;padding:2px 7px;font-size:.7rem;font-weight:600}
+    .ext-link{font-size:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted)!important;margin-right:.25rem;display:inline-block}
+    .ext-link:hover{color:var(--accent)!important;border-color:var(--accent);text-decoration:none!important}
+    .repurposing{background:rgba(245,158,11,.15);color:var(--amber);font-size:.7rem;padding:2px 6px;border-radius:4px;margin-left:.35rem}
+    .natural-agent{background:rgba(34,197,94,.12);color:var(--green);font-size:.7rem;padding:2px 6px;border-radius:4px;margin-left:.35rem}
+    .score{font-weight:700;color:var(--green)}
+    .muted{color:var(--muted)}
+    .no-data{color:var(--muted);font-style:italic;padding:1rem 0}
+    .disclaimer{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.85rem;color:var(--muted);margin-top:2rem}
+    .tab-bar{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+    .tab-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:.45rem 1rem;border-radius:8px;cursor:pointer;font-size:.85rem}
+    .tab-btn.active{color:var(--text);border-color:var(--accent);background:rgba(74,158,255,.08)}
+    .tab-panel{display:none} .tab-panel.active{display:block}
+    .ev-badge{display:inline-block;font-size:.68rem;padding:2px 6px;border-radius:4px;margin:0 .2rem .2rem 0}
+    .ev-badge.trial{background:rgba(74,158,255,.15);color:var(--accent)}
+    .ev-badge.lit{background:rgba(34,197,94,.12);color:var(--green)}
+    .ev-badge.assoc{background:rgba(245,158,11,.12);color:var(--amber)}
+    .ev-details{margin-top:.35rem;font-size:.78rem}
+    .ev-details summary{cursor:pointer;color:var(--accent)}
+    .ev-details ul{margin:.35rem 0 .5rem 1rem;color:var(--muted)}
+    .ev-lit-type{color:var(--green);font-size:.7rem;font-weight:600;margin-right:.25rem}
+    .ev-search a{font-size:.75rem;margin-right:.5rem}
+    footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+    .related-links{font-size:.88rem;margin-bottom:1.5rem}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-container">
+      <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">Disease Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+    </div>
+  </nav>
+
+  <header class="page-hero">
+    <div class="hero-eyebrow">Disease Intelligence</div>
+    <h1>ME/CFS (Myalgic Encephalomyelitis / Chronic Fatigue Syndrome)</h1>
+    <p>Disease intelligence for ME/CFS (Myalgic Encephalomyelitis / Chronic Fatigue Syndrome): 26 alterations and 0 ranked therapeutics from curated public databases.</p>
+  </header>
+
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../index.html">Home</a><span>/</span>
+      <a href="index.html">Disease Intelligence</a><span>/</span>
+      <span>ME/CFS (Myalgic Encephalomyelitis / Chronic Fatigue Syndrome)</span>
+    </nav>
+
+    
+    <div class="overview-card">
+      <h2>Disease overview</h2>
+      <div class="stat-grid"><div class="stat-cell"><div class="label">Alterations</div><div class="value">26</div></div><div class="stat-cell"><div class="label">Molecular (A)</div><div class="value">0</div></div><div class="stat-cell"><div class="label">Clinical (B–E)</div><div class="value">26</div></div><div class="stat-cell"><div class="label">Direct drugs</div><div class="value">0</div></div><div class="stat-cell"><div class="label">Via biomarker</div><div class="value">0</div></div><div class="stat-cell"><div class="label">Natural agents</div><div class="value">0</div></div><div class="stat-cell"><div class="label">Natural products</div><div class="value">4</div></div><div class="stat-cell"><div class="label">Merged ranked</div><div class="value">0</div></div></div>
+      <p class="meta-line">Sources: Open Targets, ClinicalTrials.gov, PubMed Literature, PubMed NP, ClinicalTrials.gov NP, ChEMBL NP · Pipeline phase 7 · Updated 2026-07-05</p>
+    </div>
+
+    <p class="related-links">Related: <a href="../me-cfs-biomarkers.html">Biomarker atlas</a> · <a href="../chronic-disease-interventions/chronic-fatigue-syndrome-me-cfs.html">Intervention atlas</a></p>
+    <p class="meta-line">Identifiers: —</p>
+
+    <section id="alterations">
+      <h2 class="section-title">Alterations</h2>
+      <p class="section-sub">26 total · Types A (molecular) through E (functional)</p>
+      <div class="filter-row" id="type-filters">
+        <button class="filter-chip active" data-filter="all" type="button">All</button>
+        <button class="filter-chip" data-filter="B" type="button">Lab / Clinical (10)</button><button class="filter-chip" data-filter="C" type="button">Scales &amp; PROs (16)</button>
+      </div>
+      
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Name</th><th>Type</th><th>Subtype</th><th>Direction</th>
+          <th>Frequency</th><th>Evidence</th><th>Sources</th><th>Links</th>
+        </tr></thead>
+        <tbody>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Alexithymia score (TAS-20)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Anxiety and depression score (HADS)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Cognitive inhibition</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Correlation matrix indices of regions of interests (ROIs) in the brain salience network</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Degree centrality index of cytokine network</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Disability score (FDI)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Fatigue Severity Scale</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Fatigue score (Chalder fatigue questionnaire)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Heart rate variability indices</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Heart rate, blood pressure and total peripheral resistence responses to upright posture</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Improvement in functional disability as measured by the Bell disability scale</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Improvement in physical and mental fatigue as measured by the Chalder Fatigue Scale</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Improvement in physical function (PF) as measured by the Short Form 36 Health Survey Questionnaire (SF-36)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Improvement in symptoms of autonomic dysfunction as measured by the Composite Autonomic Symptom Score (COMPASS-31)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Insomnia score (KSQ)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Number of NK-cells</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Pain scores (Brief pain Inventory)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Pain threshold (algometry)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Physical activity (Sensewear armband)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Plasma catecholamines</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Quality of Life score (PedsQL)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Short Form-36 (SF-36)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Side effect and unexpected events questionnaire</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Supine heart rate</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Urine cortisol:creatinin ratio</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Working memory</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr></tbody>
+      </table>
+    </div>
+    </section>
+
+    <section id="therapeutics">
+      <h2 class="section-title">Therapeutics</h2>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="merged" type="button">Merged (0)</button>
+        <button class="tab-btn" data-tab="direct" type="button">Direct (0)</button>
+        <button class="tab-btn" data-tab="via" type="button">Via biomarker (0)</button>
+        
+      </div>
+      <div class="tab-panel active" id="tab-merged"><p class="no-data">No therapeutics in this section.</p></div>
+      <div class="tab-panel" id="tab-direct"><p class="no-data">No therapeutics in this section.</p></div>
+      <div class="tab-panel" id="tab-via"><p class="no-data">No therapeutics in this section.</p></div>
+      
+    </section>
+
+    
+    <section id="natural-products">
+      <h2 class="section-title">Natural Products</h2>
+      <p class="section-sub">4 compounds from ClinicalTrials.gov supplement trials, ChEMBL mechanistic data, and PubMed (pipeline-ranked)</p>
+      
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Natural product</th><th>Type</th><th>Evidence</th><th>Safety</th>
+          <th>Score</th><th>Trials</th><th>Targets</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td class="name-cell"><strong>Melatonin</strong>
+            </td>
+          <td class="muted">nutraceutical</td>
+          <td><span class="tier-badge" style="background:#f59e0b">C</span></td>
+          <td class="muted">generally safe</td>
+          <td><span class="score">13</span></td>
+          <td class="muted">2 CT · 0 RCT</td>
+          <td class="muted">—</td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>Vitamin C</strong>
+            </td>
+          <td class="muted">nutraceutical</td>
+          <td><span class="tier-badge" style="background:#8892a4">D</span></td>
+          <td class="muted">GRAS</td>
+          <td><span class="score">13</span></td>
+          <td class="muted">1 CT · 0 RCT</td>
+          <td class="muted">—</td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>Coenzyme Q10</strong>
+            </td>
+          <td class="muted">nutraceutical</td>
+          <td><span class="tier-badge" style="background:#8892a4">D</span></td>
+          <td class="muted">generally safe</td>
+          <td><span class="score">10</span></td>
+          <td class="muted">1 CT · 0 RCT</td>
+          <td class="muted">—</td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>[6-(2-naphthylmethylene)cyclohexa-2,4-dien-1-yl]amine</strong>
+            </td>
+          <td class="muted">food compound</td>
+          <td><span class="tier-badge" style="background:#8892a4">D</span></td>
+          <td class="muted">unknown</td>
+          <td><span class="score">3</span></td>
+          <td class="muted">1 CT · 0 RCT</td>
+          <td class="muted">—</td>
+        </tr></tbody>
+      </table>
+    </div>
+    </section>
+
+    <p class="disclaimer">Alterations and therapeutics are aggregated from public databases (Open Targets, HPO, ChEMBL, DGIdb, and others). Natural agents are candidates from OSMF narrative reviews on opensourcemed.info/chronic-disease.html — not approved treatments. This page is for research orientation only — not medical advice.</p>
+  </main>
+
+  <footer>
+    Generated by OSMF Disease Intelligence Pipeline · Schema 1.1.0
+  </footer>
+
+  <script>
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('#alterations tbody tr').forEach(row => {
+          row.style.display = (f === 'all' || row.dataset.type === f) ? '' : 'none';
+        });
+      });
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
