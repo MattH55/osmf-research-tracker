@@ -14,6 +14,7 @@ if str(_ROOT) not in sys.path:
 
 from disease_pipeline.adapters.remission.slug_map import display_names_for_slug, label_for_slug, slug_for_label
 from disease_pipeline.display_names import apply_canonical_names
+from disease_pipeline.display_np_names import apply_np_names_to_web_data
 
 log = logging.getLogger(__name__)
 
@@ -27,9 +28,12 @@ def normalize_intelligence_json() -> int:
     for path in sorted(DATA_DIR.glob("*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         before = (data.get("condition", {}).get("shortName"), data.get("condition", {}).get("name"))
+        np_before = [np.get("name") for np in data.get("natural_products", [])]
         apply_canonical_names(data)
+        apply_np_names_to_web_data(data)
         after = (data.get("condition", {}).get("shortName"), data.get("condition", {}).get("name"))
-        if before != after:
+        np_after = [np.get("name") for np in data.get("natural_products", [])]
+        if before != after or np_before != np_after:
             path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
             log.info("%s: %r -> %r", path.stem, before, after)
             n += 1

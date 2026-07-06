@@ -1,6 +1,7 @@
 """Export natural products using the same web schema as repurposed drugs."""
 from __future__ import annotations
 
+from ...display_np_names import resolve_np_display_name
 from ...models import AgentClinicalEvidence, NaturalProduct, NPEvidenceTier, NPType, SafetyTier
 from ...output.web_export import (
     DRUG_TYPE_LABELS,
@@ -106,10 +107,19 @@ def export_natural_product(
     if evidence:
         pubmed_n = int(evidence.counts.get("association_total") or evidence.counts.get("total_publications") or 0)
 
+    display_name = resolve_np_display_name(
+        np.name,
+        common_names=np.common_names,
+        canonical_id=np.canonical_id,
+    )
+    common_names = list(np.common_names or [])
+    if display_name and display_name.lower() not in {c.lower() for c in common_names}:
+        common_names.insert(0, display_name)
+
     out: dict = {
         "id": _item_id(slug, "np", np.canonical_id),
         "canonical_id": np.canonical_id,
-        "name": np.name,
+        "name": display_name,
         "drug_type": np_type,
         "drug_type_label": DRUG_TYPE_LABELS.get(np_type, np_type.replace("_", " ").title()),
         "mechanism": np.mechanism,
@@ -127,7 +137,7 @@ def export_natural_product(
         "chembl_id": np.chembl_ids[0] if np.chembl_ids else None,
         "external_links": _np_external_links(np),
         "safety_tier": np.safety_tier.value if hasattr(np.safety_tier, "value") else str(np.safety_tier),
-        "common_names": np.common_names,
+        "common_names": common_names[:6],
         "key_findings": np.key_findings,
     }
     if evidence:

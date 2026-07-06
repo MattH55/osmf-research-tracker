@@ -15,6 +15,7 @@ from ..published_conditions import (
 from ..adapters.burden.loader import get_burden_for_slug
 from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
 from ..adapters.remission.slug_map import display_names_for_slug
+from ..display_np_names import resolve_np_display_name
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -173,9 +174,16 @@ def _therapeutics_table(drugs: list[dict], show_via: bool = False) -> str:
             nat = '<span class="natural-agent">Natural product</span>'
         via = f'<span class="muted">via {_esc(d["via_alteration"])}</span>' if show_via and d.get("via_alteration") else ""
         ev_cell = _evidence_cell(d.get("clinical_evidence")) if has_evidence else ""
+        drug_name = d["name"]
+        if d.get("source_type") == "natural_product":
+            drug_name = resolve_np_display_name(
+                d["name"],
+                common_names=d.get("common_names"),
+                canonical_id=d.get("canonical_id"),
+            )
         rows.append(f"""
         <tr>
-          <td class="name-cell"><strong>{_esc(d['name'])}</strong> {rep} {nat} {via}</td>
+          <td class="name-cell"><strong>{_esc(drug_name)}</strong> {rep} {nat} {via}</td>
           <td class="muted">{_esc(d['drug_type_label'])}</td>
           <td>{_esc(d['phase_label'])}</td>
           <td>{_tier_badge(d['evidence_tier'], d['evidence_tier_label'])}</td>
@@ -231,9 +239,14 @@ def _natural_products_table(nps: list[dict]) -> str:
         safety = np.get("safety_tier", "unknown")
         findings = (np.get("key_findings") or "")[:140]
         targets = ", ".join(np.get("target_names", [])[:3])
+        np_name = resolve_np_display_name(
+            np.get("name", ""),
+            common_names=np.get("common_names"),
+            canonical_id=np.get("canonical_id"),
+        )
         rows.append(f"""
         <tr>
-          <td class="name-cell"><strong>{_esc(np.get('name', ''))}</strong>
+          <td class="name-cell"><strong>{_esc(np_name)}</strong>
             {f'<div class="sub">{_esc(findings)}</div>' if findings else ''}</td>
           <td class="muted">{_esc(np.get('np_type', '').replace('_', ' '))}</td>
           <td>{_tier_badge(tier, tier)}</td>

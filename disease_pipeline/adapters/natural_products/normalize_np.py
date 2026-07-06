@@ -136,8 +136,10 @@ async def normalize_np_name(
             }
             cache_set("normalize_np", ck, result)
             return result
+        from ...display_np_names import professional_np_title
+
         result = {
-            "canonical_name": cleaned,
+            "canonical_name": professional_np_title(cleaned),
             "canonical_key": _slug(cleaned),
             "np_type": "nutraceutical",
             "resolved": True,
