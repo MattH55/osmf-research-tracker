@@ -204,7 +204,11 @@ async def _get_reference_nps(
     labels: list[str] = []
 
     if not options.skip_greenmedinfo:
-        tasks.append(greenmedinfo_np.search_greenmedinfo_substances(identifiers, session, options=options))
+        tasks.append(
+            greenmedinfo_np.search_greenmedinfo_substances(
+                identifiers, session, disease_slug=disease_slug, options=options
+            )
+        )
         labels.append("gmi")
     if not options.skip_examine:
         tasks.append(
