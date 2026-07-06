@@ -5,6 +5,7 @@ import html
 import json
 from pathlib import Path
 
+from ..published_conditions import biomarker_count, clinical_biomarker_count, is_publishable
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -458,13 +459,19 @@ def build_html(data: dict) -> str:
 
 def build_index_html(pages: list[dict]) -> str:
     rows = []
-    for p in sorted(pages, key=lambda x: x["condition"]["shortName"]):
+    published = [p for p in pages if is_publishable(p)]
+    for p in sorted(published, key=lambda x: x["condition"]["shortName"]):
         slug = p["slug"]
         short = p["condition"]["shortName"]
         s = p["summary"]
         tc = s["therapeutic_counts"]
         np_n = s.get("natural_product_count", len(p.get("natural_products", [])))
         nat_n = tc.get("natural", 0)
+        markers = biomarker_count(p)
+        clinical = clinical_biomarker_count(p)
+        marker_bits = [f"{markers} biomarkers"]
+        if clinical:
+            marker_bits.append(f"{clinical} clinical")
         extra = []
         if np_n:
             extra.append(f"{np_n} natural products")
@@ -474,7 +481,7 @@ def build_index_html(pages: list[dict]) -> str:
         rows.append(f"""
         <a class="disease-card" href="{_esc(slug)}.html">
           <h3>{_esc(short)}</h3>
-          <p class="muted">{s['alteration_count']} alterations · {tc['merged']} therapeutics{extra_txt}</p>
+          <p class="muted">{' · '.join(marker_bits)} · {tc['merged']} therapeutics{extra_txt}</p>
           <p class="date">Updated {_esc(p['page']['dateModified'])}</p>
         </a>""")
     nav = render_nav(
@@ -490,7 +497,7 @@ def build_index_html(pages: list[dict]) -> str:
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{_esc(REPURPOS_FULL)}</title>
-  <meta name="description" content="RepurpOS: structured alterations, ranked therapeutics, natural products, and clinical evidence for {len(pages)} conditions — from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.">
+  <meta name="description" content="RepurpOS: structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {len(published)} conditions — from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.">
   <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/index.html">
   <link rel="icon" href="{FAVICON_URL}" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -517,7 +524,7 @@ def build_index_html(pages: list[dict]) -> str:
 {nav}
 <main>
   <h1>{_esc(REPURPOS_BRAND)}</h1>
-  <p class="sub">{_esc(REPURPOS_TAGLINE)} — structured alterations, ranked therapeutics, natural products, and clinical evidence for {len(pages)} conditions from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
+  <p class="sub">{_esc(REPURPOS_TAGLINE)} — structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {len(published)} conditions from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
   <div class="grid">{''.join(rows)}</div>
 </main>
 </body>

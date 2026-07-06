@@ -14,6 +14,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from disease_pipeline.output.generate_html import build_index_html, write_page
+from disease_pipeline.published_conditions import EXCLUDED_SLUGS, exclusion_reason, is_publishable
 
 DATA_DIR = _ROOT / "data" / "disease-intelligence"
 HTML_DIR = _ROOT / "disease-intelligence"
@@ -88,14 +89,27 @@ def main() -> int:
     pages: list[dict] = []
     for p in paths:
         data = json.loads(p.read_text(encoding="utf-8"))
-        write_page(data, HTML_DIR)
-        pages.append(data)
-        log.info("HTML %s", p.stem)
+        slug = data.get("slug", p.stem)
+        if is_publishable(data):
+            write_page(data, HTML_DIR)
+            pages.append(data)
+            log.info("HTML %s", slug)
+        else:
+            reason = exclusion_reason(data)
+            html_path = HTML_DIR / f"{slug}.html"
+            if html_path.exists():
+                html_path.unlink()
+            log.info("Skip %s (%s)", slug, reason)
+
+    for stale in EXCLUDED_SLUGS:
+        stale_html = HTML_DIR / f"{stale}.html"
+        if stale_html.exists():
+            stale_html.unlink()
 
     HTML_DIR.mkdir(parents=True, exist_ok=True)
     index_path = HTML_DIR / "index.html"
     index_path.write_text(build_index_html(pages), encoding="utf-8")
-    log.info("Wrote %s (%d diseases)", index_path, len(pages))
+    log.info("Wrote %s (%d published diseases)", index_path, len(pages))
 
     rebuild_sitemap(pages)
     log.info("Site publish complete — upload the repo root folder to deploy.")
