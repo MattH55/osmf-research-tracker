@@ -15,6 +15,7 @@ if str(_ROOT) not in sys.path:
 from disease_pipeline.adapters.remission.slug_map import display_names_for_slug, label_for_slug, slug_for_label
 from disease_pipeline.display_names import apply_canonical_names
 from disease_pipeline.display_np_names import apply_np_names_to_web_data
+from disease_pipeline.np_publications import attach_supporting_publications
 
 log = logging.getLogger(__name__)
 
@@ -31,9 +32,16 @@ def normalize_intelligence_json() -> int:
         np_before = [np.get("name") for np in data.get("natural_products", [])]
         apply_canonical_names(data)
         apply_np_names_to_web_data(data)
+        gmi_articles = (data.get("summary") or {}).get("gmi_articles")
+        nps = data.get("natural_products") or []
+        if nps:
+            enriched = attach_supporting_publications(nps, gmi_articles=gmi_articles)
+            data["natural_products"] = enriched
         after = (data.get("condition", {}).get("shortName"), data.get("condition", {}).get("name"))
         np_after = [np.get("name") for np in data.get("natural_products", [])]
-        if before != after or np_before != np_after:
+        pub_before = [np.get("supporting_publications") for np in nps]
+        pub_after = [np.get("supporting_publications") for np in data.get("natural_products", [])]
+        if before != after or np_before != np_after or pub_before != pub_after:
             path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
             log.info("%s: %r -> %r", path.stem, before, after)
             n += 1

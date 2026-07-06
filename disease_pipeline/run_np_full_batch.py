@@ -91,7 +91,9 @@ async def enrich_one(path: Path, opts: PipelineOptions, local_data: dict, *, wri
                 nps, identifiers, session, opts, gmi_articles_by_name=gmi_by_name,
             )
 
-    np_rows, ev_export = export_natural_products_page(slug, nps, evidence_map)
+    np_rows, ev_export = export_natural_products_page(
+        slug, nps, evidence_map, gmi_articles=extra_meta.get("gmi_articles"),
+    )
     data["natural_products"] = np_rows
     data["natural_product_evidence"] = ev_export
     summary = data.setdefault("summary", {})

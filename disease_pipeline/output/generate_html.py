@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from pathlib import Path
 
 from ..published_conditions import (
@@ -16,6 +17,7 @@ from ..adapters.burden.loader import get_burden_for_slug
 from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
 from ..adapters.remission.slug_map import display_names_for_slug
 from ..display_np_names import resolve_np_display_name
+from ..np_publications import resolve_np_publications
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -63,6 +65,42 @@ def _links_html(links: list[dict]) -> str:
         f'<a href="{_esc(l["url"])}" target="_blank" rel="noopener" class="ext-link">{_esc(l["label"])}</a>'
         for l in links[:4]
     )
+
+
+def _short_pub_title(title: str, *, max_len: int = 72) -> str:
+    text = re.sub(r"\s+", " ", (title or "").strip())
+    if len(text) <= max_len:
+        return text
+    return text[: max_len - 1].rstrip() + "…"
+
+
+def _np_publications_html(
+    np: dict,
+    *,
+    gmi_articles: list[dict] | None = None,
+    limit: int = 3,
+) -> str:
+    pubs = resolve_np_publications(np, gmi_articles=gmi_articles, limit=limit)
+    if not pubs:
+        return ""
+    items = []
+    for pub in pubs:
+        url = pub.get("url") or ""
+        if not url:
+            continue
+        label = _short_pub_title(pub.get("title") or url)
+        study = pub.get("study_type")
+        prefix = (
+            f'<span class="np-pub-type">{_esc(study)}</span> '
+            if study else ""
+        )
+        items.append(
+            f'<li>{prefix}<a href="{_esc(url)}" target="_blank" rel="noopener" '
+            f'title="{_esc(pub.get("title") or label)}">{_esc(label)}</a></li>'
+        )
+    if not items:
+        return ""
+    return f'<ul class="np-pubs">{"".join(items)}</ul>'
 
 
 def _alterations_table(alts: list[dict]) -> str:
@@ -160,7 +198,12 @@ def _evidence_cell(ev: dict | None) -> str:
     return f'<div class="ev-cell">{badge_html}{detail}</div>'
 
 
-def _therapeutics_table(drugs: list[dict], show_via: bool = False) -> str:
+def _therapeutics_table(
+    drugs: list[dict],
+    show_via: bool = False,
+    *,
+    gmi_articles: list[dict] | None = None,
+) -> str:
     if not drugs:
         return '<p class="no-data">No therapeutics in this section.</p>'
     has_evidence = any(d.get("clinical_evidence") for d in drugs)
@@ -175,15 +218,18 @@ def _therapeutics_table(drugs: list[dict], show_via: bool = False) -> str:
         via = f'<span class="muted">via {_esc(d["via_alteration"])}</span>' if show_via and d.get("via_alteration") else ""
         ev_cell = _evidence_cell(d.get("clinical_evidence")) if has_evidence else ""
         drug_name = d["name"]
+        np_pubs = ""
         if d.get("source_type") == "natural_product":
             drug_name = resolve_np_display_name(
                 d["name"],
                 common_names=d.get("common_names"),
                 canonical_id=d.get("canonical_id"),
             )
+            np_pubs = _np_publications_html(d, gmi_articles=gmi_articles)
         rows.append(f"""
         <tr>
-          <td class="name-cell"><strong>{_esc(drug_name)}</strong> {rep} {nat} {via}</td>
+          <td class="name-cell"><strong>{_esc(drug_name)}</strong> {rep} {nat} {via}
+            {np_pubs}</td>
           <td class="muted">{_esc(d['drug_type_label'])}</td>
           <td>{_esc(d['phase_label'])}</td>
           <td>{_tier_badge(d['evidence_tier'], d['evidence_tier_label'])}</td>
@@ -228,11 +274,15 @@ def _np_lookup_links(summary: dict) -> str:
     return f'<p class="section-sub">Reference lookups: {" · ".join(bits)}</p>'
 
 
-def _natural_products_table(nps: list[dict]) -> str:
+def _natural_products_table(
+    nps: list[dict],
+    *,
+    gmi_articles: list[dict] | None = None,
+) -> str:
     if not nps:
         return '<p class="no-data">No natural products indexed for this condition yet.</p>'
     if nps[0].get("drug_type") is not None or nps[0].get("source_type") == "natural_product":
-        return _therapeutics_table(nps[:80])
+        return _therapeutics_table(nps[:80], gmi_articles=gmi_articles)
     rows = []
     for np in nps[:80]:
         tier = np.get("np_evidence_tier", "D")
@@ -244,9 +294,11 @@ def _natural_products_table(nps: list[dict]) -> str:
             common_names=np.get("common_names"),
             canonical_id=np.get("canonical_id"),
         )
+        np_pubs = _np_publications_html(np, gmi_articles=gmi_articles)
         rows.append(f"""
         <tr>
           <td class="name-cell"><strong>{_esc(np_name)}</strong>
+            {np_pubs}
             {f'<div class="sub">{_esc(findings)}</div>' if findings else ''}</td>
           <td class="muted">{_esc(np.get('np_type', '').replace('_', ' '))}</td>
           <td>{_tier_badge(tier, tier)}</td>
@@ -418,6 +470,7 @@ def build_html(data: dict) -> str:
         natural_panel = f'<div class="tab-panel" id="tab-natural">{_therapeutics_table(natural)}</div>'
 
     nps = data.get("natural_products", [])
+    gmi_articles = summary.get("gmi_articles") or []
     np_count = summary.get("natural_product_count", len(nps))
     np_section = ""
     if np_count:
@@ -426,7 +479,7 @@ def build_html(data: dict) -> str:
       <h2 class="section-title">Natural Products</h2>
       <p class="section-sub">{np_count} natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
       {_np_lookup_links(summary)}
-      {_natural_products_table(nps)}
+      {_natural_products_table(nps, gmi_articles=gmi_articles)}
     </section>"""
 
     rel = related_links(slug)
@@ -507,6 +560,11 @@ def build_html(data: dict) -> str:
     .ev-details ul{{margin:.35rem 0 .5rem 1rem;color:var(--muted)}}
     .ev-lit-type{{color:var(--green);font-size:.7rem;font-weight:600;margin-right:.25rem}}
     .ev-search a{{font-size:.75rem;margin-right:.5rem}}
+    .np-pubs{{list-style:none;margin:.35rem 0 0;padding:0;font-size:.76rem}}
+    .np-pubs li{{margin:.2rem 0;line-height:1.35}}
+    .np-pubs a{{color:var(--accent);text-decoration:none}}
+    .np-pubs a:hover{{text-decoration:underline}}
+    .np-pub-type{{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}}
     footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}}
     .related-links{{font-size:.88rem;margin-bottom:1.5rem}}
   </style>

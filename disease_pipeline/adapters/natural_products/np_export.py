@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from ...display_np_names import resolve_np_display_name
+from ...np_publications import resolve_np_publications
 from ...models import AgentClinicalEvidence, NaturalProduct, NPEvidenceTier, NPType, SafetyTier
 from ...output.web_export import (
     DRUG_TYPE_LABELS,
@@ -145,13 +146,29 @@ def export_natural_product(
     return out
 
 
+def _attach_publications(
+    row: dict,
+    *,
+    gmi_articles: list[dict] | None = None,
+) -> dict:
+    pubs = resolve_np_publications(row, gmi_articles=gmi_articles, limit=3)
+    if pubs:
+        row["supporting_publications"] = pubs
+    return row
+
+
 def export_natural_products_page(
     slug: str,
     nps: list[NaturalProduct],
     evidence_map: dict[str, AgentClinicalEvidence],
+    *,
+    gmi_articles: list[dict] | None = None,
 ) -> tuple[list[dict], dict[str, dict]]:
     rows = [
-        export_natural_product(slug, np, evidence=evidence_map.get(np.canonical_id))
+        _attach_publications(
+            export_natural_product(slug, np, evidence=evidence_map.get(np.canonical_id)),
+            gmi_articles=gmi_articles,
+        )
         for np in nps
     ]
     ev_export = {

@@ -65,7 +65,9 @@ async def enrich_one(path: Path, opts: PipelineOptions, *, write_html: bool) -> 
             gmi_articles_by_name=gmi_by_name or None,
         )
 
-    np_rows, ev_export = export_natural_products_page(slug, nps, evidence_map)
+    np_rows, ev_export = export_natural_products_page(
+        slug, nps, evidence_map, gmi_articles=gmi_articles or None,
+    )
     data["natural_products"] = np_rows
     data["natural_product_evidence"] = ev_export
 
