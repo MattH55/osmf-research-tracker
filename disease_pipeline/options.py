@@ -15,6 +15,7 @@ class PipelineOptions:
       5 — + UniProt enrichment + HMDB bulk cache + API normalize fallback
       6 — + clinical trial registry + literature evidence (Cochrane, meta-analyses, trials)
       7 — + natural products (PubMed/CT.gov clinical + ChEMBL mechanistic + GMI/Examine)
+      8 — + full 20-database NP repurposing pipeline (clinical + traditional + structural + dietary)
     """
 
     phase: int = 1
@@ -33,6 +34,21 @@ class PipelineOptions:
     skip_clinical_np: bool = False
     skip_mechanistic_np: bool = False
     skip_np_evidence: bool = False
+    skip_np_synthesis: bool = False
+    skip_nccih: bool = False
+    skip_tcmsp: bool = False
+    skip_batman_tcm: bool = False
+    skip_imppat: bool = False
+    skip_etcm: bool = False
+    skip_symmap: bool = False
+    skip_npass: bool = False
+    skip_dukes: bool = False
+    skip_knapsack: bool = False
+    skip_dsld: bool = False
+    skip_phenol_explorer: bool = False
+    skip_foodb: bool = False
+    skip_coconut: bool = False
+    use_playwright: bool = False
     max_np_evidence: int = 20
     max_genes_for_drugs: int = 15
     max_pubmed_items: int = 20
