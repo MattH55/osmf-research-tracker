@@ -155,6 +155,7 @@ class NaturalProduct(BaseModel):
     pubchem_bioassay_count: int = 0
 
     sources: list[str] = Field(default_factory=list)
+    source_links: dict[str, str] = Field(default_factory=dict)
     score: float = 0.0
 
 

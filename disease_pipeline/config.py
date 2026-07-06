@@ -5,6 +5,10 @@ from pathlib import Path
 
 PACKAGE_DIR = Path(__file__).parent
 CACHE_DIR = PACKAGE_DIR / "cache"
+BROWSER_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+)
 SEEDS_PATH = PACKAGE_DIR / "seeds" / "disease_ids.json"
 SECRETS_PATH = PACKAGE_DIR.parent / "config" / "secrets.local.json"
 
@@ -30,6 +34,8 @@ RATE_LIMITS: dict[str, float] = {
     "pubchem": 5,
     "lotus": 5,
     "anthropic": 20,
+    "greenmedinfo": 1,
+    "examine": 1,
     "default": 5,
 }
 

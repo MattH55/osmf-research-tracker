@@ -9,9 +9,23 @@ import aiohttp
 
 from ...models import Alteration, DiseaseIdentifiers, NaturalProduct, NPType, SafetyTier
 from ...options import PipelineOptions
-from . import chembl_np, clinicaltrials_np, llm_extract, normalize_np, pubchem_np, pubmed_np, score_np
+from . import (
+    chembl_np,
+    clinicaltrials_np,
+    examine_np,
+    greenmedinfo_np,
+    llm_extract,
+    normalize_np,
+    pubchem_np,
+    pubmed_np,
+    score_np,
+)
 
 log = logging.getLogger(__name__)
+
+
+async def _empty_np_list() -> list[NaturalProduct]:
+    return []
 
 
 def _slug(text: str) -> str:
@@ -74,6 +88,30 @@ def _build_np_from_clinical(norm: dict, record: dict) -> NaturalProduct:
         pubchem_cid=norm.get("pubchem_cid"),
         lotus_wikidata_id=norm.get("lotus_wikidata_id"),
         sources=sources,
+    )
+
+
+def _build_np_from_reference(norm: dict, record: dict) -> NaturalProduct:
+    source = record.get("source", "")
+    sources = [source] if source else []
+    link = record.get("url")
+    source_links = {source: link} if source and link else {}
+    sr_count = 1 if source == "Examine.com" else 0
+
+    canonical_id = norm.get("pubchem_cid") or _slug(norm["canonical_name"])
+    return NaturalProduct(
+        canonical_id=str(canonical_id),
+        name=norm["canonical_name"],
+        common_names=[record.get("name", norm["canonical_name"])],
+        np_type=_np_type(norm.get("np_type")),
+        systematic_review_count=sr_count,
+        key_findings=record.get("key_findings"),
+        safety_tier=_safety_tier(norm.get("safety_tier")),
+        herb_drug_interactions=list(norm.get("known_interactions") or []),
+        pubchem_cid=norm.get("pubchem_cid"),
+        lotus_wikidata_id=norm.get("lotus_wikidata_id"),
+        sources=sources,
+        source_links=source_links,
     )
 
 
@@ -152,6 +190,60 @@ async def _get_clinical_nps(
     return nps
 
 
+async def _get_reference_nps(
+    identifiers: DiseaseIdentifiers,
+    session: aiohttp.ClientSession,
+    synonym_index: dict,
+    options: PipelineOptions,
+    *,
+    disease_slug: str = "",
+) -> tuple[list[NaturalProduct], dict[str, str]]:
+    lookup_links: dict[str, str] = {}
+    tasks = []
+    labels: list[str] = []
+
+    if not options.skip_greenmedinfo:
+        tasks.append(greenmedinfo_np.search_greenmedinfo_substances(identifiers, session, options=options))
+        labels.append("gmi")
+    if not options.skip_examine:
+        tasks.append(
+            examine_np.search_examine_supplements(
+                identifiers, session, disease_slug=disease_slug, options=options
+            )
+        )
+        labels.append("examine")
+
+    if not tasks:
+        return [], lookup_links
+
+    results = await asyncio.gather(*tasks)
+    raw_records: list[dict] = []
+
+    for label, result in zip(labels, results):
+        if label == "gmi":
+            records, gmi_url = result
+            lookup_links["GreenMedInfo"] = gmi_url
+            raw_records.extend(records)
+        else:
+            records, examine_url = result
+            if examine_url:
+                lookup_links["Examine.com"] = examine_url
+            elif not options.skip_examine:
+                lookup_links["Examine.com"] = examine_np.examine_search_url(identifiers.name)
+            raw_records.extend(records)
+
+    nps: list[NaturalProduct] = []
+    for record in raw_records:
+        raw_name = record.get("name", "")
+        if not raw_name:
+            continue
+        norm = await normalize_np.normalize_np_name(
+            raw_name, synonym_index, session, resolve_external=False
+        )
+        nps.append(_build_np_from_reference(norm, record))
+    return nps, lookup_links
+
+
 async def _get_mechanistic_nps(
     alterations: list[Alteration],
     session: aiohttp.ClientSession,
@@ -184,6 +276,9 @@ async def build_natural_products(
     alterations: list[Alteration],
     session: aiohttp.ClientSession,
     options: PipelineOptions,
+    *,
+    disease_slug: str = "",
+    extra_meta: dict | None = None,
 ) -> list[NaturalProduct]:
     if options.skip_natural_products or not options.includes(7):
         return []
@@ -191,12 +286,30 @@ async def build_natural_products(
     synonym_index = normalize_np.load_np_synonyms()
     safety_map = score_np.load_safety_map()
 
-    np_clinical, np_mechanistic = await asyncio.gather(
-        _get_clinical_nps(identifiers, session, synonym_index, options),
-        _get_mechanistic_nps(alterations, session, synonym_index, options),
+    clinical_coro = (
+        _get_clinical_nps(identifiers, session, synonym_index, options)
+        if not options.skip_clinical_np
+        else _empty_np_list()
+    )
+    mechanistic_coro = (
+        _get_mechanistic_nps(alterations, session, synonym_index, options)
+        if not options.skip_mechanistic_np
+        else _empty_np_list()
+    )
+    reference_coro = _get_reference_nps(
+        identifiers, session, synonym_index, options, disease_slug=disease_slug
     )
 
-    raw_nps = np_clinical + np_mechanistic
+    np_clinical, np_mechanistic, ref_result = await asyncio.gather(
+        clinical_coro,
+        mechanistic_coro,
+        reference_coro,
+    )
+    np_reference, lookup_links = ref_result
+    if extra_meta is not None and lookup_links:
+        extra_meta["np_lookup_links"] = lookup_links
+
+    raw_nps = np_clinical + np_mechanistic + np_reference
     if not raw_nps:
         log.info("[NP] No natural products found for '%s'", identifiers.name)
         return []

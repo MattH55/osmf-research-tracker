@@ -14,7 +14,7 @@ class PipelineOptions:
       4 — + DisGeNET + PubMed validation (tier C only, capped)
       5 — + UniProt enrichment + HMDB bulk cache + API normalize fallback
       6 — + clinical trial registry + literature evidence (Cochrane, meta-analyses, trials)
-      7 — + natural products (PubMed/CT.gov clinical + ChEMBL mechanistic)
+      7 — + natural products (PubMed/CT.gov clinical + ChEMBL mechanistic + GMI/Examine)
     """
 
     phase: int = 1
@@ -28,6 +28,10 @@ class PipelineOptions:
     skip_natural_products: bool = False
     skip_llm_extract: bool = False
     skip_pubchem_enrich: bool = False
+    skip_greenmedinfo: bool = False
+    skip_examine: bool = False
+    skip_clinical_np: bool = False
+    skip_mechanistic_np: bool = False
     max_genes_for_drugs: int = 15
     max_pubmed_items: int = 20
     max_pubmed_np_results: int = 50

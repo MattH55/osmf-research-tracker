@@ -136,8 +136,11 @@ def deduplicate_nps(nps: list[NaturalProduct]) -> list[NaturalProduct]:
             merged[key] = np
             continue
         existing = merged[key]
+        merged_links = dict(existing.source_links)
+        merged_links.update(np.source_links)
         merged[key] = existing.model_copy(update={
             "sources": sorted(set(existing.sources + np.sources)),
+            "source_links": merged_links,
             "common_names": sorted(set(existing.common_names + np.common_names + [np.name])),
             "meta_analysis_count": max(existing.meta_analysis_count, np.meta_analysis_count),
             "rct_count": max(existing.rct_count, np.rct_count),

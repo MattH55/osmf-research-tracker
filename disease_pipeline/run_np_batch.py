@@ -62,17 +62,31 @@ async def enrich_one(path: Path, opts: PipelineOptions, *, write_html: bool) -> 
     )
     alterations = [_alteration_from_web(a) for a in data.get("alterations", [])]
 
+    extra_meta: dict = {}
     async with default_session() as session:
-        nps = await build_natural_products(identifiers, alterations, session, opts)
+        nps = await build_natural_products(
+            identifiers,
+            alterations,
+            session,
+            opts,
+            disease_slug=data.get("slug", ""),
+            extra_meta=extra_meta,
+        )
 
     data["natural_products"] = [_export_np(np) for np in nps]
     summary = data.setdefault("summary", {})
     summary["natural_product_count"] = len(nps)
     summary["pipeline_phase"] = max(summary.get("pipeline_phase", 6), 7)
+    if extra_meta.get("np_lookup_links"):
+        summary["np_lookup_links"] = extra_meta["np_lookup_links"]
     sources = summary.setdefault("sources_queried", [])
     for src in ("PubMed NP", "ClinicalTrials.gov NP", "ChEMBL NP"):
         if src not in sources:
             sources.append(src)
+    if not opts.skip_greenmedinfo and "GreenMedInfo" not in sources:
+        sources.append("GreenMedInfo")
+    if not opts.skip_examine and "Examine.com" not in sources:
+        sources.append("Examine.com")
 
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     if write_html:
@@ -113,6 +127,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-pubmed-np", type=int, default=50)
     parser.add_argument("--skip-llm", action="store_true", help="Skip Claude abstract extraction")
     parser.add_argument("--skip-pubchem-enrich", action="store_true", help="Skip PubChem bioassay enrichment")
+    parser.add_argument("--skip-greenmedinfo", action="store_true", help="Skip GreenMedInfo substance lookup")
+    parser.add_argument("--skip-examine", action="store_true", help="Skip Examine.com supplement lookup")
     parser.add_argument("--html", action="store_true", help="Regenerate HTML pages")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
@@ -126,6 +142,8 @@ def main(argv: list[str] | None = None) -> int:
         phase=7,
         skip_llm_extract=args.skip_llm,
         skip_pubchem_enrich=args.skip_pubchem_enrich,
+        skip_greenmedinfo=args.skip_greenmedinfo,
+        skip_examine=args.skip_examine,
         max_pubmed_np_results=args.max_pubmed_np,
         disease_timeout_sec=args.timeout,
         batch_concurrency=args.concurrency,

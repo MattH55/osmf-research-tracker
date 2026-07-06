@@ -190,6 +190,29 @@ def _therapeutics_table(drugs: list[dict], show_via: bool = False) -> str:
     </div>"""
 
 
+def _np_source_links(np: dict) -> str:
+    links = np.get("source_links") or {}
+    bits = []
+    for src in np.get("sources", []):
+        url = links.get(src)
+        if url:
+            bits.append(f'<a href="{_esc(url)}" target="_blank" rel="noopener">{_esc(src)}</a>')
+        else:
+            bits.append(_esc(src))
+    return " · ".join(bits) if bits else "—"
+
+
+def _np_lookup_links(summary: dict) -> str:
+    lookup = summary.get("np_lookup_links") or {}
+    if not lookup:
+        return ""
+    bits = [
+        f'<a href="{_esc(url)}" target="_blank" rel="noopener">{_esc(label)}</a>'
+        for label, url in lookup.items()
+    ]
+    return f'<p class="section-sub">Reference lookups: {" · ".join(bits)}</p>'
+
+
 def _natural_products_table(nps: list[dict]) -> str:
     if not nps:
         return '<p class="no-data">No natural products indexed for this condition yet.</p>'
@@ -208,6 +231,7 @@ def _natural_products_table(nps: list[dict]) -> str:
           <td class="muted">{_esc(safety.replace('_', ' '))}</td>
           <td><span class="score">{np.get('score', 0):.0f}</span></td>
           <td class="muted">{np.get('ct_trial_count', 0)} CT · {np.get('rct_count', 0)} RCT</td>
+          <td class="muted">{_np_source_links(np)}</td>
           <td class="muted">{_esc(targets) or '—'}</td>
         </tr>""")
     return f"""
@@ -215,7 +239,7 @@ def _natural_products_table(nps: list[dict]) -> str:
       <table class="data-table">
         <thead><tr>
           <th>Natural product</th><th>Type</th><th>Evidence</th><th>Safety</th>
-          <th>Score</th><th>Trials</th><th>Targets</th>
+          <th>Score</th><th>Trials</th><th>Sources</th><th>Targets</th>
         </tr></thead>
         <tbody>{''.join(rows)}</tbody>
       </table>
@@ -304,7 +328,8 @@ def build_html(data: dict) -> str:
         np_section = f"""
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">{np_count} compounds from ClinicalTrials.gov supplement trials, ChEMBL mechanistic data, and PubMed (pipeline-ranked)</p>
+      <p class="section-sub">{np_count} compounds from PubMed, ClinicalTrials.gov, ChEMBL, GreenMedInfo, and Examine.com (pipeline-ranked)</p>
+      {_np_lookup_links(summary)}
       {_natural_products_table(nps)}
     </section>"""
 

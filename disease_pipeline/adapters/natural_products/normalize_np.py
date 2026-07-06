@@ -83,6 +83,8 @@ async def normalize_np_name(
     raw_name: str,
     synonym_index: dict[str, str],
     session: aiohttp.ClientSession,
+    *,
+    resolve_external: bool = True,
 ) -> dict:
     cleaned = raw_name.strip()
     if not cleaned:
@@ -113,6 +115,31 @@ async def normalize_np_name(
             "source_plant": meta.get("source_plant"),
             "safety_tier": meta.get("safety_tier"),
             "known_interactions": meta.get("known_interactions", []),
+            "resolved": True,
+        }
+        cache_set("normalize_np", ck, result)
+        return result
+
+    if not resolve_external:
+        fuzzy = _fuzzy_lookup(cleaned, synonym_index)
+        if fuzzy:
+            meta = _meta_for_canonical(fuzzy)
+            result = {
+                "canonical_name": meta.get("canonical_name", fuzzy.title()),
+                "canonical_key": fuzzy,
+                "pubchem_cid": meta.get("pubchem_cid"),
+                "np_type": meta.get("np_type", "nutraceutical"),
+                "source_plant": meta.get("source_plant"),
+                "safety_tier": meta.get("safety_tier"),
+                "known_interactions": meta.get("known_interactions", []),
+                "resolved": True,
+            }
+            cache_set("normalize_np", ck, result)
+            return result
+        result = {
+            "canonical_name": cleaned,
+            "canonical_key": _slug(cleaned),
+            "np_type": "nutraceutical",
             "resolved": True,
         }
         cache_set("normalize_np", ck, result)
