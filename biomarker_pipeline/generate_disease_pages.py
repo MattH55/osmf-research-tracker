@@ -29,7 +29,8 @@ from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-CSV_PATH     = Path(__file__).parent.parent / "cure_vs_chronic_50.csv"
+DB100_PATH   = Path(__file__).parent.parent / "disease_pipeline" / "seeds" / "disease_db_100.json"
+CSV_PATH     = Path(__file__).parent.parent / "cure_vs_chronic_50.csv"  # legacy fallback
 RESULTS_DIR  = Path(__file__).parent / "results" / "biomarkers"
 DISEASE_AGENTS_DIR = Path(__file__).parent / "results" / "disease_agents"
 ATLAS_DATA_DIR = Path(__file__).parent.parent / "data" / "biomarkers"
@@ -65,6 +66,41 @@ DIRECTION_SYMBOL = {
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def _load_db100_rows() -> list[dict]:
+    """Load remission overview rows from disease_db_100.json."""
+    if not DB100_PATH.exists():
+        return []
+    try:
+        from disease_pipeline.adapters.remission.db100 import db100_row_for_page
+        from disease_pipeline.adapters.remission.slug_map import slug_for_label
+    except ImportError:
+        log.warning("disease_pipeline not importable — cannot load disease_db_100")
+        return []
+
+    payload = json.loads(DB100_PATH.read_text(encoding="utf-8"))
+    rows: list[dict] = []
+    for entry in payload.get("diseases", []):
+        label = (entry.get("disease") or "").strip()
+        if not label:
+            continue
+        slug = slug_for_label(label)
+        row = db100_row_for_page(slug)
+        if not row:
+            row = {
+                "disease": label,
+                "spontaneous_remission_rate": entry.get("spontaneous_remission_rate", ""),
+                "best_intervention_remission_rate": entry.get("best_intervention_remission_rate", ""),
+                "gap_size": entry.get("gap_size", ""),
+                "primary_barrier": entry.get("barrier_type", ""),
+                "barrier_detail": entry.get("barrier_detail", ""),
+                "notes": entry.get("barrier_detail", ""),
+            }
+        row["disease"] = label
+        row["_slug"] = slug
+        rows.append(row)
+    return rows
 
 
 def _esc(text: str) -> str:
@@ -603,20 +639,18 @@ def main() -> None:
     parser.add_argument("--disease", default=None, help="Generate only this disease (exact CSV name)")
     args = parser.parse_args()
 
-    if not CSV_PATH.exists():
-        log.error("CSV not found: %s", CSV_PATH)
-        sys.exit(1)
-
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Load CSV
-    rows: list[dict] = []
-    with open(CSV_PATH, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if row.get("disease", "").strip():
-                rows.append(row)
-
-    log.info("Loaded %d diseases from CSV", len(rows))
+    rows = _load_db100_rows()
+    if rows:
+        log.info("Loaded %d diseases from disease_db_100.json", len(rows))
+    elif CSV_PATH.exists():
+        with open(CSV_PATH, newline="", encoding="utf-8") as f:
+            rows = [row for row in csv.DictReader(f) if row.get("disease", "").strip()]
+        log.info("Loaded %d diseases from legacy CSV", len(rows))
+    else:
+        log.error("No disease_db_100.json or CSV found")
+        sys.exit(1)
 
     for row in rows:
         disease = row["disease"].strip()
@@ -624,7 +658,7 @@ def main() -> None:
             continue
 
         log.info("Generating page for: %s", disease)
-        slug = _slug(disease)
+        slug = row.get("_slug") or _slug(disease)
 
         pipeline_data = _load_pipeline_results(disease)
         log.info("  Pipeline results: %d genes loaded", len(pipeline_data))

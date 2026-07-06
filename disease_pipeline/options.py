@@ -49,6 +49,9 @@ class PipelineOptions:
     skip_foodb: bool = False
     skip_coconut: bool = False
     use_playwright: bool = False
+    skip_remission: bool = False
+    skip_gbd_remission: bool = False
+    skip_pubmed_remission: bool = False
     max_np_evidence: int = 20
     max_genes_for_drugs: int = 15
     max_pubmed_items: int = 20

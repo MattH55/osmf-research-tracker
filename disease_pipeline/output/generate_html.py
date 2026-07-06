@@ -252,6 +252,76 @@ def _natural_products_table(nps: list[dict]) -> str:
     </div>"""
 
 
+def _remission_section(data: dict) -> str:
+    rem = data.get("remission") or {}
+    if not rem:
+        return ""
+
+    def cell(label: str, value: str | None) -> str:
+        return f"""
+        <div class="rem-cell">
+          <div class="label">{_esc(label)}</div>
+          <div class="value">{_esc(value) or "—"}</div>
+        </div>"""
+
+    grid = "".join([
+        cell("Spontaneous remission", rem.get("spontaneous_remission_rate")),
+        cell("Best-intervention remission", rem.get("best_intervention_remission_rate")),
+        cell("Drug-free remission", rem.get("drug_free_remission_rate")),
+        cell("Relapse after remission", rem.get("relapse_rate_after_remission")),
+        cell("Chronicity", rem.get("chronicity_rate")),
+        cell("Gap size", rem.get("gap_size")),
+        cell("Primary barrier", rem.get("barrier_type")),
+    ])
+
+    definition = rem.get("remission_definition")
+    def_block = (
+        f'<p class="meta-line"><strong>Remission definition:</strong> {_esc(definition)}</p>'
+        if definition else ""
+    )
+
+    gbd_note = ""
+    if rem.get("gbd_epi_remission_rate_per_100k") is not None:
+        gbd_note = (
+            f'<p class="meta-line">GBD epidemiological remission rate (USA): '
+            f'{rem["gbd_epi_remission_rate_per_100k"]:.2f} per 100k person-years '
+            f'(≈{100 * rem.get("gbd_epi_annual_probability", 0):.2f}% annual transition). '
+            f'Population-level DisMod estimate — not clinical remission criteria.</p>'
+        )
+
+    barrier = rem.get("barrier_detail") or rem.get("notes")
+    barrier_block = (
+        f'<div class="barrier-note"><strong>Barrier detail:</strong> {_esc(barrier)}</div>'
+        if barrier else ""
+    )
+
+    layers = ", ".join(rem.get("layers", []))
+    locked = " · source-locked manual data" if rem.get("source_locked") else ""
+    meta = f'<p class="meta-line">Remission data layers: {_esc(layers)}{_esc(locked)} · confidence: {_esc(rem.get("confidence", "unknown"))}</p>'
+
+    pubmed = rem.get("pubmed_extractions") or []
+    pubmed_block = ""
+    if pubmed:
+        links = " ".join(
+            f'<a href="{_esc(p.get("pubmed_url", ""))}" target="_blank" rel="noopener" class="ext-link">'
+            f'PMID {_esc(p.get("pmid", ""))}</a>'
+            for p in pubmed[:5]
+            if p.get("pmid")
+        )
+        if links:
+            pubmed_block = f'<p class="meta-line">PubMed systematic reviews: {links}</p>'
+
+    soc = rem.get("last_soc_change")
+    soc_block = f'<p class="meta-line"><strong>Last SoC change:</strong> {_esc(soc)}</p>' if soc else ""
+
+    return f"""
+    <section id="remission" class="overview-card">
+      <h2>Remission &amp; chronicity</h2>
+      <div class="remission-grid">{grid}</div>
+      {def_block}{gbd_note}{barrier_block}{soc_block}{meta}{pubmed_block}
+    </section>"""
+
+
 def _summary_cards(data: dict) -> str:
     s = data["summary"]
     counts = s["alteration_counts_by_type"]
@@ -376,6 +446,11 @@ def build_html(data: dict) -> str:
     .stat-cell{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem}}
     .stat-cell .label{{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
     .stat-cell .value{{font-size:1.4rem;font-weight:700;margin-top:.25rem}}
+    .remission-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem}}
+    .rem-cell{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem}}
+    .rem-cell .label{{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
+    .rem-cell .value{{font-size:.88rem;margin-top:.35rem;line-height:1.4}}
+    .barrier-note{{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.88rem;color:var(--muted);margin-top:.75rem}}
     .meta-line,.section-sub{{color:var(--muted);font-size:.88rem;margin-bottom:1.25rem}}
     .section-title{{font-size:1.25rem;font-weight:700;margin-bottom:.25rem}}
     .filter-row{{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}}
@@ -431,6 +506,8 @@ def build_html(data: dict) -> str:
     </nav>
 
     {_summary_cards(data)}
+
+    {_remission_section(data)}
 
     {rel}
     <p class="meta-line">Identifiers: {id_rows or '—'}</p>
