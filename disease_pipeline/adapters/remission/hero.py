@@ -101,20 +101,64 @@ def _funding_level_label(level: str | None) -> str | None:
     return level.replace("_", " ").title()
 
 
+def _burden_year(burden: dict) -> int:
+    return int(burden.get("ghe_year") or burden.get("gbd_year") or 2021)
+
+
+def _burden_source(burden: dict) -> str:
+    if burden.get("ghe_cause") or burden.get("source") == "WHO GHE":
+        return "WHO GHE"
+    if burden.get("gbd_cause_id") or burden.get("source") == "IHME GBD":
+        return "IHME GBD"
+    return str(burden.get("source") or "WHO GHE")
+
+
 def hero_burden_html(burden: dict | None) -> str:
-    """Render US DALYs, NIH funding, funding level, and mortality in the hero."""
+    """Render US/global DALYs, mortality, NIH funding, and funding level in the hero."""
     if not burden:
         return ""
 
     cells: list[str] = []
+    year = _burden_year(burden)
+    source = _burden_source(burden)
 
-    dalys = burden.get("us_dalys")
-    if dalys:
+    us_dalys = burden.get("us_dalys")
+    if us_dalys:
         cells.append(
             f'<div class="hero-burden-stat hero-burden-primary">'
-            f'<span class="hero-burden-label">US DALYs (GBD)</span>'
-            f'<span class="hero-burden-value">{_esc(_fmt_num(dalys))}</span>'
-            f'<span class="hero-burden-sub">GBD {burden.get("gbd_year", 2021)} · all ages</span>'
+            f'<span class="hero-burden-label">US DALYs</span>'
+            f'<span class="hero-burden-value">{_esc(_fmt_num(us_dalys))}</span>'
+            f'<span class="hero-burden-sub">{source} {year} · all ages</span>'
+            f"</div>"
+        )
+
+    global_dalys = burden.get("global_dalys")
+    if global_dalys:
+        cells.append(
+            f'<div class="hero-burden-stat hero-burden-primary">'
+            f'<span class="hero-burden-label">Global DALYs</span>'
+            f'<span class="hero-burden-value">{_esc(_fmt_num(global_dalys))}</span>'
+            f'<span class="hero-burden-sub">{source} {year} · worldwide</span>'
+            f"</div>"
+        )
+
+    us_deaths = burden.get("us_deaths")
+    if us_deaths and float(us_deaths) >= 1:
+        cells.append(
+            f'<div class="hero-burden-stat">'
+            f'<span class="hero-burden-label">US mortality</span>'
+            f'<span class="hero-burden-value">{_esc(_fmt_num(us_deaths))} deaths/yr</span>'
+            f'<span class="hero-burden-sub">{source} {year}</span>'
+            f"</div>"
+        )
+
+    global_deaths = burden.get("global_deaths")
+    if global_deaths and float(global_deaths) >= 1:
+        cells.append(
+            f'<div class="hero-burden-stat">'
+            f'<span class="hero-burden-label">Global mortality</span>'
+            f'<span class="hero-burden-value">{_esc(_fmt_num(global_deaths))} deaths/yr</span>'
+            f'<span class="hero-burden-sub">{source} {year} · worldwide</span>'
             f"</div>"
         )
 
@@ -140,22 +184,6 @@ def hero_burden_html(burden: dict | None) -> str:
             f'<span class="hero-burden-value">{_esc(level)}</span>'
             f"</div>"
         )
-
-    mortality = burden.get("us_mortality") or burden.get("us_deaths")
-    if mortality and str(mortality) not in ("-", "+"):
-        try:
-            mval = float(mortality)
-        except (TypeError, ValueError):
-            mval = 0
-        if mval >= 100:
-            year = burden.get("mortality_year", 2024)
-            cells.append(
-                f'<div class="hero-burden-stat">'
-                f'<span class="hero-burden-label">US mortality</span>'
-                f'<span class="hero-burden-value">{_esc(_fmt_num(mval))} deaths/yr</span>'
-                f'<span class="hero-burden-sub">CDC NCHS {year}</span>'
-                f"</div>"
-            )
 
     if not cells:
         return ""
