@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XRCGK1QTB5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-XRCGK1QTB5');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>endometriosis — RepurpOS | OpenSourceMedicine</title>
+  <meta name="description" content="Structured alterations and therapeutics for endometriosis: molecular targets, clinical biomarkers, phenotypes, and ranked drugs from Open Targets, HPO, ChEMBL, and DGIdb.">
+  <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/endometriosis.html">
+  <link rel="icon" href="https://opensourcemed.info/favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;
+      --text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b}
+    body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    code{background:#2a3050;padding:2px 6px;border-radius:4px;font-size:.85em}
+    nav{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+    .nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .nav-brand{font-weight:700;font-size:.95rem;color:var(--text)} .nav-brand span{color:var(--accent)}
+    .nav-links{list-style:none;display:flex;gap:.5rem} .nav-links a{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}
+    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--card);text-decoration:none}
+    .page-hero{background:linear-gradient(135deg,#0d1230,#1a1f45);border-bottom:1px solid var(--border);padding:3rem 1.5rem 2.5rem;text-align:center}
+    .hero-eyebrow{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+    .page-hero h1{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}
+    .page-hero p{color:var(--muted);max-width:720px;margin:0 auto}
+    main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    .breadcrumb{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}
+    .overview-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem}
+    .overview-card h2{font-size:1.1rem;color:var(--accent);margin-bottom:1rem}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1rem}
+    .stat-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem}
+    .stat-cell .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .stat-cell .value{font-size:1.4rem;font-weight:700;margin-top:.25rem}
+    .meta-line,.section-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.25rem}
+    .section-title{font-size:1.25rem;font-weight:700;margin-bottom:.25rem}
+    .filter-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+    .filter-chip{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer}
+    .filter-chip.active,.filter-chip:hover{border-color:var(--accent);background:rgba(74,158,255,.1)}
+    .table-wrap{overflow-x:auto;margin-bottom:2rem}
+    .data-table{width:100%;border-collapse:collapse;font-size:.86rem}
+    .data-table th{text-align:left;padding:.6rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}
+    .data-table td{padding:.55rem 1rem;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:top}
+    .data-table tr:hover{background:rgba(74,158,255,.04)}
+    .name-cell strong{color:var(--text)} .sub{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+    .tier-badge{display:inline-block;color:#fff;border-radius:4px;padding:2px 8px;font-size:.72rem;font-weight:700}
+    .type-badge{display:inline-block;color:#fff;border-radius:4px;padding:2px 7px;font-size:.7rem;font-weight:600}
+    .ext-link{font-size:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted)!important;margin-right:.25rem;display:inline-block}
+    .ext-link:hover{color:var(--accent)!important;border-color:var(--accent);text-decoration:none!important}
+    .repurposing{background:rgba(245,158,11,.15);color:var(--amber);font-size:.7rem;padding:2px 6px;border-radius:4px;margin-left:.35rem}
+    .natural-agent{background:rgba(34,197,94,.12);color:var(--green);font-size:.7rem;padding:2px 6px;border-radius:4px;margin-left:.35rem}
+    .score{font-weight:700;color:var(--green)}
+    .muted{color:var(--muted)}
+    .no-data{color:var(--muted);font-style:italic;padding:1rem 0}
+    .disclaimer{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.85rem;color:var(--muted);margin-top:2rem}
+    .tab-bar{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+    .tab-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:.45rem 1rem;border-radius:8px;cursor:pointer;font-size:.85rem}
+    .tab-btn.active{color:var(--text);border-color:var(--accent);background:rgba(74,158,255,.08)}
+    .tab-panel{display:none} .tab-panel.active{display:block}
+    .ev-badge{display:inline-block;font-size:.68rem;padding:2px 6px;border-radius:4px;margin:0 .2rem .2rem 0}
+    .ev-badge.trial{background:rgba(74,158,255,.15);color:var(--accent)}
+    .ev-badge.lit{background:rgba(34,197,94,.12);color:var(--green)}
+    .ev-badge.assoc{background:rgba(245,158,11,.12);color:var(--amber)}
+    .ev-details{margin-top:.35rem;font-size:.78rem}
+    .ev-details summary{cursor:pointer;color:var(--accent)}
+    .ev-details ul{margin:.35rem 0 .5rem 1rem;color:var(--muted)}
+    .ev-lit-type{color:var(--green);font-size:.7rem;font-weight:600;margin-right:.25rem}
+    .ev-search a{font-size:.75rem;margin-right:.5rem}
+    footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+    .related-links{font-size:.88rem;margin-bottom:1.5rem}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-container">
+      <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+    </div>
+  </nav>
+
+  <header class="page-hero">
+    <div class="hero-eyebrow">RepurpOS</div>
+    <h1>endometriosis</h1>
+    <p>Disease intelligence for endometriosis: 116 alterations and 477 ranked therapeutics from curated public databases.</p>
+  </header>
+
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../index.html">Home</a><span>/</span>
+      <a href="index.html">RepurpOS</a><span>/</span>
+      <span>endometriosis</span>
+    </nav>
+
+    
+    <div class="overview-card">
+      <h2>Disease overview</h2>
+      <div class="stat-grid"><div class="stat-cell"><div class="label">Alterations</div><div class="value">116</div></div><div class="stat-cell"><div class="label">Molecular (A)</div><div class="value">100</div></div><div class="stat-cell"><div class="label">Clinical (B–E)</div><div class="value">16</div></div><div class="stat-cell"><div class="label">Direct drugs</div><div class="value">90</div></div><div class="stat-cell"><div class="label">Via biomarker</div><div class="value">387</div></div><div class="stat-cell"><div class="label">Natural agents</div><div class="value">0</div></div><div class="stat-cell"><div class="label">Natural products</div><div class="value">0</div></div><div class="stat-cell"><div class="label">Merged ranked</div><div class="value">477</div></div><div class="stat-cell"><div class="label">With trial/literature evidence</div><div class="value">25</div></div></div>
+      <p class="meta-line">Sources: Open Targets, HPO, ClinicalTrials.gov, DGIdb, ChEMBL, PubMed Literature · Pipeline phase 6 · Updated 2026-07-06</p>
+    </div>
+
+    
+    <p class="meta-line">Identifiers: MONDO: <code>MONDO:0005133</code></p>
+
+    <section id="alterations">
+      <h2 class="section-title">Alterations</h2>
+      <p class="section-sub">Showing 80 of 116 · Types A (molecular) through E (functional)</p>
+      <div class="filter-row" id="type-filters">
+        <button class="filter-chip active" data-filter="all" type="button">All</button>
+        <button class="filter-chip" data-filter="A" type="button">Molecular (100)</button><button class="filter-chip" data-filter="B" type="button">Lab / Clinical (12)</button><button class="filter-chip" data-filter="C" type="button">Scales &amp; PROs (4)</button>
+      </div>
+      
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Name</th><th>Type</th><th>Subtype</th><th>Direction</th>
+          <th>Frequency</th><th>Evidence</th><th>Sources</th><th>Links</th>
+        </tr></thead>
+        <tbody>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ABO</strong>
+            <div class="sub">ABO, alpha 1-3-N-acetylgalactosaminyltransferase and alpha 1-3-galactosyltransferase</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000175164" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000175164" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>AKT1</strong>
+            <div class="sub">AKT serine/threonine kinase 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P31749" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000142208" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000142208" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>AMER1</strong>
+            <div class="sub">APC membrane recruitment protein 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q5JTC6" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000184675" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000184675" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>AMH dosage</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>AMH level</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>APOH</strong>
+            <div class="sub">apolipoprotein H</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P02749" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000091583" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000091583" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>AR</strong>
+            <div class="sub">androgen receptor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A087WUX9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000169083" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000169083" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ARHGAP26</strong>
+            <div class="sub">Rho GTPase activating protein 26</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9UNA1" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000145819" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000145819" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ARID1A</strong>
+            <div class="sub">AT-rich interaction domain 1A</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/O14497" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000117713" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000117713" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ARID2</strong>
+            <div class="sub">AT-rich interaction domain 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q68CP9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000189079" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000189079" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ARL14EP</strong>
+            <div class="sub">ARF like GTPase 14 effector protein</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0ACI8SWN8" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000152219" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000152219" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>AUTS2</strong>
+            <div class="sub">activator of transcription and developmental regulator AUTS2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q8WXX7" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000158321" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000158321" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Acceptability of menstrual health and endometriosis education (quantitative)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CARD11</strong>
+            <div class="sub">caspase recruitment domain family member 11</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9BXL7" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000198286" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000198286" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CCDC170</strong>
+            <div class="sub">coiled-coil domain containing 170</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0ACI8PJW6" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000120262" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000120262" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CD109</strong>
+            <div class="sub">CD109 molecule</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q6YHK3" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000156535" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000156535" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CDC42</strong>
+            <div class="sub">cell division cycle 42</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P60953" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000070831" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000070831" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CDKN2B</strong>
+            <div class="sub">cyclin dependent kinase inhibitor 2B</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P42772" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000147883" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000147883" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CEP112</strong>
+            <div class="sub">centrosomal protein 112</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q8N8E3" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000154240" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000154240" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CNR1</strong>
+            <div class="sub">cannabinoid receptor 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P21554" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000118432" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000118432" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CREBBP</strong>
+            <div class="sub">CREB binding lysine acetyltransferase </div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q92793" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000005339" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000005339" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CTCF</strong>
+            <div class="sub">CCCTC-binding factor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P49711" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000102974" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000102974" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>CTNNB1</strong>
+            <div class="sub">catenin beta 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P35222" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000168036" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000168036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Complication rate</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DDR2</strong>
+            <div class="sub">discoidin domain receptor tyrosine kinase 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q16832" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000162733" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000162733" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DENND1B</strong>
+            <div class="sub">DENN domain containing 1B</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q6P3S1" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000213047" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000213047" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DIAPH3</strong>
+            <div class="sub">diaphanous related formin 3</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NSV4" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000139734" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000139734" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DISC1</strong>
+            <div class="sub">DISC1 scaffold protein</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NRI5" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000162946" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000162946" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DLEU7</strong>
+            <div class="sub">deleted in lymphocytic leukemia 7</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q6UYE1" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000186047" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000186047" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DMRTA1</strong>
+            <div class="sub">DMRT like family A1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q5VZB9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000176399" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000176399" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>DNM3</strong>
+            <div class="sub">dynamin 3</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9UQ16" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000197959" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000197959" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>EEFSEC</strong>
+            <div class="sub">eukaryotic elongation factor, selenocysteine-tRNA specific</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P57772" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000132394" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000132394" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ESR1</strong>
+            <div class="sub">estrogen receptor 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/B5TKC0" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000091831" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000091831" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ETAA1</strong>
+            <div class="sub">ETAA1 activator of ATR kinase</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NY74" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000143971" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000143971" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ETV6</strong>
+            <div class="sub">ETS variant transcription factor 6</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P41212" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000139083" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000139083" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Endometrioma recurrence</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Evaluation of the ovarian reserve by ultrasound by CFA</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>FGD6</strong>
+            <div class="sub">FYVE, RhoGEF and PH domain containing 6</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q6ZV73" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000180263" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000180263" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>FGFR4</strong>
+            <div class="sub">fibroblast growth factor receptor 4</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P22455" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000160867" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000160867" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>FOXP1</strong>
+            <div class="sub">forkhead box P1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9H334" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000114861" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000114861" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>FRMD7</strong>
+            <div class="sub">FERM domain containing 7</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q6ZUT3" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000165694" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000165694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>FSHB</strong>
+            <div class="sub">follicle stimulating hormone subunit beta</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01225" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000131808" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000131808" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>FSHR</strong>
+            <div class="sub">follicle stimulating hormone receptor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P23945" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000170820" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000170820" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>GDAP1</strong>
+            <div class="sub">ganglioside induced differentiation associated protein 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A6Q8PFG4" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000104381" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000104381" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>GNRH1</strong>
+            <div class="sub">gonadotropin releasing hormone 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01148" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000147437" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000147437" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>GNRHR</strong>
+            <div class="sub">gonadotropin releasing hormone receptor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/V9GZN9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000109163" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000109163" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>GPNMB</strong>
+            <div class="sub">glycoprotein nmb</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q14956" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000136235" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000136235" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>GREB1</strong>
+            <div class="sub">growth regulating estrogen receptor binding 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A0D9SG99" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000196208" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000196208" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>GRIN1</strong>
+            <div class="sub">glutamate ionotropic receptor NMDA type subunit 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q05586" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000176884" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000176884" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>HEY2</strong>
+            <div class="sub">hes related family bHLH transcription factor with YRPW motif 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9UBP5" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000135547" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000135547" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>HNF1A</strong>
+            <div class="sub">HNF1 homeobox A</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P20823" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000135100" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000135100" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>HOXA10</strong>
+            <div class="sub">homeobox A10</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P31260" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000253293" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000253293" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>ID4</strong>
+            <div class="sub">inhibitor of DNA binding 4</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P47928" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000172201" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000172201" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>IL1A</strong>
+            <div class="sub">interleukin 1 alpha</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01583" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000115008" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000115008" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>IL7R</strong>
+            <div class="sub">interleukin 7 receptor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P16871" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000168685" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000168685" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="C">
+          <td class="name-cell"><strong>Investigation of the role of Relaxin, Matrix Metalloproteinase-2 and Interleukin 6 in the diagnosis and follow-up of deep infiltrative endometriosis in women with chronic pelvic pain</strong>
+            </td>
+          <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
+          <td class="muted">Clinical scale</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>JADE2</strong>
+            <div class="sub">jade family PHD finger 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NQC1" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000043143" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000043143" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>KDR</strong>
+            <div class="sub">kinase insert domain receptor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0ACI8T581" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000128052" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000128052" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>KRAS</strong>
+            <div class="sub">KRas proto-oncogene, GTPase</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01116" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000133703" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000133703" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>LHCGR</strong>
+            <div class="sub">luteinizing hormone/choriogonadotropin receptor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P22888" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000138039" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000138039" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>MFHAS1</strong>
+            <div class="sub">multifunctional ROCO family signaling regulator 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9Y4C4" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000147324" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000147324" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>MLH1</strong>
+            <div class="sub">mutL homolog 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P40692" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000076242" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000076242" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>MLLT10</strong>
+            <div class="sub">MLLT10 histone lysine methyltransferase DOT1L cofactor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P55197" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000078403" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000078403" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>MPPED2</strong>
+            <div class="sub">metallophosphoesterase domain containing 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q15777" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000066382" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000066382" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>MST1</strong>
+            <div class="sub">macrophage stimulating 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000173531" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000173531" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>MYH11</strong>
+            <div class="sub">myosin heavy chain 11</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P35749" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000133392" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000133392" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NEGR1</strong>
+            <div class="sub">neuronal growth regulator 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q7Z3B1" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000172260" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000172260" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NF1</strong>
+            <div class="sub">neurofibromin 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P21359" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000196712" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000196712" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NFE2L3</strong>
+            <div class="sub">NFE2 like bZIP transcription factor 3</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9Y4A8" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000050344" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000050344" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NFILZ</strong>
+            <div class="sub">NFIL3 like basic leucine zipper</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A5F9ZHS7" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000268480" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000268480" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NGF</strong>
+            <div class="sub">nerve growth factor</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01138" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000134259" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000134259" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NOTCH1</strong>
+            <div class="sub">notch receptor 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P46531" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000148400" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000148400" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NOTCH2</strong>
+            <div class="sub">notch receptor 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q04721" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000134250" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000134250" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NR3C1</strong>
+            <div class="sub">nuclear receptor subfamily 3 group C member 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P04150" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000113580" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000113580" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NR3C2</strong>
+            <div class="sub">nuclear receptor subfamily 3 group C member 2</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0ACI8QBX0" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000151623" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000151623" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>NUTM2B</strong>
+            <div class="sub">NUT family member 2B</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A6NNL0" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000188199" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000188199" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Number of Participants with Pregnancy</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="B">
+          <td class="name-cell"><strong>Number of participants with maximum severity of TEAEs (Part A)</strong>
+            </td>
+          <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
+          <td class="muted">Lab value</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">ClinicalTrials.gov</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>OPRK1</strong>
+            <div class="sub">opioid receptor kappa 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P41145" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000082556" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000082556" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr data-type="A">
+          <td class="name-cell"><strong>OPRM1</strong>
+            <div class="sub">opioid receptor mu 1</div></td>
+          <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
+          <td class="muted">Gene</td>
+          <td>—</td>
+          <td class="muted">—</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P35372" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000112038" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000112038" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr></tbody>
+      </table>
+    </div>
+    </section>
+
+    <section id="therapeutics">
+      <h2 class="section-title">Therapeutics</h2>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="merged" type="button">Merged (50)</button>
+        <button class="tab-btn" data-tab="direct" type="button">Direct (40)</button>
+        <button class="tab-btn" data-tab="via" type="button">Via biomarker (40)</button>
+        
+      </div>
+      <div class="tab-panel active" id="tab-merged">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Drug</th><th>Type</th><th>Phase</th><th>Evidence</th>
+          <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td class="name-cell"><strong>3,3&#x27;,4&#x27;,5-TETRACHLOROSALICYLANILIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL291338/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL291338" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ABIRATERONE ACETATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AFATINIB</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ALCLOFENAC</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL94081/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL94081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ALCLOMETASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMCINONIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMDINOCILLIN</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1083993/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1083993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMLEXANOX</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ANHYDROUS TACROLIMUS</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>APALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>APREMILAST</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ASTEMIZOLE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATEZOLIZUMAB</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><div class="ev-cell"><span class="muted">No indexed hits</span><details class="ev-details"><summary>View evidence</summary>
+          
+          
+          <p class=ev-search><a href="https://clinicaltrials.gov/search?cond=endometriosis&amp;intr=ATEZOLIZUMAB" target="_blank" rel="noopener">CT.gov search</a> · <a href="https://www.cochranelibrary.com/search?p_p_id=scolarissearchresultsportlet_WARscolarissearchresults&amp;query=ATEZOLIZUMAB+endometriosis" target="_blank" rel="noopener">Cochrane</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/?term=ATEZOLIZUMAB+AND+endometriosis" target="_blank" rel="noopener">PubMed</a></p>
+        </details></div></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATRACURIUM BESYLATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AZACITIDINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AZARIBINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL515914/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL515914" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BECLOMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BENAZEPRIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1694/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BENORILATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL162036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL162036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200384/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE SODIUM PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200762/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200762" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE VALERATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1497/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1497" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><div class="ev-cell"><span class="muted">No indexed hits</span><details class="ev-details"><summary>View evidence</summary>
+          
+          
+          <p class=ev-search><a href="https://clinicaltrials.gov/search?cond=endometriosis&amp;intr=BICALUTAMIDE" target="_blank" rel="noopener">CT.gov search</a> · <a href="https://www.cochranelibrary.com/search?p_p_id=scolarissearchresultsportlet_WARscolarissearchresults&amp;query=BICALUTAMIDE+endometriosis" target="_blank" rel="noopener">Cochrane</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/?term=BICALUTAMIDE+AND+endometriosis" target="_blank" rel="noopener">PubMed</a></p>
+        </details></div></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BIFONAZOLE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BISACODYL</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BITHIONOL</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BITHIONOLATE SODIUM</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1447476/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1447476" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BROMOCRIPTINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BROMOCRIPTINE MESYLATE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200503/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200503" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BUPRENORPHINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2368861/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2368861" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BUTAMBEN</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL127516/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL127516" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CAFFEINE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CALCIFEDIOL ANHYDROUS</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CALCIPOTRIENE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CALCITRIOL</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CANDESARTAN CILEXETIL</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CANRENONE</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CAPIVASERTIB</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CARBACHOL</strong> <span class="repurposing">Repurposing</span>  </td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL14/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL14" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr></tbody>
+      </table>
+    </div></div>
+      <div class="tab-panel" id="tab-direct">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Drug</th><th>Type</th><th>Phase</th><th>Evidence</th>
+          <th>Score</th><th>Sources</th><th>Links</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td class="name-cell"><strong>ASOPRISNIL</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL267431/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL267431" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CANNABIDIOL</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL190461/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL190461" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CHORIOGONADOTROPIN ALFA</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201464/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201464" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CYPROTERONE ACETATE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL139835/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL139835" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>DEGARELIX</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL415606/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL415606" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>DYDROGESTERONE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200853/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200853" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ELAGOLIX</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1208155/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1208155" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ESKETAMINE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL395091/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL395091" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ESTRADIOL</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL135/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL135" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>GONADORELIN</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1007/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1007" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>GONADORELIN ACETATE</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200511/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200511" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>GONADOTROPIN, CHORIONIC</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201509/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201509" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>INDOLE-3-CARBINOL</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL155625/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL155625" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>LEUPROLIDE</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201199/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201199" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>LEUPROLIDE ACETATE</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200775/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200775" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>LEVONORGESTREL</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1389/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1389" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>LINZAGOLIX</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3668014/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3668014" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>MENOTROPINS</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108427/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108427" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>NALTREXONE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL19019/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL19019" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>PENTOXIFYLLINE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL628/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL628" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>PROGESTERONE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL103/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL103" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>RELUGOLIX</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1800159/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1800159" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>SEGESTERONE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2107778/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2107778" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>SEGESTERONE ACETATE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3707377/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3707377" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>TRIPTORELIN</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201334/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201334" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>TRIPTORELIN ACETATE</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5315073/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5315073" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>TRIPTORELIN PAMOATE</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase III</td>
+          <td><span class="tier-badge" style="background:#4a9eff">Moderate</span></td>
+          <td><span class="score">80</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200554/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200554" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ANASTROZOLE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1399/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1399" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ASCORBIC ACID</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL196/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL196" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATOSIBAN</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL382301/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL382301" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BENTAMAPIMOD</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3545213/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3545213" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CABERGOLINE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201087/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201087" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>CETRORELIX</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200490/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200490" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ELIAPIXANT</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095224/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095224" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ESTROGEN</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL592868/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL592868" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ESTROGENS, CONJUGATED</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201649/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201649" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ETONOGESTREL</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1531/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1531" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>FILGRASTIM</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201567/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201567" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>GESTRINONE</strong>   </td>
+          <td class="muted">Small molecule</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1868702/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1868702" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>INFLIXIMAB</strong>   </td>
+          <td class="muted">Biologic</td>
+          <td>Phase II</td>
+          <td><span class="tier-badge" style="background:#f59e0b">Emerging</span></td>
+          <td><span class="score">60</span></td>
+          
+          <td class="muted">Open Targets</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201581/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201581" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr></tbody>
+      </table>
+    </div></div>
+      <div class="tab-panel" id="tab-via">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Drug</th><th>Type</th><th>Phase</th><th>Evidence</th>
+          <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+          <td class="name-cell"><strong>3,3&#x27;,4&#x27;,5-TETRACHLOROSALICYLANILIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL291338/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL291338" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ABIRATERONE ACETATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ABO</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AFATINIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AKT1</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ALCLOFENAC</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL94081/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL94081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ALCLOMETASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMCINONIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMDINOCILLIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1083993/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1083993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMLEXANOX</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ABO</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ANHYDROUS TACROLIMUS</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>APALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>APREMILAST</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CDKN2B</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ASTEMIZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATEZOLIZUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ARID1A</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><div class="ev-cell"><span class="muted">No indexed hits</span><details class="ev-details"><summary>View evidence</summary>
+          
+          
+          <p class=ev-search><a href="https://clinicaltrials.gov/search?cond=endometriosis&amp;intr=ATEZOLIZUMAB" target="_blank" rel="noopener">CT.gov search</a> · <a href="https://www.cochranelibrary.com/search?p_p_id=scolarissearchresultsportlet_WARscolarissearchresults&amp;query=ATEZOLIZUMAB+endometriosis" target="_blank" rel="noopener">Cochrane</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/?term=ATEZOLIZUMAB+AND+endometriosis" target="_blank" rel="noopener">PubMed</a></p>
+        </details></div></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATRACURIUM BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AZACITIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>AZARIBINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL515914/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL515914" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BECLOMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BENAZEPRIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1694/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BENORILATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL162036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL162036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200384/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE SODIUM PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200762/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200762" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BETAMETHASONE VALERATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1497/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1497" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><div class="ev-cell"><span class="muted">No indexed hits</span><details class="ev-details"><summary>View evidence</summary>
+          
+          
+          <p class=ev-search><a href="https://clinicaltrials.gov/search?cond=endometriosis&amp;intr=BICALUTAMIDE" target="_blank" rel="noopener">CT.gov search</a> · <a href="https://www.cochranelibrary.com/search?p_p_id=scolarissearchresultsportlet_WARscolarissearchresults&amp;query=BICALUTAMIDE+endometriosis" target="_blank" rel="noopener">Cochrane</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/?term=BICALUTAMIDE+AND+endometriosis" target="_blank" rel="noopener">PubMed</a></p>
+        </details></div></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ABO</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">ChEMBL</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BIFONAZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BISACODYL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BITHIONOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BITHIONOLATE SODIUM</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1447476/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1447476" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BROMOCRIPTINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><span class="muted">—</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell"><strong>BROMOCRIPTINE MESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span></td>
+          <td class="muted">Small molecule</td>
+          <td>Approved</td>
+          <td><span class="tier-badge" style="background:#22c55e">Strong</span></td>
+          <td><span class="score">95</span></td>
+          <td><span class="muted">—</span></td>
+          <td class="muted">DGIdb</td>
+          <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200503/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200503" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
+        </tr></tbody>
+      </table>
+    </div></div>
+      
+    </section>
+
+    
+
+    <p class="disclaimer">Alterations and therapeutics are aggregated from public databases (Open Targets, HPO, ChEMBL, DGIdb, and others). Natural agents are candidates from OSMF narrative reviews on opensourcemed.info/chronic-disease.html — not approved treatments. This page is for research orientation only — not medical advice.</p>
+  </main>
+
+  <footer>
+    Generated by OSMF Disease Intelligence Pipeline · Schema 1.1.0
+  </footer>
+
+  <script>
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('#alterations tbody tr').forEach(row => {
+          row.style.display = (f === 'all' || row.dataset.type === f) ? '' : 'none';
+        });
+      });
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -5,7 +5,13 @@ import html
 import json
 from pathlib import Path
 
-from ..published_conditions import biomarker_count, clinical_biomarker_count, is_publishable
+from ..published_conditions import (
+    biomarker_count,
+    clinical_biomarker_count,
+    db100_index_slugs,
+    is_publishable,
+    on_db100_index,
+)
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -459,7 +465,13 @@ def build_html(data: dict) -> str:
 
 def build_index_html(pages: list[dict]) -> str:
     rows = []
-    published = [p for p in pages if is_publishable(p)]
+    published = [p for p in pages if is_publishable(p) and on_db100_index(p)]
+    db100 = db100_index_slugs()
+    count_label = (
+        f"{len(published)} conditions (100-disease database)"
+        if db100 is not None
+        else f"{len(published)} conditions"
+    )
     for p in sorted(published, key=lambda x: x["condition"]["shortName"]):
         slug = p["slug"]
         short = p["condition"]["shortName"]
@@ -497,7 +509,7 @@ def build_index_html(pages: list[dict]) -> str:
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{_esc(REPURPOS_FULL)}</title>
-  <meta name="description" content="RepurpOS: structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {len(published)} conditions — from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.">
+  <meta name="description" content="RepurpOS: structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {count_label} — from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.">
   <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/index.html">
   <link rel="icon" href="{FAVICON_URL}" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -524,7 +536,7 @@ def build_index_html(pages: list[dict]) -> str:
 {nav}
 <main>
   <h1>{_esc(REPURPOS_BRAND)}</h1>
-  <p class="sub">{_esc(REPURPOS_TAGLINE)} — structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {len(published)} conditions from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
+  <p class="sub">{_esc(REPURPOS_TAGLINE)} — structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {count_label} from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
   <div class="grid">{''.join(rows)}</div>
 </main>
 </body>
