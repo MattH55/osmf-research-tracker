@@ -12,7 +12,8 @@ from ..published_conditions import (
     is_publishable,
     on_db100_index,
 )
-from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_remission_html
+from ..adapters.burden.loader import get_burden_for_slug
+from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -411,6 +412,7 @@ def build_html(data: dict) -> str:
     </section>"""
 
     rel = related_links(slug)
+    burden = data.get("burden") or get_burden_for_slug(slug, data["condition"]["name"])
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -498,6 +500,7 @@ def build_html(data: dict) -> str:
     <div class="hero-eyebrow">{_esc(REPURPOS_BRAND)}</div>
     <h1>{_esc(short)}</h1>
     <p>{_esc(page['hero'])}</p>
+    {hero_burden_html(burden)}
     {hero_remission_html(data.get("remission"), detail_anchor="#remission")}
   </header>
 

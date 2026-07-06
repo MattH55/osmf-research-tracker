@@ -1,4 +1,4 @@
-"""Compact remission statistics strip for disease page hero banners."""
+"""Compact hero banner strips — remission and disease burden."""
 from __future__ import annotations
 
 import html
@@ -65,6 +65,104 @@ def hero_remission_html(
     return f'<div class="hero-remission-strip">{cells}{link}</div>'
 
 
+def _fmt_num(n: float | int | None) -> str | None:
+    if n is None:
+        return None
+    try:
+        v = float(n)
+    except (TypeError, ValueError):
+        return None
+    if v >= 1_000_000:
+        return f"{v / 1_000_000:.2f}M"
+    if v >= 10_000:
+        return f"{v / 1_000:.1f}K"
+    if v >= 100:
+        return f"{v:,.0f}"
+    if v == int(v):
+        return str(int(v))
+    return f"{v:.1f}"
+
+
+def _fmt_dollars_m(millions: float | int | None) -> str | None:
+    if millions is None or str(millions) in ("-", "+"):
+        return None
+    try:
+        m = float(millions)
+    except (TypeError, ValueError):
+        return None
+    if m >= 1000:
+        return f"${m / 1000:.2f}B"
+    return f"${m:.0f}M"
+
+
+def _funding_level_label(level: str | None) -> str | None:
+    if not level or level == "unknown":
+        return None
+    return level.replace("_", " ").title()
+
+
+def hero_burden_html(burden: dict | None) -> str:
+    """Render US DALYs, NIH funding, funding level, and mortality in the hero."""
+    if not burden:
+        return ""
+
+    cells: list[str] = []
+
+    dalys = burden.get("us_dalys")
+    if dalys:
+        cells.append(
+            f'<div class="hero-burden-stat hero-burden-primary">'
+            f'<span class="hero-burden-label">US DALYs (GBD)</span>'
+            f'<span class="hero-burden-value">{_esc(_fmt_num(dalys))}</span>'
+            f'<span class="hero-burden-sub">GBD {burden.get("gbd_year", 2021)} · all ages</span>'
+            f"</div>"
+        )
+
+    funding = _fmt_dollars_m(burden.get("nih_funding_millions_usd"))
+    if funding:
+        fy = burden.get("nih_fiscal_year", 2025)
+        cells.append(
+            f'<div class="hero-burden-stat hero-burden-primary">'
+            f'<span class="hero-burden-label">NIH funding</span>'
+            f'<span class="hero-burden-value">{_esc(funding)}</span>'
+            f'<span class="hero-burden-sub">FY{fy} · RCDC estimate</span>'
+            f"</div>"
+        )
+
+    level = _funding_level_label(burden.get("funding_level"))
+    if level:
+        cls = "hero-burden-stat"
+        if "underfund" in (burden.get("funding_level") or ""):
+            cls += " hero-burden-alert"
+        cells.append(
+            f'<div class="{cls}">'
+            f'<span class="hero-burden-label">Funding level</span>'
+            f'<span class="hero-burden-value">{_esc(level)}</span>'
+            f"</div>"
+        )
+
+    mortality = burden.get("us_mortality") or burden.get("us_deaths")
+    if mortality and str(mortality) not in ("-", "+"):
+        try:
+            mval = float(mortality)
+        except (TypeError, ValueError):
+            mval = 0
+        if mval >= 100:
+            year = burden.get("mortality_year", 2024)
+            cells.append(
+                f'<div class="hero-burden-stat">'
+                f'<span class="hero-burden-label">US mortality</span>'
+                f'<span class="hero-burden-value">{_esc(_fmt_num(mval))} deaths/yr</span>'
+                f'<span class="hero-burden-sub">CDC NCHS {year}</span>'
+                f"</div>"
+            )
+
+    if not cells:
+        return ""
+
+    return f'<div class="hero-burden-strip">{"".join(cells)}</div>'
+
+
 HERO_REMISSION_CSS = """
     .hero-remission-strip{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:.75rem;max-width:1040px;margin:1.5rem auto 0;padding-top:1.25rem;border-top:1px solid rgba(42,48,80,.45)}
     .hero-rem-stat{background:rgba(20,24,40,.55);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;text-align:left;min-width:160px;max-width:260px;flex:1 1 160px}
@@ -74,4 +172,12 @@ HERO_REMISSION_CSS = """
     .hero-rem-link{align-self:center;font-size:.8rem;color:var(--accent)!important;white-space:nowrap;padding:.5rem .25rem;flex:0 0 auto}
     .hero-rem-link:hover{text-decoration:underline!important}
     @media(max-width:640px){.hero-remission-strip{flex-direction:column;align-items:stretch}.hero-rem-stat{max-width:none}.hero-rem-link{text-align:center;padding-top:.25rem}}
+    .hero-burden-strip{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:.75rem;max-width:1040px;margin:1rem auto 0;padding-top:1rem;border-top:1px solid rgba(42,48,80,.35)}
+    .hero-burden-stat{background:rgba(20,24,40,.45);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;text-align:center;min-width:130px;max-width:200px;flex:1 1 130px}
+    .hero-burden-primary{border-color:rgba(124,106,247,.35);background:rgba(124,106,247,.08)}
+    .hero-burden-alert{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+    .hero-burden-label{display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;font-weight:600}
+    .hero-burden-value{display:block;font-size:.95rem;font-weight:700;line-height:1.3;color:var(--text)}
+    .hero-burden-sub{display:block;font-size:.68rem;color:var(--muted);margin-top:.2rem}
+    @media(max-width:640px){.hero-burden-strip{flex-direction:column;align-items:stretch}.hero-burden-stat{max-width:none}}
 """

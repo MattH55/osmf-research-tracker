@@ -24,7 +24,8 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-from disease_pipeline.adapters.remission.hero import HERO_REMISSION_CSS, hero_remission_html
+from disease_pipeline.adapters.burden.loader import get_burden_for_slug
+from disease_pipeline.adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
 from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
 
 log = logging.getLogger(__name__)
@@ -372,6 +373,7 @@ def build_page(
     barrier= _esc(csv_row.get("primary_barrier", ""))
     notes  = _esc(csv_row.get("notes", ""))
     hero_remission = hero_remission_html(csv_row, detail_anchor="#remission")
+    hero_burden = hero_burden_html(get_burden_for_slug(slug, disease))
 
     gene_sections = ""
     if pipeline_data:
@@ -549,6 +551,7 @@ def build_page(
   <div class="hero-eyebrow">Biomarker &amp; Intervention Discovery</div>
   <h1>{title}</h1>
   <p>Pharmacologically actionable gene targets, therapeutic agents ranked by evidence tier, and active clinical trials.</p>
+  {hero_burden}
   {hero_remission}
 </section>
 
