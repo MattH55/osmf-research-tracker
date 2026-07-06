@@ -12,6 +12,7 @@ from ..published_conditions import (
     is_publishable,
     on_db100_index,
 )
+from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_remission_html
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -438,6 +439,7 @@ def build_html(data: dict) -> str:
     .hero-eyebrow{{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}}
     .page-hero h1{{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}}
     .page-hero p{{color:var(--muted);max-width:720px;margin:0 auto}}
+    {HERO_REMISSION_CSS}
     main{{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}}
     .breadcrumb{{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}}
     .overview-card{{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem}}
@@ -496,6 +498,7 @@ def build_html(data: dict) -> str:
     <div class="hero-eyebrow">{_esc(REPURPOS_BRAND)}</div>
     <h1>{_esc(short)}</h1>
     <p>{_esc(page['hero'])}</p>
+    {hero_remission_html(data.get("remission"), detail_anchor="#remission")}
   </header>
 
   <main>

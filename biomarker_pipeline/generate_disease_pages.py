@@ -24,6 +24,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+from disease_pipeline.adapters.remission.hero import HERO_REMISSION_CSS, hero_remission_html
 from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
 
 log = logging.getLogger(__name__)
@@ -370,6 +371,7 @@ def build_page(
     gap    = _esc(csv_row.get("gap_size", ""))
     barrier= _esc(csv_row.get("primary_barrier", ""))
     notes  = _esc(csv_row.get("notes", ""))
+    hero_remission = hero_remission_html(csv_row, detail_anchor="#remission")
 
     gene_sections = ""
     if pipeline_data:
@@ -444,6 +446,7 @@ def build_page(
     .hero-eyebrow {{ color: var(--accent); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }}
     .page-hero h1 {{ font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700; margin-bottom: 0.75rem; }}
     .page-hero p {{ color: var(--muted); max-width: 700px; margin: 0 auto; font-size: 1rem; }}
+    {HERO_REMISSION_CSS}
 
     /* Main layout */
     main {{ max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }}
@@ -546,6 +549,7 @@ def build_page(
   <div class="hero-eyebrow">Biomarker &amp; Intervention Discovery</div>
   <h1>{title}</h1>
   <p>Pharmacologically actionable gene targets, therapeutic agents ranked by evidence tier, and active clinical trials.</p>
+  {hero_remission}
 </section>
 
 <main>
@@ -558,8 +562,8 @@ def build_page(
   </div>
 
   <!-- Disease overview -->
-  <div class="overview-card">
-    <h2>Disease Overview</h2>
+  <div class="overview-card" id="remission">
+    <h2>Remission &amp; chronicity</h2>
     <div class="remission-grid">
       <div class="rem-cell">
         <div class="label">Spontaneous remission</div>

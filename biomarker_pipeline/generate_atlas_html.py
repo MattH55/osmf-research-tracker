@@ -23,6 +23,8 @@ import json
 import logging
 from pathlib import Path
 
+from disease_pipeline.adapters.remission.db100 import db100_row_for_page
+from disease_pipeline.adapters.remission.hero import HERO_REMISSION_CSS, hero_remission_html
 from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
 
 log = logging.getLogger(__name__)
@@ -65,6 +67,11 @@ def render_atlas_html(atlas: dict) -> str:
     keywords = _escape(", ".join(page.get("keywords", [])))
     canonical = page["canonical"]
     hero = _escape(page["hero"])
+    rem_row = db100_row_for_page(slug)
+    hero_remission = hero_remission_html(
+        rem_row,
+        detail_anchor=f"chronic-disease-interventions/{slug}.html#remission",
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -91,6 +98,7 @@ def render_atlas_html(atlas: dict) -> str:
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="tracker.css">
   <link rel="stylesheet" href="css/biomarker-atlas-tracker.css">
+  <style>{HERO_REMISSION_CSS}</style>
 </head>
 <body class="biomarker-page" data-atlas="{slug}">
 <nav>
@@ -114,6 +122,7 @@ def render_atlas_html(atlas: dict) -> str:
   <div class="hero-eyebrow">Peer-Reviewed Literature Synthesis</div>
   <h1>{_escape(condition_name)} Biomarker Atlas</h1>
   <p>{hero}</p>
+  {hero_remission}
 </section>
 
 <main class="main-section">
