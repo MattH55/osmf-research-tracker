@@ -78,9 +78,17 @@ def _np_publications_html(
     np: dict,
     *,
     gmi_articles: list[dict] | None = None,
+    extra_evidence: dict[str, dict] | None = None,
+    disease_name: str | None = None,
     limit: int = 3,
 ) -> str:
-    pubs = resolve_np_publications(np, gmi_articles=gmi_articles, limit=limit)
+    pubs = resolve_np_publications(
+        np,
+        gmi_articles=gmi_articles,
+        extra_evidence=extra_evidence,
+        disease_name=disease_name,
+        limit=limit,
+    )
     if not pubs:
         return ""
     items = []
@@ -203,6 +211,8 @@ def _therapeutics_table(
     show_via: bool = False,
     *,
     gmi_articles: list[dict] | None = None,
+    extra_evidence: dict[str, dict] | None = None,
+    disease_name: str | None = None,
 ) -> str:
     if not drugs:
         return '<p class="no-data">No therapeutics in this section.</p>'
@@ -225,7 +235,12 @@ def _therapeutics_table(
                 common_names=d.get("common_names"),
                 canonical_id=d.get("canonical_id"),
             )
-            np_pubs = _np_publications_html(d, gmi_articles=gmi_articles)
+            np_pubs = _np_publications_html(
+                d,
+                gmi_articles=gmi_articles,
+                extra_evidence=extra_evidence,
+                disease_name=disease_name,
+            )
         rows.append(f"""
         <tr>
           <td class="name-cell"><strong>{_esc(drug_name)}</strong> {rep} {nat} {via}
@@ -278,11 +293,18 @@ def _natural_products_table(
     nps: list[dict],
     *,
     gmi_articles: list[dict] | None = None,
+    extra_evidence: dict[str, dict] | None = None,
+    disease_name: str | None = None,
 ) -> str:
     if not nps:
         return '<p class="no-data">No natural products indexed for this condition yet.</p>'
     if nps[0].get("drug_type") is not None or nps[0].get("source_type") == "natural_product":
-        return _therapeutics_table(nps[:80], gmi_articles=gmi_articles)
+        return _therapeutics_table(
+            nps[:80],
+            gmi_articles=gmi_articles,
+            extra_evidence=extra_evidence,
+            disease_name=disease_name,
+        )
     rows = []
     for np in nps[:80]:
         tier = np.get("np_evidence_tier", "D")
@@ -294,7 +316,12 @@ def _natural_products_table(
             common_names=np.get("common_names"),
             canonical_id=np.get("canonical_id"),
         )
-        np_pubs = _np_publications_html(np, gmi_articles=gmi_articles)
+        np_pubs = _np_publications_html(
+            np,
+            gmi_articles=gmi_articles,
+            extra_evidence=extra_evidence,
+            disease_name=disease_name,
+        )
         rows.append(f"""
         <tr>
           <td class="name-cell"><strong>{_esc(np_name)}</strong>
@@ -471,6 +498,8 @@ def build_html(data: dict) -> str:
 
     nps = data.get("natural_products", [])
     gmi_articles = summary.get("gmi_articles") or []
+    np_extra_evidence = data.get("natural_product_evidence") or {}
+    disease_name = (data.get("condition") or {}).get("name") or short
     np_count = summary.get("natural_product_count", len(nps))
     np_section = ""
     if np_count:
@@ -479,7 +508,7 @@ def build_html(data: dict) -> str:
       <h2 class="section-title">Natural Products</h2>
       <p class="section-sub">{np_count} natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
       {_np_lookup_links(summary)}
-      {_natural_products_table(nps, gmi_articles=gmi_articles)}
+      {_natural_products_table(nps, gmi_articles=gmi_articles, extra_evidence=np_extra_evidence, disease_name=disease_name)}
     </section>"""
 
     rel = related_links(slug)

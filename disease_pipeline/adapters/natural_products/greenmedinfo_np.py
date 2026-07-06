@@ -64,7 +64,7 @@ def _parse_substances(html: str) -> list[dict]:
     return records
 
 
-def _parse_articles(html: str, *, limit: int = 40) -> list[dict]:
+def _parse_articles(html: str, *, limit: int = 150) -> list[dict]:
     articles: list[dict] = []
     seen: set[str] = set()
 

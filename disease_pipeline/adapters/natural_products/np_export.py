@@ -150,8 +150,14 @@ def _attach_publications(
     row: dict,
     *,
     gmi_articles: list[dict] | None = None,
+    disease_name: str | None = None,
 ) -> dict:
-    pubs = resolve_np_publications(row, gmi_articles=gmi_articles, limit=3)
+    pubs = resolve_np_publications(
+        row,
+        gmi_articles=gmi_articles,
+        disease_name=disease_name,
+        limit=3,
+    )
     if pubs:
         row["supporting_publications"] = pubs
     return row
@@ -163,11 +169,13 @@ def export_natural_products_page(
     evidence_map: dict[str, AgentClinicalEvidence],
     *,
     gmi_articles: list[dict] | None = None,
+    disease_name: str | None = None,
 ) -> tuple[list[dict], dict[str, dict]]:
     rows = [
         _attach_publications(
             export_natural_product(slug, np, evidence=evidence_map.get(np.canonical_id)),
             gmi_articles=gmi_articles,
+            disease_name=disease_name,
         )
         for np in nps
     ]
