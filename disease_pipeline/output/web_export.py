@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 from datetime import datetime, timezone
 
+from ..adapters.remission.slug_map import display_names_for_slug, web_slug
 from ..models import AgentClinicalEvidence, Alteration, DiseasePageData, Therapeutic
 
 SCHEMA_VERSION = "1.1.0"
@@ -78,16 +79,6 @@ DISPLAY_LIMITS = {
     "therapeutics_via": 40,
     "therapeutics_merged": 50,
 }
-
-
-def web_slug(name: str) -> str:
-    s = name.lower().strip()
-    s = re.sub(r"\s*\([^)]*\)", "", s)
-    for suffix in (" mellitus", " (essential)"):
-        if s.endswith(suffix):
-            s = s[: -len(suffix)]
-    s = re.sub(r"[^\w\s-]", "", s)
-    return re.sub(r"[\s_]+", "-", s).strip("-")
 
 
 def _short_name(full_name: str) -> str:
@@ -211,9 +202,13 @@ def _tier_sort_key_drug(d: dict) -> tuple:
     return (-d["score"], -d["max_phase"], {"A": 0, "B": 1, "C": 2}[d["evidence_tier"]], d["name"])
 
 
-def to_web_json(page: DiseasePageData, *, cap_display: bool = False) -> dict:
-    slug = web_slug(page.identifiers.name)
-    short = _short_name(page.identifiers.name)
+def to_web_json(page: DiseasePageData, *, cap_display: bool = False, slug: str | None = None) -> dict:
+    slug = slug or web_slug(page.identifiers.name)
+    short, full = display_names_for_slug(
+        slug,
+        fallback_short=_short_name(page.identifiers.name),
+        fallback_full=page.identifiers.name,
+    )
     date_mod = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     meta = page.pipeline_meta
 
@@ -251,7 +246,7 @@ def to_web_json(page: DiseasePageData, *, cap_display: bool = False) -> dict:
         "slug": slug,
         "id": f"{slug}-intelligence",
         "condition": {
-            "name": page.identifiers.name,
+            "name": full,
             "shortName": short,
             "alternateNames": [],
         },
@@ -264,7 +259,7 @@ def to_web_json(page: DiseasePageData, *, cap_display: bool = False) -> dict:
             "title": f"{short} — RepurpOS | OpenSourceMedicine",
             "breadcrumbName": f"{short} Intelligence",
             "description": (
-                f"Structured alterations and therapeutics for {page.identifiers.name}: "
+                f"Structured alterations and therapeutics for {full}: "
                 f"molecular targets, clinical biomarkers, phenotypes, and ranked drugs "
                 f"from Open Targets, HPO, ChEMBL, and DGIdb."
             ),
@@ -276,7 +271,7 @@ def to_web_json(page: DiseasePageData, *, cap_display: bool = False) -> dict:
             ],
             "canonical": f"{SITE_BASE}/disease-intelligence/{slug}.html",
             "hero": (
-                f"Disease intelligence for {page.identifiers.name}: "
+                f"Disease intelligence for {full}: "
                 f"{len(page.alterations)} alterations and "
                 f"{len(page.therapeutics_merged)} ranked therapeutics "
                 f"from curated public databases."

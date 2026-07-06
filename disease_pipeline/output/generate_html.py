@@ -14,6 +14,7 @@ from ..published_conditions import (
 )
 from ..adapters.burden.loader import get_burden_for_slug
 from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
+from ..adapters.remission.slug_map import display_names_for_slug
 from ..site_nav import (
     FAVICON_URL,
     GOOGLE_ANALYTICS_SNIPPET,
@@ -358,7 +359,11 @@ def _summary_cards(data: dict) -> str:
 def build_html(data: dict) -> str:
     page = data["page"]
     slug = data["slug"]
-    short = data["condition"]["shortName"]
+    short, full = display_names_for_slug(
+        slug,
+        fallback_short=data["condition"].get("shortName"),
+        fallback_full=data["condition"].get("name"),
+    )
     summary = data["summary"]
     alts = data["alterations"]
     ther = data["therapeutics"]

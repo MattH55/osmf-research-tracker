@@ -25,6 +25,7 @@ from pathlib import Path
 
 from disease_pipeline.adapters.burden.loader import get_burden_for_slug
 from disease_pipeline.adapters.remission.db100 import db100_row_for_page
+from disease_pipeline.adapters.remission.slug_map import display_names_for_slug
 from disease_pipeline.adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
 from disease_pipeline.site_nav import GOOGLE_ANALYTICS_SNIPPET
 
@@ -57,7 +58,11 @@ def _references_html(markers: list[dict]) -> str:
 
 def render_atlas_html(atlas: dict) -> str:
     slug = atlas["slug"]
-    condition_name = atlas["condition"]["name"]
+    condition_name, _ = display_names_for_slug(
+        slug,
+        fallback_short=atlas.get("condition", {}).get("name"),
+        fallback_full=atlas.get("condition", {}).get("name"),
+    )
     page = atlas["page"]
     markers = atlas["markers"]
     n_markers = len(markers)

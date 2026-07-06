@@ -2,10 +2,20 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from ...config import PACKAGE_DIR
-from ...output.web_export import web_slug
+
+
+def web_slug(name: str) -> str:
+    s = name.lower().strip()
+    s = re.sub(r"\s*\([^)]*\)", "", s)
+    for suffix in (" mellitus", " (essential)"):
+        if s.endswith(suffix):
+            s = s[: -len(suffix)]
+    s = re.sub(r"[^\w\s-]", "", s)
+    return re.sub(r"[\s_]+", "-", s).strip("-")
 
 MANIFEST_PATH = PACKAGE_DIR / "seeds" / "disease_db_100_manifest.json"
 
@@ -38,6 +48,14 @@ CANONICAL_SLUG_HINTS: dict[str, str] = {
 
 _label_to_slug: dict[str, str] | None = None
 _slug_to_label: dict[str, str] | None = None
+_slug_to_query: dict[str, str] | None = None
+
+# Slugs outside disease_db_100_manifest.json
+EXTRA_DISPLAY_NAMES: dict[str, tuple[str, str]] = {
+    "cancer": ("Cancer", "Cancer"),
+    "measles": ("Measles", "Measles"),
+    "sarcopenia": ("Sarcopenia", "Sarcopenia"),
+}
 
 
 def load_label_slug_map() -> dict[str, str]:
@@ -60,11 +78,56 @@ def load_label_slug_map() -> dict[str, str]:
     return mapping
 
 
+def load_slug_query_map() -> dict[str, str]:
+    global _slug_to_query
+    if _slug_to_query is not None:
+        return _slug_to_query
+
+    mapping: dict[str, str] = {}
+    if MANIFEST_PATH.exists():
+        for row in json.loads(MANIFEST_PATH.read_text(encoding="utf-8")):
+            slug = row.get("slug", "")
+            query = (row.get("query") or row.get("label") or "").strip()
+            if slug and query:
+                mapping[slug] = query
+
+    _slug_to_query = mapping
+    return mapping
+
+
 def label_for_slug(slug: str) -> str | None:
     global _slug_to_label
     if _slug_to_label is None:
         _slug_to_label = {v: k for k, v in load_label_slug_map().items()}
     return _slug_to_label.get(slug)
+
+
+def query_for_slug(slug: str) -> str | None:
+    return load_slug_query_map().get(slug)
+
+
+def display_names_for_slug(
+    slug: str,
+    *,
+    fallback_short: str | None = None,
+    fallback_full: str | None = None,
+) -> tuple[str, str]:
+    """Return (shortName, fullName) using manifest labels as canonical display text."""
+    if slug in EXTRA_DISPLAY_NAMES:
+        short, full = EXTRA_DISPLAY_NAMES[slug]
+        return short, full
+
+    short = label_for_slug(slug)
+    full = query_for_slug(slug)
+
+    if not short and fallback_short:
+        short = fallback_short.strip()
+    if not full:
+        full = (fallback_full or short or "").strip()
+    if not short:
+        short = full or slug.replace("-", " ").title()
+
+    return short, full
 
 
 def slug_for_label(label: str) -> str:
