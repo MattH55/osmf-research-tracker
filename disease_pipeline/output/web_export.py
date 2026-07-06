@@ -254,7 +254,7 @@ def to_web_json(page: DiseasePageData, *, cap_display: bool = False) -> dict:
             if k != "name" and v is not None
         },
         "page": {
-            "title": f"{short} — Disease Intelligence | OSMF",
+            "title": f"{short} — RepurpOS | OpenSourceMedicine",
             "breadcrumbName": f"{short} Intelligence",
             "description": (
                 f"Structured alterations and therapeutics for {page.identifiers.name}: "

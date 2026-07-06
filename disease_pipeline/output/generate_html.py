@@ -5,7 +5,15 @@ import html
 import json
 from pathlib import Path
 
-from ..site_nav import FAVICON_URL, GOOGLE_ANALYTICS_SNIPPET, related_links, render_nav
+from ..site_nav import (
+    FAVICON_URL,
+    GOOGLE_ANALYTICS_SNIPPET,
+    REPURPOS_BRAND,
+    REPURPOS_FULL,
+    REPURPOS_TAGLINE,
+    related_links,
+    render_nav,
+)
 
 TIER_COLOUR = {"A": "#22c55e", "B": "#4a9eff", "C": "#f59e0b"}
 TYPE_COLOUR = {"A": "#7c6af7", "B": "#4a9eff", "C": "#f59e0b", "D": "#ef4444", "E": "#22c55e"}
@@ -13,6 +21,18 @@ TYPE_COLOUR = {"A": "#7c6af7", "B": "#4a9eff", "C": "#f59e0b", "D": "#ef4444", "
 
 def _esc(text: str | None) -> str:
     return html.escape(str(text or ""))
+
+
+def _page_title(page: dict, short: str) -> str:
+    title = str(page.get("title") or "")
+    if "Disease Intelligence" in title:
+        return title.replace(
+            " — Disease Intelligence | OSMF",
+            f" — {REPURPOS_BRAND} | OpenSourceMedicine",
+        )
+    if title:
+        return title
+    return f"{short} — {REPURPOS_BRAND} | OpenSourceMedicine"
 
 
 def _tier_badge(tier: str, label: str) -> str:
@@ -289,7 +309,7 @@ def build_html(data: dict) -> str:
 {GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{_esc(page['title'])}</title>
+  <title>{_esc(_page_title(page, short))}</title>
   <meta name="description" content="{_esc(page['description'])}">
   <link rel="canonical" href="{_esc(page['canonical'])}">
   <link rel="icon" href="{FAVICON_URL}" type="image/png">
@@ -360,7 +380,7 @@ def build_html(data: dict) -> str:
 {render_nav(depth="di", active="di")}
 
   <header class="page-hero">
-    <div class="hero-eyebrow">Disease Intelligence</div>
+    <div class="hero-eyebrow">{_esc(REPURPOS_BRAND)}</div>
     <h1>{_esc(short)}</h1>
     <p>{_esc(page['hero'])}</p>
   </header>
@@ -368,7 +388,7 @@ def build_html(data: dict) -> str:
   <main>
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="../index.html">Home</a><span>/</span>
-      <a href="index.html">Disease Intelligence</a><span>/</span>
+      <a href="index.html">{_esc(REPURPOS_BRAND)}</a><span>/</span>
       <span>{_esc(short)}</span>
     </nav>
 
@@ -457,15 +477,20 @@ def build_index_html(pages: list[dict]) -> str:
           <p class="muted">{s['alteration_count']} alterations · {tc['merged']} therapeutics{extra_txt}</p>
           <p class="date">Updated {_esc(p['page']['dateModified'])}</p>
         </a>""")
-    nav = render_nav(depth="di", active="di")
+    nav = render_nav(
+        depth="di",
+        active="di",
+        brand=REPURPOS_BRAND,
+        brand_span=REPURPOS_TAGLINE,
+    )
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 {GOOGLE_ANALYTICS_SNIPPET}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Disease Intelligence Index | OSMF</title>
-  <meta name="description" content="Structured disease intelligence for 60 conditions: molecular alterations, ranked therapeutics, natural products, and clinical evidence from Open Targets, HPO, ChEMBL, and DGIdb.">
+  <title>{_esc(REPURPOS_FULL)}</title>
+  <meta name="description" content="RepurpOS: structured alterations, ranked therapeutics, natural products, and clinical evidence for {len(pages)} conditions — from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.">
   <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/index.html">
   <link rel="icon" href="{FAVICON_URL}" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -491,8 +516,8 @@ def build_index_html(pages: list[dict]) -> str:
 <body>
 {nav}
 <main>
-  <h1>Disease Intelligence</h1>
-  <p class="sub">Structured alterations, ranked therapeutics, natural products, and clinical evidence for {len(pages)} conditions — from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
+  <h1>{_esc(REPURPOS_BRAND)}</h1>
+  <p class="sub">{_esc(REPURPOS_TAGLINE)} — structured alterations, ranked therapeutics, natural products, and clinical evidence for {len(pages)} conditions from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
   <div class="grid">{''.join(rows)}</div>
 </main>
 </body>

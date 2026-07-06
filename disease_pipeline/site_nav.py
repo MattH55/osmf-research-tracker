@@ -7,6 +7,9 @@ from pathlib import Path
 
 SITE_LINKS_PATH = Path(__file__).parent / "seeds" / "site_links.json"
 FAVICON_URL = "https://opensourcemed.info/favicon.png"
+REPURPOS_BRAND = "RepurpOS"
+REPURPOS_TAGLINE = "by OpenSourceMedicine"
+REPURPOS_FULL = f"{REPURPOS_BRAND} {REPURPOS_TAGLINE}"
 GOOGLE_ANALYTICS_ID = "G-XRCGK1QTB5"
 GOOGLE_ANALYTICS_SNIPPET = f"""  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id={GOOGLE_ANALYTICS_ID}"></script>
@@ -20,7 +23,7 @@ GOOGLE_ANALYTICS_SNIPPET = f"""  <!-- Google tag (gtag.js) -->
 
 SITE_NAV_LINKS = [
     ("../index.html", "Research Tracker"),
-    ("index.html", "Disease Intelligence", "di"),
+    ("index.html", REPURPOS_BRAND, "di"),
     ("../biomarker-atlas.html", "Biomarkers"),
     ("../chronic-disease-interventions/index.html", "Interventions"),
     ("../clinical_trials.html", "Clinical Trials"),
@@ -29,7 +32,7 @@ SITE_NAV_LINKS = [
 
 ROOT_NAV_LINKS = [
     ("index.html", "Research Tracker"),
-    ("disease-intelligence/index.html", "Disease Intelligence"),
+    ("disease-intelligence/index.html", REPURPOS_BRAND),
     ("biomarker-atlas.html", "Biomarkers"),
     ("chronic-disease-interventions/index.html", "Interventions"),
     ("clinical_trials.html", "Clinical Trials"),
@@ -47,7 +50,13 @@ def _esc(text: str) -> str:
     return html.escape(text)
 
 
-def render_nav(*, depth: str = "di", active: str | None = None) -> str:
+def render_nav(
+    *,
+    depth: str = "di",
+    active: str | None = None,
+    brand: str = "Open Source Medicine",
+    brand_span: str = "Foundation",
+) -> str:
     """depth: 'root' for site root pages, 'di' for disease-intelligence pages."""
     links = ROOT_NAV_LINKS if depth == "root" else SITE_NAV_LINKS
     items = []
@@ -60,7 +69,7 @@ def render_nav(*, depth: str = "di", active: str | None = None) -> str:
     return f"""
   <nav>
     <div class="nav-container">
-      <a href="{brand_href}" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
+      <a href="{brand_href}" class="nav-brand">{_esc(brand)} <span>{_esc(brand_span)}</span></a>
       <ul class="nav-links">{''.join(items)}</ul>
     </div>
   </nav>"""
