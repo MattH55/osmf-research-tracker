@@ -28,12 +28,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0   # full history so we can commit cleanly
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -48,22 +48,26 @@ jobs:
         run: python update_research_tracker.py
         env:
           PYTHONUNBUFFERED: "1"
+          PYTHONPATH: ${{ github.workspace }}
           TRACKER_CONDITION: ${{ github.event.inputs.condition }}
 
       - name: Run Clinical Trials Card Agent (daily)
         run: python clinical_trials/clinical_trials_agent.py
         env:
           PYTHONUNBUFFERED: "1"
+          PYTHONPATH: ${{ github.workspace }}
 
       - name: Run Therapeutic Agents Aggregator (daily)
         run: python aggregate_therapeutic_agents.py
         env:
           PYTHONUNBUFFERED: "1"
+          PYTHONPATH: ${{ github.workspace }}
 
       - name: Enhance Therapeutic Agents Clinical Notes (daily)
         run: python generate_detailed_notes.py
         env:
           PYTHONUNBUFFERED: "1"
+          PYTHONPATH: ${{ github.workspace }}
 
       - name: Commit and push updated data (if any changes)
         run: |
@@ -94,7 +98,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
