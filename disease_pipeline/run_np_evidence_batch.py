@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run GreenMedInfo + Examine.com lookups across all disease-intelligence pages."""
+"""Attach trial/literature evidence to natural products and export drug-aligned schema."""
 from __future__ import annotations
 
 import argparse
@@ -14,12 +14,10 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from disease_pipeline.adapters.natural_products.np_evidence import enrich_natural_products_evidence
-from disease_pipeline.adapters.natural_products.np_export import export_natural_products_page
-from disease_pipeline.adapters.natural_products.runner import build_natural_products
+from disease_pipeline.adapters.natural_products.np_export import export_natural_products_page, natural_product_from_row
 from disease_pipeline.adapters.natural_products.score_np import apply_safety, deduplicate_nps, load_safety_map
 from disease_pipeline.http_util import default_session
-from disease_pipeline.models import Alteration, AlterationType, DiseaseIdentifiers, EvidenceTier
-from disease_pipeline.adapters.natural_products.np_export import natural_product_from_row
+from disease_pipeline.models import Alteration, AlterationType, DiseaseIdentifiers, EvidenceTier, NaturalProduct
 from disease_pipeline.options import PipelineOptions
 from disease_pipeline.output.generate_html import write_page
 
@@ -29,26 +27,9 @@ HTML_DIR = _ROOT / "disease-intelligence"
 log = logging.getLogger(__name__)
 
 
-def _alteration_from_web(row: dict) -> Alteration:
-    t = row.get("type", "C")
-    return Alteration(
-        canonical_id=row.get("canonical_id", row.get("id", "")),
-        name=row["name"],
-        alteration_type=AlterationType(t),
-        subtype=row.get("subtype", "gene" if t == "A" else "pathology"),
-        direction=row.get("direction"),
-        frequency_label=row.get("frequency_label"),
-        frequency_pct=row.get("frequency_pct"),
-        sources=row.get("sources", []),
-        source_ids=row.get("source_ids", {}),
-        evidence_tier=EvidenceTier(row.get("evidence_tier", "C")),
-        pubmed_count=row.get("pubmed_count", 0),
-        definition=row.get("definition"),
-    )
-
-
 async def enrich_one(path: Path, opts: PipelineOptions, *, write_html: bool) -> dict | None:
     data = json.loads(path.read_text(encoding="utf-8"))
+    slug = data.get("slug", path.stem)
     name = data["condition"]["name"]
     ids = data.get("identifiers", {})
     identifiers = DiseaseIdentifiers(
@@ -60,48 +41,40 @@ async def enrich_one(path: Path, opts: PipelineOptions, *, write_html: bool) -> 
         mesh_id=ids.get("mesh_id"),
         umls_cui=ids.get("umls_cui"),
     )
-    alterations = [_alteration_from_web(a) for a in data.get("alterations", [])]
-    existing = [natural_product_from_row(row) for row in data.get("natural_products", [])]
-    extra_meta: dict = {}
-    slug = data.get("slug", path.stem)
+
+    raw_rows = data.get("natural_products", [])
+    if not raw_rows:
+        log.info("'%s': no natural products — skip", name)
+        return None
+
+    nps = [natural_product_from_row(row) for row in raw_rows]
+    nps = deduplicate_nps(nps)
+    nps = apply_safety(nps, load_safety_map())
+
+    gmi_articles = (data.get("summary") or {}).get("gmi_articles") or []
+    gmi_by_name: dict[str, list[dict]] = {}
+    if gmi_articles:
+        gmi_by_name[name.lower()] = gmi_articles
 
     async with default_session() as session:
-        ref_nps = await build_natural_products(
+        evidence_map = await enrich_natural_products_evidence(
+            nps,
             identifiers,
-            alterations,
             session,
             opts,
-            disease_slug=slug,
-            extra_meta=extra_meta,
+            gmi_articles_by_name=gmi_by_name or None,
         )
-        nps = deduplicate_nps(existing + ref_nps)
-        nps = apply_safety(nps, load_safety_map())
-        gmi_by_name = None
-        if extra_meta.get("gmi_articles"):
-            gmi_by_name = {name.lower(): extra_meta["gmi_articles"]}
-        evidence_map = {}
-        if not opts.skip_np_evidence:
-            evidence_map = await enrich_natural_products_evidence(
-                nps,
-                identifiers,
-                session,
-                opts,
-                gmi_articles_by_name=gmi_by_name,
-            )
 
     np_rows, ev_export = export_natural_products_page(slug, nps, evidence_map)
     data["natural_products"] = np_rows
     data["natural_product_evidence"] = ev_export
+
     summary = data.setdefault("summary", {})
-    summary["natural_product_count"] = len(nps)
+    summary["natural_product_count"] = len(np_rows)
     summary["np_evidence_count"] = len(ev_export)
     summary["pipeline_phase"] = max(summary.get("pipeline_phase", 6), 7)
-    if extra_meta.get("np_lookup_links"):
-        summary["np_lookup_links"] = extra_meta["np_lookup_links"]
-    if extra_meta.get("gmi_articles"):
-        summary["gmi_articles"] = extra_meta["gmi_articles"]
     sources = summary.setdefault("sources_queried", [])
-    for src in ("GreenMedInfo", "Examine.com"):
+    for src in ("PubMed NP Literature", "ClinicalTrials.gov NP"):
         if src not in sources:
             sources.append(src)
 
@@ -109,8 +82,8 @@ async def enrich_one(path: Path, opts: PipelineOptions, *, write_html: bool) -> 
     if write_html:
         write_page(data, HTML_DIR)
 
-    log.info("'%s': %d natural products (GMI/Examine) -> %s", name, len(nps), path.name)
-    return {"name": name, "slug": data["slug"], "count": len(nps)}
+    log.info("'%s': %d NPs, %d with evidence -> %s", name, len(np_rows), len(ev_export), path.name)
+    return {"name": name, "slug": slug, "count": len(np_rows), "evidence": len(ev_export)}
 
 
 async def run_batch(opts: PipelineOptions, *, write_html: bool, only_slug: str | None) -> list[dict]:
@@ -142,11 +115,12 @@ async def run_batch(opts: PipelineOptions, *, write_html: bool, only_slug: str |
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Enrich disease pages with GreenMedInfo and Examine.com natural product lookups"
+        description="Export natural products with drug-aligned schema and trial/literature evidence"
     )
     parser.add_argument("--slug", help="Run a single disease slug only")
     parser.add_argument("--concurrency", type=int, default=1)
-    parser.add_argument("--timeout", type=float, default=300.0)
+    parser.add_argument("--timeout", type=float, default=900.0)
+    parser.add_argument("--max-evidence", type=int, default=20)
     parser.add_argument("--html", action="store_true", help="Regenerate HTML pages")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
@@ -158,21 +132,15 @@ def main(argv: list[str] | None = None) -> int:
 
     opts = PipelineOptions(
         phase=7,
-        skip_llm_extract=True,
-        skip_pubchem_enrich=True,
-        skip_clinical_np=True,
-        skip_mechanistic_np=True,
-        skip_greenmedinfo=False,
-        skip_examine=False,
         skip_np_evidence=False,
-        max_np_evidence=20,
+        max_np_evidence=args.max_evidence,
         disease_timeout_sec=args.timeout,
         batch_concurrency=args.concurrency,
         use_cache=True,
     )
     results = asyncio.run(run_batch(opts, write_html=args.html, only_slug=args.slug))
-    total_np = sum(r["count"] for r in results)
-    log.info("Done: %d diseases, %d total NPs", len(results), total_np)
+    ev_total = sum(r["evidence"] for r in results)
+    log.info("Done: %d diseases, %d NPs with evidence attached", len(results), ev_total)
     return 0 if results else 1
 
 

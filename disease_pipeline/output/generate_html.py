@@ -163,7 +163,11 @@ def _therapeutics_table(drugs: list[dict], show_via: bool = False) -> str:
     rows = []
     for d in drugs:
         rep = '<span class="repurposing">Repurposing</span>' if d.get("repurposing_signal") else ""
-        nat = '<span class="natural-agent">OSMF review</span>' if d.get("source_type") == "natural_agent" else ""
+        nat = ""
+        if d.get("source_type") == "natural_agent":
+            nat = '<span class="natural-agent">OSMF review</span>'
+        elif d.get("source_type") == "natural_product":
+            nat = '<span class="natural-agent">Natural product</span>'
         via = f'<span class="muted">via {_esc(d["via_alteration"])}</span>' if show_via and d.get("via_alteration") else ""
         ev_cell = _evidence_cell(d.get("clinical_evidence")) if has_evidence else ""
         rows.append(f"""
@@ -216,6 +220,8 @@ def _np_lookup_links(summary: dict) -> str:
 def _natural_products_table(nps: list[dict]) -> str:
     if not nps:
         return '<p class="no-data">No natural products indexed for this condition yet.</p>'
+    if nps[0].get("drug_type") is not None or nps[0].get("source_type") == "natural_product":
+        return _therapeutics_table(nps[:80])
     rows = []
     for np in nps[:80]:
         tier = np.get("np_evidence_tier", "D")
@@ -328,7 +334,7 @@ def build_html(data: dict) -> str:
         np_section = f"""
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">{np_count} compounds from PubMed, ClinicalTrials.gov, ChEMBL, GreenMedInfo, and Examine.com (pipeline-ranked)</p>
+      <p class="section-sub">{np_count} natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
       {_np_lookup_links(summary)}
       {_natural_products_table(nps)}
     </section>"""

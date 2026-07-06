@@ -32,6 +32,8 @@ class PipelineOptions:
     skip_examine: bool = False
     skip_clinical_np: bool = False
     skip_mechanistic_np: bool = False
+    skip_np_evidence: bool = False
+    max_np_evidence: int = 20
     max_genes_for_drugs: int = 15
     max_pubmed_items: int = 20
     max_pubmed_np_results: int = 50

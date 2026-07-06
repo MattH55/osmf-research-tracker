@@ -47,6 +47,13 @@ DRUG_TYPE_LABELS = {
     "nutraceutical": "Nutraceutical",
     "lifestyle": "Lifestyle",
     "psychedelic": "Psychedelic",
+    "botanical": "Botanical",
+    "probiotic": "Probiotic",
+    "amino_acid": "Amino acid",
+    "food_compound": "Food compound",
+    "tcm_herb": "TCM herb",
+    "ayurvedic": "Ayurvedic",
+    "mushroom": "Mushroom",
 }
 
 PHASE_LABELS = {

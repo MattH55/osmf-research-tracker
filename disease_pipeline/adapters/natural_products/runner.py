@@ -197,8 +197,9 @@ async def _get_reference_nps(
     options: PipelineOptions,
     *,
     disease_slug: str = "",
-) -> tuple[list[NaturalProduct], dict[str, str]]:
+) -> tuple[list[NaturalProduct], dict[str, str], list[dict]]:
     lookup_links: dict[str, str] = {}
+    gmi_articles: list[dict] = []
     tasks = []
     labels: list[str] = []
 
@@ -214,15 +215,16 @@ async def _get_reference_nps(
         labels.append("examine")
 
     if not tasks:
-        return [], lookup_links
+        return [], lookup_links, gmi_articles
 
     results = await asyncio.gather(*tasks)
     raw_records: list[dict] = []
 
     for label, result in zip(labels, results):
         if label == "gmi":
-            records, gmi_url = result
+            records, gmi_url, articles = result
             lookup_links["GreenMedInfo"] = gmi_url
+            gmi_articles = articles
             raw_records.extend(records)
         else:
             records, examine_url = result
@@ -241,7 +243,7 @@ async def _get_reference_nps(
             raw_name, synonym_index, session, resolve_external=False
         )
         nps.append(_build_np_from_reference(norm, record))
-    return nps, lookup_links
+    return nps, lookup_links, gmi_articles
 
 
 async def _get_mechanistic_nps(
@@ -305,9 +307,12 @@ async def build_natural_products(
         mechanistic_coro,
         reference_coro,
     )
-    np_reference, lookup_links = ref_result
-    if extra_meta is not None and lookup_links:
-        extra_meta["np_lookup_links"] = lookup_links
+    np_reference, lookup_links, gmi_articles = ref_result
+    if extra_meta is not None:
+        if lookup_links:
+            extra_meta["np_lookup_links"] = lookup_links
+        if gmi_articles:
+            extra_meta["gmi_articles"] = gmi_articles
 
     raw_nps = np_clinical + np_mechanistic + np_reference
     if not raw_nps:

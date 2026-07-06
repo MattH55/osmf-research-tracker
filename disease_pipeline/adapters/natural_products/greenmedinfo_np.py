@@ -91,8 +91,8 @@ async def search_greenmedinfo_substances(
     session: aiohttp.ClientSession,
     *,
     options: PipelineOptions | None = None,
-) -> tuple[list[dict], str]:
-    """Return substance records and the GMI search URL used."""
+) -> tuple[list[dict], str, list[dict]]:
+    """Return substance records, GMI search URL, and article references."""
     opts = options or PipelineOptions()
     url = gmi_search_url(identifiers.name)
     html = await fetch_html(
@@ -103,14 +103,22 @@ async def search_greenmedinfo_substances(
         use_cache=opts.use_cache,
     )
     if not html:
-        return [], url
+        return [], url, []
 
     records = _parse_substances(html)[:40]
-    articles = _article_snippets(html)
+    article_rows = []
+    for slug, title in _ARTICLE_RE.findall(html)[:15]:
+        clean = re.sub(r"\s+", " ", title).strip()
+        if clean:
+            article_rows.append({
+                "title": clean,
+                "url": f"{GMI_BASE}/article/{slug.strip('/')}",
+            })
+    articles = [a["title"] for a in article_rows]
     if articles and records:
         summary = "; ".join(articles[:3])
         for rec in records[:5]:
             rec.setdefault("key_findings", summary[:280])
 
     log.info("[GMI] %d substances for '%s'", len(records), identifiers.name)
-    return records, url
+    return records, url, article_rows
