@@ -136,10 +136,13 @@
   <select id="tag" style="margin-left:6px;" onchange="filter()">
     <option value="">All Tags</option>
   </select>
+  <select id="evidence" style="margin-left:6px;" onchange="filter()">
+    <option value="">All Evidence Levels</option>
+  </select>
   <select id="litType" style="margin-left:6px;" onchange="filter()">
     <option value="">All Literature</option>
   </select>
-  <button onclick="document.getElementById('search').value=''; document.getElementById('condition').value=''; document.getElementById('tag').value=''; const lit=document.getElementById('litType'); if (lit) lit.value=''; filter()" style="margin-left:6px;">Clear</button>
+  <button onclick="document.getElementById('search').value=''; document.getElementById('condition').value=''; document.getElementById('tag').value=''; document.getElementById('evidence').value=''; const lit=document.getElementById('litType'); if (lit) lit.value=''; filter()" style="margin-left:6px;">Clear</button>
 </div>
 
 <div id="meta" style="font-size:0.85rem; color:#666; margin-bottom:10px;"></div>
@@ -507,12 +510,13 @@ function renderSummary(data, agents) {
 }
 
 function populateFilters(agents) {
-  const condSet = new Set(), tagSet = new Set(), litSet = new Set();
+  const condSet = new Set(), tagSet = new Set(), litSet = new Set(), evSet = new Set();
   agents.forEach(a => {
     a.conditions.forEach(c => condSet.add(c));
     a.tags.forEach(t => tagSet.add(t));
     a.mechanisms.forEach(m => tagSet.add(m));
     a.studies.forEach(s => litSet.add(s.literatureCategory || classifyLiterature(s)));
+    evSet.add(a.evidence || 'Preliminary');
   });
   const csel = document.getElementById('condition');
   csel.innerHTML = '<option value="">All Conditions</option>';
@@ -524,6 +528,15 @@ function populateFilters(agents) {
   [...tagSet].sort().forEach(t => {
     const o = document.createElement('option'); o.value = t; o.textContent = t; tsel.appendChild(o);
   });
+  const esel = document.getElementById('evidence');
+  if (esel) {
+    esel.innerHTML = '<option value="">All Evidence Levels</option>';
+    ['Strong', 'Moderate', 'Preliminary', 'Anecdotal', 'Theoretical'].forEach(e => {
+      if (evSet.has(e)) {
+        const o = document.createElement('option'); o.value = e; o.textContent = e; esel.appendChild(o);
+      }
+    });
+  }
   const lsel = document.getElementById('litType');
   if (lsel) {
     lsel.innerHTML = '<option value="">All Literature</option>';
@@ -537,6 +550,7 @@ function filter() {
   const term = (document.getElementById('search').value || '').toLowerCase();
   const cond = document.getElementById('condition').value;
   const tag = document.getElementById('tag').value;
+  const evidence = document.getElementById('evidence').value;
   const litType = document.getElementById('litType')?.value || '';
 
   const filtered = renderedAgents.filter(a => {
@@ -545,6 +559,7 @@ function filter() {
     return (!term || hay.includes(term)) &&
       (!cond || a.conditions.includes(cond)) &&
       (!tag || a.tags.includes(tag) || a.mechanisms.includes(tag)) &&
+      (!evidence || a.evidence === evidence) &&
       (!litType || a.studies.some(s => (s.literatureCategory || classifyLiterature(s)) === litType));
   });
   render(filtered);
