@@ -573,7 +573,7 @@ function render(list) {
       .sort((a,b) => b[1] - a[1])
       .map(([cat, n]) => '<span class="lit-chip lit-' + cat + '">' + escape(literatureLabel(cat)) + ' ' + n + '</span>')
       .join('');
-    const litItems = a.studies.slice(0,5).map(s => {
+    const litItems = a.studies.map(s => {
       const href = s.pmid ? 'https://pubmed.ncbi.nlm.nih.gov/' + s.pmid + '/' : '';
       const label = escape((s.title || s.excerpt || 'Literature item').slice(0, 180));
       const prefix = '<span class="lit-chip lit-' + (s.literatureCategory || classifyLiterature(s)) + '">' + escape(literatureLabel(s.literatureCategory || classifyLiterature(s))) + '</span> ';
@@ -593,7 +593,7 @@ function render(list) {
       '<div class="meta"><strong>Mechanisms:</strong> ' + escape(a.mechanisms.slice(0,5).join(', ')) + '</div>' +
       '<div class="meta"><strong>Evidence Level:</strong> ' + evPill + '</div>' +
       relHtml +
-      (a.studies.length ? '<div class="literature-layer"><strong>Published literature:</strong><div class="lit-chips">' + litChips + '</div><div class="literature-list">' + litItems + '</div></div>' : '') +
+      (a.studies.length ? '<div class="literature-layer"><strong>Published literature (' + a.studies.length + ' studies, all linked):</strong><div class="lit-chips">' + litChips + '</div><div class="literature-list">' + litItems + '</div></div>' : '') +
       '<div class="meta"><strong>Key Refs:</strong> ' + escape(a.refs.slice(0,4).join(' | ')) + '</div>' +
       '<div class="meta" style="background:#f8fafc; padding:4px;"><strong>Clinical Notes:</strong> ' + escape(a.notes[0] || '') + '</div>' +
       '<div class="meta" style="font-size:0.75rem;">Source rows: ' + a.sourceAgents.length + ' | Studies: ' + a.studies.length + ' | Trials: ' + a.trials.length + '</div>' +
