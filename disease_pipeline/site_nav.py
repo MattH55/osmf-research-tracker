@@ -24,6 +24,7 @@ GOOGLE_ANALYTICS_SNIPPET = f"""  <!-- Google tag (gtag.js) -->
 SITE_NAV_LINKS = [
     ("../index.html", "Research Tracker"),
     ("index.html", REPURPOS_BRAND, "di"),
+    ("../ntd/index.html", "NTD Intelligence"),
     ("../biomarker-atlas.html", "Biomarkers"),
     ("../chronic-disease-interventions/index.html", "Interventions"),
     ("../clinical_trials.html", "Clinical Trials"),
@@ -33,6 +34,7 @@ SITE_NAV_LINKS = [
 ROOT_NAV_LINKS = [
     ("index.html", "Research Tracker"),
     ("disease-intelligence/index.html", REPURPOS_BRAND),
+    ("ntd/index.html", "NTD Intelligence"),
     ("biomarker-atlas.html", "Biomarkers"),
     ("chronic-disease-interventions/index.html", "Interventions"),
     ("clinical_trials.html", "Clinical Trials"),
