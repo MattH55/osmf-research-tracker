@@ -12,6 +12,7 @@ export function SearchFilters() {
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value);
     else next.delete(key);
+    next.delete("page");
     router.push(`/search?${next.toString()}`);
   }
 

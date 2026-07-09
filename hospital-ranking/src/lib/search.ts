@@ -1,15 +1,18 @@
 import {
   getHospital,
+  getHospitalCount,
   getHospitals,
   getPrice,
   getProcedure,
   getProcedures,
 } from "./data";
-import { distanceMiles, lookupZip, normalizeZip } from "./geo";
+import { distanceMiles, inRadiusBox, lookupZip, normalizeZip } from "./geo";
 import { estimateOop } from "./format";
-import type { InsuranceType, Procedure, SearchParams, SearchResult } from "./types";
+import type { Hospital, InsuranceType, Procedure, SearchParams, SearchResult } from "./types";
 
 const DEFAULT_RADIUS = 50;
+export const DEFAULT_RESULT_LIMIT = 50;
+export const MAX_RESULT_LIMIT = 100;
 
 function matchProcedure(query: string): Procedure | undefined {
   const q = query.trim().toLowerCase();
@@ -31,22 +34,52 @@ function matchProcedure(query: string): Procedure | undefined {
   );
 }
 
-export function searchHospitals(raw: SearchParams): {
+function hospitalCandidates(
+  origin: { lat: number; lng: number } | null,
+  radiusMiles: number,
+): Hospital[] {
+  const all = getHospitals();
+  if (!origin) return all;
+  return all.filter(
+    (h) =>
+      h.latitude &&
+      h.longitude &&
+      inRadiusBox(origin.lat, origin.lng, h.latitude, h.longitude, radiusMiles),
+  );
+}
+
+export function searchHospitals(
+  raw: SearchParams & { limit?: number; offset?: number },
+): {
   results: SearchResult[];
   procedure: Procedure | null;
   zip: string;
   origin: { lat: number; lng: number; city: string; state: string } | null;
   warnings: string[];
+  total: number;
+  limit: number;
+  offset: number;
 } {
   const warnings: string[] = [];
   const procedure = matchProcedure(raw.procedure);
+  const limit = Math.min(
+    Math.max(raw.limit ?? DEFAULT_RESULT_LIMIT, 1),
+    MAX_RESULT_LIMIT,
+  );
+  const offset = Math.max(raw.offset ?? 0, 0);
+
   if (!procedure) {
     return {
       results: [],
       procedure: null,
       zip: normalizeZip(raw.zip),
       origin: null,
-      warnings: ["We couldn't match that procedure. Try knee replacement, cataract surgery, or colonoscopy."],
+      warnings: [
+        "We couldn't match that procedure. Try knee replacement, cataract surgery, or colonoscopy.",
+      ],
+      total: 0,
+      limit,
+      offset,
     };
   }
 
@@ -54,8 +87,18 @@ export function searchHospitals(raw: SearchParams): {
   const origin = lookupZip(zip);
   if (!origin) {
     warnings.push(
-      `ZIP ${zip} isn't in our demo geocoder yet. Showing all sample hospitals — add this ZIP to data/seed/zip-centroids.json or connect a geocoding API.`,
+      `ZIP ${zip} was not found in our geocoder. Try a valid 5-digit U.S. ZIP code.`,
     );
+    return {
+      results: [],
+      procedure,
+      zip,
+      origin: null,
+      warnings,
+      total: 0,
+      limit,
+      offset,
+    };
   }
 
   const radius = raw.radiusMiles ?? DEFAULT_RADIUS;
@@ -63,23 +106,26 @@ export function searchHospitals(raw: SearchParams): {
   const minStars = raw.minStars ?? 0;
   const maxPrice = raw.maxPrice;
 
-  let results: SearchResult[] = getHospitals().map((hospital) => {
-    const price = getPrice(hospital.id, procedure.id) ?? null;
-    const dist = origin
-      ? distanceMiles(origin.lat, origin.lng, hospital.latitude, hospital.longitude)
-      : 0;
-    return {
-      hospital,
-      procedure,
-      price,
-      distanceMiles: dist,
-      estimatedOop: estimateOop(price, insurance),
-    };
-  });
+  let results: SearchResult[] = hospitalCandidates(origin, radius).map(
+    (hospital) => {
+      const price = getPrice(hospital.id, procedure.id) ?? null;
+      const dist = distanceMiles(
+        origin.lat,
+        origin.lng,
+        hospital.latitude,
+        hospital.longitude,
+      );
+      return {
+        hospital,
+        procedure,
+        price,
+        distanceMiles: dist,
+        estimatedOop: estimateOop(price, insurance),
+      };
+    },
+  );
 
-  if (origin) {
-    results = results.filter((r) => r.distanceMiles <= radius);
-  }
+  results = results.filter((r) => r.distanceMiles <= radius);
 
   if (minStars > 0) {
     results = results.filter(
@@ -102,25 +148,37 @@ export function searchHospitals(raw: SearchParams): {
     if (sort === "price") {
       const pa = a.estimatedOop ?? a.price?.cashMedian ?? Infinity;
       const pb = b.estimatedOop ?? b.price?.cashMedian ?? Infinity;
-      return pa - pb;
+      if (pa !== pb) return pa - pb;
+      return a.distanceMiles - b.distanceMiles;
     }
     return a.distanceMiles - b.distanceMiles;
   });
 
-  if (results.length === 0) {
+  const total = results.length;
+
+  if (total === 0) {
     warnings.push(
       "No hospitals matched your filters. Try widening the radius or lowering the quality threshold.",
     );
   }
 
-  const missingPrice = results.filter((r) => !r.price).length;
-  if (missingPrice > 0) {
+  const withPrices = results.filter((r) => r.price).length;
+  if (total > 0 && withPrices < total) {
     warnings.push(
-      `${missingPrice} hospital(s) lack price data for this procedure in our current sample dataset.`,
+      `${total - withPrices} of ${total} result(s) lack procedure price data — CMS quality ratings are shown; prices expand as MRF/Turquoise feeds are added.`,
     );
   }
 
-  return { results, procedure, zip, origin, warnings };
+  return {
+    results: results.slice(offset, offset + limit),
+    procedure,
+    zip,
+    origin,
+    warnings,
+    total,
+    limit,
+    offset,
+  };
 }
 
 export function procedureSuggestions(query: string): Procedure[] {
@@ -133,4 +191,4 @@ export function procedureSuggestions(query: string): Procedure[] {
   );
 }
 
-export { getHospital, getProcedure };
+export { getHospital, getProcedure, getHospitalCount };

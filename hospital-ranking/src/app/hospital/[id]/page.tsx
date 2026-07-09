@@ -66,6 +66,28 @@ export default async function HospitalPage({
             </a>
           </p>
         )}
+        {(hospital.hospitalType || hospital.ownership || hospital.emergencyServices) && (
+          <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600">
+            {hospital.hospitalType && (
+              <div>
+                <dt className="inline font-medium text-slate-700">Type: </dt>
+                <dd className="inline">{hospital.hospitalType}</dd>
+              </div>
+            )}
+            {hospital.ownership && (
+              <div>
+                <dt className="inline font-medium text-slate-700">Ownership: </dt>
+                <dd className="inline">{hospital.ownership}</dd>
+              </div>
+            )}
+            {hospital.emergencyServices && (
+              <div>
+                <dt className="inline font-medium text-slate-700">Emergency services: </dt>
+                <dd className="inline">{hospital.emergencyServices}</dd>
+              </div>
+            )}
+          </dl>
+        )}
       </header>
 
       <Disclaimer />
@@ -152,8 +174,9 @@ export default async function HospitalPage({
             </dl>
           ) : (
             <p className="mt-2 text-sm text-slate-600">
-              We don&apos;t have a price estimate for this procedure at this facility in the
-              current sample dataset.
+              We don&apos;t have a price estimate for this procedure at this facility yet.
+              CMS quality ratings are available; procedure prices expand as MRF/Turquoise
+              feeds are added.
             </p>
           )}
           <p className="mt-3 text-xs text-slate-500">

@@ -2,9 +2,10 @@ import { Suspense } from "react";
 import { Disclaimer } from "@/components/disclaimer";
 import { HospitalResultCard } from "@/components/hospital-result-card";
 import { SearchFilters } from "@/components/search-filters";
+import { SearchPagination } from "@/components/search-pagination";
 import { SearchForm } from "@/components/search-form";
 import { getProcedures } from "@/lib/data";
-import { searchHospitals } from "@/lib/search";
+import { DEFAULT_RESULT_LIMIT, searchHospitals } from "@/lib/search";
 import type { InsuranceType, SearchParams } from "@/lib/types";
 
 function FiltersBar() {
@@ -22,6 +23,8 @@ function parseSearchParams(
     const v = sp[k];
     return Array.isArray(v) ? v[0] : v;
   };
+  const page = Math.max(Number(get("page")) || 1, 1);
+  const limit = DEFAULT_RESULT_LIMIT;
   return {
     procedure: get("procedure") ?? "",
     zip: get("zip") ?? "",
@@ -30,12 +33,31 @@ function parseSearchParams(
     maxPrice: get("maxPrice") ? Number(get("maxPrice")) : undefined,
     insurance: (get("insurance") as InsuranceType) ?? "cash",
     sort: (get("sort") as SearchParams["sort"]) ?? "distance",
+    limit,
+    offset: (page - 1) * limit,
   };
+}
+
+function PaginationBar({
+  total,
+  limit,
+  offset,
+}: {
+  total: number;
+  limit: number;
+  offset: number;
+}) {
+  return (
+    <Suspense fallback={null}>
+      <SearchPagination total={total} limit={limit} offset={offset} />
+    </Suspense>
+  );
 }
 
 function SearchResults({ sp }: { sp: Record<string, string | string[] | undefined> }) {
   const params = parseSearchParams(sp);
-  const { results, procedure, zip, origin, warnings } = searchHospitals(params);
+  const { results, procedure, zip, origin, warnings, total, limit, offset } =
+    searchHospitals(params);
 
   if (!params.procedure || !params.zip) {
     return (
@@ -55,7 +77,13 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
               ? ` near ${origin.city}, ${origin.state} (${zip})`
               : ` · ZIP ${zip}`}
             {" · "}
-            {results.length} {results.length === 1 ? "facility" : "facilities"}
+            {total} {total === 1 ? "facility" : "facilities"} found
+            {total > results.length && (
+              <span className="text-teal-800/70">
+                {" "}
+                (showing {results.length} on this page)
+              </span>
+            )}
           </p>
           <p className="mt-1 text-xs text-teal-800/80">{procedure.description}</p>
         </div>
@@ -76,6 +104,8 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
           <HospitalResultCard key={r.hospital.id} result={r} />
         ))}
       </div>
+
+      <PaginationBar total={total} limit={limit} offset={offset} />
     </div>
   );
 }

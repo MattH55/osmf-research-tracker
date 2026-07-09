@@ -14,6 +14,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const page = Math.max(Number(sp.get("page")) || 1, 1);
+  const limit = sp.get("limit") ? Number(sp.get("limit")) : undefined;
+  const offset = sp.get("offset")
+    ? Number(sp.get("offset"))
+    : limit
+      ? (page - 1) * limit
+      : undefined;
+
   const { results, warnings, ...meta } = searchHospitals({
     procedure,
     zip,
@@ -22,11 +30,14 @@ export async function GET(request: NextRequest) {
     maxPrice: sp.get("maxPrice") ? Number(sp.get("maxPrice")) : undefined,
     insurance: (sp.get("insurance") as InsuranceType) ?? "cash",
     sort: (sp.get("sort") as "distance" | "price" | "quality") ?? "distance",
+    limit,
+    offset,
   });
 
   return NextResponse.json({
     ...meta,
     count: results.length,
+    page: Math.floor(meta.offset / meta.limit) + 1,
     warnings,
     results: results.map((r) => ({
       hospitalId: r.hospital.id,

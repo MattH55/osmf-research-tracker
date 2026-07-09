@@ -1,11 +1,14 @@
 import { Disclaimer } from "@/components/disclaimer";
-import { DATA_VINTAGE, PRICE_VINTAGE } from "@/lib/data";
+import { DATA_VINTAGE, getDataMeta, getHospitalCount, PRICE_VINTAGE } from "@/lib/data";
 
 export const metadata = {
   title: "About & data sources",
 };
 
 export default function AboutPage() {
+  const meta = getDataMeta();
+  const hospitalCount = meta.hospitalCount ?? getHospitalCount();
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <h1 className="text-3xl font-bold text-slate-900">About HospitalCompare</h1>
@@ -30,8 +33,13 @@ export default function AboutPage() {
               >
                 CMS Provider Data Catalog
               </a>{" "}
-              — Overall Hospital Quality Star Rating, HCAHPS, readmissions (vintage{" "}
-              {DATA_VINTAGE} in demo).
+              — Overall Hospital Quality Star Rating, readmissions, and safety measures for{" "}
+              {hospitalCount.toLocaleString()} U.S. hospitals (vintage {DATA_VINTAGE}).
+            </li>
+            <li>
+              <strong>Coverage:</strong> Acute care, critical access, children&apos;s,
+              psychiatric, long-term, rural emergency, VA, and DoD facilities from CMS
+              Hospital General Information.
             </li>
             <li>
               <strong>Prices:</strong> Hospital Machine-Readable Files (CMS Hospital Price
@@ -44,7 +52,8 @@ export default function AboutPage() {
               >
                 Turquoise Health
               </a>
-              . MVP uses illustrative sample prices ({PRICE_VINTAGE}).
+              . Most hospitals show quality only today; a small sample has illustrative
+              prices ({PRICE_VINTAGE}) while MRF ingestion is built out.
             </li>
             <li>
               <strong>Procedures:</strong> CPT / DRG mapping for CMS shoppable services and

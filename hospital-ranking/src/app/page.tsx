@@ -1,6 +1,6 @@
 import { Disclaimer } from "@/components/disclaimer";
 import { SearchForm } from "@/components/search-form";
-import { getProcedures } from "@/lib/data";
+import { getDataMeta, getHospitalCount, getProcedures } from "@/lib/data";
 import Link from "next/link";
 
 const FEATURED = [
@@ -12,6 +12,8 @@ const FEATURED = [
 
 export default function HomePage() {
   const procedures = getProcedures();
+  const meta = getDataMeta();
+  const hospitalCount = meta.hospitalCount ?? getHospitalCount();
 
   return (
     <div>
@@ -24,8 +26,12 @@ export default function HomePage() {
             Shop smarter for hospital care
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600">
-            Compare CMS quality ratings with cash and insured price estimates for
-            common elective procedures — all in plain language.
+            Compare CMS quality ratings across{" "}
+            <span className="font-medium text-slate-800">
+              {hospitalCount.toLocaleString()} U.S. hospitals
+            </span>{" "}
+            with cash and insured price estimates for common elective procedures — all in
+            plain language.
           </p>
         </div>
         <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">

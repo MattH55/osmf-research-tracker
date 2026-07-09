@@ -17,6 +17,9 @@ export interface Hospital {
   id: string;
   cmsProviderId?: string;
   npi?: string;
+  hospitalType?: string;
+  ownership?: string;
+  emergencyServices?: string;
   name: string;
   address: string;
   city: string;
@@ -68,6 +71,8 @@ export interface SearchParams {
   maxPrice?: number;
   insurance?: InsuranceType;
   sort?: "distance" | "price" | "quality";
+  limit?: number;
+  offset?: number;
 }
 
 export interface ZipCentroid {

@@ -1,16 +1,50 @@
-import zipCentroids from "../../data/seed/zip-centroids.json";
+import { existsSync, readFileSync } from "fs";
+import path from "path";
+import seedZips from "../../data/seed/zip-centroids.json";
 import type { ZipCentroid } from "./types";
 
 const EARTH_RADIUS_MI = 3958.8;
 
+let _zipIndex: Record<string, ZipCentroid> | null = null;
+
+function loadZipIndex(): Record<string, ZipCentroid> {
+  if (_zipIndex) return _zipIndex;
+  const cmsPath = path.join(process.cwd(), "data", "cms", "zip-centroids.json");
+  if (existsSync(cmsPath)) {
+    _zipIndex = JSON.parse(readFileSync(cmsPath, "utf-8")) as Record<
+      string,
+      ZipCentroid
+    >;
+  } else {
+    _zipIndex = seedZips as Record<string, ZipCentroid>;
+  }
+  return _zipIndex;
+}
+
 export function normalizeZip(zip: string): string {
-  return zip.replace(/\D/g, "").slice(0, 5);
+  return zip.replace(/\D/g, "").slice(0, 5).padStart(5, "0");
 }
 
 export function lookupZip(zip: string): ZipCentroid | null {
   const key = normalizeZip(zip);
-  const hit = (zipCentroids as Record<string, ZipCentroid>)[key];
-  return hit ?? null;
+  return loadZipIndex()[key] ?? null;
+}
+
+/** Rough bounding-box check before haversine (radius in miles). */
+export function inRadiusBox(
+  lat: number,
+  lng: number,
+  pointLat: number,
+  pointLng: number,
+  radiusMiles: number,
+): boolean {
+  if (!pointLat || !pointLng) return false;
+  const latDelta = radiusMiles / 69;
+  const lngDelta = radiusMiles / (69 * Math.cos((lat * Math.PI) / 180));
+  return (
+    Math.abs(pointLat - lat) <= latDelta &&
+    Math.abs(pointLng - lng) <= lngDelta
+  );
 }
 
 /** Haversine distance in miles between two lat/lng points. */
