@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -1077,9 +1082,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (50)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (25)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (40)</button>
@@ -1093,7 +1104,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABCIXIMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1104,7 +1115,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1115,7 +1126,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ADALIMUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1126,7 +1137,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALBUTREPENONACOG ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1137,7 +1148,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL5315076/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL5315076" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALTEPLASE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1148,7 +1159,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1159,7 +1170,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANDEXANET ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1170,7 +1181,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANIFROLUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1181,7 +1192,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANISTREPLASE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1192,7 +1203,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTIHEMOPHILIC FACTOR (RECOMBINANT) PEGYLATED-EXEI</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1207,7 +1218,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTIHEMOPHILIC FACTOR, PEGYLATED (MW 20000) HUMAN SEQUENCE RECOMBINANT</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1222,7 +1233,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4594584/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4594584" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTITHROMBIN ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1233,7 +1244,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1201554/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1201554" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTITHROMBIN III</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1244,7 +1255,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIXABAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1255,7 +1266,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1266,7 +1277,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZATHIOPRINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1277,7 +1288,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETRIXABAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1288,7 +1299,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1299,7 +1310,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARBACHOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1310,7 +1321,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL14/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL14" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CIPROFLOXACIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1321,7 +1332,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL8/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL8" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CLOMIPRAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1332,7 +1343,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL415/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL415" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX (RECOMBINANT), GLYCOPEGYLATED</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1343,7 +1354,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX HUMAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1354,7 +1365,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4297986/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4297986" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX RECOMBINANT HUMAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1365,7 +1376,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2109205/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2109205" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR VII HUMAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1376,7 +1387,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL6068490/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL6068490" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR VIIA (RECOMBINANT)-JNCW</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1387,7 +1398,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR X HUMAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1398,7 +1409,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4297951/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4297951" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR X, HUMAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1409,7 +1420,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COLLAGENASE CLOSTRIDIUM HISTOLYTICUM</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1424,7 +1435,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COUMARIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1435,7 +1446,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>DAMOCTOCOG ALFA PEGOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1450,7 +1461,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL5315069/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL5315069" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DANAPAROID</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1461,7 +1472,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>DESMOPRESSIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1476,7 +1487,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DEXAMETHASONE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1487,7 +1498,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DIAZEPAM</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1498,7 +1509,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL12/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL12" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DICHLORPHENAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1509,7 +1520,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL17/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL17" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DIETHYLSTILBESTROL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1520,7 +1531,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL411/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL411" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DROTRECOGIN ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1535,7 +1546,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EDOXABAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1546,7 +1557,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EDOXABAN TOSYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1557,7 +1568,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2105682/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2105682" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>EFANESOCTOCOG ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1572,7 +1583,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL5095275/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL5095275" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>EFMOROCTOCOG ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1587,7 +1598,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EFTRENONACOG ALFA</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1598,7 +1609,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4594598/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4594598" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EMICIZUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1609,7 +1620,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPIRUBICIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1620,7 +1631,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL417/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL417" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPTACOG ALFA (ACTIVATED)</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1631,7 +1642,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2108334/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2108334" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPTACOG BETA (ACTIVATED)</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1642,7 +1653,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL5315078/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL5315078" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPTIFIBATIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1653,7 +1664,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ETHOXZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1664,7 +1675,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL18/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL18" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ETRANACOGENE DEZAPARVOVEC</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1685,7 +1696,7 @@
           <th>Score</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX RECOMBINANT HUMAN</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1696,7 +1707,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109205/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109205" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EFTRENONACOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1707,7 +1718,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4594598/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4594598" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FITUSIRAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1718,7 +1729,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297754/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297754" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPTACOG ALFA (ACTIVATED)</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1729,7 +1740,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108334/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108334" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARC-19499</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1740,7 +1751,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297890/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297890" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BAY-1093884</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1751,7 +1762,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297904/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297904" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MARZEPTACOG ALFA (ACTIVATED)</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1762,7 +1773,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4298072/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4298072" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTIHEMOPHILIC FACTOR, PEGYLATED (MW 20000) HUMAN SEQUENCE RECOMBINANT</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1773,7 +1784,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4594584/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4594584" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIXABAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1784,7 +1795,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL231779/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL231779" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX HUMAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1795,7 +1806,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297986/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297986" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CONCIZUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1806,7 +1817,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297730/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297730" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DAMOCTOCOG ALFA PEGOL</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1817,7 +1828,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5315069/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5315069" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EFANESOCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1828,7 +1839,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095275/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095275" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EFMOROCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1839,7 +1850,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297945/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297945" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LONOCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1850,7 +1861,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4594603/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4594603" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MARSTACIMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1861,7 +1872,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3990039/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3990039" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MOROCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1872,7 +1883,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109137/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109137" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>OCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1883,7 +1894,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297873/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297873" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>RIVAROXABAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1894,7 +1905,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL198362/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL198362" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SIMOCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1905,7 +1916,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108319/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108319" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SUSOCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1916,7 +1927,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5315075/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5315075" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TUROCTOCOG ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1927,7 +1938,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108286/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108286" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>VALOCTOCOGENE ROXAPARVOVEC</strong>   
             </td>
           <td class="muted">Gene therapy</td>
@@ -1938,7 +1949,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297579/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297579" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>VITAMIN K</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1949,7 +1960,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201519/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201519" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>VON WILLEBRAND FACTOR HUMAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1970,7 +1981,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABCIXIMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via FGA</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -1981,7 +1992,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -1992,7 +2003,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ADALIMUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CRP</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2003,7 +2014,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALBUTREPENONACOG ALFA</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2014,7 +2025,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL5315076/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL5315076" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALTEPLASE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via FGA</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2025,7 +2036,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2036,7 +2047,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANDEXANET ALFA</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2047,7 +2058,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANIFROLUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via IFNAR2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2058,7 +2069,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANISTREPLASE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via FGA</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2069,7 +2080,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTIHEMOPHILIC FACTOR (RECOMBINANT) PEGYLATED-EXEI</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F8</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2084,7 +2095,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTIHEMOPHILIC FACTOR, PEGYLATED (MW 20000) HUMAN SEQUENCE RECOMBINANT</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F8</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2099,7 +2110,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4594584/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4594584" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTITHROMBIN ALFA</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2110,7 +2121,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1201554/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1201554" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTITHROMBIN III</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2121,7 +2132,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIXABAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2132,7 +2143,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via FAU</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2143,7 +2154,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZATHIOPRINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2154,7 +2165,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETRIXABAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2165,7 +2176,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2176,7 +2187,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARBACHOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2187,7 +2198,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL14/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL14" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CIPROFLOXACIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2198,7 +2209,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL8/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL8" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CLOMIPRAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2209,7 +2220,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL415/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL415" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX (RECOMBINANT), GLYCOPEGYLATED</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2220,7 +2231,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX HUMAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2231,7 +2242,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4297986/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4297986" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR IX RECOMBINANT HUMAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2242,7 +2253,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2109205/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2109205" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR VII HUMAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F7</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2253,7 +2264,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL6068490/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL6068490" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR VIIA (RECOMBINANT)-JNCW</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F7</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2264,7 +2275,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR X HUMAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2275,7 +2286,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4297951/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4297951" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COAGULATION FACTOR X, HUMAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2286,7 +2297,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COLLAGENASE CLOSTRIDIUM HISTOLYTICUM</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via COL4A1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2301,7 +2312,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>COUMARIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2312,7 +2323,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>DAMOCTOCOG ALFA PEGOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F8</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2327,7 +2338,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL5315069/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL5315069" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DANAPAROID</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2338,7 +2349,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>DESMOPRESSIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F8</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2353,7 +2364,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DEXAMETHASONE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F9</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2364,7 +2375,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DIAZEPAM</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2375,7 +2386,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL12/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL12" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DICHLORPHENAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2386,7 +2397,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL17/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL17" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DIETHYLSTILBESTROL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACVRL1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2397,7 +2408,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL411/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL411" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DROTRECOGIN ALFA</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F8</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2412,7 +2423,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EDOXABAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2423,7 +2434,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EDOXABAN TOSYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via F10</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2442,8 +2453,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">1 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">1 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/hemophilia-0" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/search/?q=hemophilia" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -2452,7 +2469,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Kefir</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35252176/" target="_blank" rel="noopener" title="Therapeutic effects of kefir peptides on hemophilia-induced osteoporosis.">Therapeutic effects of kefir peptides on hemophilia-induced osteoporosi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2497,6 +2514,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>

@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -1077,9 +1082,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (50)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (40)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (40)</button>
@@ -1093,7 +1104,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>3,3&#x27;,4&#x27;,5-TETRACHLOROSALICYLANILIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1104,7 +1115,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL291338/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL291338" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABIRATERONE ACETATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1115,7 +1126,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1126,7 +1137,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1137,7 +1148,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AFATINIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1148,7 +1159,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOFENAC</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1159,7 +1170,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL94081/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL94081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOMETASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1170,7 +1181,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMCINONIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1181,7 +1192,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMDINOCILLIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1192,7 +1203,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1203,7 +1214,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1083993/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1083993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLEXANOX</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1214,7 +1225,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1225,7 +1236,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1236,7 +1247,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANHYDROUS TACROLIMUS</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1247,7 +1258,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1258,7 +1269,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1269,7 +1280,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APREMILAST</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1280,7 +1291,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASTEMIZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1291,7 +1302,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1302,7 +1313,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATEZOLIZUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1317,7 +1328,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATRACURIUM BESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1328,7 +1339,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1339,7 +1350,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZACITIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1350,7 +1361,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZARIBINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1361,7 +1372,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL515914/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL515914" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BECLOMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1372,7 +1383,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENAZEPRIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1383,7 +1394,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1694/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENORILATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1394,7 +1405,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL162036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL162036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1405,7 +1416,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1416,7 +1427,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200384/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE SODIUM PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1427,7 +1438,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200762/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200762" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE VALERATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1438,7 +1449,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1497/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1497" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1453,7 +1464,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1464,7 +1475,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BIFONAZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1475,7 +1486,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISACODYL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1486,7 +1497,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITHIONOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1497,7 +1508,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITHIONOLATE SODIUM</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1508,7 +1519,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1447476/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1447476" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1519,7 +1530,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1530,7 +1541,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE MESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1541,7 +1552,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200503/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200503" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BUPRENORPHINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1552,7 +1563,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2368861/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2368861" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BUTAMBEN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1563,7 +1574,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL127516/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL127516" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CAFFEINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1574,7 +1585,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CALCIFEDIOL ANHYDROUS</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1585,7 +1596,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CALCIPOTRIENE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1596,7 +1607,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CALCITRIOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1607,7 +1618,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANDESARTAN CILEXETIL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1618,7 +1629,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANRENONE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1629,7 +1640,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CAPIVASERTIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1640,7 +1651,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARBACHOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1661,7 +1672,7 @@
           <th>Score</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASOPRISNIL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1672,7 +1683,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL267431/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL267431" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANNABIDIOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1683,7 +1694,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL190461/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL190461" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHORIOGONADOTROPIN ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1694,7 +1705,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201464/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201464" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYPROTERONE ACETATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1705,7 +1716,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL139835/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL139835" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DEGARELIX</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1716,7 +1727,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL415606/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL415606" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DYDROGESTERONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1727,7 +1738,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200853/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200853" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ELAGOLIX</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1738,7 +1749,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1208155/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1208155" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESKETAMINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1749,7 +1760,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL395091/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL395091" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESTRADIOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1760,7 +1771,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL135/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL135" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GONADORELIN</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1771,7 +1782,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1007/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1007" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GONADORELIN ACETATE</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1782,7 +1793,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200511/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200511" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GONADOTROPIN, CHORIONIC</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1793,7 +1804,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201509/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201509" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>INDOLE-3-CARBINOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1804,7 +1815,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL155625/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL155625" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LEUPROLIDE</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1815,7 +1826,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201199/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201199" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LEUPROLIDE ACETATE</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1826,7 +1837,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200775/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200775" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LEVONORGESTREL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1837,7 +1848,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1389/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1389" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LINZAGOLIX</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1848,7 +1859,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3668014/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3668014" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MENOTROPINS</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1859,7 +1870,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108427/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108427" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>NALTREXONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1870,7 +1881,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL19019/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL19019" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>PENTOXIFYLLINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1881,7 +1892,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL628/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL628" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>PROGESTERONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1892,7 +1903,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL103/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL103" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>RELUGOLIX</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1903,7 +1914,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1800159/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1800159" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SEGESTERONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1914,7 +1925,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2107778/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2107778" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SEGESTERONE ACETATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1925,7 +1936,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3707377/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3707377" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TRIPTORELIN</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1936,7 +1947,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201334/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201334" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TRIPTORELIN ACETATE</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1947,7 +1958,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5315073/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5315073" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TRIPTORELIN PAMOATE</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1958,7 +1969,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200554/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200554" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANASTROZOLE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1969,7 +1980,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1399/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1399" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASCORBIC ACID</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1980,7 +1991,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL196/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL196" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATOSIBAN</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1991,7 +2002,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL382301/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL382301" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENTAMAPIMOD</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2002,7 +2013,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3545213/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3545213" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CABERGOLINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2013,7 +2024,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201087/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201087" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CETRORELIX</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2024,7 +2035,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200490/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200490" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ELIAPIXANT</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2035,7 +2046,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095224/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095224" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESTROGEN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2046,7 +2057,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL592868/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL592868" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESTROGENS, CONJUGATED</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2057,7 +2068,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201649/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201649" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ETONOGESTREL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2068,7 +2079,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1531/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1531" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FILGRASTIM</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2079,7 +2090,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201567/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201567" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GESTRINONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2090,7 +2101,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1868702/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1868702" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>INFLIXIMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2111,7 +2122,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>3,3&#x27;,4&#x27;,5-TETRACHLOROSALICYLANILIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2122,7 +2133,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL291338/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL291338" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABIRATERONE ACETATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2133,7 +2144,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ABO</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2144,7 +2155,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2155,7 +2166,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AFATINIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AKT1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2166,7 +2177,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOFENAC</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2177,7 +2188,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL94081/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL94081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOMETASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2188,7 +2199,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMCINONIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2199,7 +2210,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMDINOCILLIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2210,7 +2221,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2221,7 +2232,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1083993/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1083993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLEXANOX</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2232,7 +2243,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2243,7 +2254,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ABO</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2254,7 +2265,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANHYDROUS TACROLIMUS</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2265,7 +2276,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2276,7 +2287,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2287,7 +2298,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APREMILAST</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CDKN2B</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2298,7 +2309,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASTEMIZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2309,7 +2320,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2320,7 +2331,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATEZOLIZUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ARID1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2335,7 +2346,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATRACURIUM BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2346,7 +2357,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2357,7 +2368,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZACITIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2368,7 +2379,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZARIBINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2379,7 +2390,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL515914/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL515914" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BECLOMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2390,7 +2401,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENAZEPRIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2401,7 +2412,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1694/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENORILATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2412,7 +2423,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL162036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL162036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2423,7 +2434,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2434,7 +2445,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200384/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE SODIUM PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2445,7 +2456,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200762/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200762" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE VALERATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2456,7 +2467,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1497/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1497" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2471,7 +2482,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ABO</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2482,7 +2493,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BIFONAZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2493,7 +2504,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISACODYL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2504,7 +2515,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITHIONOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2515,7 +2526,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITHIONOLATE SODIUM</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2526,7 +2537,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1447476/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1447476" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2537,7 +2548,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2548,7 +2559,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE MESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2567,8 +2578,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">81 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">81 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/endometriosis" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/conditions/endometriosis/" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -2577,7 +2594,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin D3</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32453393/" target="_blank" rel="noopener" title="Supplementation with vitamin D or ω-3 fatty acids in adolescent girls and young women with endometriosis (SAGE): a double-blind, randomized, placebo-controlled trial">Supplementation with vitamin D or ω-3 fatty acids in adolescent girls a…</a></li><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38221738/" target="_blank" rel="noopener" title="Dietary antioxidant supplementation seems to beneficially impact the severity of endometriosis-related dysmenorrhea.">Dietary antioxidant supplementation seems to beneficially impact the se…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38215179/" target="_blank" rel="noopener" title="Association between vitamin D and endometriosis among American women.">Association between vitamin D and endometriosis among American women.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2592,7 +2609,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280795" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-d" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/vitamin-d/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Omega-3 Fatty Acids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta-analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40273491/" target="_blank" rel="noopener" title="Effect of omega-3 polyunsaturated fatty acid on endometriosis">Effect of omega-3 polyunsaturated fatty acid on endometriosis</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20332166/" target="_blank" rel="noopener" title="Higher omega-3 fatty acid consumption is associated with a reduced risk for endometriosis.">Higher omega-3 fatty acid consumption is associated with a reduced risk…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32453393/" target="_blank" rel="noopener" title="Supplementation with vitamin D or ω-3 fatty acids in adolescent girls and young women with endometriosis.">Supplementation with vitamin D or ω-3 fatty acids in adolescent girls a…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2607,7 +2624,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/446284" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/omega-3-fatty-acids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/fish-oil/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin D3</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32453393/" target="_blank" rel="noopener" title="Supplementation with vitamin D or ω-3 fatty acids in adolescent girls and young women with endometriosis (SAGE): a double-blind, randomized, placebo-controlled trial">Supplementation with vitamin D or ω-3 fatty acids in adolescent girls a…</a></li><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37644533/" target="_blank" rel="noopener" title="Antioxidant vitamins supplementation reduce endometriosis related pelvic pain.">Antioxidant vitamins supplementation reduce endometriosis related pelvi…</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38820340/" target="_blank" rel="noopener" title="Vitamin C and E antioxidant supplementation may significantly reduce pain symptoms in endometriosis.">Vitamin C and E antioxidant supplementation may significantly reduce pa…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2622,7 +2639,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280795" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/vitamin-d/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Melatonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41462252/" target="_blank" rel="noopener" title="Efficacy of antioxidant supplementation in alleviating endometriosis-related pain: insights from a systematic review and meta-analysis of RCTs">Efficacy of antioxidant supplementation in alleviating endometriosis-re…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32481415/" target="_blank" rel="noopener" title="Effect of melatonin for the management of endometriosis: A protocol of systematic review and meta-analysis">Effect of melatonin for the management of endometriosis: A protocol of…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27000311/" target="_blank" rel="noopener" title="Dietary supplements for dysmenorrhoea">Dietary supplements for dysmenorrhoea</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2637,7 +2654,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/896" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/melatonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/melatonin/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Omega-3 Fatty Acids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta-analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40273491/" target="_blank" rel="noopener" title="Effect of omega-3 polyunsaturated fatty acid on endometriosis">Effect of omega-3 polyunsaturated fatty acid on endometriosis</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20332166/" target="_blank" rel="noopener" title="Higher omega-3 fatty acid consumption is associated with a reduced risk for endometriosis.">Higher omega-3 fatty acid consumption is associated with a reduced risk…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32453393/" target="_blank" rel="noopener" title="Supplementation with vitamin D or ω-3 fatty acids in adolescent girls and young women with endometriosis.">Supplementation with vitamin D or ω-3 fatty acids in adolescent girls a…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2652,7 +2669,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/446284" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/fish-oil/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Melatonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41462252/" target="_blank" rel="noopener" title="Efficacy of antioxidant supplementation in alleviating endometriosis-related pain: insights from a systematic review and meta-analysis of RCTs">Efficacy of antioxidant supplementation in alleviating endometriosis-re…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32481415/" target="_blank" rel="noopener" title="Effect of melatonin for the management of endometriosis: A protocol of systematic review and meta-analysis">Effect of melatonin for the management of endometriosis: A protocol of…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27000311/" target="_blank" rel="noopener" title="Dietary supplements for dysmenorrhoea">Dietary supplements for dysmenorrhoea</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2667,7 +2684,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/896" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/melatonin/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin C</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37644533/" target="_blank" rel="noopener" title="Antioxidant vitamins supplementation reduce endometriosis related pelvic pain.">Antioxidant vitamins supplementation reduce endometriosis related pelvi…</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38820340/" target="_blank" rel="noopener" title="Vitamin C and E antioxidant supplementation may significantly reduce pain symptoms in endometriosis.">Vitamin C and E antioxidant supplementation may significantly reduce pa…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/22728166/" target="_blank" rel="noopener" title="Antioxidant supplementation reduces endometriosis-related pelvic pain in humans.">Antioxidant supplementation reduces endometriosis-related pelvic pain i…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2682,7 +2699,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/54670067" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-c" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin E</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34122682/" target="_blank" rel="noopener" title="The Effect of Combined Vitamin C and Vitamin E Supplementation on Oxidative Stress Markers in Women with Endometriosis: A Randomized, Triple-Blind Placebo-Controlled Clinical Trial">The Effect of Combined Vitamin C and Vitamin E Supplementation on Oxida…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/22728166/" target="_blank" rel="noopener" title="Antioxidant supplementation reduces endometriosis-related pelvic pain in humans">Antioxidant supplementation reduces endometriosis-related pelvic pain i…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19476631/" target="_blank" rel="noopener" title="Women with endometriosis improved their peripheral antioxidant markers after the application of a high antioxidant diet">Women with endometriosis improved their peripheral antioxidant markers…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2697,7 +2714,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/14985" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-e" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>N-Acetylcysteine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41663453/" target="_blank" rel="noopener" title="Administration of N-acetylcysteine influence the expression of apoptotic genes in the granulosa cells of infertile women diagnosed with endometriosis">Administration of N-acetylcysteine influence the expression of apoptoti…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34994286/" target="_blank" rel="noopener" title="Comparing the effect of adjunctive N-acetylcysteine plus low dose contraceptive with low dose contraceptive alone on recurrence of ovarian endometrioma and chronic pelvic pain after conservative laparoscopic surgery: a randomised clinical trial study">Comparing the effect of adjunctive N-acetylcysteine plus low dose contr…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36981595/" target="_blank" rel="noopener" title="Oral NAC improves endometriosis-related pain and the size of endometriomas.">Oral NAC improves endometriosis-related pain and the size of endometrio…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2712,7 +2729,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/12035" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/nac-n-acetyl-l-cysteine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Zinc</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16634350/" target="_blank" rel="noopener" title="Deficient intake of antioxidants is associated with an intensification of endometriosis severity.">Deficient intake of antioxidants is associated with an intensification…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35315418/" target="_blank" rel="noopener" title="A review of dietary supplements for treatment of endometriosis.">A review of dietary supplements for treatment of endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2727,7 +2744,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/23994" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/zinc" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Ginger</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27000311/" target="_blank" rel="noopener" title="Dietary supplements for dysmenorrhoea">Dietary supplements for dysmenorrhoea</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41303437/" target="_blank" rel="noopener" title="Mechanistic insights into the anti-inflammatory and anti-proliferative effects of selected medicinal plants in endometriosis.">Mechanistic insights into the anti-inflammatory and anti-proliferative…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32827666/" target="_blank" rel="noopener" title="Nutritional implications of ginger: chemistry, biological activities and signaling pathways.">Nutritional implications of ginger: chemistry, biological activities an…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2742,7 +2759,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/442793" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/ginger" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin K</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37644533/" target="_blank" rel="noopener" title="Antioxidant vitamins supplementation reduce endometriosis related pelvic pain.">Antioxidant vitamins supplementation reduce endometriosis related pelvi…</a></li><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38221738/" target="_blank" rel="noopener" title="Dietary antioxidant supplementation seems to beneficially impact the severity of endometriosis-related dysmenorrhea.">Dietary antioxidant supplementation seems to beneficially impact the se…</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38820340/" target="_blank" rel="noopener" title="Vitamin C and E antioxidant supplementation may significantly reduce pain symptoms in endometriosis.">Vitamin C and E antioxidant supplementation may significantly reduce pa…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2757,7 +2774,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5284607" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-k" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Resveratrol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33387724/" target="_blank" rel="noopener" title="Resveratrol lowers VEGF and TNF-α 2 expression in endometriosis women.">Resveratrol lowers VEGF and TNF-α 2 expression in endometriosis women.</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23536571/" target="_blank" rel="noopener" title="Regression of endometrial implants by resveratrol in an experimentally induced endometriosis model.">Regression of endometrial implants by resveratrol in an experimentally…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25462211/" target="_blank" rel="noopener" title="Resveratrol alone is a potential agent for the treatment of endometriosis and may be an alternative to leuprolide acetate.">Resveratrol alone is a potential agent for the treatment of endometrios…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2772,7 +2789,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/445154" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/resveratrol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Curcumin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40088332/" target="_blank" rel="noopener" title="Nanomicelle curcumin improves oxidative stress, inflammatory markers, and assisted reproductive techniques outcomes in endometriosis cases.">Nanomicelle curcumin improves oxidative stress, inflammatory markers, a…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21069258/" target="_blank" rel="noopener" title="Curcumin exhibits potentially therapeutic properties in a rat experimental model of endometriosis.">Curcumin exhibits potentially therapeutic properties in a rat experimen…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35559378/" target="_blank" rel="noopener" title="Curcumin treats endometriosis in mice by the HIF signaling pathway.">Curcumin treats endometriosis in mice by the HIF signaling pathway.</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2787,7 +2804,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/969516" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/turmeric" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Quercetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35583746/" target="_blank" rel="noopener" title="Impact of curcumin, quercetin, or resveratrol on the pathophysiology of endometriosis: A systematic review">Impact of curcumin, quercetin, or resveratrol on the pathophysiology of…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32921020/" target="_blank" rel="noopener" title="Effectiveness of the integration of quercetin, turmeric, and N-acetylcysteine in reducing inflammation and pain associated with endometriosis.">Effectiveness of the integration of quercetin, turmeric, and N-acetylcy…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37652054/" target="_blank" rel="noopener" title="Flavonoids quercetin and kaempferol are NR4A1 antagonists and suppress endometriosis.">Flavonoids quercetin and kaempferol are NR4A1 antagonists and suppress…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2802,7 +2819,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280343" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/quercetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Feverfew</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23876538/" target="_blank" rel="noopener" title="Parthenolide reduces cell proliferation and prostaglandin E2 [corrected] in human endometriotic stromal cells and inhibits development of endometriosis.">Parthenolide reduces cell proliferation and prostaglandin E2 [corrected…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37633416/" target="_blank" rel="noopener" title="Parthenolide repressed endometriosis.">Parthenolide repressed endometriosis.</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33124671/" target="_blank" rel="noopener" title="Plants as source of new therapies for endometriosis: a review of preclinical and clinical studies.">Plants as source of new therapies for endometriosis: a review of precli…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2817,7 +2834,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/72513" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/parthenolide" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Boswellia</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37168676/" target="_blank" rel="noopener" title="Frankincense ameliorates endometriosis via inducing apoptosis and reducing adhesion.">Frankincense ameliorates endometriosis via inducing apoptosis and reduc…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36499679/" target="_blank" rel="noopener" title="Regulation of apoptosis and oxidative stress by oral Boswellia serrata gum resin extract in a model of endometriosis.">Regulation of apoptosis and oxidative stress by oral Boswellia serrata…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19403929/" target="_blank" rel="noopener" title="A botanical extract inhibits cell proliferation, induces apoptosis, and suppresses CCL5 in human endometriotic stromal cells.">A botanical extract inhibits cell proliferation, induces apoptosis, and…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2832,7 +2849,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/6917974" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/boswellia" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Egcg</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19088106/" target="_blank" rel="noopener" title="Anti-angiogenic effects of green tea catechin on an experimental endometriosis model.">Anti-angiogenic effects of green tea catechin on an experimental endome…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28322293/" target="_blank" rel="noopener" title="Tea polyphenols inhibit the growth and virulence properties of Fusobacterium nucleatum.">Tea polyphenols inhibit the growth and virulence properties of Fusobact…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2847,7 +2864,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/65064" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/green-tea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Alpha-Lipoic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33345661/" target="_blank" rel="noopener" title="The role of alpha lipoic acid in female and male infertility: a systematic review">The role of alpha lipoic acid in female and male infertility: a systema…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34022075/" target="_blank" rel="noopener" title="Alpha-linolenic acid regulates the gut microbiota and the inflammatory environment in a model of endometriosis.">Alpha-linolenic acid regulates the gut microbiota and the inflammatory…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20813690/" target="_blank" rel="noopener" title="Sinomenine can inhibit the production and activity of TNF-alpha and NF-kappaB to suppress the adhesion, implantation, infiltration and growth of the endometrial cells in the rat model of endometriosis.">Sinomenine can inhibit the production and activity of TNF-alpha and NF-…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2862,7 +2879,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/6112" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/alpha-lipoic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Probiotics</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35315418/" target="_blank" rel="noopener" title="A review of dietary supplements for treatment of endometriosis.">A review of dietary supplements for treatment of endometriosis.</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38139822/" target="_blank" rel="noopener" title="Gut microbiota and endometriosis: exploring the relationship and therapeutic implications.">Gut microbiota and endometriosis: exploring the relationship and therap…</a></li></ul></td>
           <td class="muted">Probiotic</td>
@@ -2877,7 +2894,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/probiotics" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Selenium</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16634350/" target="_blank" rel="noopener" title="Deficient intake of antioxidants is associated with an intensification of endometriosis severity.">Deficient intake of antioxidants is associated with an intensification…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2888,7 +2905,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/6326970" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/selenium" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Silymarin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36266431/" target="_blank" rel="noopener" title="Silymarin significantly reduced interleukin-6 levels, sizes of endometrioma lesions, and pain-related symptoms.">Silymarin significantly reduced interleukin-6 levels, sizes of endometr…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2899,7 +2916,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5213" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/silymarin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Sulforaphane</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31217757/" target="_blank" rel="noopener" title="Sulforaphane exhibits antiproliferative, apoptotic, anti-inflammatory, and anti-angiogenic properties and ameliorates a rat model of endometriosis.">Sulforaphane exhibits antiproliferative, apoptotic, anti-inflammatory,…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2910,7 +2927,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5350" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/sulforaphane" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Licorice</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19403929/" target="_blank" rel="noopener" title="A botanical extract inhibits cell proliferation, induces apoptosis, and suppresses CCL5 in human endometriotic stromal cells.">A botanical extract inhibits cell proliferation, induces apoptosis, and…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41303437/" target="_blank" rel="noopener" title="Mechanistic insights into the anti-inflammatory and anti-proliferative effects of selected medicinal plants in endometriosis.">Mechanistic insights into the anti-inflammatory and anti-proliferative…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2921,7 +2938,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/licorice" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EGCG (Epigallocatechin Gallate)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19088106/" target="_blank" rel="noopener" title="Anti-angiogenic effects of green tea catechin on an experimental endometriosis model.">Anti-angiogenic effects of green tea catechin on an experimental endome…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28322293/" target="_blank" rel="noopener" title="Tea polyphenols inhibit the growth and virulence properties of Fusobacterium nucleatum.">Tea polyphenols inhibit the growth and virulence properties of Fusobact…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35315418/" target="_blank" rel="noopener" title="A review of dietary supplements for treatment of endometriosis.">A review of dietary supplements for treatment of endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2932,7 +2949,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/egcg-epigallocatechin-gallate" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Polyphenols</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36982152/" target="_blank" rel="noopener" title="Fisetin ameliorates endometriosis modulating mast cells derived NLRP-3 inflammasome pathway and oxidative stress.">Fisetin ameliorates endometriosis modulating mast cells derived NLRP-3…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28322293/" target="_blank" rel="noopener" title="Tea polyphenols inhibit the growth and virulence properties of Fusobacterium nucleatum.">Tea polyphenols inhibit the growth and virulence properties of Fusobact…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38398530/" target="_blank" rel="noopener" title="The effect of Rubus idaeus polyphenols extract in induced endometriosis.">The effect of Rubus idaeus polyphenols extract in induced endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2943,7 +2960,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/polyphenols" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginsenosides</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30547177/" target="_blank" rel="noopener" title="Ginsenoside Rf alleviates dysmenorrhea and inflammation in a model of endometriosis.">Ginsenoside Rf alleviates dysmenorrhea and inflammation in a model of e…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29247225/" target="_blank" rel="noopener" title="Ginsenoside Rg3 decreases fibrotic and invasive nature of endometriosis.">Ginsenoside Rg3 decreases fibrotic and invasive nature of endometriosis.</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29140979/" target="_blank" rel="noopener" title="Ginsenoside Rg3 suppresses angiogenesis in developing endometrial lesions.">Ginsenoside Rg3 suppresses angiogenesis in developing endometrial lesio…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2954,7 +2971,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginsenosides" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Flavonoids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37652054/" target="_blank" rel="noopener" title="Flavonoids quercetin and kaempferol are NR4A1 antagonists and suppress endometriosis.">Flavonoids quercetin and kaempferol are NR4A1 antagonists and suppress…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32127140/" target="_blank" rel="noopener" title="The regression of endometriosis with glycosylated flavonoids isolated from Melilotus officinalis.">The regression of endometriosis with glycosylated flavonoids isolated f…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/22447626/" target="_blank" rel="noopener" title="Xanthohumol inhibits growth and vascularization of developing endometriotic lesions.">Xanthohumol inhibits growth and vascularization of developing endometri…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2965,7 +2982,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/flavonoids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin a</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37644533/" target="_blank" rel="noopener" title="Antioxidant vitamins supplementation reduce endometriosis related pelvic pain.">Antioxidant vitamins supplementation reduce endometriosis related pelvi…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19476631/" target="_blank" rel="noopener" title="Women with endometriosis improved their peripheral antioxidant markers after the application of a high antioxidant diet.">Women with endometriosis improved their peripheral antioxidant markers…</a></li><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38221738/" target="_blank" rel="noopener" title="Dietary antioxidant supplementation seems to beneficially impact the severity of endometriosis-related dysmenorrhea.">Dietary antioxidant supplementation seems to beneficially impact the se…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2976,7 +2993,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/445354" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Xanthohumol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/22447626/" target="_blank" rel="noopener" title="Xanthohumol inhibits growth and vascularization of developing endometriotic lesions.">Xanthohumol inhibits growth and vascularization of developing endometri…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33124671/" target="_blank" rel="noopener" title="Plants as source of new therapies for endometriosis: a review of preclinical and clinical studies.">Plants as source of new therapies for endometriosis: a review of precli…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26256952/" target="_blank" rel="noopener" title="Selected antioxidants could be used to treat endometriosis by reducing oxidative stress.">Selected antioxidants could be used to treat endometriosis by reducing…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2987,7 +3004,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/xanthohumol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fruit: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29401293/" target="_blank" rel="noopener" title="A higher intake of fruits is associated with a lower risk of endometriosis.">A higher intake of fruits is associated with a lower risk of endometrio…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2998,7 +3015,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/fruit-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vegetables: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29401293/" target="_blank" rel="noopener" title="A higher intake of fruits is associated with a lower risk of endometriosis.">A higher intake of fruits is associated with a lower risk of endometrio…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3009,7 +3026,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/vegetables-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Astaxanthin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37020589/" target="_blank" rel="noopener" title="Astaxanthin ameliorates inflammation, oxidative stress, and reproductive outcomes in endometriosis patients.">Astaxanthin ameliorates inflammation, oxidative stress, and reproductiv…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40722981/" target="_blank" rel="noopener" title="Elevated levels of ROS and free radicals are involved in the pathogenesis of endometriosis.">Elevated levels of ROS and free radicals are involved in the pathogenes…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3020,7 +3037,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281224" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/astaxanthin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Antioxidant Formulas</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16634350/" target="_blank" rel="noopener" title="Deficient intake of antioxidants is associated with an intensification of endometriosis severity.">Deficient intake of antioxidants is associated with an intensification…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19476631/" target="_blank" rel="noopener" title="Women with endometriosis improved their peripheral antioxidant markers after the application of a high antioxidant diet.">Women with endometriosis improved their peripheral antioxidant markers…</a></li><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37644533/" target="_blank" rel="noopener" title="Antioxidant vitamins supplementation reduce endometriosis related pelvic pain.">Antioxidant vitamins supplementation reduce endometriosis related pelvi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3031,7 +3048,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/antioxidant-formulas" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Progesterone</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19898767/" target="_blank" rel="noopener" title="Low levels of progesterone in the follicular phase could be responsible for the progression of endometriosis and related pain.">Low levels of progesterone in the follicular phase could be responsible…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/8943541/" target="_blank" rel="noopener" title="Progesterone inhibits cytokine-induced interleukein-6 production associated with endometriosis.">Progesterone inhibits cytokine-induced interleukein-6 production associ…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3042,7 +3059,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5994" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/progesterone" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Garlic: Aged</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23619991/" target="_blank" rel="noopener" title="These results suggest that HEABG may be effective in the prevention and treatment of endometriosis in humans.">These results suggest that HEABG may be effective in the prevention and…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36466216/" target="_blank" rel="noopener" title="Aged garlic extract as a potential prophylactic to reduce the progression of endometriosis and associated pain burden.">Aged garlic extract as a potential prophylactic to reduce the progressi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3053,7 +3070,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/garlic-aged" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Nettle</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31325603/" target="_blank" rel="noopener" title="The aerial parts of U. dioica exhibited promising activity in the endometriosis.">The aerial parts of U. dioica exhibited promising activity in the endom…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3064,7 +3081,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/nettle" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Genistein</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38304042/" target="_blank" rel="noopener" title="This study concluded that genistein prevented endometriosis by performing the antiangiogenic activity and showed a similar function to estradiol.">This study concluded that genistein prevented endometriosis by performi…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29736382/" target="_blank" rel="noopener" title="Genistein can be a candidate in the treatment of endometriosis.">Genistein can be a candidate in the treatment of endometriosis.</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3075,7 +3092,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280961" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/genistein" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Apigenin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40404937/" target="_blank" rel="noopener" title="Anti-infertility roles of flavonoids: insights into the female reproductive system.">Anti-infertility roles of flavonoids: insights into the female reproduc…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33124671/" target="_blank" rel="noopener" title="Plants as source of new therapies for endometriosis: a review of preclinical and clinical studies.">Plants as source of new therapies for endometriosis: a review of precli…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3086,7 +3103,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280443" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/apigenin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Catechin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19088106/" target="_blank" rel="noopener" title="Anti-angiogenic effects of green tea catechin on an experimental endometriosis model.">Anti-angiogenic effects of green tea catechin on an experimental endome…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24876174/" target="_blank" rel="noopener" title="Antifibrotic properties of epigallocatechin-3-gallate in endometriosis.">Antifibrotic properties of epigallocatechin-3-gallate in endometriosis.</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23081870/" target="_blank" rel="noopener" title="Natural therapies assessment for the treatment of endometriosis.">Natural therapies assessment for the treatment of endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3097,7 +3114,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/catechin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Naringenin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29121349/" target="_blank" rel="noopener" title="Naringenin is a promising therapeutic compound for treatment of endometriosis in women.">Naringenin is a promising therapeutic compound for treatment of endomet…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31252288/" target="_blank" rel="noopener" title="naringenin may have a therapeutic potential in the treatment of endometriosis via induction of ROS-mediated apoptosis and its anti-invasive effects.">naringenin may have a therapeutic potential in the treatment of endomet…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3108,7 +3125,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/439246" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/naringenin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Pterostilbene</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37454164/" target="_blank" rel="noopener" title="Natural resveratrol analogs differentially target endometriotic cells into apoptosis pathways.">Natural resveratrol analogs differentially target endometriotic cells i…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39458478/" target="_blank" rel="noopener" title="Resveratrol and its natural analogs mitigate immune dysregulation and oxidative imbalance in the endometriosis.">Resveratrol and its natural analogs mitigate immune dysregulation and o…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3119,7 +3136,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/pterostilbene" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Puerarin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33124671/" target="_blank" rel="noopener" title="Plants as source of new therapies for endometriosis: a review of preclinical and clinical studies.">Plants as source of new therapies for endometriosis: a review of precli…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21949833/" target="_blank" rel="noopener" title="Puerarin suppresses invasion and vascularization of endometriosis tissue stimulated by 17β-estradiol.">Puerarin suppresses invasion and vascularization of endometriosis tissu…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3130,7 +3147,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/puerarin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cryptoxanthin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29401293/" target="_blank" rel="noopener" title="A higher intake of fruits is associated with a lower risk of endometriosis.">A higher intake of fruits is associated with a lower risk of endometrio…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3141,7 +3158,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cryptoxanthin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Emodin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro, Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32982173/" target="_blank" rel="noopener" title="Emodin inhibits the migration and invasion abilities of human endometrial stromal cells.">Emodin inhibits the migration and invasion abilities of human endometri…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3152,7 +3169,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/emodin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Homeopathic Medicine: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28187404/" target="_blank" rel="noopener" title="Potentized estrogen at a dose of 3 drops twice daily for 24 weeks was effective in reducing endometriosis-associated pelvic pain.">Potentized estrogen at a dose of 3 drops twice daily for 24 weeks was e…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19588398/" target="_blank" rel="noopener" title="Chinese herbal medicine has therapeutic value in the treatment of endometriosis.">Chinese herbal medicine has therapeutic value in the treatment of endom…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30412733/" target="_blank" rel="noopener" title="A review of plant-derived medicines for treatment of endometriosis.">A review of plant-derived medicines for treatment of endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3163,7 +3180,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/homeopathic-medicine-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginseng (Siberian)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28558522/" target="_blank" rel="noopener" title="Saponin extracts induced apoptosis of endometrial cells from women with endometriosis.">Saponin extracts induced apoptosis of endometrial cells from women with…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3174,7 +3191,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginseng-siberian" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Formononetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37447325/" target="_blank" rel="noopener" title="Formononetin inhibits progression of endometriosis.">Formononetin inhibits progression of endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3185,7 +3202,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/formononetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>6-Shogaol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30402023/" target="_blank" rel="noopener" title="6-Shogaol reduces progression of experimental endometriosis.">6-Shogaol reduces progression of experimental endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3196,7 +3213,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/6-shogaol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Acai</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27851787/" target="_blank" rel="noopener" title="Açaí is a promising novel pharmacological therapeutic treatment for endometriosis.">Açaí is a promising novel pharmacological therapeutic treatment for end…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3207,7 +3224,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/acai" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Aloe Vera</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29734542/" target="_blank" rel="noopener" title="Aloe vera is effective in the inhibition of formation and regression of endometriotic lesions.">Aloe vera is effective in the inhibition of formation and regression of…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3218,7 +3235,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/aloe-vera" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Luteolin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30925413/" target="_blank" rel="noopener" title="Ameliorative effects of luteolin against endometriosis progression.">Ameliorative effects of luteolin against endometriosis progression.</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3229,7 +3246,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280445" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/luteolin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bufalin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29636364/" target="_blank" rel="noopener" title="Bufalin suppresses endometriosis progression by inducing pyroptosis and apoptosis.">Bufalin suppresses endometriosis progression by inducing pyroptosis and…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3240,7 +3257,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bufalin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bee Propolis</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17636241/" target="_blank" rel="noopener" title="Caffeic acid phenethyl ester, a compound found within propolis causes regression of experimental endometriosis.">Caffeic acid phenethyl ester, a compound found within propolis causes r…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37753513/" target="_blank" rel="noopener" title="Sulawesi propolis induces higher apoptotic activity and lower inflammatory activity in a rat endometriosis model.">Sulawesi propolis induces higher apoptotic activity and lower inflammat…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3251,7 +3268,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bee-propolis" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Caffeic Acid Phenethyl Ester</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19898767/" target="_blank" rel="noopener" title="Low levels of progesterone in the follicular phase could be responsible for the progression of endometriosis and related pain.">Low levels of progesterone in the follicular phase could be responsible…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33508990/" target="_blank" rel="noopener" title="Vitamin D intake in patients with endometriosis resulted in a significant improvement of pelvic pain, total-/HDL-cholesterol ratio, hs-CRP and TAC levels.">Vitamin D intake in patients with endometriosis resulted in a significa…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17636241/" target="_blank" rel="noopener" title="Caffeic acid phenethyl ester, a compound found within propolis causes regression of experimental endometriosis.">Caffeic acid phenethyl ester, a compound found within propolis causes r…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3262,7 +3279,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281787" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/caffeic-acid-phenethyl-ester" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cat&#x27;s Claw</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21030132/" target="_blank" rel="noopener" title="Cat&amp;#039;s claw extract appears to be a promising alternative for treating endometriosis.">Cat&amp;#039;s claw extract appears to be a promising alternative for treat…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3273,7 +3290,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cats-claw" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Hesperidin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37630196/" target="_blank" rel="noopener" title="Effects of quince gel and hesperidin mixture on experimental endometriosis.">Effects of quince gel and hesperidin mixture on experimental endometrio…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3284,7 +3301,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10621" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/hesperidin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fisetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36982152/" target="_blank" rel="noopener" title="Fisetin ameliorates endometriosis modulating mast cells derived NLRP-3 inflammasome pathway and oxidative stress.">Fisetin ameliorates endometriosis modulating mast cells derived NLRP-3…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3295,7 +3312,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281614" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/fisetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Kaempferol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37652054/" target="_blank" rel="noopener" title="Flavonoids quercetin and kaempferol are NR4A1 antagonists and suppress endometriosis.">Flavonoids quercetin and kaempferol are NR4A1 antagonists and suppress…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3306,7 +3323,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280863" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/kaempferol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fucoidan</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33266505/" target="_blank" rel="noopener" title="Fucoidan can effectively inhibit cell proliferation and cell migration of endometriosis cells.">Fucoidan can effectively inhibit cell proliferation and cell migration…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3317,7 +3334,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/fucoidan" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Honokiol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26828978/" target="_blank" rel="noopener" title="Honokiol effectively inhibit the proliferation of rat edometeriotic tissues in a dose dependent manner.">Honokiol effectively inhibit the proliferation of rat edometeriotic tis…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3328,7 +3345,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/honokiol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Indole-3-Carbinol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36432626/" target="_blank" rel="noopener" title="Indole-3-carbinol inhibits the growth of endometriotic lesions.">Indole-3-carbinol inhibits the growth of endometriotic lesions.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3339,7 +3356,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/indole-3-carbinol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Leonurine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28389633/" target="_blank" rel="noopener" title="Leonurine attenuates hyperalgesia in mMice with induced adenomyosis.">Leonurine attenuates hyperalgesia in mMice with induced adenomyosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3350,7 +3367,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/leonurine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Myricetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31952013/" target="_blank" rel="noopener" title="Myricetin has antiproliferative effects on endometriosis through cell cycle regulation.">Myricetin has antiproliferative effects on endometriosis through cell c…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3361,7 +3378,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281672" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/myricetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Oleuropein</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36419064/" target="_blank" rel="noopener" title="Oleuropein suppresses endometriosis progression and improves the fertility of mice with endometriosis.">Oleuropein suppresses endometriosis progression and improves the fertil…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3372,7 +3389,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/oleuropein" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Palmitoylethanolamide</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27790149/" target="_blank" rel="noopener" title="Palmitoylethanolamide and polydatin treatment causes endometriotic lesion regression.">Palmitoylethanolamide and polydatin treatment causes endometriotic lesi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3383,7 +3400,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/palmitoylethanolamide" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Royal Jelly</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34806344/" target="_blank" rel="noopener" title="Possible therapeutic effect of royal jelly on endometriotic lesion size, pain sensitivity, and neurotrophic factors.">Possible therapeutic effect of royal jelly on endometriotic lesion size…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3394,7 +3411,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/royal-jelly" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Sea Buckthorn</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28040120/" target="_blank" rel="noopener" title="Sea buckthorn and St. John&amp;#039;s wort oil may be a promising alternative for the treatment of endometriosis.">Sea buckthorn and St. John&amp;#039;s wort oil may be a promising alternati…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3405,7 +3422,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/sea-buckthorn" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>St. John&#x27;s Wort</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28040120/" target="_blank" rel="noopener" title="Sea buckthorn and St. John&amp;#039;s wort oil may be a promising alternative for the treatment of endometriosis.">Sea buckthorn and St. John&amp;#039;s wort oil may be a promising alternati…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -3416,7 +3433,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281804" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/st-johns-wort" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Silibinin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30144397/" target="_blank" rel="noopener" title="Silibinin-induced endoplasmic reticulum stress and mitochondrial dysfunction suppress growth of endometriotic lesions.">Silibinin-induced endoplasmic reticulum stress and mitochondrial dysfun…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3427,7 +3444,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/silibinin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Sinomenine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20813690/" target="_blank" rel="noopener" title="Sinomenine can inhibit the production and activity of TNF-alpha and NF-kappaB to suppress the adhesion, implantation, infiltration and growth of the endometrial cells in the rat model of endometriosis.">Sinomenine can inhibit the production and activity of TNF-alpha and NF-…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3438,7 +3455,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/sinomenine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Propolis: Bee</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17636241/" target="_blank" rel="noopener" title="Caffeic acid phenethyl ester, a compound found within propolis causes regression of experimental endometriosis.">Caffeic acid phenethyl ester, a compound found within propolis causes r…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37753513/" target="_blank" rel="noopener" title="Sulawesi propolis induces higher apoptotic activity and lower inflammatory activity in a rat endometriosis model.">Sulawesi propolis induces higher apoptotic activity and lower inflammat…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3449,7 +3466,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/propolis-bee" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Broccoli Sprouts</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31217757/" target="_blank" rel="noopener" title="Sulforaphane exhibits antiproliferative, apoptotic, anti-inflammatory, and anti-angiogenic properties and ameliorates a rat model of endometriosis.">Sulforaphane exhibits antiproliferative, apoptotic, anti-inflammatory,…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3460,7 +3477,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/broccoli-sprouts" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Black Tea</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28322293/" target="_blank" rel="noopener" title="Tea polyphenols inhibit the growth and virulence properties of Fusobacterium nucleatum.">Tea polyphenols inhibit the growth and virulence properties of Fusobact…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3471,7 +3488,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/black-tea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Theaflavins</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28322293/" target="_blank" rel="noopener" title="Tea polyphenols inhibit the growth and virulence properties of Fusobacterium nucleatum.">Tea polyphenols inhibit the growth and virulence properties of Fusobact…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3482,7 +3499,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/theaflavins" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Raspberry</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38398530/" target="_blank" rel="noopener" title="The effect of Rubus idaeus polyphenols extract in induced endometriosis.">The effect of Rubus idaeus polyphenols extract in induced endometriosis.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3493,7 +3510,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/raspberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Yellow Sweet Clover (Melilotus Officinalis)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32127140/" target="_blank" rel="noopener" title="The regression of endometriosis with glycosylated flavonoids isolated from Melilotus officinalis.">The regression of endometriosis with glycosylated flavonoids isolated f…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3504,7 +3521,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/yellow-sweet-clover-melilotus-officinalis" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Hydrogen: Molecular</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27342272/" target="_blank" rel="noopener" title="The results showed that both profiles of high-dose H2 breathing reduced the size of the endometrial explants.">The results showed that both profiles of high-dose H2 breathing reduced…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37200624/" target="_blank" rel="noopener" title="Review of the potential therapeutic effects and molecular mechanisms of resveratrol on endometriosis.">Review of the potential therapeutic effects and molecular mechanisms of…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3515,7 +3532,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/hydrogen-molecular" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Nobiletin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29871974/" target="_blank" rel="noopener" title="This study provides the first evidence that nobiletin exert protection on endometriosis.">This study provides the first evidence that nobiletin exert protection…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3526,7 +3543,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/nobiletin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vanillin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37409688/" target="_blank" rel="noopener" title="Vanillin prevents the growth of endometriotic lesions through anti-inflammatory and antioxidant pathways.">Vanillin prevents the growth of endometriotic lesions through anti-infl…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3567,6 +3584,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>

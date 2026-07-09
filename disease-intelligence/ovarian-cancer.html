@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -1077,9 +1082,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (50)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (40)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (40)</button>
@@ -1093,7 +1104,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1108,7 +1119,7 @@
           <td class="muted">Open Targets, ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>EPIRUBICIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1123,7 +1134,7 @@
           <td class="muted">Open Targets, ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL417/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL417" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>SIROLIMUS</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1138,7 +1149,7 @@
           <td class="muted">Open Targets, ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL413/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL413" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>3,3&#x27;,4&#x27;,5-TETRACHLOROSALICYLANILIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1149,7 +1160,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL291338/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL291338" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABEMACICLIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1160,7 +1171,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABIRATERONE ACETATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1171,7 +1182,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1182,7 +1193,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1193,7 +1204,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AFATINIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1204,7 +1215,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOFENAC</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1215,7 +1226,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL94081/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL94081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOMETASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1226,7 +1237,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALECTINIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1237,7 +1248,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALECTINIB HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1248,7 +1259,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL3707320/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL3707320" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMCINONIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1259,7 +1270,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMDINOCILLIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1270,7 +1281,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1281,7 +1292,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1083993/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1083993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLEXANOX</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1292,7 +1303,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1303,7 +1314,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1314,7 +1325,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANHYDROUS TACROLIMUS</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1325,7 +1336,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1336,7 +1347,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>APIGENIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1351,7 +1362,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1362,7 +1373,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASTEMIZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1373,7 +1384,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1384,7 +1395,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATEZOLIZUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1395,7 +1406,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATRACURIUM BESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1406,7 +1417,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1417,7 +1428,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AVELUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1428,7 +1439,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZACITIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1439,7 +1450,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZARIBINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1450,7 +1461,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL515914/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL515914" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BECLOMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1461,7 +1472,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENAZEPRIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1472,7 +1483,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1694/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENDAMUSTINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1483,7 +1494,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENORILATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1494,7 +1505,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL162036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL162036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1505,7 +1516,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1516,7 +1527,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200384/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE SODIUM PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1527,7 +1538,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200762/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200762" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE VALERATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1538,7 +1549,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1497/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1497" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEVACIZUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1549,7 +1560,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEXAROTENE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1560,7 +1571,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1571,7 +1582,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BIFONAZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1582,7 +1593,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BINIMETINIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1593,7 +1604,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISACODYL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1604,7 +1615,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITHIONOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1615,7 +1626,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITHIONOLATE SODIUM</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1626,7 +1637,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1447476/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1447476" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>BLEOMYCIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1641,7 +1652,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1652,7 +1663,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BOSUTINIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1673,7 +1684,7 @@
           <th>Score</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALVIMOPAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1684,7 +1695,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL270190/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL270190" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMONAFIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1695,7 +1706,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL428676/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL428676" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATEZOLIZUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1706,7 +1717,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3707227/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3707227" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AVELUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1717,7 +1728,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3833373/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3833373" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZENOSERTIB</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1728,7 +1739,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BATIRAXCEPT</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1739,7 +1750,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4594462/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4594462" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENMELSTOBART</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1750,7 +1761,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5315042/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5315042" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CADONILIMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1761,7 +1772,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4594456/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4594456" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANFOSFAMIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1772,7 +1783,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2111086/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2111086" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANFOSFAMIDE HYDROCHLORIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1783,7 +1794,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2107319/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2107319" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CATEQUENTINIB HYDROCHLORIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1794,7 +1805,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5314570/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5314570" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CEDIRANIB</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1805,7 +1816,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL491473/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL491473" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CISPLATIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1816,7 +1827,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL11359/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL11359" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYCLOPHOSPHAMIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1827,7 +1838,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200796/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200796" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DOCETAXEL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1838,7 +1849,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3545252/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3545252" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DOSTARLIMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1849,7 +1860,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4298124/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4298124" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DOXORUBICIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1860,7 +1871,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL53463/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL53463" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DURVALUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1871,7 +1882,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3301587/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3301587" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPOETIN ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1882,7 +1893,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201565/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201565" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ETARFOLATIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1893,7 +1904,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297280/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297280" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ETOPOSIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1904,7 +1915,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL44657/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL44657" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FARLETUZUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1915,7 +1926,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1743016/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1743016" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FERRIC DERISOMALTOSE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1926,7 +1937,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4298187/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4298187" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FERROUS GLUCONATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1937,7 +1948,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3833303/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3833303" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FILGRASTIM</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1948,7 +1959,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201567/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201567" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FLUZOPARIB</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1959,7 +1970,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3930624/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3930624" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GEMCITABINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1970,7 +1981,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL888/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL888" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>HYDRALAZINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1981,7 +1992,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL276832/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL276832" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>IBCASERTIB</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1992,7 +2003,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095033/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095033" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>IRON ISOMALTOSIDE 1000</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2003,7 +2014,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4298046/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4298046" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>IRON SUCROSE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2014,7 +2025,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200823/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200823" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ISOPHENOXODIOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2025,7 +2036,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL195560/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL195560" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>KARENITECIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2036,7 +2047,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1743260/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1743260" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LORNOXICAM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2047,7 +2058,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1569487/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1569487" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LURBINECTEDIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2058,7 +2069,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297516/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297516" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MAGNESIUM VALPROATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2069,7 +2080,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2315212/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2315212" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MASITINIB</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2080,7 +2091,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1908391/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1908391" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>NEMVALEUKIN ALFA</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2091,7 +2102,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095282/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095282" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>NINTEDANIB</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2102,7 +2113,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL502835/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL502835" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>NIVOLUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2123,7 +2134,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>3,3&#x27;,4&#x27;,5-TETRACHLOROSALICYLANILIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2134,7 +2145,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL291338/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL291338" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABEMACICLIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CDKN2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2145,7 +2156,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ABIRATERONE ACETATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2156,7 +2167,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AKT1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2167,7 +2178,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2178,7 +2189,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AFATINIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ALK</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2189,7 +2200,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOFENAC</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2200,7 +2211,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL94081/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL94081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALCLOMETASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2211,7 +2222,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALECTINIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ALK</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2222,7 +2233,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALECTINIB HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ALK</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2233,7 +2244,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL3707320/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL3707320" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMCINONIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2244,7 +2255,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMDINOCILLIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2255,7 +2266,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2266,7 +2277,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1083993/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1083993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLEXANOX</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2277,7 +2288,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2288,7 +2299,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AKT1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2299,7 +2310,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANHYDROUS TACROLIMUS</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2310,7 +2321,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2321,7 +2332,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>APIGENIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BRCA1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2336,7 +2347,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2347,7 +2358,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASTEMIZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2358,7 +2369,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATALUREN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2369,7 +2380,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATEZOLIZUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ARID1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2380,7 +2391,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATRACURIUM BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2391,7 +2402,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2402,7 +2413,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AVELUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ATM</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2413,7 +2424,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZACITIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2424,7 +2435,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AZARIBINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2435,7 +2446,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL515914/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL515914" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BECLOMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2446,7 +2457,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENAZEPRIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2457,7 +2468,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1694/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1694" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENDAMUSTINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ATM</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2468,7 +2479,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENORILATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2479,7 +2490,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL162036/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL162036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2490,7 +2501,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE DIPROPIONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2501,7 +2512,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200384/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE SODIUM PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2512,7 +2523,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200762/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200762" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE VALERATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AR</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2523,7 +2534,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1497/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1497" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEVACIZUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ALK</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2534,7 +2545,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEXAROTENE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BLM</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2545,7 +2556,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CDH1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2556,7 +2567,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via AKT1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2579,8 +2590,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">77 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">77 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/ovarian-cancer" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/search/?q=ovarian+cancer" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -2589,7 +2606,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin D3</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta-analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34894920/" target="_blank" rel="noopener" title="Effect of 1α,25(OH)(2)D(3)-Treated M1 and M2 Macrophages on Cell Proliferation and Migration Ability in Ovarian Cancer">Effect of 1α,25(OH)(2)D(3)-Treated M1 and M2 Macrophages on Cell Prolif…</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/22213311/" target="_blank" rel="noopener" title="Review: there is a consistently strong inverse correlations with solar UVB for 15 types of cancers.">Review: there is a consistently strong inverse correlations with solar…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25971716/" target="_blank" rel="noopener" title="In this cohort, higher serum 25(OH)D concentrations at diagnosis were associated with longer survival among women with ovarian cancer.">In this cohort, higher serum 25(OH)D concentrations at diagnosis were a…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2604,7 +2621,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280795" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-d" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Omega-3 Fatty Acids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33787051/" target="_blank" rel="noopener" title="Gynecological cancer and omega-3 fatty acid intakes: Meta-analysis">Gynecological cancer and omega-3 fatty acid intakes: Meta-analysis</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30336660/" target="_blank" rel="noopener" title="Dietary Intake of Omega-3 fatty acids and Endocrine-related Gynecological Cancer: A Meta-Analysis of Observational Studies">Dietary Intake of Omega-3 fatty acids and Endocrine-related Gynecologic…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434631/" target="_blank" rel="noopener" title="Effects of omega-3 fatty acids on cancer risk: a systematic review">Effects of omega-3 fatty acids on cancer risk: a systematic review</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2619,7 +2636,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/446284" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/omega-3-fatty-acids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin C</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30002308/" target="_blank" rel="noopener" title="Systematic Review of Intravenous Ascorbate in Cancer Clinical Trials">Systematic Review of Intravenous Ascorbate in Cancer Clinical Trials</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24142805/" target="_blank" rel="noopener" title="Dietary intake and ovarian cancer risk: a systematic review">Dietary intake and ovarian cancer risk: a systematic review</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32753546/" target="_blank" rel="noopener" title="An open-label, phase II multicohort study of an oral hypomethylating agent CC-486 and durvalumab in advanced solid tumors">An open-label, phase II multicohort study of an oral hypomethylating ag…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2634,7 +2651,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/54670067" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-c" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Ginger</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40061690/" target="_blank" rel="noopener" title="Modulatory Effects of Gingerol in Cancer Cell Growth Through Activation and Suppression of Signal Pathways in Cancer Cell Growth Systemic Review">Modulatory Effects of Gingerol in Cancer Cell Growth Through Activation…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36937441/" target="_blank" rel="noopener" title="The inhibitory effect of 6-gingerol and cisplatin on ovarian cancer and antitumor activity.">The inhibitory effect of 6-gingerol and cisplatin on ovarian cancer and…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31857975/" target="_blank" rel="noopener" title="10-gingerol inhibits ovarian cancer cell growth by inducing G2 arrest.">10-gingerol inhibits ovarian cancer cell growth by inducing G2 arrest.</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2649,7 +2666,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/442793" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/gingerol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Curcumin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39445208/" target="_blank" rel="noopener" title="The Association Between Anti-Neoplastic Effects of Curcumin and Urogenital Cancers: A Systematic Review">The Association Between Anti-Neoplastic Effects of Curcumin and Urogeni…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33299312/" target="_blank" rel="noopener" title="Co-delivery of docetaxel and curcumin via nanomicelles for enhancing anti-ovarian cancer treatment.">Co-delivery of docetaxel and curcumin via nanomicelles for enhancing an…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20845461/" target="_blank" rel="noopener" title="Curcumin enhances oral bioavailability and anti-tumor therapeutic efficacy of paclitaxel upon administration in nanoemulsion formulation.">Curcumin enhances oral bioavailability and anti-tumor therapeutic effic…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2664,7 +2681,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/969516" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/turmeric" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Berberine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/42096996/" target="_blank" rel="noopener" title="Nanocrystalline berberine is associated with improved antitumor activity of PD-1 blockade in ovarian cancer">Nanocrystalline berberine is associated with improved antitumor activit…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/41657772/" target="_blank" rel="noopener" title="Natural compounds in ovarian cancer: mechanistic insights and therapeutic potential">Natural compounds in ovarian cancer: mechanistic insights and therapeut…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/41595746/" target="_blank" rel="noopener" title="Recent Update Targeting Autophagy-Apoptosis Crosstalk Using Bioactive Natural Products for Ovarian Cancer Treatment">Recent Update Targeting Autophagy-Apoptosis Crosstalk Using Bioactive N…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2679,7 +2696,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/2353" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/berberine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Quercetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27904580/" target="_blank" rel="noopener" title="Quercetin and ovarian cancer: An evaluation based on a systematic review">Quercetin and ovarian cancer: An evaluation based on a systematic review</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37447264/" target="_blank" rel="noopener" title="Selected Flavonols in Breast and Gynecological Cancer: A Systematic Review">Selected Flavonols in Breast and Gynecological Cancer: A Systematic Rev…</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36438791/" target="_blank" rel="noopener" title="The pharmacological mechanism of Chinese herbs effective in treating advanced ovarian cancer: Integrated meta-analysis and network pharmacology analysis">The pharmacological mechanism of Chinese herbs effective in treating ad…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2694,7 +2711,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280343" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/quercetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Resveratrol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27262332/" target="_blank" rel="noopener" title="Phytochemicals as Adjunctive with Conventional Anticancer Therapies">Phytochemicals as Adjunctive with Conventional Anticancer Therapies</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/42253320/" target="_blank" rel="noopener" title="Integrative transcriptomics and structure-based screening identifies Phyllanthus amarus phytocompounds as potential WNT5A modulators in ovarian cancer.">Integrative transcriptomics and structure-based screening identifies Ph…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38026996/" target="_blank" rel="noopener" title="Myricetin suppresses TGF-β-induced epithelial-to-mesenchymal transition in ovarian cancer.">Myricetin suppresses TGF-β-induced epithelial-to-mesenchymal transition…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2709,7 +2726,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/445154" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/resveratrol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Ashwagandha</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33718372/" target="_blank" rel="noopener" title="Withaferin A and ovarian cancer antagonistically regulate skeletal muscle mass.">Withaferin A and ovarian cancer antagonistically regulate skeletal musc…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32722688/" target="_blank" rel="noopener" title="Withaferin A attenuates ovarian cancer-induced cardiac cachexia.">Withaferin A attenuates ovarian cancer-induced cardiac cachexia.</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31767036/" target="_blank" rel="noopener" title="Withaferin A ameliorates ovarian cancer-induced cachexia and proinflammatory signaling.">Withaferin A ameliorates ovarian cancer-induced cachexia and proinflamm…</a></li></ul></td>
           <td class="muted">Ayurvedic</td>
@@ -2724,7 +2741,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/11985808" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/ashwagandha" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Egcg</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19465043/" target="_blank" rel="noopener" title="Can green tea do that? A literature review of the clinical evidence">Can green tea do that? A literature review of the clinical evidence</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23988418/" target="_blank" rel="noopener" title="A two-stage, single-arm, phase II study of EGCG-enriched green tea drink as a maintenance therapy in women with advanced stage ovarian cancer">A two-stage, single-arm, phase II study of EGCG-enriched green tea drin…</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28445129/" target="_blank" rel="noopener" title="This meta-analysis showed an inverse association between tea consumption and ovarian cancer risk.">This meta-analysis showed an inverse association between tea consumptio…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2739,7 +2756,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/65064" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/green-tea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Melatonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24376664/" target="_blank" rel="noopener" title="Individual variations in serum melatonin levels through time: implications for epidemiologic studies">Individual variations in serum melatonin levels through time: implicati…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/8912546/" target="_blank" rel="noopener" title="A phase II study of tamoxifen plus melatonin in metastatic solid tumour patients">A phase II study of tamoxifen plus melatonin in metastatic solid tumour…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27162542/" target="_blank" rel="noopener" title="Lower serum levels of melatonin in ovarian cancer patients which may contribute to the pathogenesis of ovarian cancer.">Lower serum levels of melatonin in ovarian cancer patients which may co…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2754,7 +2771,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/896" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/melatonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Grape Seed Extract</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/33312217/" target="_blank" rel="noopener" title="Anti-proliferative and anti-apoptotic effects of grape seed extract on chemo-resistant OVCAR-3 ovarian cancer cells">Anti-proliferative and anti-apoptotic effects of grape seed extract on…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2769,7 +2786,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/proanthocyanidins" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bitter Melon</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26487740/" target="_blank" rel="noopener" title="Bitter melon extract functions as a natural AMPK activator in the inhibition of ovarian cancer cell growth and might be useful as a supplement to improve the efficacy of cisplatin.">Bitter melon extract functions as a natural AMPK activator in the inhib…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32814169/" target="_blank" rel="noopener" title="MAP30 protein from Momordica charantia is therapeutic and has synergic activity with cisplatin against ovarian cancer.">MAP30 protein from Momordica charantia is therapeutic and has synergic…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2784,7 +2801,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bitter-melon" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Saffron</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/30483395/" target="_blank" rel="noopener" title="The effects of crocetin, extracted from saffron, in chemotherapy against the incidence of multiple drug resistance phenotype">The effects of crocetin, extracted from saffron, in chemotherapy agains…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/27342070/" target="_blank" rel="noopener" title="Crocin suppresses multidrug resistance in MRP overexpressing ovarian cancer cell line">Crocin suppresses multidrug resistance in MRP overexpressing ovarian ca…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/21986580/" target="_blank" rel="noopener" title="Crocetin induces cytotoxicity and enhances vincristine-induced cancer cell death via p53-dependent and -independent mechanisms">Crocetin induces cytotoxicity and enhances vincristine-induced cancer c…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2799,7 +2816,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/637760" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/crocin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Schisandra</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16619374/" target="_blank" rel="noopener" title="A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutherococcus (Siberian ginseng) and Schisandra may boost suppressed immunity in ovarian cancer patients on chemotherapy.">A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutheroc…</a></li></ul></td>
           <td class="muted">TCM herb</td>
@@ -2814,7 +2831,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/schisandra" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Selenium</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41630017/" target="_blank" rel="noopener" title="Efficacy and safety of intravenous administration of high-dose selenium for preventing chemotherapy-induced peripheral neuropathy in platinum-sensitive recurrent ovarian cancer: a phase 3, double-blind, parallel group, randomized controlled pilot study">Efficacy and safety of intravenous administration of high-dose selenium…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30068487/" target="_blank" rel="noopener" title="Phase I trial of selenium plus chemotherapy in gynecologic cancers">Phase I trial of selenium plus chemotherapy in gynecologic cancers</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/15099940/" target="_blank" rel="noopener" title="Selenium as an element in the treatment of ovarian cancer in women receiving chemotherapy">Selenium as an element in the treatment of ovarian cancer in women rece…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2829,7 +2846,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/6326970" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/selenium" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Cannabidiol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31193514/" target="_blank" rel="noopener" title="A case report of a female patient who demonstrated disease response after declining standard therapy and taking a combination of Laetrile and CBD oil.">A case report of a female patient who demonstrated disease response aft…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38603577/" target="_blank" rel="noopener" title="Cannabidiol inhibits epithelial ovarian cancer: role of gut microbiome.">Cannabidiol inhibits epithelial ovarian cancer: role of gut microbiome.</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32682943/" target="_blank" rel="noopener" title="Enhancing ovarian cancer conventional chemotherapy through the combination with cannabidiol loaded microparticles.">Enhancing ovarian cancer conventional chemotherapy through the combinat…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2844,7 +2861,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/644019" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/cannabidiol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Flavonoids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38813726/" target="_blank" rel="noopener" title="Dietary Flavonoids Consumption and Health: An Umbrella Review">Dietary Flavonoids Consumption and Health: An Umbrella Review</a></li><li><span class="np-pub-type">Meta-analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32661683/" target="_blank" rel="noopener" title="Association between dietary intake and risk of ovarian cancer: a systematic review and meta-analysis">Association between dietary intake and risk of ovarian cancer: a system…</a></li><li><span class="np-pub-type">Meta-analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26960146/" target="_blank" rel="noopener" title="Association among Dietary Flavonoids, Flavonoid Subclasses and Ovarian Cancer Risk: A Meta-Analysis">Association among Dietary Flavonoids, Flavonoid Subclasses and Ovarian…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2859,7 +2876,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/flavonoids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Ginsenosides</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27262332/" target="_blank" rel="noopener" title="Phytochemicals as Adjunctive with Conventional Anticancer Therapies">Phytochemicals as Adjunctive with Conventional Anticancer Therapies</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32151067/" target="_blank" rel="noopener" title="Combining Rp1 with chemotherapeutic agents could circumvent drug resistance and improve treatment efficacy.">Combining Rp1 with chemotherapeutic agents could circumvent drug resist…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30481782/" target="_blank" rel="noopener" title="Ginsenoside 20(S)-Rg3 inhibited the Warburg effect in ovarian cancer cells via H19/miR-324-5p/PKM2 pathway.">Ginsenoside 20(S)-Rg3 inhibited the Warburg effect in ovarian cancer ce…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2874,7 +2891,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginsenosides" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Apigenin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/19158208/" target="_blank" rel="noopener" title="Dietary intake of selected flavonols, flavones, and flavonoid-rich foods and risk of cancer in middle-aged and older women">Dietary intake of selected flavonols, flavones, and flavonoid-rich food…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2889,7 +2906,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280443" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/apigenin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Genistein</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16171852/" target="_blank" rel="noopener" title="Fermented soy therapy may have therapeutic value in treating platinum-resistant ovarian cancer.">Fermented soy therapy may have therapeutic value in treating platinum-r…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33550763/" target="_blank" rel="noopener" title="Genistein suppresses the inflammation and GSK-3 pathway in an animal model of spontaneous ovarian cancer.">Genistein suppresses the inflammation and GSK-3 pathway in an animal mo…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23229410/" target="_blank" rel="noopener" title="&amp;quot;Genistein, a soy phytoestrogen, prevents the growth of BG-1 ovarian cancer cells induced by 17β-estradiol or bisphenol A via the inhibition of cell cycle progression.&amp;quot;">&amp;quot;Genistein, a soy phytoestrogen, prevents the growth of BG-1 ovari…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2900,7 +2917,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280961" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/genistein" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Caffeic Acid Phenethyl Ester</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29710481/" target="_blank" rel="noopener" title="Caffeic acid phenethyl ester inhibits the progression of ovarian cancer.">Caffeic acid phenethyl ester inhibits the progression of ovarian cancer.</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31376137/" target="_blank" rel="noopener" title="Phenethyl isothiocyanate hampers growth and progression of HER2-positive breast and ovarian carcinoma by targeting their stem cell compartment.">Phenethyl isothiocyanate hampers growth and progression of HER2-positiv…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2911,7 +2928,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281787" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/caffeic-acid-phenethyl-ester" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Shikonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36248433/" target="_blank" rel="noopener" title="Shikonin mediates apoptosis through G protein-coupled estrogen receptor of ovarian cancer cells.">Shikonin mediates apoptosis through G protein-coupled estrogen receptor…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35087718/" target="_blank" rel="noopener" title="TEM1-targeting PEGylated PLGA shikonin nanoformulation for immunomodulation and eradication of ovarian cancer.">TEM1-targeting PEGylated PLGA shikonin nanoformulation for immunomodula…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2922,7 +2939,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/shikonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cardamonin</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -2933,7 +2950,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cardamonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Baicalein</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/35102626/" target="_blank" rel="noopener" title="Wogonin and its analogs for the prevention and treatment of cancer: A systematic review">Wogonin and its analogs for the prevention and treatment of cancer: A s…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2944,7 +2961,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/baicalein" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cruciferous Vegetables</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25740748/" target="_blank" rel="noopener" title="Consumption of cruciferous vegetables may reduce the risk of ovarian cancer.">Consumption of cruciferous vegetables may reduce the risk of ovarian ca…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29693426/" target="_blank" rel="noopener" title="A diet that includes cruciferous vegetables could be an important modifiable risk factor for ovarian cancer.">A diet that includes cruciferous vegetables could be an important modif…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34901122/" target="_blank" rel="noopener" title="Pre-diagnosis cruciferous vegetables and isothiocyanates intake and ovarian cancer survival.">Pre-diagnosis cruciferous vegetables and isothiocyanates intake and ova…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2955,7 +2972,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cruciferous-vegetables" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Myricetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32276584/" target="_blank" rel="noopener" title="Effect of gallic acid and myricetin on ovarian cancer models.">Effect of gallic acid and myricetin on ovarian cancer models.</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26113875/" target="_blank" rel="noopener" title="Myricetin might serve as potential anti-angiogenic agent in the prevention of ovarian cancers.">Myricetin might serve as potential anti-angiogenic agent in the prevent…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38026996/" target="_blank" rel="noopener" title="Myricetin suppresses TGF-β-induced epithelial-to-mesenchymal transition in ovarian cancer.">Myricetin suppresses TGF-β-induced epithelial-to-mesenchymal transition…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2966,7 +2983,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281672" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/myricetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Citrus Naringin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38988927/" target="_blank" rel="noopener" title="Naringin inhibits cisplatin resistance of ovarian cancer cells.">Naringin inhibits cisplatin resistance of ovarian cancer cells.</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29928387/" target="_blank" rel="noopener" title="Naringin inhibits ovarian tumor growth by promoting apoptosis.">Naringin inhibits ovarian tumor growth by promoting apoptosis.</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38947385/" target="_blank" rel="noopener" title="Reversal of platinum-based chemotherapy resistance in ovarian cancer by naringin.">Reversal of platinum-based chemotherapy resistance in ovarian cancer by…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2977,7 +2994,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/citrus-naringin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Flaxseed</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20153884/" target="_blank" rel="noopener" title="Flaxseed has a chemopreventive effect on ovarian cancer and increased survival in hens.">Flaxseed has a chemopreventive effect on ovarian cancer and increased s…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34577143/" target="_blank" rel="noopener" title="Flaxseed increases animal lifespan and reduces ovarian cancer severity by toxically augmenting one-carbon metabolism.">Flaxseed increases animal lifespan and reduces ovarian cancer severity…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25850566/" target="_blank" rel="noopener" title="Flaxseed reduces the pro-carcinogenic micro-environment in the ovaries of normal hens by altering the PG and oestrogen pathways in a dose-dependent manner.">Flaxseed reduces the pro-carcinogenic micro-environment in the ovaries…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2988,7 +3005,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/flaxseed" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Naringenin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36029647/" target="_blank" rel="noopener" title="Naringenin suppresses epithelial ovarian cancer by inhibiting proliferation and modulating gut microbiota.">Naringenin suppresses epithelial ovarian cancer by inhibiting prolifera…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2999,7 +3016,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/439246" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/naringenin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ellagic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34339030/" target="_blank" rel="noopener" title="Pharmacological effects of natural components against ovarian cancer and mechanisms.">Pharmacological effects of natural components against ovarian cancer an…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29173024/" target="_blank" rel="noopener" title="The main components of pomegranate can inhibit metastasis of ovarian cancer.">The main components of pomegranate can inhibit metastasis of ovarian ca…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32415699/" target="_blank" rel="noopener" title="The anti-tumourigenic effect of ellagic acid in SKOV-3 ovarian cancer cells entails activation of autophagy mediated by inhibiting Akt and activating AMPK.">The anti-tumourigenic effect of ellagic acid in SKOV-3 ovarian cancer c…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3010,7 +3027,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ellagic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Betulinic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/36958401/" target="_blank" rel="noopener" title="Programmed-response cross-linked nanocarrier for multidrug-resistant ovarian cancer treatment">Programmed-response cross-linked nanocarrier for multidrug-resistant ov…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/35408619/" target="_blank" rel="noopener" title="Rhodamine 101 Conjugates of Triterpenoic Amides Are of Comparable Cytotoxicity as Their Rhodamine B Analogs">Rhodamine 101 Conjugates of Triterpenoic Amides Are of Comparable Cytot…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/34628206/" target="_blank" rel="noopener" title="Betulinic acid and its spray dried microparticle formulation: In vitro PDT effect against ovarian carcinoma cell line and in vivo plasma and tumor disposition">Betulinic acid and its spray dried microparticle formulation: In vitro…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3021,7 +3038,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/64971" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/betulinic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Chrysin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/40938040/" target="_blank" rel="noopener" title="Chrysin-Loaded Micelles Regulate Cell Cycle and Induce Intrinsic and Extrinsic Apoptosis in Ovarian Cancer Cells">Chrysin-Loaded Micelles Regulate Cell Cycle and Induce Intrinsic and Ex…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/40194519/" target="_blank" rel="noopener" title="Inhibition of DNA polymerase eta-mediated translesion DNA synthesis with small molecule sensitises ovarian cancer stem-like cells to chemotherapy">Inhibition of DNA polymerase eta-mediated translesion DNA synthesis wit…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/36723692/" target="_blank" rel="noopener" title="Niosomes nanoparticles as a novel approach in drug delivery enhances anticancer properties of chrysin in human ovarian carcinoma cells (SKOV3): an in vitro study">Niosomes nanoparticles as a novel approach in drug delivery enhances an…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3032,7 +3049,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281607" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/chrysin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cranberry</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -3043,7 +3060,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cranberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Salvia Miltiorrhiza</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/41864114/" target="_blank" rel="noopener" title="Dimethyl bisphenolate inhibits ovarian cancer growth by regulating the PI3K/AKT/mTOR signaling pathway">Dimethyl bisphenolate inhibits ovarian cancer growth by regulating the…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/40609387/" target="_blank" rel="noopener" title="Dihydrotanshinone I inhibits ovarian tumor growth by suppressing ITGB1/FAK-mediated extracellular matrix signaling">Dihydrotanshinone I inhibits ovarian tumor growth by suppressing ITGB1/…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/40237524/" target="_blank" rel="noopener" title="Preliminary exploration of the potential role of salvianolic acid F in regulating ovarian cancer cell proliferation, migration, invasion, and apoptosis and its association with the EP300/PI3K/AKT pathway">Preliminary exploration of the potential role of salvianolic acid F in…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3054,7 +3071,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/salvia-miltiorrhiza" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Delphinidin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/38239977/" target="_blank" rel="noopener" title="The multiple actions of grape and its polyphenols on female reproductive processes with an emphasis on cell signalling">The multiple actions of grape and its polyphenols on female reproductiv…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/33445795/" target="_blank" rel="noopener" title="Delphinidin Increases the Sensitivity of Ovarian Cancer Cell Lines to 3-Bromopyruvate">Delphinidin Increases the Sensitivity of Ovarian Cancer Cell Lines to 3…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/29122484/" target="_blank" rel="noopener" title="Delphinidin inhibits BDNF-induced migration and invasion in SKOV3 ovarian cancer cells">Delphinidin inhibits BDNF-induced migration and invasion in SKOV3 ovari…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3065,7 +3082,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/delphinidin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Black Tea</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28445129/" target="_blank" rel="noopener" title="This meta-analysis showed an inverse association between tea consumption and ovarian cancer risk.">This meta-analysis showed an inverse association between tea consumptio…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25332332/" target="_blank" rel="noopener" title="Higher intakes of flavonols and flavanones as well as black tea consumption may be associated with lower risk of ovarian cancer.">Higher intakes of flavonols and flavanones as well as black tea consump…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3076,7 +3093,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/black-tea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Daidzein</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16171852/" target="_blank" rel="noopener" title="Fermented soy therapy may have therapeutic value in treating platinum-resistant ovarian cancer.">Fermented soy therapy may have therapeutic value in treating platinum-r…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29512690/" target="_blank" rel="noopener" title="Daidzein exerts anticancer activity towards SKOV3 human ovarian cancer cells.">Daidzein exerts anticancer activity towards SKOV3 human ovarian cancer…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3087,7 +3104,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281708" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/daidzein" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Soy</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16171852/" target="_blank" rel="noopener" title="Fermented soy therapy may have therapeutic value in treating platinum-resistant ovarian cancer.">Fermented soy therapy may have therapeutic value in treating platinum-r…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19775307/" target="_blank" rel="noopener" title="Soy intake has a protective effect against the risk for endocrine-related gynaecological cancers such as ovarian and endometrial cancer.">Soy intake has a protective effect against the risk for endocrine-relat…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3098,7 +3115,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/soy" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Isoliquiritigenin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28934130/" target="_blank" rel="noopener" title="Isoliquiritigenin is a candidate agent for the treatment of human ovarian cancer.">Isoliquiritigenin is a candidate agent for the treatment of human ovari…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31623144/" target="_blank" rel="noopener" title="Isoliquiritigenin may be an effective therapeutic agent against ovarian cancer.">Isoliquiritigenin may be an effective therapeutic agent against ovarian…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3109,7 +3126,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/isoliquiritigenin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ursolic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26323892/" target="_blank" rel="noopener" title="Ursolic acid could affect the proliferation and apoptosis of human ovarian cancer stem-like cells and it is a potent anti-ovarian cancer agent.">Ursolic acid could affect the proliferation and apoptosis of human ovar…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3120,7 +3137,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/64945" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/ursolic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Gallic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32276584/" target="_blank" rel="noopener" title="Effect of gallic acid and myricetin on ovarian cancer models.">Effect of gallic acid and myricetin on ovarian cancer models.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3131,7 +3148,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/gallic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Gambogic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23436279/" target="_blank" rel="noopener" title="Gambogic acid sensitizes ovarian cancer cells to doxorubicin through ROS-mediated apoptosis.">Gambogic acid sensitizes ovarian cancer cells to doxorubicin through RO…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39643123/" target="_blank" rel="noopener" title="Gambogic acid induces GSDME dependent pyroptotic signaling pathway via ROS/P53/Mitochondria/Caspase-3 in ovarian cancer cells.">Gambogic acid induces GSDME dependent pyroptotic signaling pathway via…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3142,7 +3159,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/gambogic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Plumbagin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/22806981/" target="_blank" rel="noopener" title="Plumbagin inhibits tumorigenesis and angiogenesis of ovarian cancer cells in vivo.">Plumbagin inhibits tumorigenesis and angiogenesis of ovarian cancer cel…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3153,7 +3170,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/plumbagin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Amla Fruit</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24133573/" target="_blank" rel="noopener" title="Amla extract may prove useful as an alternative or adjunct therapeutic approach in helping to fight ovarian cancer.">Amla extract may prove useful as an alternative or adjunct therapeutic…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27129171/" target="_blank" rel="noopener" title="Amla extract modulates cancer cells and the tumor microenvironment.">Amla extract modulates cancer cells and the tumor microenvironment.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3164,7 +3181,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/amla-fruit" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Mangiferin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30655860/" target="_blank" rel="noopener" title="Anti-neoplastic effect of mangiferin on human ovarian adenocarcinoma OVCAR8 cells.">Anti-neoplastic effect of mangiferin on human ovarian adenocarcinoma OV…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34339030/" target="_blank" rel="noopener" title="Pharmacological effects of natural components against ovarian cancer and mechanisms.">Pharmacological effects of natural components against ovarian cancer an…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3175,7 +3192,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/mangiferin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Organosulfur Compounds</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30837041/" target="_blank" rel="noopener" title="Effects of diallyl disulfide on the proliferation and apoptosis of epithelial ovarian cancer cells.">Effects of diallyl disulfide on the proliferation and apoptosis of epit…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/42253320/" target="_blank" rel="noopener" title="Integrative transcriptomics and structure-based screening identifies Phyllanthus amarus phytocompounds as potential WNT5A modulators in ovarian cancer.">Integrative transcriptomics and structure-based screening identifies Ph…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3186,7 +3203,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/organosulfur-compounds" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fisetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30378308/" target="_blank" rel="noopener" title="Fisetin and fisetin nanopartical have the effect of anti-ovarian cancer cells.">Fisetin and fisetin nanopartical have the effect of anti-ovarian cancer…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28598107/" target="_blank" rel="noopener" title="This is the first insight into the antitumor, anti-proliferative and the induction of apoptosis efficacy of fisetin against ovarian cancer.">This is the first insight into the antitumor, anti-proliferative and th…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3197,7 +3214,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281614" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/fisetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Gold (Nanoparticles)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25071019/" target="_blank" rel="noopener" title="Gold nanoparticles sensitize ovarian cancer cells to cisplatin.">Gold nanoparticles sensitize ovarian cancer cells to cisplatin.</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36335352/" target="_blank" rel="noopener" title="Synergetic delivery of artesunate and isosorbide 5-mononitrate with reduction-sensitive polymer nanoparticles for ovarian cancer.">Synergetic delivery of artesunate and isosorbide 5-mononitrate with red…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3208,7 +3225,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/gold-nanoparticles" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Sophora Flavescens</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26099492/" target="_blank" rel="noopener" title="Oxymatrine suppresses proliferation and facilitates apoptosis of human ovarian cancer cells.">Oxymatrine suppresses proliferation and facilitates apoptosis of human…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39649540/" target="_blank" rel="noopener" title="PLGA-PEG-c(RGDfK)- Kushenol E micelles with a therapeutic potential for targeting ovarian cancer.">PLGA-PEG-c(RGDfK)- Kushenol E micelles with a therapeutic potential for…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3219,7 +3236,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/sophora-flavescens" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Luteolin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34339030/" target="_blank" rel="noopener" title="Pharmacological effects of natural components against ovarian cancer and mechanisms.">Pharmacological effects of natural components against ovarian cancer an…</a></li><li><span class="np-pub-type">Animal Study, In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29173024/" target="_blank" rel="noopener" title="The main components of pomegranate can inhibit metastasis of ovarian cancer.">The main components of pomegranate can inhibit metastasis of ovarian ca…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3230,7 +3247,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280445" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/luteolin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Artesunate</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36335352/" target="_blank" rel="noopener" title="Synergetic delivery of artesunate and isosorbide 5-mononitrate with reduction-sensitive polymer nanoparticles for ovarian cancer.">Synergetic delivery of artesunate and isosorbide 5-mononitrate with red…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3241,7 +3258,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/artesunate" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Raspberry</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26725849/" target="_blank" rel="noopener" title="A red raspberry component, sanguiin H-6 could inhibit A2780 human ovarian carcinoma cells.">A red raspberry component, sanguiin H-6 could inhibit A2780 human ovari…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3252,7 +3269,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/raspberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Artemisinin</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -3263,7 +3280,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/artemisinin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Astragaloside</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/41504490/" target="_blank" rel="noopener" title="Chiral and Dual Drugs Combination Reduces Tumor-Associated Neutrophils-Induced T-Cell Immunoparalysis to Treat Epithelial Ovarian Cancer">Chiral and Dual Drugs Combination Reduces Tumor-Associated Neutrophils-…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/41166894/" target="_blank" rel="noopener" title="AS-IV inhibits the progression of ovarian cancer by targeting the circ_0124787/miR-6875-3p/IL-1β axis">AS-IV inhibits the progression of ovarian cancer by targeting the circ_…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/37323083/" target="_blank" rel="noopener" title="Astragaloside II enhanced sensitivity of ovarian cancer cells to cisplatin via triggering apoptosis and autophagy">Astragaloside II enhanced sensitivity of ovarian cancer cells to cispla…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3274,7 +3291,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/astragaloside" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Barberry</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -3285,7 +3302,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/barberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Beta-Elemene</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/40531758/" target="_blank" rel="noopener" title="RETRACTION: Treatment with β-elemene combined with paclitaxel inhibits growth, migration, and invasion and induces apoptosis of ovarian cancer cells by activation of STAT-NF-κB pathway">RETRACTION: Treatment with β-elemene combined with paclitaxel inhibits…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/36395609/" target="_blank" rel="noopener" title="Therapeutic potential of Curcuma oil and its terpenoids in gynecological cancers">Therapeutic potential of Curcuma oil and its terpenoids in gynecologica…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/32401925/" target="_blank" rel="noopener" title="Treatment with β-elemene combined with paclitaxel inhibits growth, migration, and invasion and induces apoptosis of ovarian cancer cells by activation of STAT-NF-κB pathway">Treatment with β-elemene combined with paclitaxel inhibits growth, migr…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3296,7 +3313,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/beta-elemene" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cucurbitacin B</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/36681055/" target="_blank" rel="noopener" title="Label-free-based quantitative proteomic analysis of the inhibition of cisplatin-resistant ovarian cancer cell proliferation by cucurbitacin B">Label-free-based quantitative proteomic analysis of the inhibition of c…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/28693146/" target="_blank" rel="noopener" title="Inhibition of paclitaxel resistance and apoptosis induction by cucurbitacin B in ovarian carcinoma cells">Inhibition of paclitaxel resistance and apoptosis induction by cucurbit…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/26242260/" target="_blank" rel="noopener" title="Approach for chemosensitization of cisplatin-resistant ovarian cancer by cucurbitacin B">Approach for chemosensitization of cisplatin-resistant ovarian cancer b…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3307,7 +3324,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cucurbitacin-b" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Demethoxycurcumin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/39626913/" target="_blank" rel="noopener" title="Effects of Curcumin and Its Analogue Desmethoxycurcumin on miR-133b and Its Target Gene GSTP-1 in Cisplatin-resistant Ovarian Cancer Cells">Effects of Curcumin and Its Analogue Desmethoxycurcumin on miR-133b and…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/28345465/" target="_blank" rel="noopener" title="Demethoxycurcumin inhibited human epithelia ovarian cancer cells&#x27; growth via up-regulating miR-551a">Demethoxycurcumin inhibited human epithelia ovarian cancer cells&#x27; growt…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/9868158/" target="_blank" rel="noopener" title="Cytotoxicity of curcuminoids and some novel compounds from Curcuma zedoaria">Cytotoxicity of curcuminoids and some novel compounds from Curcuma zedo…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3318,7 +3335,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/demethoxycurcumin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EGCG (Epigallocatechin Gallate)</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -3329,7 +3346,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/egcg-epigallocatechin-gallate" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Emodin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/42197230/" target="_blank" rel="noopener" title="Novel Aloe-Emodin Derivatives as Potential Anticancer Agents: Synthesis, Characterization and Cytotoxic Activity">Novel Aloe-Emodin Derivatives as Potential Anticancer Agents: Synthesis…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/40974422/" target="_blank" rel="noopener" title="Comprehensive analysis of VDAC1 in gynecological tumors and structure-based virtual screening of its natural inhibitors">Comprehensive analysis of VDAC1 in gynecological tumors and structure-b…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/40274346/" target="_blank" rel="noopener" title="Emd-D inhibited ovarian cancer progression via PFKFB4-dependent glycolysis and apoptosis">Emd-D inhibited ovarian cancer progression via PFKFB4-dependent glycoly…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3340,7 +3357,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/emodin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Gc Protein-Derived Macrophage Activating Factor (GcMAF)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24179708/" target="_blank" rel="noopener" title="The clinical cases presented here reinforce the hypothesis that GcMAF could become part of anticancer immunotherapeutic regimens.">The clinical cases presented here reinforce the hypothesis that GcMAF c…</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28834887/" target="_blank" rel="noopener" title="Serum C-reactive protein levels may serve as an indicator of ovarian cancer risk.">Serum C-reactive protein levels may serve as an indicator of ovarian ca…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29693426/" target="_blank" rel="noopener" title="A diet that includes cruciferous vegetables could be an important modifiable risk factor for ovarian cancer.">A diet that includes cruciferous vegetables could be an important modif…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3351,7 +3368,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/gc-protein-derived-macrophage-activating-factor-gcmaf" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginseng (Siberian)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16619374/" target="_blank" rel="noopener" title="A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutherococcus (Siberian ginseng) and Schisandra may boost suppressed immunity in ovarian cancer patients on chemotherapy.">A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutheroc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3362,7 +3379,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginseng-siberian" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Maral Root</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16619374/" target="_blank" rel="noopener" title="A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutherococcus (Siberian ginseng) and Schisandra may boost suppressed immunity in ovarian cancer patients on chemotherapy.">A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutheroc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3373,7 +3390,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/maral-root" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Rhodiola (Tibetan Ginseng)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16619374/" target="_blank" rel="noopener" title="A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutherococcus (Siberian ginseng) and Schisandra may boost suppressed immunity in ovarian cancer patients on chemotherapy.">A combination of Leuzea carthamoides (Maral root), Rhodiola, Eleutheroc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3384,7 +3401,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/rhodiola-tibetan-ginseng" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Agaricus Blazei</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/15304151/" target="_blank" rel="noopener" title="Agaricus blazei increases natural killer cell activity and quality of life in gynecological cancer patients undergoing chemotherapy.">Agaricus blazei increases natural killer cell activity and quality of l…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3395,7 +3412,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/agaricus-blazei" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Isoflavones</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16171852/" target="_blank" rel="noopener" title="Fermented soy therapy may have therapeutic value in treating platinum-resistant ovarian cancer.">Fermented soy therapy may have therapeutic value in treating platinum-r…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3406,7 +3423,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/isoflavones" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Anthocyanins</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25332332/" target="_blank" rel="noopener" title="Higher intakes of flavonols and flavanones as well as black tea consumption may be associated with lower risk of ovarian cancer.">Higher intakes of flavonols and flavanones as well as black tea consump…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3417,7 +3434,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/145858" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/anthocyanins" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Mistletoe</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18074761/" target="_blank" rel="noopener" title="Mistletoe may prolong overall survival of ovarian cancer patients.">Mistletoe may prolong overall survival of ovarian cancer patients.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3428,7 +3445,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/mistletoe" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fiber</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29575880/" target="_blank" rel="noopener" title="Modifiable lifestyle factors and ovarian cancer incidence in women.">Modifiable lifestyle factors and ovarian cancer incidence in women.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3439,7 +3456,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/fiber" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fruit: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29575880/" target="_blank" rel="noopener" title="Modifiable lifestyle factors and ovarian cancer incidence in women.">Modifiable lifestyle factors and ovarian cancer incidence in women.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3450,7 +3467,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/fruit-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Rice</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29575880/" target="_blank" rel="noopener" title="Modifiable lifestyle factors and ovarian cancer incidence in women.">Modifiable lifestyle factors and ovarian cancer incidence in women.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3461,7 +3478,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/rice" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vegetables: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29575880/" target="_blank" rel="noopener" title="Modifiable lifestyle factors and ovarian cancer incidence in women.">Modifiable lifestyle factors and ovarian cancer incidence in women.</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25740748/" target="_blank" rel="noopener" title="Consumption of cruciferous vegetables may reduce the risk of ovarian cancer.">Consumption of cruciferous vegetables may reduce the risk of ovarian ca…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29693426/" target="_blank" rel="noopener" title="A diet that includes cruciferous vegetables could be an important modifiable risk factor for ovarian cancer.">A diet that includes cruciferous vegetables could be an important modif…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3472,7 +3489,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/vegetables-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Infection/Infectitious Agent Byproducts (Beneficial)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20559706/" target="_blank" rel="noopener" title="Mumps parotitis may lead to expression and immune recognition of a tumor-associated form of MUC1 and create effective immune surveillance of ovarian cancer cells that express this form of MUC1.">Mumps parotitis may lead to expression and immune recognition of a tumo…</a></li><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28934130/" target="_blank" rel="noopener" title="Isoliquiritigenin is a candidate agent for the treatment of human ovarian cancer.">Isoliquiritigenin is a candidate agent for the treatment of human ovari…</a></li><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26323892/" target="_blank" rel="noopener" title="Ursolic acid could affect the proliferation and apoptosis of human ovarian cancer stem-like cells and it is a potent anti-ovarian cancer agent.">Ursolic acid could affect the proliferation and apoptosis of human ovar…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3483,7 +3500,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/infectioninfectitious-agent-byproducts-beneficial" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Olive</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/12146851/" target="_blank" rel="noopener" title="Olive oil consumption is associated with reduced incidence of ovarian cancer.">Olive oil consumption is associated with reduced incidence of ovarian c…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25506212/" target="_blank" rel="noopener" title="Olive oil prevents bone loss in tumor patients and has excellent prospects for curing osteoporosis after menopause.">Olive oil prevents bone loss in tumor patients and has excellent prospe…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3494,7 +3511,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/olive" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Tocotrienol: Delta</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30639384/" target="_blank" rel="noopener" title="The combination of bevacizumab and tocotrienol is potent in chemotherapy refractory ovarian cancer.">The combination of bevacizumab and tocotrienol is potent in chemotherap…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3505,7 +3522,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/tocotrienol-delta" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Coffee</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29777049/" target="_blank" rel="noopener" title="These results suggest that coffee drinking may protect against liver, ovarian, thyroid and endometrial cancers and melanoma.">These results suggest that coffee drinking may protect against liver, o…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3546,6 +3563,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>

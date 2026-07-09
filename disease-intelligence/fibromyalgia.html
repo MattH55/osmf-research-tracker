@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -1077,9 +1082,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (50)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (40)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (40)</button>
@@ -1093,7 +1104,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>IMIPRAMINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1108,7 +1119,7 @@
           <td class="muted">Open Targets, ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL11/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL11" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACEBUTOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1119,7 +1130,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACEBUTOLOL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1130,7 +1141,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200813/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200813" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1141,7 +1152,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALBUTEROL SULFATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1152,7 +1163,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1441059/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1441059" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALFUZOSIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1163,7 +1174,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALFUZOSIN HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1174,7 +1185,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1723/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1723" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMBENONIUM</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1185,7 +1196,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMBENONIUM CHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1196,7 +1207,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200541/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200541" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1207,7 +1218,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMITRIPTYLINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1218,7 +1229,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BENZOATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1229,7 +1240,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4594262/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4594262" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1240,7 +1251,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1251,7 +1262,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE MALEATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1262,7 +1273,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200984/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200984" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1273,7 +1284,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIGENIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1284,7 +1295,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1295,7 +1306,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1306,7 +1317,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1317,7 +1328,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200379/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200379" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARBUTAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1328,7 +1339,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARFORMOTEROL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1339,7 +1350,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARFORMOTEROL TARTRATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1350,7 +1361,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1951071/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1951071" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASENAPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1361,7 +1372,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATENOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1372,7 +1383,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATIPAMEZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1383,7 +1394,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1394,7 +1405,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZGALANTAMINE GLUCONATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1405,7 +1416,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL6068431/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL6068431" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1416,7 +1427,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEPRIDIL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1427,7 +1438,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEPRIDIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1438,7 +1449,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200382/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200382" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1449,7 +1460,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAXOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1460,7 +1471,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAXOLOL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1471,7 +1482,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1691/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1691" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETHANIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1482,7 +1493,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1493,7 +1504,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISOPROLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1504,7 +1515,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISOPROLOL FUMARATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1515,7 +1526,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1472989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1472989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITOLTEROL MESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1526,7 +1537,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRETYLIUM</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1537,7 +1548,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1548,7 +1559,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE TARTRATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1559,7 +1570,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200389/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200389" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1570,7 +1581,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CABERGOLINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1581,7 +1592,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARBACHOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1592,7 +1603,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL14/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL14" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARTEOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1603,7 +1614,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARTEOLOL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1618,7 +1629,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1201002/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1201002" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARVEDILOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1633,7 +1644,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARVEDILOL PHOSPHATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1648,7 +1659,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1201167/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1201167" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CELECOXIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1669,7 +1680,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMITRIPTYLINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1680,7 +1691,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL629/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL629" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANNABIDIOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1691,7 +1702,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL190461/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL190461" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYCLOBENZAPRINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1702,7 +1713,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL669/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL669" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYCLOBENZAPRINE HYDROCHLORIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1713,7 +1724,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200636/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200636" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DOLASETRON</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1724,7 +1735,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2368925/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2368925" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DULOXETINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1735,7 +1746,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1175/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1175" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ERENUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1746,7 +1757,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3833329/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3833329" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESREBOXETINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1757,7 +1768,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL180101/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL180101" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FERRIC CARBOXYMALTOSE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1768,7 +1779,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108597/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108597" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FERRIC OXYHYDROXIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1779,7 +1790,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4802224/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4802224" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FERROUS SULFATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1790,7 +1801,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200830/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200830" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GABAPENTIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1801,7 +1812,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL940/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL940" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>IRON ISOMALTOSIDE 1000</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1812,7 +1823,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4298046/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4298046" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>KETOTIFEN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1823,7 +1834,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL534/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL534" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LIDOCAINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1834,7 +1845,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL79/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL79" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MEMANTINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1845,7 +1856,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL807/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL807" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MILNACIPRAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1856,7 +1867,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL259209/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL259209" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MIROGABALIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1867,7 +1878,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3545125/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3545125" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>REBOXETINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1878,7 +1889,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL14370/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL14370" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SODIUM OXYBATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1889,7 +1900,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200682/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200682" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SOMATROPIN</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -1900,7 +1911,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201621/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201621" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TRAMADOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1911,7 +1922,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1237044/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1237044" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPRELOXETINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1922,7 +1933,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297646/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297646" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BCG VACCINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1933,7 +1944,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2108905/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2108905" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CARBIDOPA</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1944,7 +1955,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200748/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200748" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYCLOSERINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1955,7 +1966,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL771/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL771" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DESVENLAFAXINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1966,7 +1977,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1118/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1118" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DESVENLAFAXINE SUCCINATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1977,7 +1988,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1201728/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1201728" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DEXAMETHASONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1988,7 +1999,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL384467/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL384467" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DEXTROMETHORPHAN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1999,7 +2010,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL52440/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL52440" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DRONABINOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2010,7 +2021,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL465/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL465" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DROXIDOPA</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2021,7 +2032,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2103827/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2103827" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESCITALOPRAM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2032,7 +2043,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1508/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1508" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ESLICARBAZEPINE ACETATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2043,7 +2054,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL87992/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL87992" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FAMCICLOVIR</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2054,7 +2065,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL880/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL880" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FAXELADOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2065,7 +2076,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2103829/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2103829" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FLUPIRTINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2076,7 +2087,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL255044/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL255044" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FREMANEZUMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2087,7 +2098,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297756/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297756" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>IBUTAMOREN MESYLATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2098,7 +2109,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2105872/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2105872" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>IMIPRAMINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2123,7 +2134,7 @@
           <th>Score</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACEBUTOLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2134,7 +2145,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACEBUTOLOL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2145,7 +2156,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200813/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200813" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2156,7 +2167,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALBUTEROL SULFATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2167,7 +2178,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1441059/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1441059" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALFUZOSIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2178,7 +2189,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALFUZOSIN HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2189,7 +2200,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1723/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1723" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMBENONIUM</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2200,7 +2211,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMBENONIUM CHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2211,7 +2222,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200541/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200541" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMIODARONE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2222,7 +2233,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMITRIPTYLINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2233,7 +2244,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BENZOATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CACNA1F</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2244,7 +2255,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL4594262/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL4594262" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CACNA1F</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2255,7 +2266,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200402/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200402" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE BESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CACNA1C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2266,7 +2277,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMLODIPINE MALEATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CACNA1F</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2277,7 +2288,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200984/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200984" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2288,7 +2299,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIGENIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2299,7 +2310,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2310,7 +2321,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2321,7 +2332,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2332,7 +2343,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200379/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200379" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARBUTAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2343,7 +2354,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARFORMOTEROL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2354,7 +2365,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARFORMOTEROL TARTRATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2365,7 +2376,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1951071/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1951071" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASENAPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2376,7 +2387,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATENOLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2387,7 +2398,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATIPAMEZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2398,7 +2409,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2409,7 +2420,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZGALANTAMINE GLUCONATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2420,7 +2431,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL6068431/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL6068431" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2431,7 +2442,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEPRIDIL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CACNA1A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2442,7 +2453,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEPRIDIL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CACNA1G</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2453,7 +2464,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200382/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200382" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAMETHASONE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2464,7 +2475,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAXOLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2475,7 +2486,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAXOLOL HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2486,7 +2497,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1691/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1691" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETHANIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2497,7 +2508,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ACHE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2508,7 +2519,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISOPROLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2519,7 +2530,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISOPROLOL FUMARATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2530,7 +2541,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1472989/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1472989" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BITOLTEROL MESYLATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2541,7 +2552,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRETYLIUM</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRB1</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2552,7 +2563,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2571,8 +2582,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">60 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">60 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/fibromyalgia" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/conditions/fibromyalgia/" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -2581,7 +2598,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Magnesium</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31150373/" target="_blank" rel="noopener" title="Magnesium and malic acid supplement for fibromyalgia">Magnesium and malic acid supplement for fibromyalgia</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29457627/" target="_blank" rel="noopener" title="Combination pharmacotherapy for the treatment of fibromyalgia in adults">Combination pharmacotherapy for the treatment of fibromyalgia in adults</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32825400/" target="_blank" rel="noopener" title="Nutritional Interventions in the Management of Fibromyalgia Syndrome">Nutritional Interventions in the Management of Fibromyalgia Syndrome</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2596,7 +2613,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5462224" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/magnesium" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/magnesium/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin D3</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11056415/" target="_blank" rel="noopener" title="A combination of ascorbigen (a food derived form of vitamin c) and broccoli powder reduces pain sensivitiy and improves quality of life in patients with fibromyalgia.">A combination of ascorbigen (a food derived form of vitamin c) and broc…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16805968/" target="_blank" rel="noopener" title="Due to the higher levels of oxidative stress in patients with fibromyalgia supplementation with antioxidant vitamins may be beneficial.">Due to the higher levels of oxidative stress in patients with fibromyal…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/9310111/" target="_blank" rel="noopener" title="Elevated homocysteine levels in the cerebrospinal fluid of patients with fibromyalgia and chronic fatigue syndrome is probably due in part to vitamin b12 deficiency.">Elevated homocysteine levels in the cerebrospinal fluid of patients wit…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2611,7 +2628,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280795" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-d" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/vitamin-d/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin D3</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11056415/" target="_blank" rel="noopener" title="A combination of ascorbigen (a food derived form of vitamin c) and broccoli powder reduces pain sensivitiy and improves quality of life in patients with fibromyalgia.">A combination of ascorbigen (a food derived form of vitamin c) and broc…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16805968/" target="_blank" rel="noopener" title="Due to the higher levels of oxidative stress in patients with fibromyalgia supplementation with antioxidant vitamins may be beneficial.">Due to the higher levels of oxidative stress in patients with fibromyal…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/9310111/" target="_blank" rel="noopener" title="Elevated homocysteine levels in the cerebrospinal fluid of patients with fibromyalgia and chronic fatigue syndrome is probably due in part to vitamin b12 deficiency.">Elevated homocysteine levels in the cerebrospinal fluid of patients wit…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2626,7 +2643,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280795" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/vitamin-d/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Magnesium</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31150373/" target="_blank" rel="noopener" title="Magnesium and malic acid supplement for fibromyalgia">Magnesium and malic acid supplement for fibromyalgia</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29457627/" target="_blank" rel="noopener" title="Combination pharmacotherapy for the treatment of fibromyalgia in adults">Combination pharmacotherapy for the treatment of fibromyalgia in adults</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32825400/" target="_blank" rel="noopener" title="Nutritional Interventions in the Management of Fibromyalgia Syndrome">Nutritional Interventions in the Management of Fibromyalgia Syndrome</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2641,7 +2658,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5462224" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/magnesium/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Chlorella</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/10815009/" target="_blank" rel="noopener" title="Chlorella may help to relieve the symptoms of fibromyalgia in some patients.">Chlorella may help to relieve the symptoms of fibromyalgia in some pati…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2656,7 +2673,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://examine.com/supplements/chlorella/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Coenzyme Q10</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38220408/" target="_blank" rel="noopener" title="Coenzyme Q10 supplementation in rheumatic diseases: A systematic review">Coenzyme Q10 supplementation in rheumatic diseases: A systematic review</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32878326/" target="_blank" rel="noopener" title="Dietary Interventions in the Management of Fibromyalgia: A Systematic Review and Best-Evidence Synthesis">Dietary Interventions in the Management of Fibromyalgia: A Systematic R…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40151031/" target="_blank" rel="noopener" title="Effects of Coenzyme Q10, Tryptophan, and Magnesium Supplementation on Fatigue in Patients with Fibromyalgia - A Randomized Trial">Effects of Coenzyme Q10, Tryptophan, and Magnesium Supplementation on F…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2671,7 +2688,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281915" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/ubiquinol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/coenzyme-q10/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>L-Carnitine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40299412/" target="_blank" rel="noopener" title="Acetyl-L-carnitine as an add-on treatment in fibromyalgia syndrome.">Acetyl-L-carnitine as an add-on treatment in fibromyalgia syndrome.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17543140/" target="_blank" rel="noopener" title="Acetyl-L-carnitine significantly improves the condition of patients with fibromyalgia.">Acetyl-L-carnitine significantly improves the condition of patients wit…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37378482/" target="_blank" rel="noopener" title="Palmitoylethanolamide and acetyl-L-carnitine act synergistically with duloxetine and pregabalin in fibromyalgia.">Palmitoylethanolamide and acetyl-L-carnitine act synergistically with d…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2686,7 +2703,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10917" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/acetyl-l-carnitine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/carnitine/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Saffron</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30456199/" target="_blank" rel="noopener" title="Saffron and duloxetine demonstrated comparable efficacy in treatment of fibromyalgia symptoms.">Saffron and duloxetine demonstrated comparable efficacy in treatment of…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2701,7 +2718,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/637760" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/saffron" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/saffron/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Creatine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29214470/" target="_blank" rel="noopener" title="Clinical and anti-aging effect of mud-bathing therapy for patients with fibromyalgia">Clinical and anti-aging effect of mud-bathing therapy for patients with…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25230216/" target="_blank" rel="noopener" title="Changes in metabolites after treatment with memantine in fibromyalgia. A double-blind randomized controlled trial with magnetic resonance spectroscopy with a 6-month follow-up">Changes in metabolites after treatment with memantine in fibromyalgia.…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23554283/" target="_blank" rel="noopener" title="Creatine supplementation in fibromyalgia: a randomized, double-blind, placebo-controlled trial">Creatine supplementation in fibromyalgia: a randomized, double-blind, p…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2716,7 +2733,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/586" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/creatine/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Iron</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38652420/" target="_blank" rel="noopener" title="Proteomics in Patients with Fibromyalgia Syndrome: A Systematic Review of Observational Studies">Proteomics in Patients with Fibromyalgia Syndrome: A Systematic Review…</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32825400/" target="_blank" rel="noopener" title="Nutritional Interventions in the Management of Fibromyalgia Syndrome">Nutritional Interventions in the Management of Fibromyalgia Syndrome</a></li><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39796445/" target="_blank" rel="noopener" title="Effectiveness of the SYNCHRONIZE + Brief Intervention in Improving Mediterranean Diet Adherence, Nutritional Quality and Intake Pattern in Persons with Fibromyalgia and Chronic Fatigue Syndrome">Effectiveness of the SYNCHRONIZE + Brief Intervention in Improving Medi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2731,7 +2748,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/23925" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/iron/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Iron</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38652420/" target="_blank" rel="noopener" title="Proteomics in Patients with Fibromyalgia Syndrome: A Systematic Review of Observational Studies">Proteomics in Patients with Fibromyalgia Syndrome: A Systematic Review…</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32825400/" target="_blank" rel="noopener" title="Nutritional Interventions in the Management of Fibromyalgia Syndrome">Nutritional Interventions in the Management of Fibromyalgia Syndrome</a></li><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39796445/" target="_blank" rel="noopener" title="Effectiveness of the SYNCHRONIZE + Brief Intervention in Improving Mediterranean Diet Adherence, Nutritional Quality and Intake Pattern in Persons with Fibromyalgia and Chronic Fatigue Syndrome">Effectiveness of the SYNCHRONIZE + Brief Intervention in Improving Medi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2746,7 +2763,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/23925" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/iron/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Creatine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29214470/" target="_blank" rel="noopener" title="Clinical and anti-aging effect of mud-bathing therapy for patients with fibromyalgia">Clinical and anti-aging effect of mud-bathing therapy for patients with…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25230216/" target="_blank" rel="noopener" title="Changes in metabolites after treatment with memantine in fibromyalgia. A double-blind randomized controlled trial with magnetic resonance spectroscopy with a 6-month follow-up">Changes in metabolites after treatment with memantine in fibromyalgia.…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23554283/" target="_blank" rel="noopener" title="Creatine supplementation in fibromyalgia: a randomized, double-blind, placebo-controlled trial">Creatine supplementation in fibromyalgia: a randomized, double-blind, p…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2761,7 +2778,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/586" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/creatine/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>S-Adenosylmethionine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/9543578/" target="_blank" rel="noopener" title="Evaluation of S-adenosylmethionine in secondary fibromyalgia: a double-blind study">Evaluation of S-adenosylmethionine in secondary fibromyalgia: a double-…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2776,7 +2793,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://examine.com/supplements/s-adenosyl-methionine/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Coenzyme Q10</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38220408/" target="_blank" rel="noopener" title="Coenzyme Q10 supplementation in rheumatic diseases: A systematic review">Coenzyme Q10 supplementation in rheumatic diseases: A systematic review</a></li><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32878326/" target="_blank" rel="noopener" title="Dietary Interventions in the Management of Fibromyalgia: A Systematic Review and Best-Evidence Synthesis">Dietary Interventions in the Management of Fibromyalgia: A Systematic R…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40151031/" target="_blank" rel="noopener" title="Effects of Coenzyme Q10, Tryptophan, and Magnesium Supplementation on Fatigue in Patients with Fibromyalgia - A Randomized Trial">Effects of Coenzyme Q10, Tryptophan, and Magnesium Supplementation on F…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2791,7 +2808,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281915" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/coenzyme-q10/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Calcium</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta-analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41499180/" target="_blank" rel="noopener" title="Pregabalin in Pregnancy: Major Congenital Malformations, Other Birth Outcomes, and Neurodevelopmental Outcomes">Pregabalin in Pregnancy: Major Congenital Malformations, Other Birth Ou…</a></li><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39377412/" target="_blank" rel="noopener" title="High-dose Omega-3 Alters Serum Magnesium and Calcium Levels and Affects Fibromyalgia Symptoms: A Randomized, Double-blind, Placebo-Control Study">High-dose Omega-3 Alters Serum Magnesium and Calcium Levels and Affects…</a></li><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26816332/" target="_blank" rel="noopener" title="Association of Alterations in Gray Matter Volume With Reduced Evoked-Pain Connectivity Following Short-Term Administration of Pregabalin in Patients With Fibromyalgia">Association of Alterations in Gray Matter Volume With Reduced Evoked-Pa…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2806,7 +2823,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5460341" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/calcium" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin B12</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39832803/" target="_blank" rel="noopener" title="Differences in Ferritin, Vitamin D, and Vitamin B12 Between Fibromyalgia Patients and Healthy Individuals: A Systematic Review and Meta-Analysis">Differences in Ferritin, Vitamin D, and Vitamin B12 Between Fibromyalgi…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11056415/" target="_blank" rel="noopener" title="A combination of ascorbigen (a food derived form of vitamin c) and broccoli powder reduces pain sensivitiy and improves quality of life in patients with fibromyalgia.">A combination of ascorbigen (a food derived form of vitamin c) and broc…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16805968/" target="_blank" rel="noopener" title="Due to the higher levels of oxidative stress in patients with fibromyalgia supplementation with antioxidant vitamins may be beneficial.">Due to the higher levels of oxidative stress in patients with fibromyal…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2821,7 +2838,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5311498" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-b-12" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Vitamin C</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39337423/" target="_blank" rel="noopener" title="Nutraceutical Supplementation as a Potential Non-Drug Treatment for Fibromyalgia: Effects on Lipid Profile, Oxidative Status, and Quality of Life">Nutraceutical Supplementation as a Potential Non-Drug Treatment for Fib…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11056415/" target="_blank" rel="noopener" title="A combination of ascorbigen (a food derived form of vitamin c) and broccoli powder reduces pain sensivitiy and improves quality of life in patients with fibromyalgia.">A combination of ascorbigen (a food derived form of vitamin c) and broc…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16805968/" target="_blank" rel="noopener" title="Due to the higher levels of oxidative stress in patients with fibromyalgia supplementation with antioxidant vitamins may be beneficial.">Due to the higher levels of oxidative stress in patients with fibromyal…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2836,7 +2853,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/54670067" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-c" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>D-Ribose</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17109576/" target="_blank" rel="noopener" title="D-ribose significantly reduces clinical symptoms in patients suffering from fibromyalgia and chronic fatigue syndrome.">D-ribose significantly reduces clinical symptoms in patients suffering…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2851,7 +2868,7 @@
           <td class="muted">Examine.com, GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10975657" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/d-ribose" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a> <a href="https://examine.com/supplements/d-ribose/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Zinc</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18496697/" target="_blank" rel="noopener" title="Patients with fibromyalgia appear to have low levels of zinc and magnesium correlating with tender points and fatigue, respectively.">Patients with fibromyalgia appear to have low levels of zinc and magnes…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2866,7 +2883,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/23994" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/zinc" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Folate</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/38910579/" target="_blank" rel="noopener" title="Effect of fibromyalgia on demographic, biochemical, metabolic and inflammatory profiles: a single-centre retrospective study">Effect of fibromyalgia on demographic, biochemical, metabolic and infla…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/32150934/" target="_blank" rel="noopener" title="Do Nutritional Factors Interact with Chronic Musculoskeletal Pain? A Systematic Review">Do Nutritional Factors Interact with Chronic Musculoskeletal Pain? A Sy…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/27267522/" target="_blank" rel="noopener" title="Food intake assessment and quality of life in women with fibromyalgia">Food intake assessment and quality of life in women with fibromyalgia</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2881,7 +2898,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/135398658" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/folic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Dhea</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Food compound</td>
@@ -2892,7 +2909,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5881" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/dhea/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Olive Oil</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27443526/" target="_blank" rel="noopener" title="Olive oil may be a valuable therapeutic support in Fibromyalgia.">Olive oil may be a valuable therapeutic support in Fibromyalgia.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11361228/" target="_blank" rel="noopener" title="Silicone gel breast implant rupture and resultant extracapsular silicone may contribute to fibromyalgia.">Silicone gel breast implant rupture and resultant extracapsular silicon…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2903,7 +2920,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/olive-oil" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>L-Carnitine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40299412/" target="_blank" rel="noopener" title="Acetyl-L-carnitine as an add-on treatment in fibromyalgia syndrome.">Acetyl-L-carnitine as an add-on treatment in fibromyalgia syndrome.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17543140/" target="_blank" rel="noopener" title="Acetyl-L-carnitine significantly improves the condition of patients with fibromyalgia.">Acetyl-L-carnitine significantly improves the condition of patients wit…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37378482/" target="_blank" rel="noopener" title="Palmitoylethanolamide and acetyl-L-carnitine act synergistically with duloxetine and pregabalin in fibromyalgia.">Palmitoylethanolamide and acetyl-L-carnitine act synergistically with d…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2918,7 +2935,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10917" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/carnitine/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Saffron</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30456199/" target="_blank" rel="noopener" title="Saffron and duloxetine demonstrated comparable efficacy in treatment of fibromyalgia symptoms.">Saffron and duloxetine demonstrated comparable efficacy in treatment of…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2933,7 +2950,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/637760" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/saffron/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Melatonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21158908/" target="_blank" rel="noopener" title="Administration of melatonin, alone or in a combination with fluoxetine was effective in the treatment of patients with fibromyalgia.">Administration of melatonin, alone or in a combination with fluoxetine…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23394493/" target="_blank" rel="noopener" title="Amelioration of hypercholesterolemia and fatigue by ubiquinol-10 supplementation.">Amelioration of hypercholesterolemia and fatigue by ubiquinol-10 supple…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31387429/" target="_blank" rel="noopener" title="Coenzyme Q10 supplementation alleviates pain in pregabalin-treated fibromyalgia patients via reducing brain activity and mitochondrial dysfunction.">Coenzyme Q10 supplementation alleviates pain in pregabalin-treated fibr…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2944,7 +2961,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/896" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/melatonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Probiotics</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30026567/" target="_blank" rel="noopener" title="Probiotics improved impulsivity and decision-making in fibromyalgia patients.">Probiotics improved impulsivity and decision-making in fibromyalgia pat…</a></li></ul></td>
           <td class="muted">Probiotic</td>
@@ -2955,7 +2972,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/probiotics" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Tryptophan</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40151031/" target="_blank" rel="noopener" title="The dietary supplement was efficacious in improving physical aspects of fibromyalgia.">The dietary supplement was efficacious in improving physical aspects of…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2966,7 +2983,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/6305" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/tryptophan" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Turmeric</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/37976478/" target="_blank" rel="noopener" title="Diet Composition&#x27;s Effect on Chronic Musculoskeletal Pain: A Narrative Review">Diet Composition&#x27;s Effect on Chronic Musculoskeletal Pain: A Narrative…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/37375716/" target="_blank" rel="noopener" title="Beyond Seasoning-The Role of Herbs and Spices in Rheumatic Diseases">Beyond Seasoning-The Role of Herbs and Spices in Rheumatic Diseases</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/35566585/" target="_blank" rel="noopener" title="Effects of Antioxidants on Pain Perception in Patients with Fibromyalgia-A Systematic Review">Effects of Antioxidants on Pain Perception in Patients with Fibromyalgi…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2977,7 +2994,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/969516" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/turmeric" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SAMe (S-Adenosylmethionine)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/1925418/" target="_blank" rel="noopener" title="Sam-e improves symptoms in primary fibromyalgia.">Sam-e improves symptoms in primary fibromyalgia.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2988,7 +3005,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/same-s-adenosylmethionine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cannabidiol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33400996/" target="_blank" rel="noopener" title="Fibromyalgia patients saw many benefits from using CBD across multiple symptoms domains.">Fibromyalgia patients saw many benefits from using CBD across multiple…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2999,7 +3016,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/644019" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/cannabidiol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>D-Ribose</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17109576/" target="_blank" rel="noopener" title="D-ribose significantly reduces clinical symptoms in patients suffering from fibromyalgia and chronic fatigue syndrome.">D-ribose significantly reduces clinical symptoms in patients suffering…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3014,7 +3031,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10975657" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/d-ribose/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Dhea</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/27498549/" target="_blank" rel="noopener" title="Different DHEA-S Levels and Response Patterns in Individuals with Chronic Neck Pain, Compared with a Pain Free Group-a Pilot Study">Different DHEA-S Levels and Response Patterns in Individuals with Chron…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/25039497/" target="_blank" rel="noopener" title="The effects of dehydroepiandrosterone (DHEA) in the treatment of depression and depressive symptoms in other psychiatric and medical illnesses: a systematic review">The effects of dehydroepiandrosterone (DHEA) in the treatment of depres…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/15996074/" target="_blank" rel="noopener" title="A randomized controlled trial of dehydroepiandrosterone in postmenopausal women with fibromyalgia">A randomized controlled trial of dehydroepiandrosterone in postmenopaus…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3025,7 +3042,7 @@
           <td class="muted">Examine.com</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5881" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://examine.com/supplements/dhea/" target="_blank" rel="noopener" class="ext-link">Examine.com</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cannabis</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21533029/" target="_blank" rel="noopener" title="Cannabis reduces symptoms in patients with fibromyalgia.">Cannabis reduces symptoms in patients with fibromyalgia.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31195754/" target="_blank" rel="noopener" title="Medical cannabis appears to be a safe and effective alternative for the treatment of fibromyalgia symptoms.">Medical cannabis appears to be a safe and effective alternative for the…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33118602/" target="_blank" rel="noopener" title="Phytocannabinoids can be a low-cost and well-tolerated therapy to reduce symptoms and increase the quality of life of patients with fibromyalgia.">Phytocannabinoids can be a low-cost and well-tolerated therapy to reduc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3036,7 +3053,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cannabis" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Palmitoylethanolamide</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37378482/" target="_blank" rel="noopener" title="Palmitoylethanolamide and acetyl-L-carnitine act synergistically with duloxetine and pregabalin in fibromyalgia.">Palmitoylethanolamide and acetyl-L-carnitine act synergistically with d…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26334329/" target="_blank" rel="noopener" title="Research suggests the efficacy and safety of palmitoylethanolamide in the treatment of pain associated with fibromyalgia.">Research suggests the efficacy and safety of palmitoylethanolamide in t…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40871024/" target="_blank" rel="noopener" title="These results suggest that adding LAC and PEA to standard care may provide meaningful symptom relief for fibromyalgia patients with suspected small fiber involvement.">These results suggest that adding LAC and PEA to standard care may prov…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3047,7 +3064,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/palmitoylethanolamide" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Homeopathic Medicine: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25146079/" target="_blank" rel="noopener" title="Homeopathy could have some benefit in the treatment of fibromyalgia.">Homeopathy could have some benefit in the treatment of fibromyalgia.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19358959/" target="_blank" rel="noopener" title="Homeopathic treatment appears to be safe and effective in patients with fibromyalgia.">Homeopathic treatment appears to be safe and effective in patients with…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14734789/" target="_blank" rel="noopener" title="Individualized homeopathic treatment improves clinical status in fibromyalgia patients.">Individualized homeopathic treatment improves clinical status in fibrom…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3058,7 +3075,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/homeopathic-medicine-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>5-HTP (5-Hydroxytryptophan)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/1521674/" target="_blank" rel="noopener" title="5-HTP improves Fibromyalgia symptoms in a human clinical study.">5-HTP improves Fibromyalgia symptoms in a human clinical study.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3069,7 +3086,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/5-htp-5-hydroxytryptophan" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Chlorella (Algae)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/10815009/" target="_blank" rel="noopener" title="Chlorella may help to relieve the symptoms of fibromyalgia in some patients.">Chlorella may help to relieve the symptoms of fibromyalgia in some pati…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3080,7 +3097,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/chlorella-algae" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Hydroxytyrosol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32784915/" target="_blank" rel="noopener" title="Hydroxytyrosol as a promising ally in the treatment of fibromyalgia.">Hydroxytyrosol as a promising ally in the treatment of fibromyalgia.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3091,7 +3108,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/hydroxytyrosol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Broccoli</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11056415/" target="_blank" rel="noopener" title="A combination of ascorbigen (a food derived form of vitamin c) and broccoli powder reduces pain sensivitiy and improves quality of life in patients with fibromyalgia.">A combination of ascorbigen (a food derived form of vitamin c) and broc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3102,7 +3119,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/broccoli" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Malic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/8587088/" target="_blank" rel="noopener" title="A combination of malic acid and magnesium is safe and may be beneficial in the treatment of patients with fibromyalgia.">A combination of malic acid and magnesium is safe and may be beneficial…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3113,7 +3130,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/malic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Chocolate</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27866465/" target="_blank" rel="noopener" title="Antioxidant protection from bioactive compounds present in fruit and vegetables could have an adjuvant role in fibromyalgia treatment.">Antioxidant protection from bioactive compounds present in fruit and ve…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3124,7 +3141,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/chocolate" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fruit: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27866465/" target="_blank" rel="noopener" title="Antioxidant protection from bioactive compounds present in fruit and vegetables could have an adjuvant role in fibromyalgia treatment.">Antioxidant protection from bioactive compounds present in fruit and ve…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3135,7 +3152,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/fruit-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Polyphenols</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27866465/" target="_blank" rel="noopener" title="Antioxidant protection from bioactive compounds present in fruit and vegetables could have an adjuvant role in fibromyalgia treatment.">Antioxidant protection from bioactive compounds present in fruit and ve…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3146,7 +3163,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/polyphenols" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vegetables: All</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27866465/" target="_blank" rel="noopener" title="Antioxidant protection from bioactive compounds present in fruit and vegetables could have an adjuvant role in fibromyalgia treatment.">Antioxidant protection from bioactive compounds present in fruit and ve…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3157,7 +3174,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/vegetables-all" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Sea Salt: Dead Sea</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11344827/" target="_blank" rel="noopener" title="Balneotherapy at the Dead Sea area appears to produce a statistically significant substantial improvement in the number of active joints and tender points in both male and female patients with fibromyalgia and psoriatic arthritis.">Balneotherapy at the Dead Sea area appears to produce a statistically s…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3168,7 +3185,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/sea-salt-dead-sea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cellfood</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18157288/" target="_blank" rel="noopener" title="Cellfood (deutrosulfazyme) improves fibromyalgia symptoms and health-related quality of life.">Cellfood (deutrosulfazyme) improves fibromyalgia symptoms and health-re…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3179,7 +3196,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cellfood" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Oxygen Therapies</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18157288/" target="_blank" rel="noopener" title="Cellfood (deutrosulfazyme) improves fibromyalgia symptoms and health-related quality of life.">Cellfood (deutrosulfazyme) improves fibromyalgia symptoms and health-re…</a></li><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36690401/" target="_blank" rel="noopener" title="Efficacy and safety of hyperbaric oxygen therapy for fibromyalgia.">Efficacy and safety of hyperbaric oxygen therapy for fibromyalgia.</a></li><li><span class="np-pub-type">Meta Analysis</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37218804/" target="_blank" rel="noopener" title="Effectiveness of hyperbaric oxygen for fibromyalgia.">Effectiveness of hyperbaric oxygen for fibromyalgia.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3190,7 +3207,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/oxygen-therapies" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Pycnogenol (Pine Bark)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33541059/" target="_blank" rel="noopener" title="Idiopathic myalgic pain (fibromyalgia): supportive management and prevention with Pycnogenol.">Idiopathic myalgic pain (fibromyalgia): supportive management and preve…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3201,7 +3218,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/pycnogenol-pine-bark" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Delta-Tetrahydrocannabinol (THC)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33118602/" target="_blank" rel="noopener" title="Phytocannabinoids can be a low-cost and well-tolerated therapy to reduce symptoms and increase the quality of life of patients with fibromyalgia.">Phytocannabinoids can be a low-cost and well-tolerated therapy to reduc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3212,7 +3229,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/delta-tetrahydrocannabinol-thc" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Homeopathic Medicine: Rhus Toxicodendron</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25146079/" target="_blank" rel="noopener" title="Homeopathy could have some benefit in the treatment of fibromyalgia.">Homeopathy could have some benefit in the treatment of fibromyalgia.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19358959/" target="_blank" rel="noopener" title="Homeopathic treatment appears to be safe and effective in patients with fibromyalgia.">Homeopathic treatment appears to be safe and effective in patients with…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14734789/" target="_blank" rel="noopener" title="Individualized homeopathic treatment improves clinical status in fibromyalgia patients.">Individualized homeopathic treatment improves clinical status in fibrom…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3223,7 +3240,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/homeopathic-medicine-rhus-toxicodendron" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Magnesium: Transdermal</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/8587088/" target="_blank" rel="noopener" title="A combination of malic acid and magnesium is safe and may be beneficial in the treatment of patients with fibromyalgia.">A combination of malic acid and magnesium is safe and may be beneficial…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/10626702/" target="_blank" rel="noopener" title="Due to the high hair calcium and magnesium levels in patients with Fibromyalgia supplementation with calcium and magnesium may be beneficial.">Due to the high hair calcium and magnesium levels in patients with Fibr…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/9513929/" target="_blank" rel="noopener" title="Magnesium deficiency is common in patients with chronic fatigue syndrome and fibromyalgia.">Magnesium deficiency is common in patients with chronic fatigue syndrom…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3234,7 +3251,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/magnesium-transdermal" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Astaxanthin</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Food compound</td>
@@ -3245,7 +3262,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281224" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/astaxanthin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fisetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/38813984/" target="_blank" rel="noopener" title="Longitudinal Progression of Patients with Long COVID Treated in a Post-COVID Clinic: A Cross-Sectional Survey">Longitudinal Progression of Patients with Long COVID Treated in a Post-…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/35011610/" target="_blank" rel="noopener" title="Evaluation of Endothelial Dysfunction and Autophagy in Fibromyalgia-Related Vascular and Cerebral Cortical Changes and the Ameliorative Effect of Fisetin">Evaluation of Endothelial Dysfunction and Autophagy in Fibromyalgia-Rel…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/32010308/" target="_blank" rel="noopener" title="Attenuation of reserpine-induced fibromyalgia via ROS and serotonergic pathway modulation by fisetin, a plant flavonoid polyphenol">Attenuation of reserpine-induced fibromyalgia via ROS and serotonergic…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3256,7 +3273,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281614" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/fisetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Diosmetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/38662182/" target="_blank" rel="noopener" title="Diosmetin attenuates fibromyalgia-like symptoms in a reserpine-induced model in mice">Diosmetin attenuates fibromyalgia-like symptoms in a reserpine-induced…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3267,7 +3284,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/diosmetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Honokiol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/40676048/" target="_blank" rel="noopener" title="Honokiol ameliorates reserpine-induced fibromyalgia through antioxidant, anti-inflammatory, neurotrophic, and anti-apoptotic mechanisms">Honokiol ameliorates reserpine-induced fibromyalgia through antioxidant…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3278,7 +3295,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/honokiol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Lignans</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -3289,7 +3306,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/lignans" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Psychedelics:All</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -3300,7 +3317,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/psychedelicsall" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bifidobacterium Infantis</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/29695180/" target="_blank" rel="noopener" title="Are probiotic treatments useful on fibromyalgia syndrome or chronic fatigue syndrome patients? A systematic review">Are probiotic treatments useful on fibromyalgia syndrome or chronic fat…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3311,7 +3328,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bifidobacterium-infantis" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Capsaicin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/40252663/" target="_blank" rel="noopener" title="Pharmacotherapy and non-invasive neuromodulation for neuropathic pain: a systematic review and meta-analysis">Pharmacotherapy and non-invasive neuromodulation for neuropathic pain:…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/22842953/" target="_blank" rel="noopener" title="Short-term efficacy of topical capsaicin therapy in severely affected fibromyalgia patients">Short-term efficacy of topical capsaicin therapy in severely affected f…</a></li><li><a href="https://pubmed.ncbi.nlm.nih.gov/20202927/" target="_blank" rel="noopener" title="Evidence for the efficacy of complementary and alternative medicines in the management of fibromyalgia: a systematic review">Evidence for the efficacy of complementary and alternative medicines in…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3322,7 +3339,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/capsaicin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Mineral Water</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27457628/" target="_blank" rel="noopener" title="A water-based Ai Chi program may contribute to the improvement of mental and physical health and the quality of life in women with Fibromyalgia.">A water-based Ai Chi program may contribute to the improvement of menta…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31161236/" target="_blank" rel="noopener" title="Baths with mineral-medicinal water from As Burgas can make an improvement on the impact caused by fibromyalgia.">Baths with mineral-medicinal water from As Burgas can make an improveme…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21742283/" target="_blank" rel="noopener" title="Effects of thermal therapy combining sauna therapy and underwater exercise in patients with fibromyalgia.">Effects of thermal therapy combining sauna therapy and underwater exerc…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3363,6 +3380,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>

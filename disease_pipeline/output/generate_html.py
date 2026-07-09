@@ -31,6 +31,16 @@ from ..site_nav import (
 TIER_COLOUR = {"A": "#22c55e", "B": "#4a9eff", "C": "#f59e0b"}
 TYPE_COLOUR = {"A": "#7c6af7", "B": "#4a9eff", "C": "#f59e0b", "D": "#ef4444", "E": "#22c55e"}
 
+# PubMed / registry counts that indicate direct clinical evidence (not association-only hits).
+_CLINICAL_EVIDENCE_KEYS = (
+    "trials_registry",
+    "cochrane_review",
+    "meta_analysis",
+    "systematic_review",
+    "clinical_trial",
+    "rct",
+)
+
 
 def _esc(text: str | None) -> str:
     return html.escape(str(text or ""))
@@ -143,6 +153,37 @@ def _alterations_table(alts: list[dict]) -> str:
     </div>"""
 
 
+def _has_direct_clinical_evidence(item: dict) -> bool:
+    """True when indexed registry trials or published trial/RCT literature exist."""
+    ev = item.get("clinical_evidence")
+    if ev:
+        counts = ev.get("counts") or {}
+        if any(int(counts.get(k) or 0) > 0 for k in _CLINICAL_EVIDENCE_KEYS):
+            return True
+        if ev.get("clinical_trials"):
+            return True
+        if ev.get("literature"):
+            return True
+        return False
+    if int(item.get("ct_trial_count") or 0) > 0 or int(item.get("rct_count") or 0) > 0:
+        return True
+    return False
+
+
+def _therapeutic_row_class(item: dict) -> str:
+    base = "therapeutic-row"
+    return f"{base} has-clinical-evidence" if _has_direct_clinical_evidence(item) else f"{base} no-clinical-evidence"
+
+
+def _evidence_toggle_html(checkbox_id: str, *, hidden_hint: str = "") -> str:
+    return f"""
+      <label class="evidence-toggle" for="{checkbox_id}">
+        <input type="checkbox" id="{checkbox_id}" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="{checkbox_id}">{hidden_hint}</span>
+      </label>"""
+
+
 def _evidence_cell(ev: dict | None) -> str:
     if not ev:
         return '<span class="muted">—</span>'
@@ -242,7 +283,7 @@ def _therapeutics_table(
                 disease_name=disease_name,
             )
         rows.append(f"""
-        <tr>
+        <tr class="{_therapeutic_row_class(d)}">
           <td class="name-cell"><strong>{_esc(drug_name)}</strong> {rep} {nat} {via}
             {np_pubs}</td>
           <td class="muted">{_esc(d['drug_type_label'])}</td>
@@ -323,7 +364,7 @@ def _natural_products_table(
             disease_name=disease_name,
         )
         rows.append(f"""
-        <tr>
+        <tr class="{_therapeutic_row_class(np)}">
           <td class="name-cell"><strong>{_esc(np_name)}</strong>
             {np_pubs}
             {f'<div class="sub">{_esc(findings)}</div>' if findings else ''}</td>
@@ -506,8 +547,9 @@ def build_html(data: dict) -> str:
         np_section = f"""
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">{np_count} natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">{np_count} natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       {_np_lookup_links(summary)}
+      {_evidence_toggle_html("show-no-evidence-natural")}
       {_natural_products_table(nps, gmi_articles=gmi_articles, extra_evidence=np_extra_evidence, disease_name=disease_name)}
     </section>"""
 
@@ -594,6 +636,11 @@ def build_html(data: dict) -> str:
     .np-pubs a{{color:var(--accent);text-decoration:none}}
     .np-pubs a:hover{{text-decoration:underline}}
     .np-pub-type{{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}}
+    .evidence-toggle{{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}}
+    .evidence-toggle input{{accent-color:var(--accent);width:1rem;height:1rem}}
+    .hidden-count{{color:var(--amber);font-size:.82rem}}
+    .therapeutic-row.no-clinical-evidence{{display:none}}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{{display:table-row}}
     footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}}
     .related-links{{font-size:.88rem;margin-bottom:1.5rem}}
   </style>
@@ -635,9 +682,10 @@ def build_html(data: dict) -> str:
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       {natural_note}
-      <div class="tab-bar">
+      {_evidence_toggle_html("show-no-evidence-therapeutics")}
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged ({len(ther['merged_ranked'])})</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct ({len(ther['direct'])})</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker ({len(ther['via_biomarker'])})</button>
@@ -677,6 +725,20 @@ def build_html(data: dict) -> str:
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       }});
     }});
+    function bindEvidenceToggle(checkboxId) {{
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {{
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      }});
+    }}
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>"""

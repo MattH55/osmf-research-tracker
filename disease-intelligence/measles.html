@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -428,9 +433,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       <p class="section-sub">From <a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener">opensourcemed.info/chronic-disease</a> — Acute management of measles: a systematic review of therapeutic strategies. Candidates for further study, not approved treatments.</p>
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (11)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (6)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (0)</button>
@@ -444,7 +455,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL6068354</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -459,7 +470,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL6068354/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL6068354" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL22</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -474,7 +485,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL22/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL22" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL443</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -489,7 +500,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL443/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL443" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL2109201</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -504,7 +515,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109201/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109201" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL2109211</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -519,7 +530,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109211/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109211" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL2109225</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -534,7 +545,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109225/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109225" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Interferon-alpha (Interferon-α)</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Biologic</td>
@@ -549,7 +560,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Investigational monoclonal antibodies</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Biologic</td>
@@ -564,7 +575,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Ribavirin</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Small molecule</td>
@@ -579,7 +590,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin A (High-dose supplementation)</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Supplement</td>
@@ -594,7 +605,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Zinc supplementation</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Supplement</td>
@@ -619,7 +630,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL6068354</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -634,7 +645,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL6068354/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL6068354" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL22</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -649,7 +660,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL22/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL22" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL443</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -664,7 +675,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL443/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL443" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL2109201</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -679,7 +690,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109201/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109201" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL2109211</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -694,7 +705,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2109211/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2109211" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CHEMBL2109225</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -720,7 +731,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Interferon-alpha (Interferon-α)</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Biologic</td>
@@ -735,7 +746,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Investigational monoclonal antibodies</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Biologic</td>
@@ -750,7 +761,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Ribavirin</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Small molecule</td>
@@ -765,7 +776,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin A (High-dose supplementation)</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Supplement</td>
@@ -780,7 +791,7 @@
           <td class="muted">OSMF Chronic Disease Review</td>
           <td class="links-cell"><a href="https://opensourcemed.info/chronic-disease.html" target="_blank" rel="noopener" class="ext-link">OSMF Review</a> <a href="https://www.sciencedirect.com/science/article/pii/S0166354226000203" target="_blank" rel="noopener" class="ext-link">Citation</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Zinc supplementation</strong>  <span class="natural-agent">OSMF review</span> 
             </td>
           <td class="muted">Supplement</td>
@@ -802,8 +813,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">11 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">11 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/measles" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/search/?q=Measles" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -812,7 +829,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Spirulina</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/8984158/" target="_blank" rel="noopener" title="Calcium spirulan, an inhibitor of enveloped virus replication, from a blue-green alga Spirulina, exhibits activity against a variety of viruses.">Calcium spirulan, an inhibitor of enveloped virus replication, from a b…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -827,7 +844,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/spirulina" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginkgo Biloba</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32179788/" target="_blank" rel="noopener" title="Ginkgolic acid inhibits fusion of enveloped viruses.">Ginkgolic acid inhibits fusion of enveloped viruses.</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -842,7 +859,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginkgo-biloba" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>(2E,4E,6E,8E)-3,7-dimethyl-9-(2,6,6-trimethylcyclohexen-1-yl)nona-2,4,6,8-tetraen-1-ol</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Food compound</td>
@@ -857,7 +874,7 @@
           <td class="muted">ClinicalTrials.gov</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/445354" target="_blank" rel="noopener" class="ext-link">PubChem</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin a</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/1285727/" target="_blank" rel="noopener" title="Children with measles studied in this New York City outbreak had lower vitamin A levels and were more likely to have a high fever for more than 7 days, be hospitalized, have lower measles antibodies, and increased morbidity.">Children with measles studied in this New York City outbreak had lower…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25619709/" target="_blank" rel="noopener" title="Ribavirin and high dose vitamin A might be a treatment option for measles pneumonitis in adults.">Ribavirin and high dose vitamin A might be a treatment option for measl…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/10213986/" target="_blank" rel="noopener" title="Vitamin A supplementation may have therapeutic activity in the treatment of measles and respiratory syncytial virus (RSV) infection.">Vitamin A supplementation may have therapeutic activity in the treatmen…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -872,7 +889,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/445354" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Seaweed</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><a href="https://pubmed.ncbi.nlm.nih.gov/27419139/" target="_blank" rel="noopener" title="Synergistic Effects of Sulfated Polysaccharides from Mexican Seaweeds against Measles Virus">Synergistic Effects of Sulfated Polysaccharides from Mexican Seaweeds a…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -887,7 +904,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/seaweed" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Infection/Infectitious Agent Byproducts (Beneficial)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21666212/" target="_blank" rel="noopener" title="Laboratory characterization of measles virus infection in previously vaccinated and unvaccinated individuals.">Laboratory characterization of measles virus infection in previously va…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26122188/" target="_blank" rel="noopener" title="Measles and mumps, especially in case of both infections, were associated with lower risks of mortality from atherosclerotic CVD.">Measles and mumps, especially in case of both infections, were associat…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19255001/" target="_blank" rel="noopener" title="Measles infection protects against allergic disease in children.">Measles infection protects against allergic disease in children.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -902,7 +919,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/infectioninfectitious-agent-byproducts-beneficial" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Beta-Carotene</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35294044/" target="_blank" rel="noopener" title="Vitamin A supplementation for preventing morbidity and mortality in children from six months to five years of age">Vitamin A supplementation for preventing morbidity and mortality in chi…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28282701/" target="_blank" rel="noopener" title="Vitamin A supplementation for preventing morbidity and mortality in children from six months to five years of age">Vitamin A supplementation for preventing morbidity and mortality in chi…</a></li><li><span class="np-pub-type">Cochrane review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/21868478/" target="_blank" rel="noopener" title="Vitamin A supplements for preventing mortality, illness, and blindness in children aged under 5: systematic review and meta-analysis">Vitamin A supplements for preventing mortality, illness, and blindness…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -917,7 +934,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/beta-carotene" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Anthocyanins</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35804339/" target="_blank" rel="noopener" title="A defined anthocyanin mixture sourced from bilberry and black currant inhibits Measles virus and various herpesviruses.">A defined anthocyanin mixture sourced from bilberry and black currant i…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -932,7 +949,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/145858" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/anthocyanins" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bilberry</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35804339/" target="_blank" rel="noopener" title="A defined anthocyanin mixture sourced from bilberry and black currant inhibits Measles virus and various herpesviruses.">A defined anthocyanin mixture sourced from bilberry and black currant i…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -947,7 +964,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bilberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Black Currant</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35804339/" target="_blank" rel="noopener" title="A defined anthocyanin mixture sourced from bilberry and black currant inhibits Measles virus and various herpesviruses.">A defined anthocyanin mixture sourced from bilberry and black currant i…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -962,7 +979,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/black-currant" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Polyphenols</strong>  <span class="natural-agent">Natural product</span> 
             </td>
           <td class="muted">Nutraceutical</td>
@@ -1007,6 +1024,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>

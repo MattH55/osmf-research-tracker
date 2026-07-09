@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -307,9 +312,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (0)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (0)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (0)</button>
@@ -324,8 +335,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">18 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">18 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/sjogrens-syndrome" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/search/?q=Sj%C3%B6gren%27s+Syndrome" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -334,7 +351,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Omega-3 Fatty Acids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/9849649/" target="_blank" rel="noopener" title="Data support pro- and anti-inflammatory roles within EFA metabolism">Data support pro- and anti-inflammatory roles within EFA metabolism</a></li><li><span class="np-pub-type">Commentary</span> <a href="https://pubmed.ncbi.nlm.nih.gov/6088955/" target="_blank" rel="noopener" title="Essential fatty acid supplementation may be beneficial in treating Sjogren&amp;#039;s syndrome.">Essential fatty acid supplementation may be beneficial in treating Sjog…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -349,7 +366,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/446284" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/dha-docosahexaenoic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Curcumin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Systematic review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/41112251/" target="_blank" rel="noopener" title="Research progress on traditional Chinese medicine compounds in autoimmune-related skin diseases">Research progress on traditional Chinese medicine compounds in autoimmu…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26380101/" target="_blank" rel="noopener" title="These studies show that ultrasoluble curcumin and turmeric could prove useful as a therapeutic intervention in systemic lupus erythematosus and Sjogren&amp;#039;s syndrome.">These studies show that ultrasoluble curcumin and turmeric could prove…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20146265/" target="_blank" rel="noopener" title="Heat-solubilized curry spice curcumin inhibits antibody-antigen interaction in in vitro studies indicating it may help to alleviate autoimmune diseases.">Heat-solubilized curry spice curcumin inhibits antibody-antigen interac…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -364,7 +381,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/969516" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/turmeric" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Egcg</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin is a potential candidate for controlling inflammation during primary Sjögren&amp;#039;s syndrome.">Cardamonin is a potential candidate for controlling inflammation during…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/13680146/" target="_blank" rel="noopener" title="Celiac disease prevalance is significantly higher in those diagnosed with Sjogren&amp;#039;s syndrome.">Celiac disease prevalance is significantly higher in those diagnosed wi…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -379,7 +396,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/65064" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/green-tea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Lactobacillus</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32219478/" target="_blank" rel="noopener" title="Probiotics as a prophylaxis to prevent oral candidiasis in patients with Sjogren&#x27;s syndrome: a double-blinded, placebo-controlled, randomized trial">Probiotics as a prophylaxis to prevent oral candidiasis in patients wit…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16390470/" target="_blank" rel="noopener" title="Impact of wearing an intra-oral lubricating device on oral health in dry mouth patients">Impact of wearing an intra-oral lubricating device on oral health in dr…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li></ul></td>
           <td class="muted">Probiotic</td>
@@ -394,7 +411,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/lactobacillus-acidophilus" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Melatonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30328688/" target="_blank" rel="noopener" title="Pycnogenol supplementation in patients with Sjogren syndromein a remission phase may be effective to control inflammation and reduce symptoms.">Pycnogenol supplementation in patients with Sjogren syndromein a remiss…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40163019/" target="_blank" rel="noopener" title="Supplementation with Pycnogenol® may offer advantages and management possibilities for patients with vasculitis diseases allowing to avoid more potentially dangerous drug treatments.">Supplementation with Pycnogenol® may offer advantages and management po…</a></li><li><span class="np-pub-type">Commentary</span> <a href="https://pubmed.ncbi.nlm.nih.gov/6088955/" target="_blank" rel="noopener" title="Essential fatty acid supplementation may be beneficial in treating Sjogren&amp;#039;s syndrome.">Essential fatty acid supplementation may be beneficial in treating Sjog…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -409,7 +426,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/896" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/melatonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Peony</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30280368/" target="_blank" rel="noopener" title="The efficacy and safety of total glucosides of peony in the treatment of primary Sjögren&#x27;s syndrome: a multi-center, randomized, double-blinded, placebo-controlled clinical trial">The efficacy and safety of total glucosides of peony in the treatment o…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin is a potential candidate for controlling inflammation during primary Sjögren&amp;#039;s syndrome.">Cardamonin is a potential candidate for controlling inflammation during…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -424,7 +441,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/peony" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EGCG (Epigallocatechin Gallate)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin is a potential candidate for controlling inflammation during primary Sjögren&amp;#039;s syndrome.">Cardamonin is a potential candidate for controlling inflammation during…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/13680146/" target="_blank" rel="noopener" title="Celiac disease prevalance is significantly higher in those diagnosed with Sjogren&amp;#039;s syndrome.">Celiac disease prevalance is significantly higher in those diagnosed wi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -439,7 +456,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/egcg-epigallocatechin-gallate" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Paeoniflorin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin is a potential candidate for controlling inflammation during primary Sjögren&amp;#039;s syndrome.">Cardamonin is a potential candidate for controlling inflammation during…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/13680146/" target="_blank" rel="noopener" title="Celiac disease prevalance is significantly higher in those diagnosed with Sjogren&amp;#039;s syndrome.">Celiac disease prevalance is significantly higher in those diagnosed wi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -454,7 +471,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/paeoniflorin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Essential Fatty Acids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16303936/" target="_blank" rel="noopener" title="Systemic omega-6 essential fatty acid treatment and pge1 tear content in Sjögren&#x27;s syndrome patients">Systemic omega-6 essential fatty acid treatment and pge1 tear content i…</a></li><li><span class="np-pub-type">Randomized controlled trial</span> <a href="https://pubmed.ncbi.nlm.nih.gov/3529370/" target="_blank" rel="noopener" title="Patients with primary Sjögren&#x27;s syndrome treated for two months with evening primrose oil">Patients with primary Sjögren&#x27;s syndrome treated for two months with ev…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/9849649/" target="_blank" rel="noopener" title="Data support pro- and anti-inflammatory roles within EFA metabolism">Data support pro- and anti-inflammatory roles within EFA metabolism</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -469,7 +486,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/essential-fatty-acids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Colostrum</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/11996158/" target="_blank" rel="noopener" title="Bovine Colostrum has beneficial effects in Sjogren&amp;#039;s syndrome and oral lichen planus.">Bovine Colostrum has beneficial effects in Sjogren&amp;#039;s syndrome and…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -484,7 +501,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/colostrum" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Cardamonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin inhibits pro-inflammatory cytokine production and suppresses NO pathway in PBMCs from patients with primary Sjögren&#x27;s syndrome">Cardamonin inhibits pro-inflammatory cytokine production and suppresses…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/13680146/" target="_blank" rel="noopener" title="Celiac disease prevalance is significantly higher in those diagnosed with Sjogren&amp;#039;s syndrome.">Celiac disease prevalance is significantly higher in those diagnosed wi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -499,7 +516,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cardamonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Dhea (Dehydroepiandrosterone)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin is a potential candidate for controlling inflammation during primary Sjögren&amp;#039;s syndrome.">Cardamonin is a potential candidate for controlling inflammation during…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/13680146/" target="_blank" rel="noopener" title="Celiac disease prevalance is significantly higher in those diagnosed with Sjogren&amp;#039;s syndrome.">Celiac disease prevalance is significantly higher in those diagnosed wi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -514,7 +531,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/dhea-dehydroepiandrosterone" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Pycnogenol (Pine Bark)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30328688/" target="_blank" rel="noopener" title="Pycnogenol supplementation in patients with Sjogren syndromein a remission phase may be effective to control inflammation and reduce symptoms.">Pycnogenol supplementation in patients with Sjogren syndromein a remiss…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40163019/" target="_blank" rel="noopener" title="Supplementation with Pycnogenol® may offer advantages and management possibilities for patients with vasculitis diseases allowing to avoid more potentially dangerous drug treatments.">Supplementation with Pycnogenol® may offer advantages and management po…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -529,7 +546,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/pycnogenol-pine-bark" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Flavonoids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40163019/" target="_blank" rel="noopener" title="Supplementation with Pycnogenol® may offer advantages and management possibilities for patients with vasculitis diseases allowing to avoid more potentially dangerous drug treatments.">Supplementation with Pycnogenol® may offer advantages and management po…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -544,7 +561,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/flavonoids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Verbascoside</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35638582/" target="_blank" rel="noopener" title="Acteoside promotes B cell-derived IL-10 production and ameliorates autoimmunity.">Acteoside promotes B cell-derived IL-10 production and ameliorates auto…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -559,7 +576,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/verbascoside" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Blueberry</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37103112/" target="_blank" rel="noopener" title="Blueberry stem extract prevents lacrimal hyposecretion.">Blueberry stem extract prevents lacrimal hyposecretion.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -574,7 +591,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/blueberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Goji</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/14719202/" target="_blank" rel="noopener" title="An adverse immune reaction to wheat proteins is more commonly apparent (anti-tTG) in Sjögren&amp;#039;s syndrome.">An adverse immune reaction to wheat proteins is more commonly apparent…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29303022/" target="_blank" rel="noopener" title="Cardamonin is a potential candidate for controlling inflammation during primary Sjögren&amp;#039;s syndrome.">Cardamonin is a potential candidate for controlling inflammation during…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/13680146/" target="_blank" rel="noopener" title="Celiac disease prevalance is significantly higher in those diagnosed with Sjogren&amp;#039;s syndrome.">Celiac disease prevalance is significantly higher in those diagnosed wi…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -589,7 +606,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/goji" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Isoflavones</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40181166/" target="_blank" rel="noopener" title="Calycosin synergizes with methotrexate in the treatment of Sjögren&amp;#039;s disease by targeting BATF in T follicular helper cells.">Calycosin synergizes with methotrexate in the treatment of Sjögren&amp;#039…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -634,6 +651,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>

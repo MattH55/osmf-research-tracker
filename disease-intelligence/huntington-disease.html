@@ -103,6 +103,11 @@
     .np-pubs a{color:var(--accent);text-decoration:none}
     .np-pubs a:hover{text-decoration:underline}
     .np-pub-type{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}
+    .evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}
+    .evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+    .hidden-count{color:var(--amber);font-size:.82rem}
+    .therapeutic-row.no-clinical-evidence{display:none}
+    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
   </style>
@@ -112,7 +117,7 @@
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../ntd/index.html">NTD Intelligence</a></li><li><a href="../biomarker-atlas.html">Biomarkers</a></li><li><a href="../chronic-disease-interventions/index.html">Interventions</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
   </nav>
 
@@ -1077,9 +1082,15 @@
 
     <section id="therapeutics">
       <h2 class="section-title">Therapeutics</h2>
-      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, merged ranking, and clinical trial / literature evidence (top agents)</p>
+      <p class="section-sub">Direct disease associations, biomarker-linked drugs, OSMF narrative-review natural agents, and merged ranking. Only agents with registry trials or published clinical literature are shown by default.</p>
       
-      <div class="tab-bar">
+      
+      <label class="evidence-toggle" for="show-no-evidence-therapeutics">
+        <input type="checkbox" id="show-no-evidence-therapeutics" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-therapeutics"></span>
+      </label>
+      <div class="tab-bar" id="therapeutics-panels">
         <button class="tab-btn active" data-tab="merged" type="button">Merged (50)</button>
         <button class="tab-btn" data-tab="direct" type="button">Direct (40)</button>
         <button class="tab-btn" data-tab="via" type="button">Via biomarker (40)</button>
@@ -1093,7 +1104,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACEBUTOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1104,7 +1115,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1115,7 +1126,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1126,7 +1137,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE MALEATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1137,7 +1148,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2360079/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2360079" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ADAPALENE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1148,7 +1159,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ADUCANUMAB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1159,7 +1170,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMINEPTIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1170,7 +1181,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMISULPRIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1181,7 +1192,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMITRIPTYLINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1192,7 +1203,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMOXAPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1203,7 +1214,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1214,7 +1225,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTI-THYMOCYTE GLOBULIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1225,7 +1236,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIXABAN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1236,7 +1247,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1247,7 +1258,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1258,7 +1269,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL3187985/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL3187985" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1269,7 +1280,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1280,7 +1291,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200379/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200379" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARGIPRESSIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1291,7 +1302,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARIPIPRAZOLE LAUROXIL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1302,7 +1313,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARSENIC TRIOXIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1313,7 +1324,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASENAPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1324,7 +1335,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASENAPINE MALEATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1335,7 +1346,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL3544974/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL3544974" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATENOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1346,7 +1357,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATIPAMEZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1357,7 +1368,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATORVASTATIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1368,7 +1379,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1379,7 +1390,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BACLOFEN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1390,7 +1401,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENPERIDOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1401,7 +1412,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZPHETAMINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1412,7 +1423,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZQUINAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1423,7 +1434,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZQUINAMIDE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1434,7 +1445,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200707/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200707" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAXOLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1449,7 +1460,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETHANIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1460,7 +1471,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1471,7 +1482,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISOPROLOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1486,7 +1497,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BLONANSERIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1497,7 +1508,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1508,7 +1519,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BREXPIPRAZOLE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1519,7 +1530,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1534,7 +1545,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE TARTRATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1545,7 +1556,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200389/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200389" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1556,7 +1567,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMOCRIPTINE MESYLATE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1567,7 +1578,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200503/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200503" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BROMPERIDOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1578,7 +1589,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BUPROPION HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1589,7 +1600,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BUSPIRONE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1600,7 +1611,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CABERGOLINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1611,7 +1622,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CAFFEINE</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1622,7 +1633,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CAMPTOTHECIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1633,7 +1644,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANNABIDIOL</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1644,7 +1655,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CAPSAICIN</strong> <span class="repurposing">Repurposing</span>  
             </td>
           <td class="muted">Small molecule</td>
@@ -1665,7 +1676,7 @@
           <th>Score</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CREATINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1676,7 +1687,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL283800/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL283800" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DALZANEMDOR</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1687,7 +1698,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL5095095/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL5095095" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LATREPIRDINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1698,7 +1709,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL589390/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL589390" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>METFORMIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1709,7 +1720,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1431/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1431" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>OLANZAPINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1720,7 +1731,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL715/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL715" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>PRIDOPIDINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1731,7 +1742,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL596802/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL596802" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>RILUZOLE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1742,7 +1753,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL744/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL744" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TIAPRIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1753,7 +1764,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL84158/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL84158" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TOMINERSEN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1764,7 +1775,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297581/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297581" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>UBIDECARENONE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1775,7 +1786,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL454801/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL454801" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>VOTOPLAM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1786,7 +1797,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4850295/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4850295" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETYLCYSTEINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1797,7 +1808,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL600/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL600" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMANTADINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1808,7 +1819,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL660/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL660" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANX-005</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1819,7 +1830,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4650442/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4650442" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATOMOXETINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1830,7 +1841,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL641/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL641" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BEVANTOLOL HYDROCHLORIDE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1841,7 +1852,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2106060/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2106060" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BIOTIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1852,7 +1863,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL857/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL857" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRANAPLAM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1863,7 +1874,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4290141/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4290141" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CANNABIDIOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1874,7 +1885,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL190461/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL190461" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CITALOPRAM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1885,7 +1896,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL549/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL549" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYSTEAMINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1896,7 +1907,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL602/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL602" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>CYSTEAMINE BITARTRATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1907,7 +1918,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200577/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200577" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DIVALPROEX SODIUM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1918,7 +1929,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2105613/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2105613" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>DRONABINOL</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1929,7 +1940,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL465/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL465" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EPIGALOCATECHIN GALLATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1940,7 +1951,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL297453/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL297453" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>FENOFIBRATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1951,7 +1962,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL672/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL672" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>GLYCEROL PHENYLBUTYRATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1962,7 +1973,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL2105745/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL2105745" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LAQUINIMOD</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1973,7 +1984,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL66092/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL66092" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>LITHIUM CARBONATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1984,7 +1995,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1200826/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1200826" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MARDEPODECT</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -1995,7 +2006,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL562318/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL562318" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MAVOGLURANT</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2006,7 +2017,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL3087515/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL3087515" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MEMANTINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2017,7 +2028,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL807/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL807" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>MINOCYCLINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2028,7 +2039,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1434/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1434" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>NEFLAMAPIMOD</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2039,7 +2050,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL119385/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL119385" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>PEPINEMAB</strong>   
             </td>
           <td class="muted">Biologic</td>
@@ -2050,7 +2061,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297884/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297884" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SODIUM PHENYLBUTYRATE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2061,7 +2072,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1746/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1746" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>SRX246</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2072,7 +2083,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL244243/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL244243" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>THIAMINE</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2083,7 +2094,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL1588/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL1588" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>TRIHEPTANOIN</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2094,7 +2105,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL4297585/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL4297585" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ALENDRONATE SODIUM</strong>   
             </td>
           <td class="muted">Small molecule</td>
@@ -2115,7 +2126,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACEBUTOLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2126,7 +2137,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETAZOLAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2137,7 +2148,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL20/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL20" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2148,7 +2159,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ACETOPHENAZINE MALEATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2159,7 +2170,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL2360079/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL2360079" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ADAPALENE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BDNF</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2170,7 +2181,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ADUCANUMAB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via APOE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2181,7 +2192,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMINEPTIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2192,7 +2203,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMISULPRIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2203,7 +2214,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMITRIPTYLINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BDNF</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2214,7 +2225,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMOXAPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2225,7 +2236,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>AMPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2236,7 +2247,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL405/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL405" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ANTI-THYMOCYTE GLOBULIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via CD4</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2247,7 +2258,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APIXABAN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via APOE</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2258,7 +2269,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2269,7 +2280,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APOMORPHINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2280,7 +2291,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL3187985/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL3187985" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2291,7 +2302,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>APRACLONIDINE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2302,7 +2313,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200379/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200379" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARGIPRESSIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BDNF</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2313,7 +2324,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARIPIPRAZOLE LAUROXIL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2324,7 +2335,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ARSENIC TRIOXIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BDNF</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2335,7 +2346,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASENAPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2346,7 +2357,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ASENAPINE MALEATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2357,7 +2368,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL3544974/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL3544974" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATENOLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2368,7 +2379,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATIPAMEZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2379,7 +2390,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATORVASTATIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD3</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2390,7 +2401,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>ATROPINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2401,7 +2412,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BACLOFEN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BDNF</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2412,7 +2423,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENPERIDOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2423,7 +2434,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZPHETAMINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2434,7 +2445,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZQUINAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2445,7 +2456,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BENZQUINAMIDE HYDROCHLORIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2456,7 +2467,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/chembl:CHEMBL1200707/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/chembl:CHEMBL1200707" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETAXOLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2471,7 +2482,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BETHANIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2482,7 +2493,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BICALUTAMIDE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2A</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2493,7 +2504,7 @@
           <td class="muted">ChEMBL</td>
           <td class="links-cell"><a href="https://www.ebi.ac.uk/chembl/compound_report_card/CHEMBL409/" target="_blank" rel="noopener" class="ext-link">ChEMBL</a> <a href="https://platform.opentargets.org/drug/CHEMBL409" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BISOPROLOL</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2508,7 +2519,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BLONANSERIN</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2519,7 +2530,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BORTEZOMIB</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via BDNF</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2530,7 +2541,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BREXPIPRAZOLE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via DRD2</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2541,7 +2552,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2556,7 +2567,7 @@
           <td class="muted">DGIdb</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>BRIMONIDINE TARTRATE</strong> <span class="repurposing">Repurposing</span>  <span class="muted">via ADRA2C</span>
             </td>
           <td class="muted">Small molecule</td>
@@ -2575,8 +2586,14 @@
     
     <section id="natural-products">
       <h2 class="section-title">Natural Products</h2>
-      <p class="section-sub">72 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked)</p>
+      <p class="section-sub">72 natural products with the same evidence schema as repurposed drugs — registry trials, PubMed literature, and reference links (pipeline-ranked). Only agents with direct clinical evidence are shown by default.</p>
       <p class="section-sub">Reference lookups: <a href="https://greenmedinfo.com/disease/huntington-disease" target="_blank" rel="noopener">GreenMedInfo</a> · <a href="https://examine.com/search/?q=Huntington+disease" target="_blank" rel="noopener">Examine.com</a></p>
+      
+      <label class="evidence-toggle" for="show-no-evidence-natural">
+        <input type="checkbox" id="show-no-evidence-natural" aria-controls="therapeutics-panels">
+        <span>Show agents without direct trial evidence</span>
+        <span class="hidden-count" data-hidden-for="show-no-evidence-natural"></span>
+      </label>
       
     <div class="table-wrap">
       <table class="data-table">
@@ -2585,7 +2602,7 @@
           <th>Score</th><th>Trials &amp; literature</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Creatine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2600,7 +2617,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/586" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://www.greenmedinfo.com/substance/creatine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Omega-3 Fatty Acids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30890195/" target="_blank" rel="noopener" title="Efficacy of ethyl-EPA as a treatment for Huntington disease.">Efficacy of ethyl-EPA as a treatment for Huntington disease.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2615,7 +2632,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/446284" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/eicosapentaenoic-acid-epa" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Garlic</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39683859/" target="_blank" rel="noopener" title="Potential protective effects of pungent flavor components in neurodegenerative diseases.">Potential protective effects of pungent flavor components in neurodegen…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2630,7 +2647,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/7812" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/allicin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin C</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31212603/" target="_blank" rel="noopener" title="Pantothenate deficiency could lead to neurodegeneration/dementia in Huntington&amp;#039;s disease that might be preventable by treatment with vitamin B5.">Pantothenate deficiency could lead to neurodegeneration/dementia in Hun…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34802410/" target="_blank" rel="noopener" title="Role of vitamins in neurodegenerative diseases: a review.">Role of vitamins in neurodegenerative diseases: a review.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2645,7 +2662,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/54670067" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-c" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin D3</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31212603/" target="_blank" rel="noopener" title="Pantothenate deficiency could lead to neurodegeneration/dementia in Huntington&amp;#039;s disease that might be preventable by treatment with vitamin B5.">Pantothenate deficiency could lead to neurodegeneration/dementia in Hun…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34802410/" target="_blank" rel="noopener" title="Role of vitamins in neurodegenerative diseases: a review.">Role of vitamins in neurodegenerative diseases: a review.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2660,7 +2677,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280795" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/vitamin-d" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Curcumin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2675,7 +2692,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/969516" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/curcumin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Resveratrol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2690,7 +2707,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/445154" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/resveratrol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Coenzyme Q10</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30404563/" target="_blank" rel="noopener" title="Coenzyme Q10 supplementation in acute ischemic stroke: Is it beneficial in short-term administration?">Coenzyme Q10 supplementation in acute ischemic stroke: Is it beneficial…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27913695/" target="_blank" rel="noopener" title="A randomized, double-blind, placebo-controlled trial of coenzyme Q10 in Huntington disease">A randomized, double-blind, placebo-controlled trial of coenzyme Q10 in…</a></li><li><span class="np-pub-type">Clinical trial publication</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25063191/" target="_blank" rel="noopener" title="Plasma 8-hydroxy-2&#x27;-deoxyguanosine Levels in Huntington Disease and Healthy Controls Treated with Coenzyme Q10">Plasma 8-hydroxy-2&#x27;-deoxyguanosine Levels in Huntington Disease and Hea…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2705,7 +2722,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281915" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/coenzyme-q10" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Melatonin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32182222/" target="_blank" rel="noopener" title="Melatonin inhibits cytosolic mitochondrial-DNA induced neuroinflammatory signaling in accelerated aging and neurodegeneration.">Melatonin inhibits cytosolic mitochondrial-DNA induced neuroinflammator…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23220257/" target="_blank" rel="noopener" title="Quercetin supplementation is effective in improving mitochondrial dysfunctions induced by 3-nitropropionic acid: implications in Huntington&amp;#039;s disease.">Quercetin supplementation is effective in improving mitochondrial dysfu…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32784556/" target="_blank" rel="noopener" title="Cellular mechanisms of melatonin: Insight from neurodegenerative diseases.">Cellular mechanisms of melatonin: Insight from neurodegenerative diseas…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2720,7 +2737,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/896" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/melatonin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Creatine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Amino acid</td>
@@ -2735,7 +2752,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/586" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/creatine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ashwagandha</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33904021/" target="_blank" rel="noopener" title="These results indicate immense potential of Withaferin A for the treatment of Huntington disease.">These results indicate immense potential of Withaferin A for the treatm…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32305638/" target="_blank" rel="noopener" title="The review concludes the results of recent studies on Ashwagandha suggesting its extensive potential as neuroprotective in various brain disorders.">The review concludes the results of recent studies on Ashwagandha sugge…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33538666/" target="_blank" rel="noopener" title="Withania somnifera in neurological disorders: Ethnopharmacological evidence, mechanism of action and its progress in delivery systems.">Withania somnifera in neurological disorders: Ethnopharmacological evid…</a></li></ul></td>
           <td class="muted">Ayurvedic</td>
@@ -2750,7 +2767,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/11985808" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/ashwagandha" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Berberine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Transgenic Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26225560/" target="_blank" rel="noopener" title="Berberine could effectively alleviate motor dysfunction and prolong the survival of transgenic N171-82Q HD mice.">Berberine could effectively alleviate motor dysfunction and prolong the…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2765,7 +2782,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/2353" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/berberine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Black Seed Oil</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29855977/" target="_blank" rel="noopener" title="Nano-formulated thymoquinone suspension can efficiently culminate 3-NP induced Huntington&amp;#039;s disease progression.">Nano-formulated thymoquinone suspension can efficiently culminate 3-NP…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/28532681/" target="_blank" rel="noopener" title="Resveratrol could be used to slow down Huntington&amp;#039;s Disease progression.">Resveratrol could be used to slow down Huntington&amp;#039;s Disease progre…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2780,7 +2797,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10281" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/thymoquinone" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Quercetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Meta Analysis, Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30890195/" target="_blank" rel="noopener" title="Efficacy of ethyl-EPA as a treatment for Huntington disease.">Efficacy of ethyl-EPA as a treatment for Huntington disease.</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2795,7 +2812,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5280343" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/quercetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Egcg</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17908043/" target="_blank" rel="noopener" title="Neurorescue activity, APP regulation and amyloid-beta peptide reduction by novel multi-functional brain permeable iron- chelating- antioxidants, M-30 and green tea polyphenol, EGCG.">Neurorescue activity, APP regulation and amyloid-beta peptide reduction…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16893904/" target="_blank" rel="noopener" title="The polyphenol in green tea known as EGCG may inhibit the progression of Huntington&amp;#039;s disease.">The polyphenol in green tea known as EGCG may inhibit the progression o…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2810,7 +2827,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/65064" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/green-tea" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginseng</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19185022/" target="_blank" rel="noopener" title="Ginsenosides offer a potential therapeutic choice for the treatment of Huntington&amp;#039;s disease.">Ginsenosides offer a potential therapeutic choice for the treatment of…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/23717136/" target="_blank" rel="noopener" title="Effects of Panax ginseng in Neurodegenerative Diseases.">Effects of Panax ginseng in Neurodegenerative Diseases.</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27630732/" target="_blank" rel="noopener" title="Ginseng and its constituents have potential merits in the treatment of cerebral disorders.">Ginseng and its constituents have potential merits in the treatment of…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2825,7 +2842,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginseng" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bacopa</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33675463/" target="_blank" rel="noopener" title="Neuroprotection with Bacopa monnieri-A review of experimental evidence.">Neuroprotection with Bacopa monnieri-A review of experimental evidence.</a></li></ul></td>
           <td class="muted">Ayurvedic</td>
@@ -2840,7 +2857,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bacopa" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Moringa</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36206551/" target="_blank" rel="noopener" title="Neuroprotective potential of Moringa oleifera mediated by NF-kB/Nrf2/HO-1 signaling pathway.">Neuroprotective potential of Moringa oleifera mediated by NF-kB/Nrf2/HO…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2855,7 +2872,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/moringa-oleifera" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row has-clinical-evidence">
           <td class="name-cell"><strong>Cannabidiol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2870,7 +2887,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/644019" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/cannabidiol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Licorice</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24675225/" target="_blank" rel="noopener" title="Aqueous extract of Glycyrrhiza inflata inhibits aggregation by upregulating PPARGC1A and NFE2L2-ARE pathways in cell models of spinocerebellar ataxia 3.">Aqueous extract of Glycyrrhiza inflata inhibits aggregation by upregula…</a></li></ul></td>
           <td class="muted">Botanical</td>
@@ -2885,7 +2902,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/licorice" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginseng (Asian)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2896,7 +2913,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginseng-asian" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cannabinoids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2907,7 +2924,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cannabinoids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginsenosides</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2918,7 +2935,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginsenosides" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cannabis</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2929,7 +2946,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cannabis" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Delta-Tetrahydrocannabinol (THC)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2940,7 +2957,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/delta-tetrahydrocannabinol-thc" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Chrysin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32901525/" target="_blank" rel="noopener" title="Chrysin ameliorates 3 nitropropinoic acid induced neurotoxicity targeting behavioural, biochemical and histological alterations.">Chrysin ameliorates 3 nitropropinoic acid induced neurotoxicity targeti…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27690136/" target="_blank" rel="noopener" title="Chrysin can serve as a potential therapeutic agent on 3-Nitropropionic acid induced mitochondrial deficits and subsequent apoptosis.">Chrysin can serve as a potential therapeutic agent on 3-Nitropropionic…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34328092/" target="_blank" rel="noopener" title="The findings indicate that chrysin has protective effects against neurological conditions by modulating oxidative stress, inflammation, and apoptosis.">The findings indicate that chrysin has protective effects against neuro…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -2951,7 +2968,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281607" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/chrysin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Rutin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2962,7 +2979,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/rutin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Sesamol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/19504387/" target="_blank" rel="noopener" title="Sesamol attenuates experimentally induced Huntington-like changes in an animal model.">Sesamol attenuates experimentally induced Huntington-like changes in an…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20102363/" target="_blank" rel="noopener" title="Sesamol protects against cognitive dysfunction and altered glutathione redox balance.">Sesamol protects against cognitive dysfunction and altered glutathione…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2973,7 +2990,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/sesamol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Piperine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39683859/" target="_blank" rel="noopener" title="Potential protective effects of pungent flavor components in neurodegenerative diseases.">Potential protective effects of pungent flavor components in neurodegen…</a></li><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32093571/" target="_blank" rel="noopener" title="The results of the current study reveal the neuroprotective competency of piperine against Huntington disease like symptoms.">The results of the current study reveal the neuroprotective competency…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2984,7 +3001,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/piperine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Vitamin B-5 (Pantothenic Acid)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31212603/" target="_blank" rel="noopener" title="Pantothenate deficiency could lead to neurodegeneration/dementia in Huntington&amp;#039;s disease that might be preventable by treatment with vitamin B5.">Pantothenate deficiency could lead to neurodegeneration/dementia in Hun…</a></li><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34802410/" target="_blank" rel="noopener" title="Role of vitamins in neurodegenerative diseases: a review.">Role of vitamins in neurodegenerative diseases: a review.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -2995,7 +3012,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/vitamin-b-5-pantothenic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Catechin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17908043/" target="_blank" rel="noopener" title="Neurorescue activity, APP regulation and amyloid-beta peptide reduction by novel multi-functional brain permeable iron- chelating- antioxidants, M-30 and green tea polyphenol, EGCG.">Neurorescue activity, APP regulation and amyloid-beta peptide reduction…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3006,7 +3023,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/catechin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>6-Shogaol</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3017,7 +3034,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/6-shogaol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ellagic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3028,7 +3045,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ellagic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Betulinic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34339019/" target="_blank" rel="noopener" title="Betulinic acid hydroxamate has the potential for further pharmacological development of a novel drug candidate for the treatment of Huntington&amp;#039;s disease.">Betulinic acid hydroxamate has the potential for further pharmacologica…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3039,7 +3056,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/64971" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/betulinic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Carbon 60</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Insect Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36611963/" target="_blank" rel="noopener" title="Fullerenols prevent neuron death and reduce oxidative stress in drosophila Huntington&amp;#039;s disease model.">Fullerenols prevent neuron death and reduce oxidative stress in drosoph…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3050,7 +3067,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/carbon-60" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginseng (American)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3061,7 +3078,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginseng-american" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ginseng (Korean)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3072,7 +3089,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ginseng-korean" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Goji</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16434666/" target="_blank" rel="noopener" title="Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#039;s disease.">Creatine reduces oxidative injury to DNA in patients with Huntington&amp;#0…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18831882/" target="_blank" rel="noopener" title="Eiocosapentaenoic acid significantly reduces brain atrophy in Huntington&amp;#039;s disease.">Eiocosapentaenoic acid significantly reduces brain atrophy in Huntingto…</a></li><li><span class="np-pub-type">Human Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25300331/" target="_blank" rel="noopener" title="Improved Executive Function and Callosal White Matter Microstructure after Rhythm Exercise in Huntington&amp;#039;s Disease.">Improved Executive Function and Callosal White Matter Microstructure af…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3083,7 +3100,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/goji" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Guarana</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30116496/" target="_blank" rel="noopener" title="Guarana hydroalcoholic extract has therapeutic potential in combating age-related diseases associated with protein misfolding and accumulation.">Guarana hydroalcoholic extract has therapeutic potential in combating a…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3094,7 +3111,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/guarana" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Naringenin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33856270/" target="_blank" rel="noopener" title="Naringenin mitigates behavioral alterations and provides neuroprotection against 3-nitropropinoic acid-induced Huntington&amp;#039;s disease like symptoms.">Naringenin mitigates behavioral alterations and provides neuroprotectio…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3105,7 +3122,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/439246" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/naringenin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ligustrazine</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30021362/" target="_blank" rel="noopener" title="Neuroprotective activity of tetramethylpyrazine against 3-nitropropionic acid induced Huntington&amp;#039;s disease-like symptoms.">Neuroprotective activity of tetramethylpyrazine against 3-nitropropioni…</a></li><li><span class="np-pub-type">Transgenic Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37191091/" target="_blank" rel="noopener" title="Neuroprotective effect of aloe emodin against Huntington&amp;#039;s disease-like symptoms.">Neuroprotective effect of aloe emodin against Huntington&amp;#039;s disease…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37521470/" target="_blank" rel="noopener" title="Neuroprotective potency of mangiferin against 3-nitropropionic acid induced Huntington&amp;#039;s disease-like symptoms.">Neuroprotective potency of mangiferin against 3-nitropropionic acid ind…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3116,7 +3133,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ligustrazine" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Emodin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30021362/" target="_blank" rel="noopener" title="Neuroprotective activity of tetramethylpyrazine against 3-nitropropionic acid induced Huntington&amp;#039;s disease-like symptoms.">Neuroprotective activity of tetramethylpyrazine against 3-nitropropioni…</a></li><li><span class="np-pub-type">Transgenic Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37191091/" target="_blank" rel="noopener" title="Neuroprotective effect of aloe emodin against Huntington&amp;#039;s disease-like symptoms.">Neuroprotective effect of aloe emodin against Huntington&amp;#039;s disease…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37521470/" target="_blank" rel="noopener" title="Neuroprotective potency of mangiferin against 3-nitropropionic acid induced Huntington&amp;#039;s disease-like symptoms.">Neuroprotective potency of mangiferin against 3-nitropropionic acid ind…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3127,7 +3144,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/emodin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Mangiferin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30021362/" target="_blank" rel="noopener" title="Neuroprotective activity of tetramethylpyrazine against 3-nitropropionic acid induced Huntington&amp;#039;s disease-like symptoms.">Neuroprotective activity of tetramethylpyrazine against 3-nitropropioni…</a></li><li><span class="np-pub-type">Transgenic Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37191091/" target="_blank" rel="noopener" title="Neuroprotective effect of aloe emodin against Huntington&amp;#039;s disease-like symptoms.">Neuroprotective effect of aloe emodin against Huntington&amp;#039;s disease…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37521470/" target="_blank" rel="noopener" title="Neuroprotective potency of mangiferin against 3-nitropropionic acid induced Huntington&amp;#039;s disease-like symptoms.">Neuroprotective potency of mangiferin against 3-nitropropionic acid ind…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3138,7 +3155,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/mangiferin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Perillaldehyde</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/38990058/" target="_blank" rel="noopener" title="Perillaldehyde alleviates polyQ-induced neurodegeneration through the induction of autophagy and mitochondrial UPR in Caenorhabditis elegans.">Perillaldehyde alleviates polyQ-induced neurodegeneration through the i…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3149,7 +3166,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/perillaldehyde" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Safranal</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33611726/" target="_blank" rel="noopener" title="Safranal prevented the motor dysfunction induced by 3-NP in animal model of Huntington&amp;#039;s disease.">Safranal prevented the motor dysfunction induced by 3-NP in animal mode…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3160,7 +3177,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/safranal" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>EGCG (Epigallocatechin Gallate)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Human In Vitro</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17908043/" target="_blank" rel="noopener" title="Neurorescue activity, APP regulation and amyloid-beta peptide reduction by novel multi-functional brain permeable iron- chelating- antioxidants, M-30 and green tea polyphenol, EGCG.">Neurorescue activity, APP regulation and amyloid-beta peptide reduction…</a></li><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/16893904/" target="_blank" rel="noopener" title="The polyphenol in green tea known as EGCG may inhibit the progression of Huntington&amp;#039;s disease.">The polyphenol in green tea known as EGCG may inhibit the progression o…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3171,7 +3188,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/egcg-epigallocatechin-gallate" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>False Black Pepper</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Animal Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26796265/" target="_blank" rel="noopener" title="These findings suggest the neuroprotective effect of embelin against Huntington&amp;#039;s disease.">These findings suggest the neuroprotective effect of embelin against Hu…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3182,7 +3199,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/false-black-pepper" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Ruta Graveolens</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/32670826/" target="_blank" rel="noopener" title="Ruta graveolens as a potential source of neuroactive compounds to promote and restore neural functions.">Ruta graveolens as a potential source of neuroactive compounds to promo…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3193,7 +3210,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/ruta-graveolens" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Amla Fruit</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30848470/" target="_blank" rel="noopener" title="A review exploring the multifaceted neuroprotective actions of amla.">A review exploring the multifaceted neuroprotective actions of amla.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3204,7 +3221,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/amla-fruit" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Astaxanthin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/36286468/" target="_blank" rel="noopener" title="Astaxanthin has protection against neuronal excitotoxicity.">Astaxanthin has protection against neuronal excitotoxicity.</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3215,7 +3232,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281224" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/astaxanthin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Baicalein</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40616756/" target="_blank" rel="noopener" title="Baicalein-mediated regulation of Nrf2/ARE, NFĸB, and MAPK signaling in Huntington&amp;#039;s disease.">Baicalein-mediated regulation of Nrf2/ARE, NFĸB, and MAPK signaling in…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3226,7 +3243,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/baicalein" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Carnosic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/29335845/" target="_blank" rel="noopener" title="Carnosic acid is a potential candidate to be listed as a neuroprotective agent by acting on the mitochondria of neural cells.">Carnosic acid is a potential candidate to be listed as a neuroprotectiv…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3237,7 +3254,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/carnosic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Rosmarinic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/26064904/" target="_blank" rel="noopener" title="Discovery of natural compounds as nonpeptidyl inhibitors is a significant transition towards feasible drug development for neurodegenerative disorders.">Discovery of natural compounds as nonpeptidyl inhibitors is a significa…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3248,7 +3265,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/rosmarinic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Cottonseed Oil (Gossypol)</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33495516/" target="_blank" rel="noopener" title="Gossypol induces autophagic degradation of mutant huntingtin.">Gossypol induces autophagic degradation of mutant huntingtin.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3259,7 +3276,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/cottonseed-oil-gossypol" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Raspberry</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/30397021/" target="_blank" rel="noopener" title="Identification and microbial production of the raspberry phenol salidroside that is active against Huntington’s disease.">Identification and microbial production of the raspberry phenol salidro…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3270,7 +3287,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/raspberry" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Lactobacillus Plantarum</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/33454870/" target="_blank" rel="noopener" title="L. plantarum 200655 might be used as a prophylactic functional ingredient to prevent neurodegenerative disease.">L. plantarum 200655 might be used as a prophylactic functional ingredie…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3281,7 +3298,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/lactobacillus-plantarum" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Bamboo</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/17894646/" target="_blank" rel="noopener" title="Lig-8, a compound extracted from bamboo, exhibits neuroprotective properties.">Lig-8, a compound extracted from bamboo, exhibits neuroprotective prope…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3292,7 +3309,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/bamboo" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Icariin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/42299008/" target="_blank" rel="noopener" title="Mechanistic perspectives of icariin against neuroinflammation.">Mechanistic perspectives of icariin against neuroinflammation.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3303,7 +3320,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/icariin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Lotus</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/25699594/" target="_blank" rel="noopener" title="Neferine attenuates the protein level and toxicity of mutant huntingtin in PC-12 cells.">Neferine attenuates the protein level and toxicity of mutant huntingtin…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3314,7 +3331,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/lotus" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Caffeic Acid Phenethyl Ester</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34102977/" target="_blank" rel="noopener" title="Neuroprotective potential of caffeic acid phenethyl ester in CNS disorders.">Neuroprotective potential of caffeic acid phenethyl ester in CNS disord…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3325,7 +3342,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281787" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/caffeic-acid-phenethyl-ester" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Capsaicin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/39683859/" target="_blank" rel="noopener" title="Potential protective effects of pungent flavor components in neurodegenerative diseases.">Potential protective effects of pungent flavor components in neurodegen…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3336,7 +3353,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/capsaicin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Punicic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/35159404/" target="_blank" rel="noopener" title="Punicic acid and its role in the prevention of neurological disorders.">Punicic acid and its role in the prevention of neurological disorders.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3347,7 +3364,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/punicic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Stilbenes</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/18684235/" target="_blank" rel="noopener" title="Resveratrol: a natural compound with pharmacological potential in neurodegenerative diseases.">Resveratrol: a natural compound with pharmacological potential in neuro…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3358,7 +3375,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/stilbenes" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Tauroursodeoxycholic Acid</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/24891994/" target="_blank" rel="noopener" title="Tauroursodeoxycholic acid (TUDCA) may have therapeutic value in neurodegenerative illnesses.">Tauroursodeoxycholic acid (TUDCA) may have therapeutic value in neurode…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3369,7 +3386,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/tauroursodeoxycholic-acid" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Avocado</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27651262/" target="_blank" rel="noopener" title="The critical review results indicate that compounds in avocado are unique antioxidants, and thus may be promising as effective neuropreventive agents.">The critical review results indicate that compounds in avocado are uniq…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3380,7 +3397,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/avocado" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Diosmin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40703750/" target="_blank" rel="noopener" title="The neuroprotective effects of hesperidin and diosmin in neurological disorders.">The neuroprotective effects of hesperidin and diosmin in neurological d…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3391,7 +3408,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/diosmin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Hesperidin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/40703750/" target="_blank" rel="noopener" title="The neuroprotective effects of hesperidin and diosmin in neurological disorders.">The neuroprotective effects of hesperidin and diosmin in neurological d…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3402,7 +3419,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/10621" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/hesperidin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Carotenoids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/34339943/" target="_blank" rel="noopener" title="The neuroprotective potential of carotenoids in vitro and in vivo.">The neuroprotective potential of carotenoids in vitro and in vivo.</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3413,7 +3430,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/carotenoids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Fisetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/20952447/" target="_blank" rel="noopener" title="The polyphenols fisetin and resveratrol provide neuroprotection in multiple models of Huntington&amp;#039;s disease.">The polyphenols fisetin and resveratrol provide neuroprotection in mult…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3424,7 +3441,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281614" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/fisetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Flavonoids</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/31234550/" target="_blank" rel="noopener" title="The potential of flavonoids for the treatment of neurodegenerative diseases.">The potential of flavonoids for the treatment of neurodegenerative dise…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3435,7 +3452,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://greenmedinfo.com/substance/flavonoids" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Myricetin</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">Review</span> <a href="https://pubmed.ncbi.nlm.nih.gov/37461364/" target="_blank" rel="noopener" title="Therapeutic potential of myricetin in the treatment of neurological, neuropsychiatric, and neurodegenerative disorders.">Therapeutic potential of myricetin in the treatment of neurological, ne…</a></li></ul></td>
           <td class="muted">Food compound</td>
@@ -3446,7 +3463,7 @@
           <td class="muted">GreenMedInfo</td>
           <td class="links-cell"><a href="https://pubchem.ncbi.nlm.nih.gov/compound/5281672" target="_blank" rel="noopener" class="ext-link">PubChem</a> <a href="https://greenmedinfo.com/substance/myricetin" target="_blank" rel="noopener" class="ext-link">GreenMedInfo</a></td>
         </tr>
-        <tr>
+        <tr class="therapeutic-row no-clinical-evidence">
           <td class="name-cell"><strong>Garlic: Aged</strong>  <span class="natural-agent">Natural product</span> 
             <ul class="np-pubs"><li><span class="np-pub-type">In Vitro Study</span> <a href="https://pubmed.ncbi.nlm.nih.gov/27263111/" target="_blank" rel="noopener" title="This experimental data provides information for the molecular targets of AGE and its components to mitigate neurodegeneration and neuroinflammation.">This experimental data provides information for the molecular targets o…</a></li></ul></td>
           <td class="muted">Nutraceutical</td>
@@ -3487,6 +3504,20 @@
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       });
     });
+    function bindEvidenceToggle(checkboxId) {
+      var cb = document.getElementById(checkboxId);
+      if (!cb) return;
+      var scope = cb.closest('section');
+      if (!scope) return;
+      var hidden = scope.querySelectorAll('.therapeutic-row.no-clinical-evidence').length;
+      var hint = scope.querySelector('[data-hidden-for="' + checkboxId + '"]');
+      if (hint && hidden) hint.textContent = '(' + hidden + ' hidden)';
+      cb.addEventListener('change', function() {
+        scope.classList.toggle('show-no-clinical-evidence', cb.checked);
+      });
+    }
+    bindEvidenceToggle('show-no-evidence-therapeutics');
+    bindEvidenceToggle('show-no-evidence-natural');
   </script>
 </body>
 </html>
