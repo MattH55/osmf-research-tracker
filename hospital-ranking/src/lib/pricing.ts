@@ -89,14 +89,28 @@ function roundPrice(n: number): number {
 }
 
 export function isReportedPrice(price: ProcedurePrice): boolean {
-  return price.priceSource === "sample_mrf";
+  return (
+    price.priceSource === "hospital_mrf" || price.priceSource === "sample_mrf"
+  );
 }
 
 export function priceSourceLabel(source: string): string {
+  if (source === "hospital_mrf") return "Hospital MRF (published)";
   if (source === "sample_mrf") return "Hospital MRF (sample)";
-  if (source === "estimated") return "Modeled estimate";
+  if (source === "estimated") return "Modeled estimate (not hospital-reported)";
   return source;
 }
+
+/** Documented formula — only used when ALLOW_MODELED_ESTIMATES=1 */
+export const ESTIMATE_METHODOLOGY = {
+  summary:
+    "National shoppable-service medians × state cost index × hospital-type/ownership/stars × per-hospital jitter. Not from any hospital file.",
+  sources: [
+    "Procedure medians: CMS shoppable-service / FAIR Health public benchmarks (hand-curated)",
+    "State index: approximate Medicare geographic adjustment factors",
+    "Hospital modifiers: CMS hospital type, ownership, overall star rating",
+  ],
+};
 
 export function estimateProcedurePrice(
   hospital: Hospital,

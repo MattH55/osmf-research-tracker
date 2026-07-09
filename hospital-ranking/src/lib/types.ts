@@ -41,6 +41,7 @@ export interface Hospital {
 export interface ProcedurePrice {
   hospitalId: string;
   procedureId: string;
+  cmsProviderId?: string;
   cashLow: number | null;
   cashMedian: number | null;
   cashHigh: number | null;

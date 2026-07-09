@@ -78,6 +78,19 @@ const priceByHospitalProcedure = new Map(
   prices.map((p) => [`${p.hospitalId}:${p.procedureId}`, p]),
 );
 
+/** Real prices scraped from hospital MRF files (etl/ingest_mrf_prices.py) */
+const mrfPrices = readJson<ProcedurePrice[]>(path.join(CMS_DIR, "mrf-prices.json")) ?? [];
+const mrfByCmsAndProcedure = new Map<string, ProcedurePrice>();
+const mrfByHospitalProcedure = new Map<string, ProcedurePrice>();
+for (const p of mrfPrices) {
+  mrfByHospitalProcedure.set(`${p.hospitalId}:${p.procedureId}`, p);
+  const cmsId =
+    p.cmsProviderId ?? p.hospitalId.replace(/^hosp-cms-/, "");
+  if (cmsId) mrfByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, p);
+}
+
+const ALLOW_MODELED_ESTIMATES = process.env.ALLOW_MODELED_ESTIMATES === "1";
+
 export function getHospitalCount(): number {
   return loadHospitals().length;
 }
@@ -102,15 +115,36 @@ export function getPrice(
   hospitalId: string,
   procedureId: string,
 ): ProcedurePrice | undefined {
+  const mrfDirect = mrfByHospitalProcedure.get(`${hospitalId}:${procedureId}`);
+  if (mrfDirect) return mrfDirect;
+
+  const h = hospitalMap().get(hospitalId);
+  if (h?.cmsProviderId) {
+    const mrfCms = mrfByCmsAndProcedure.get(`${h.cmsProviderId}:${procedureId}`);
+    if (mrfCms) return mrfCms;
+  }
+
   const direct = priceByHospitalProcedure.get(`${hospitalId}:${procedureId}`);
   if (direct) return direct;
-  const h = hospitalMap().get(hospitalId);
   if (!h) return undefined;
   if (h.cmsProviderId) {
     const cms = priceByCmsAndProcedure.get(`${h.cmsProviderId}:${procedureId}`);
     if (cms) return cms;
   }
-  return estimateProcedurePrice(h, procedureId);
+  if (ALLOW_MODELED_ESTIMATES) {
+    return estimateProcedurePrice(h, procedureId);
+  }
+  return undefined;
+}
+
+export function getMrfPriceMeta(): {
+  count: number;
+  allowModeledEstimates: boolean;
+} {
+  return {
+    count: mrfPrices.length,
+    allowModeledEstimates: ALLOW_MODELED_ESTIMATES,
+  };
 }
 
 export function getPricesForHospital(hospitalId: string): ProcedurePrice[] {

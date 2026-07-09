@@ -153,9 +153,14 @@ export function searchHospitals(
   }
 
   const reported = results.filter((r) => r.price && isReportedPrice(r.price)).length;
-  if (total > 0 && reported < total) {
+  const withPrice = results.filter((r) => r.price).length;
+  if (total > 0 && withPrice < total) {
     warnings.push(
-      `Prices are modeled estimates for ${total - reported} of ${total} result(s) based on national benchmarks and your state. ${reported > 0 ? `${reported} have reported hospital MRF sample prices.` : "Verify with the hospital before scheduling."}`,
+      `${total - withPrice} of ${total} result(s) have no published MRF price in our database yet. We only show hospital-reported charges — not modeled guesses.`,
+    );
+  } else if (total > 0 && reported < withPrice) {
+    warnings.push(
+      `${withPrice - reported} result(s) use legacy sample data; ${reported} use scraped hospital MRF files.`,
     );
   }
 
