@@ -1,0 +1,12 @@
+# Add to opensourcemed.info site root .htaccess (LiteSpeed / Apache)
+# Proxies /hospital-ranking to the Vercel deployment (URL stays opensourcemed.info/hospital-ranking)
+# Requires mod_proxy — if unavailable, use the Redirect fallback below.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^hospital-ranking$ https://hospital-ranking.vercel.app/hospital-ranking [P,L]
+  RewriteRule ^hospital-ranking/(.*)$ https://hospital-ranking.vercel.app/hospital-ranking/$1 [P,L]
+</IfModule>
+
+# Fallback (changes browser URL to vercel.app):
+# RedirectMatch 302 ^/hospital-ranking(.*)$ https://hospital-ranking.vercel.app/hospital-ranking$1
