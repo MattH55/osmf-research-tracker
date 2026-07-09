@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatCurrency, formatPriceRange } from "@/lib/format";
+import { isReportedPrice } from "@/lib/pricing";
 import { formatDistance } from "@/lib/geo";
 import type { SearchResult } from "@/lib/types";
 import { StarRating } from "./star-rating";
@@ -53,9 +54,16 @@ export function HospitalResultCard({ result }: { result: SearchResult }) {
         <div className="shrink-0 text-left sm:text-right">
           {price ? (
             <>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Est. out-of-pocket
-              </p>
+              <div className="flex items-center justify-start gap-2 sm:justify-end">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                  Est. out-of-pocket
+                </p>
+                {!isReportedPrice(price) && (
+                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-800">
+                    Est.
+                  </span>
+                )}
+              </div>
               <p className="text-2xl font-bold text-teal-700">
                 {formatCurrency(estimatedOop)}
               </p>

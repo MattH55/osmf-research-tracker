@@ -11,6 +11,7 @@ import {
   getProcedures,
 } from "@/lib/data";
 import { formatCurrency, formatPriceRange, percentLabel } from "@/lib/format";
+import { isReportedPrice, priceSourceLabel } from "@/lib/pricing";
 
 export default async function HospitalPage({
   params,
@@ -145,6 +146,12 @@ export default async function HospitalPage({
             {focusProcedure.plainName} at this hospital
           </h2>
           {focusPrice ? (
+            <>
+            {!isReportedPrice(focusPrice) && (
+              <p className="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+                Modeled estimate — confirm with hospital
+              </p>
+            )}
             <dl className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-xs font-medium uppercase text-slate-500">Cash price range</dt>
@@ -172,29 +179,29 @@ export default async function HospitalPage({
                 <dd className="font-semibold">{formatCurrency(focusPrice.oopHdhp)}</dd>
               </div>
             </dl>
+            </>
           ) : (
             <p className="mt-2 text-sm text-slate-600">
-              We don&apos;t have a price estimate for this procedure at this facility yet.
-              CMS quality ratings are available; procedure prices expand as MRF/Turquoise
-              feeds are added.
+              We don&apos;t have a price estimate for this procedure at this facility.
             </p>
           )}
           <p className="mt-3 text-xs text-slate-500">
             Price vintage: {focusPrice?.priceVintage ?? "—"} · Source:{" "}
-            {focusPrice?.priceSource ?? "—"}
+            {focusPrice ? priceSourceLabel(focusPrice.priceSource) : "—"}
           </p>
         </section>
       )}
 
       <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">All priced procedures (sample)</h2>
+        <h2 className="text-lg font-semibold text-slate-900">All procedures</h2>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-xs uppercase text-slate-500">
                 <th className="py-2 pr-4">Procedure</th>
                 <th className="py-2 pr-4">Cash median</th>
-                <th className="py-2">Negotiated</th>
+                <th className="py-2 pr-4">Negotiated</th>
+                <th className="py-2">Source</th>
               </tr>
             </thead>
             <tbody>
@@ -205,7 +212,10 @@ export default async function HospitalPage({
                   <tr key={pr.procedureId} className="border-b border-slate-100">
                     <td className="py-3 pr-4 font-medium">{proc.plainName}</td>
                     <td className="py-3 pr-4">{formatCurrency(pr.cashMedian)}</td>
-                    <td className="py-3">{formatCurrency(pr.negotiatedMedian)}</td>
+                    <td className="py-3 pr-4">{formatCurrency(pr.negotiatedMedian)}</td>
+                    <td className="py-3 text-xs text-slate-500">
+                      {isReportedPrice(pr) ? "MRF" : "Est."}
+                    </td>
                   </tr>
                 );
               })}

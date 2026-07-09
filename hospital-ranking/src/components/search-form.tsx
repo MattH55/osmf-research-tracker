@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { matchProcedures, resolveProcedureSlug } from "@/lib/procedure-match";
 import type { Procedure } from "@/lib/types";
 
 export function SearchForm({
@@ -14,34 +15,64 @@ export function SearchForm({
   defaultZip?: string;
 }) {
   const router = useRouter();
-  const [procedure, setProcedure] = useState(defaultProcedure);
+  const listboxId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const initialProc = procedures.find(
+    (p) => p.slug === defaultProcedure || p.plainName.toLowerCase() === defaultProcedure.toLowerCase(),
+  );
+
+  const [query, setQuery] = useState(initialProc?.plainName ?? defaultProcedure);
   const [zip, setZip] = useState(defaultZip);
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
-  const filtered = procedures.filter((p) => {
-    const q = procedure.toLowerCase();
-    if (!q) return true;
-    return (
-      p.plainName.toLowerCase().includes(q) ||
-      p.slug.includes(q) ||
-      p.searchTerms.some((t) => t.toLowerCase().includes(q))
-    );
-  });
+  const suggestions = matchProcedures(query, procedures).slice(0, 8);
+  const showList = open && suggestions.length > 0;
+
+  const selectProcedure = useCallback((p: Procedure) => {
+    setQuery(p.plainName);
+    setOpen(false);
+    setActiveIndex(-1);
+  }, []);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const slug =
-      procedures.find(
-        (p) =>
-          p.slug === procedure ||
-          p.plainName.toLowerCase() === procedure.toLowerCase(),
-      )?.slug ?? procedure.trim().toLowerCase().replace(/\s+/g, "-");
+    const slug = resolveProcedureSlug(query, procedures);
     const params = new URLSearchParams({
       procedure: slug,
       zip: zip.replace(/\D/g, "").slice(0, 5),
     });
     router.push(`/search?${params.toString()}`);
   }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!showList) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        setOpen(true);
+        setActiveIndex(0);
+      }
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.min(i + 1, suggestions.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      e.preventDefault();
+      selectProcedure(suggestions[activeIndex]);
+    } else if (e.key === "Escape") {
+      setOpen(false);
+      setActiveIndex(-1);
+    }
+  }
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [query]);
 
   return (
     <form onSubmit={submit} className="space-y-4" role="search" aria-label="Find hospitals">
@@ -51,44 +82,58 @@ export function SearchForm({
             Procedure
           </label>
           <input
+            ref={inputRef}
             id="procedure"
             name="procedure"
-            type="text"
+            type="search"
             autoComplete="off"
+            role="combobox"
+            aria-expanded={showList}
+            aria-controls={listboxId}
+            aria-autocomplete="list"
+            aria-activedescendant={
+              activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined
+            }
             required
-            placeholder="e.g. knee replacement, colonoscopy"
-            value={procedure}
+            placeholder="Start typing: knee, colonoscopy, 27447…"
+            value={query}
             onChange={(e) => {
-              setProcedure(e.target.value);
+              setQuery(e.target.value);
               setOpen(true);
             }}
             onFocus={() => setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 150)}
+            onKeyDown={onKeyDown}
             className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            list="procedure-list"
           />
-          <datalist id="procedure-list">
-            {procedures.map((p) => (
-              <option key={p.id} value={p.plainName} />
-            ))}
-          </datalist>
-          {open && filtered.length > 0 && procedure.length > 0 && (
+          {showList && (
             <ul
-              className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+              id={listboxId}
+              className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
               role="listbox"
             >
-              {filtered.slice(0, 6).map((p) => (
-                <li key={p.id}>
+              {suggestions.map((p, i) => (
+                <li
+                  key={p.id}
+                  id={`${listboxId}-opt-${i}`}
+                  role="option"
+                  aria-selected={i === activeIndex}
+                >
                   <button
                     type="button"
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-teal-50"
-                    onMouseDown={() => {
-                      setProcedure(p.plainName);
-                      setOpen(false);
-                    }}
+                    className={`w-full px-4 py-2.5 text-left text-sm ${
+                      i === activeIndex ? "bg-teal-50" : "hover:bg-teal-50"
+                    }`}
+                    onMouseDown={() => selectProcedure(p)}
+                    onMouseEnter={() => setActiveIndex(i)}
                   >
-                    <span className="font-medium">{p.plainName}</span>
+                    <span className="font-medium text-slate-900">{p.plainName}</span>
                     <span className="ml-2 text-slate-500">{p.category}</span>
+                    {p.cptCodes.length > 0 && (
+                      <span className="mt-0.5 block text-xs text-slate-400">
+                        CPT {p.cptCodes.join(", ")}
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}

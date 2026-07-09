@@ -8,6 +8,7 @@ import {
 } from "./data";
 import { distanceMiles, inRadiusBox, lookupZip, normalizeZip } from "./geo";
 import { estimateOop } from "./format";
+import { isReportedPrice } from "./pricing";
 import type { Hospital, InsuranceType, Procedure, SearchParams, SearchResult } from "./types";
 
 const DEFAULT_RADIUS = 50;
@@ -162,10 +163,10 @@ export function searchHospitals(
     );
   }
 
-  const withPrices = results.filter((r) => r.price).length;
-  if (total > 0 && withPrices < total) {
+  const reported = results.filter((r) => r.price && isReportedPrice(r.price)).length;
+  if (total > 0 && reported < total) {
     warnings.push(
-      `${total - withPrices} of ${total} result(s) lack procedure price data — CMS quality ratings are shown; prices expand as MRF/Turquoise feeds are added.`,
+      `Prices are modeled estimates for ${total - reported} of ${total} result(s) based on national benchmarks and your state. ${reported > 0 ? `${reported} have reported hospital MRF sample prices.` : "Verify with the hospital before scheduling."}`,
     );
   }
 

@@ -3,6 +3,7 @@ import path from "path";
 import proceduresJson from "../../data/seed/procedures.json";
 import pricesJson from "../../data/seed/prices.json";
 import seedHospitalsJson from "../../data/seed/hospitals.json";
+import { estimateProcedurePrice } from "./pricing";
 import type { Hospital, Procedure, ProcedurePrice } from "./types";
 
 const CMS_DIR = path.join(process.cwd(), "data", "cms");
@@ -104,10 +105,12 @@ export function getPrice(
   const direct = priceByHospitalProcedure.get(`${hospitalId}:${procedureId}`);
   if (direct) return direct;
   const h = hospitalMap().get(hospitalId);
-  if (h?.cmsProviderId) {
-    return priceByCmsAndProcedure.get(`${h.cmsProviderId}:${procedureId}`);
+  if (!h) return undefined;
+  if (h.cmsProviderId) {
+    const cms = priceByCmsAndProcedure.get(`${h.cmsProviderId}:${procedureId}`);
+    if (cms) return cms;
   }
-  return undefined;
+  return estimateProcedurePrice(h, procedureId);
 }
 
 export function getPricesForHospital(hospitalId: string): ProcedurePrice[] {

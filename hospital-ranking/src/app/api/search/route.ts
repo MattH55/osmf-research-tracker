@@ -47,6 +47,8 @@ export async function GET(request: NextRequest) {
       estimatedOop: r.estimatedOop,
       cashMedian: r.price?.cashMedian ?? null,
       hasPrice: Boolean(r.price),
+      priceSource: r.price?.priceSource ?? null,
+      isReported: r.price?.priceSource === "sample_mrf",
     })),
   });
 }

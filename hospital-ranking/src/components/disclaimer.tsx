@@ -8,9 +8,10 @@ export function Disclaimer({ compact = false }: { compact?: boolean }) {
           : "rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
       }
     >
-      <strong className="font-semibold">Estimates only.</strong> Verify prices and
-      coverage with the hospital and your insurer. This tool is not medical advice and
-      does not store personal health information.
+      <strong className="font-semibold">Estimates only.</strong> Most prices are modeled
+      from national benchmarks; some hospitals show reported MRF sample data. Verify all
+      prices and coverage with the hospital and your insurer. Not medical advice — no PHI
+      stored.
     </aside>
   );
 }
