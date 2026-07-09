@@ -74,14 +74,20 @@ query DiseaseKnownDrugs($efoId: String!) {
 def _phase_to_int(stage: str | None) -> int:
     if not stage:
         return 0
-    s = str(stage).upper()
-    if "APPROVED" in s or "PHASE_IV" in s or "PHASE 4" in s:
+    s = str(stage).upper().replace("-", "_")
+    if "LAUNCHED" in s or "APPROVED" in s:
         return 4
-    if "PHASE_III" in s or "PHASE 3" in s:
+    if "PHASE_IV" in s or "PHASE4" in s:
+        return 4
+    if "PHASE_III" in s or "PHASE3" in s:
         return 3
-    if "PHASE_II" in s or "PHASE 2" in s:
+    if "PHASE_2_3" in s:
+        return 3
+    if "PHASE_II" in s or "PHASE2" in s:
         return 2
-    if "PHASE_I" in s or "PHASE 1" in s:
+    if "PHASE_1_2" in s:
+        return 2
+    if "PHASE_I" in s or "PHASE1" in s:
         return 1
     return 0
 

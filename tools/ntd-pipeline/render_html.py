@@ -24,7 +24,7 @@ GOOGLE_ANALYTICS_SNIPPET = f"""  <!-- Google tag (gtag.js) -->
     gtag('js', new Date());
     gtag('config', '{GOOGLE_ANALYTICS_ID}');
   </script>"""
-UPDATED = "2026-07-09"
+UPDATED = "2026-07-10"
 OUT_DIR = "ntd"
 
 NAV = [
@@ -83,7 +83,16 @@ main{{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}}
 .caveat{{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:.85rem 1.1rem;font-size:.84rem;color:var(--amber);margin-bottom:1.5rem}}
 footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}}
 .muted{{color:var(--muted)}}
+.source-soc{{color:var(--green);font-size:.78rem;font-weight:600}}
+.source-ot{{color:var(--muted);font-size:.78rem}}
+@media(max-width:720px){{
+.nav-container{{height:auto;min-height:60px;padding:.75rem 1rem;flex-wrap:wrap;gap:.5rem}}
+.nav-links{{width:100%;justify-content:flex-start}}
+.pi-kv{{grid-template-columns:1fr}}
+.stat-grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}
+}}
 """
+CSS = CSS.replace("{{", "{").replace("}}", "}")
 
 
 def esc(x):
@@ -127,6 +136,40 @@ def fmt(n):
         return f"{int(float(n)):,}"
     except (ValueError, TypeError):
         return esc(n)
+
+
+def phase_label(d: dict) -> str:
+    p = d.get("max_phase") or 0
+    if d.get("approved") or p >= 4:
+        return "Approved"
+    if p == 3:
+        return "Phase 3"
+    if p == 2:
+        return "Phase 2"
+    if p == 1:
+        return "Phase 1"
+    if p == 0 and d.get("source", "").startswith("WHO"):
+        return "Standard of care"
+    return "—"
+
+
+def drug_rows_html(drugs: list[dict]) -> str:
+    if not drugs:
+        return '<tr><td colspan="5" class="muted">No therapeutic agents curated for this condition.</td></tr>'
+    rows = []
+    for d in drugs:
+        src = d.get("source") or "Open Targets"
+        src_cls = "source-soc" if "WHO" in src or "standard" in src.lower() or "MSF" in src or "DNDi" in src else "source-ot"
+        rows.append(
+            f"<tr>"
+            f"<td><strong>{esc(d.get('drug'))}</strong></td>"
+            f"<td class='muted'>{esc(d.get('type') or '—')}</td>"
+            f"<td>{esc(phase_label(d))}</td>"
+            f"<td class='muted'>{esc(d.get('moa') or '—')}</td>"
+            f"<td><span class='{src_cls}'>{esc(src)}</span></td>"
+            f"</tr>"
+        )
+    return "".join(rows)
 
 
 def load_rows():
@@ -217,17 +260,11 @@ def disease_page(row):
     </div>"""
 
     drugs = row.get("top_drug_detail") or [{"drug": d} for d in row.get("top_drugs", [])]
-    drug_rows = "".join(
-        f"<tr><td><strong>{esc(d.get('drug'))}</strong></td>"
-        f"<td class='muted'>{esc(d.get('type') or '—')}</td>"
-        f"<td>{esc(d.get('max_phase') if d.get('max_phase') is not None else '—')}</td>"
-        f"<td class='muted'>{esc(d.get('moa') or '—')}</td>"
-        f"<td>{'yes' if d.get('approved') else '—'}</td></tr>"
-        for d in drugs
-    ) or '<tr><td colspan="5" class="muted">No drugs resolved (run live pipeline / cross-check WHO EML &amp; DNDi).</td></tr>'
+    soc = [d for d in drugs if "Open Targets" not in (d.get("source") or "")]
+    pipeline = [d for d in drugs if "Open Targets" in (d.get("source") or "")]
 
     targets = row.get("top_target_detail") or []
-    tgt = ", ".join(esc(t.get("symbol")) for t in targets if t.get("symbol")) or "—"
+    tgt = ", ".join(esc(t.get("symbol")) for t in targets[:6] if t.get("symbol")) or "—"
 
     note = f'<p class="section-sub">{esc(row["note"])}</p>' if row.get("note") else ""
 
@@ -251,17 +288,25 @@ def disease_page(row):
       {post_infectious_block(row)}
     </section>
     <section>
-      <h2 class="section-title">Top therapeutic hits</h2>
-      <p class="section-sub">From Open Targets known drugs (ChEMBL indications). Standard-of-care antiparasitics may be underrepresented.</p>
+      <h2 class="section-title">Therapeutic agents</h2>
+      <p class="section-sub">WHO-recognized and standard-of-care agents are listed first; Open Targets clinical-pipeline candidates follow when relevant.</p>
+      <h3 class="section-title" style="font-size:1.05rem;margin-top:1.5rem">Standard of care &amp; WHO-recognized agents</h3>
       <div class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Drug / agent</th><th>Type</th><th>Max phase</th><th>Mechanism</th><th>Approved</th></tr></thead>
-          <tbody>{drug_rows}</tbody>
+          <thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead>
+          <tbody>{drug_rows_html(soc)}</tbody>
         </table>
       </div>
-      <p class="muted" style="font-size:.84rem">Top associated targets: {tgt}</p>
+      {f'''<h3 class="section-title" style="font-size:1.05rem;margin-top:1.75rem">Clinical pipeline (Open Targets)</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead>
+          <tbody>{drug_rows_html(pipeline)}</tbody>
+        </table>
+      </div>''' if pipeline else ''}
+      <p class="muted" style="font-size:.84rem;margin-top:1rem">Associated drug targets (Open Targets): {tgt}</p>
     </section>
-    <p class="disclaimer">Burden: IHME GBD (indicative seed unless refreshed) · Therapeutics: Open Targets / ChEMBL · Post-infectious data: curated peer-reviewed literature · Ontology: {esc(row.get('efo_id') or '—')} · Updated {UPDATED}. Associations, not a diagnostic test.</p>
+    <p class="disclaimer">Burden: IHME GBD (indicative seed unless refreshed) · Therapeutics: curated WHO EML / SOC + Open Targets pipeline · Post-infectious data: curated peer-reviewed literature · Ontology: {esc(row.get('efo_id') or '—')} · Updated {UPDATED}. Associations, not a diagnostic test.</p>
   </main>
   <footer>Generated by OSMF NTD Intelligence Pipeline · Open Source Medicine Foundation</footer>
 </body></html>"""

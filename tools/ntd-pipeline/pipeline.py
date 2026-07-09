@@ -30,6 +30,7 @@ import time
 
 import ntd_registry as reg
 import burden as burden_mod
+import therapeutics as ther
 
 # ---- optional live connectors (only imported when not --mock) ----------------
 def _live():
@@ -68,12 +69,34 @@ def resolve_id(ntd, ot, mock):
     return rid
 
 
+def merge_drugs(ntd_key: str, ot_drugs: list[dict], n_pipeline: int = 6) -> list[dict]:
+    """All curated SOC agents; then up to n_pipeline Open Targets phase 2+ candidates."""
+    soc = ther.get_soc(ntd_key)
+    seen = {ther.normalize_name(d["drug"]) for d in soc}
+    merged = list(soc)
+    added = 0
+    for d in ot_drugs:
+        name = ther.normalize_name(d.get("drug", ""))
+        if not name or name in seen:
+            continue
+        phase = d.get("max_phase") or 0
+        if phase < 2 and not d.get("approved"):
+            continue
+        entry = dict(d)
+        entry["source"] = "Open Targets (clinical pipeline)"
+        merged.append(entry)
+        seen.add(name)
+        added += 1
+        if added >= n_pipeline:
+            break
+    return merged
+
+
 def get_drugs(ntd, efo, ot, mock, n):
     if mock:
-        return _MOCK_DRUGS.get(ntd.key, [])[:n]
-    if not efo:
-        return []
-    return ot.known_drugs(efo, size=max(50, n))[:n]
+        return merge_drugs(ntd.key, _MOCK_DRUGS.get(ntd.key, []), n_pipeline=n)
+    ot_drugs = ot.known_drugs(efo, size=50) if efo else []
+    return merge_drugs(ntd.key, ot_drugs, n_pipeline=n)
 
 
 def get_targets(ntd, efo, ot, mock, n):
