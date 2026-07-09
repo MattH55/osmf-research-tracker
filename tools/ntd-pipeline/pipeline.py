@@ -84,6 +84,9 @@ def merge_drugs(ntd_key: str, ot_drugs: list[dict], n_pipeline: int = 6) -> list
             continue
         entry = dict(d)
         entry["source"] = "Open Targets (clinical pipeline)"
+        entry["stage"] = entry.get("stage") or "acute"
+        entry["evidence"] = "pipeline"
+        entry["type"] = entry.get("type") or "Small molecule"
         merged.append(entry)
         seen.add(name)
         added += 1
@@ -124,7 +127,7 @@ def build_rows(args):
     seed_flag = burden.get("_meta", {}).get("is_seed", True)
 
     rows = []
-    for ntd in reg.NTD_LIST:
+    for ntd in reg.all_diseases():
         b = burden_mod.get(burden, ntd.key)
         pa = reg.get_post_acute(ntd.key)
 
@@ -210,8 +213,11 @@ def main():
     args = ap.parse_args()
 
     mode = "MOCK (no network)" if args.mock else "LIVE"
+    n_who = len(reg.NTD_LIST)
+    n_all = len(reg.all_diseases())
     print(f"NTD pipeline - {mode} - 21 WHO NTD groups "
-          f"({len(reg.NTD_LIST)} rows; dengue & chikungunya split)")
+          f"({n_who} rows; dengue & chikungunya split) + "
+          f"{n_all - n_who} supplemental viral")
     rows, seed_flag = build_rows(args)
     write_outputs(rows, args.out)
     print_table(rows, args.top)

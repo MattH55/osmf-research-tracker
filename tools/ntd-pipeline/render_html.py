@@ -12,6 +12,7 @@ import os
 
 import ntd_registry as reg
 import persistence as pers
+import therapeutics as ther
 
 SITE_CSS_HREF = ""
 FAVICON_URL = "https://opensourcemed.info/favicon.png"
@@ -85,6 +86,17 @@ footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border
 .muted{{color:var(--muted)}}
 .source-soc{{color:var(--green);font-size:.78rem;font-weight:600}}
 .source-ot{{color:var(--muted);font-size:.78rem}}
+.stage-heading{{font-size:1.05rem;font-weight:700;margin:1.75rem 0 .75rem;color:var(--text)}}
+.stage-heading:first-of-type{{margin-top:1rem}}
+.evidence-toggle{{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1.25rem;cursor:pointer;user-select:none}}
+.evidence-toggle input{{accent-color:var(--accent);width:1rem;height:1rem}}
+.evidence-badge{{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 6px;border-radius:4px;margin-left:.35rem}}
+.evidence-published{{background:rgba(34,197,94,.15);color:var(--green)}}
+.evidence-pipeline{{background:rgba(245,158,11,.12);color:var(--amber)}}
+.evidence-preliminary{{background:rgba(136,146,164,.15);color:var(--muted)}}
+.agent-row.evidence-pipeline,.agent-row.evidence-preliminary{{display:none}}
+body.show-unpublished .agent-row.evidence-pipeline,body.show-unpublished .agent-row.evidence-preliminary{{display:table-row}}
+.hidden-count{{color:var(--amber);font-size:.82rem;margin-left:.5rem}}
 @media(max-width:720px){{
 .nav-container{{height:auto;min-height:60px;padding:.75rem 1rem;flex-wrap:wrap;gap:.5rem}}
 .nav-links{{width:100%;justify-content:flex-start}}
@@ -153,16 +165,25 @@ def phase_label(d: dict) -> str:
     return "—"
 
 
+def evidence_badge(ev: str) -> str:
+    labels = {"published": "Published evidence", "pipeline": "Pipeline", "preliminary": "Preliminary"}
+    return f'<span class="evidence-badge evidence-{ev}">{esc(labels.get(ev, ev))}</span>'
+
+
 def drug_rows_html(drugs: list[dict]) -> str:
     if not drugs:
-        return '<tr><td colspan="5" class="muted">No therapeutic agents curated for this condition.</td></tr>'
+        return '<tr><td colspan="5" class="muted">No agents in this stage.</td></tr>'
     rows = []
     for d in drugs:
         src = d.get("source") or "Open Targets"
-        src_cls = "source-soc" if "WHO" in src or "standard" in src.lower() or "MSF" in src or "DNDi" in src else "source-ot"
+        src_cls = "source-soc" if (
+            "WHO" in src or "standard" in src.lower() or "MSF" in src or "DNDi" in src
+            or "FDA" in src or "Published" in src
+        ) else "source-ot"
+        ev = ther.infer_evidence(d)
         rows.append(
-            f"<tr>"
-            f"<td><strong>{esc(d.get('drug'))}</strong></td>"
+            f"<tr class='agent-row evidence-{ev}'>"
+            f"<td><strong>{esc(d.get('drug'))}</strong>{evidence_badge(ev) if ev != 'published' else ''}</td>"
             f"<td class='muted'>{esc(d.get('type') or '—')}</td>"
             f"<td>{esc(phase_label(d))}</td>"
             f"<td class='muted'>{esc(d.get('moa') or '—')}</td>"
@@ -170,6 +191,55 @@ def drug_rows_html(drugs: list[dict]) -> str:
             f"</tr>"
         )
     return "".join(rows)
+
+
+def staged_therapeutics_html(drugs: list[dict]) -> tuple[str, int]:
+    """Group agents by clinical stage; return HTML and count of hidden (non-published) rows."""
+    by_stage: dict[str, list[dict]] = {s: [] for s in ther.STAGES}
+    hidden = 0
+    for d in drugs:
+        stage = d.get("stage") or "acute"
+        if stage not in by_stage:
+            stage = "acute"
+        by_stage[stage].append(d)
+        if ther.infer_evidence(d) != "published":
+            hidden += 1
+
+    parts = []
+    for stage in ther.STAGES:
+        items = by_stage.get(stage, [])
+        if not items:
+            continue
+        label = ther.STAGE_LABELS.get(stage, stage)
+        parts.append(
+            f'<h3 class="stage-heading">{esc(label)}</h3>'
+            f'<div class="table-wrap"><table class="data-table">'
+            f'<thead><tr><th>Agent</th><th>Type</th><th>Status</th>'
+            f'<th>Mechanism / role</th><th>Source</th></tr></thead>'
+            f"<tbody>{drug_rows_html(items)}</tbody></table></div>"
+        )
+    if not parts:
+        parts.append('<p class="muted">No therapeutic agents curated for this condition.</p>')
+    return "".join(parts), hidden
+
+
+EVIDENCE_TOGGLE = """
+      <label class="evidence-toggle">
+        <input type="checkbox" id="show-unpublished" aria-controls="therapeutics-stages">
+        <span>Show pipeline &amp; preliminary agents</span>
+        <span class="hidden-count" id="hidden-agent-count"></span>
+      </label>
+      <script>
+        (function(){
+          var cb = document.getElementById('show-unpublished');
+          var cnt = document.getElementById('hidden-agent-count');
+          var hidden = document.querySelectorAll('.agent-row.evidence-pipeline,.agent-row.evidence-preliminary').length;
+          if (cnt && hidden) cnt.textContent = '(' + hidden + ' hidden)';
+          if (cb) cb.addEventListener('change', function(){
+            document.body.classList.toggle('show-unpublished', cb.checked);
+          });
+        })();
+      </script>"""
 
 
 def load_rows():
@@ -260,19 +330,26 @@ def disease_page(row):
     </div>"""
 
     drugs = row.get("top_drug_detail") or [{"drug": d} for d in row.get("top_drugs", [])]
-    soc = [d for d in drugs if "Open Targets" not in (d.get("source") or "")]
-    pipeline = [d for d in drugs if "Open Targets" in (d.get("source") or "")]
+    staged_html, hidden_n = staged_therapeutics_html(drugs)
 
     targets = row.get("top_target_detail") or []
     tgt = ", ".join(esc(t.get("symbol")) for t in targets[:6] if t.get("symbol")) or "—"
 
-    note = f'<p class="section-sub">{esc(row["note"])}</p>' if row.get("note") else ""
+    note = f'<p class="caveat">{esc(row["note"])}</p>' if row.get("note") else ""
+    supp = reg.is_supplemental(row["key"])
+    hero_sub = (
+        "Supplemental viral disease intelligence: burden, staged therapeutics with published-evidence filter, "
+        "and documented post-infectious syndrome."
+        if supp else
+        "Neglected tropical disease intelligence: burden, staged therapeutics with published-evidence filter, "
+        "and documented post-infectious syndrome with literature persistence rates."
+    )
 
     return f"""{head(row['disease'])}{nav_html()}
   <header class="page-hero">
     <div class="hero-eyebrow">NTD Intelligence</div>
     <h1>{esc(row['disease'])}</h1>
-    <p>Neglected tropical disease intelligence: burden, top therapeutic hits, and documented post-infectious syndrome with literature persistence rates.</p>
+    <p>{hero_sub}</p>
   </header>
   <main>
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -287,23 +364,11 @@ def disease_page(row):
       <p class="section-sub">Whether a post-acute infection syndrome is documented and the literature proportion with persistent symptoms.</p>
       {post_infectious_block(row)}
     </section>
-    <section>
-      <h2 class="section-title">Therapeutic agents</h2>
-      <p class="section-sub">WHO-recognized and standard-of-care agents are listed first; Open Targets clinical-pipeline candidates follow when relevant.</p>
-      <h3 class="section-title" style="font-size:1.05rem;margin-top:1.5rem">Standard of care &amp; WHO-recognized agents</h3>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead>
-          <tbody>{drug_rows_html(soc)}</tbody>
-        </table>
-      </div>
-      {f'''<h3 class="section-title" style="font-size:1.05rem;margin-top:1.75rem">Clinical pipeline (Open Targets)</h3>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead>
-          <tbody>{drug_rows_html(pipeline)}</tbody>
-        </table>
-      </div>''' if pipeline else ''}
+    <section id="therapeutics">
+      <h2 class="section-title">Therapeutic agents by stage</h2>
+      <p class="section-sub">Vector control, prevention, acute treatment, and post-infectious care. Only agents with published evidence are shown by default.</p>
+      {EVIDENCE_TOGGLE}
+      <div id="therapeutics-stages">{staged_html}</div>
       <p class="muted" style="font-size:.84rem;margin-top:1rem">Associated drug targets (Open Targets): {tgt}</p>
     </section>
     <p class="disclaimer">Burden: IHME GBD (indicative seed unless refreshed) · Therapeutics: curated WHO EML / SOC + Open Targets pipeline · Post-infectious data: curated peer-reviewed literature · Ontology: {esc(row.get('efo_id') or '—')} · Updated {UPDATED}. Associations, not a diagnostic test.</p>
@@ -312,7 +377,7 @@ def disease_page(row):
 </body></html>"""
 
 
-def index_page(rows):
+def _index_rows(rows):
     body = []
     for r in rows:
         pa = reg.get_post_acute(r["key"])
@@ -328,13 +393,32 @@ def index_page(rows):
             f'<td>{esc(pct)}</td>'
             f'<td class="muted">{esc(pr.syndrome if pr else pa.syndrome)}</td></tr>'
         )
-    pais = sum(1 for r in rows if reg.get_post_acute(r["key"]).kind == "PAIS")
+    return "".join(body)
+
+
+def index_page(rows):
+    who_rows = [r for r in rows if not reg.is_supplemental(r["key"])]
+    viral_rows = [r for r in rows if reg.is_supplemental(r["key"])]
+    pais = sum(1 for r in who_rows if reg.get_post_acute(r["key"]).kind == "PAIS")
+    viral_section = ""
+    if viral_rows:
+        viral_section = f"""
+    <section>
+      <h2 class="section-title">Supplemental viral diseases</h2>
+      <p class="section-sub">High-burden viral diseases not on the WHO NTD list — same intelligence template (measles, yellow fever, Zika).</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Disease</th><th>Pathogen</th><th>Deaths/yr</th><th>DALYs/yr</th><th>Post-infectious</th><th>Persist %</th><th>Syndrome</th></tr></thead>
+          <tbody>{_index_rows(viral_rows)}</tbody>
+        </table>
+      </div>
+    </section>"""
 
     return f"""{head("NTD Intelligence")}{nav_html()}
   <header class="page-hero">
     <div class="hero-eyebrow">WHO Neglected Tropical Diseases</div>
     <h1>NTD Intelligence</h1>
-    <p>The 21 WHO neglected tropical disease groups ({len(rows)} rows — dengue and chikungunya are split because burden, therapeutics, and post-acute syndromes differ), ranked by disease burden, with top therapeutic hits and documented post-infectious persistence rates. {pais} carry a distinct post-infectious infection syndrome (PAIS).</p>
+    <p>The 21 WHO neglected tropical disease groups ({len(who_rows)} rows — dengue and chikungunya are split because burden, therapeutics, and post-acute syndromes differ), ranked by disease burden, with staged therapeutics and documented post-infectious persistence rates. {pais} carry a distinct post-infectious infection syndrome (PAIS). {len(viral_rows)} supplemental viral diseases are listed below.</p>
   </header>
   <main>
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -344,20 +428,22 @@ def index_page(rows):
     {indicative_banner(rows)}
     <div class="stat-grid">
       <div class="stat-cell"><div class="label">NTD groups</div><div class="value">21</div><div class="sub">WHO · noma added Dec 2023</div></div>
-      <div class="stat-cell"><div class="label">Table rows</div><div class="value">{len(rows)}</div><div class="sub">dengue &amp; chikungunya split</div></div>
+      <div class="stat-cell"><div class="label">WHO table rows</div><div class="value">{len(who_rows)}</div><div class="sub">dengue &amp; chikungunya split</div></div>
+      <div class="stat-cell"><div class="label">Supplemental viral</div><div class="value">{len(viral_rows)}</div><div class="sub">measles, yellow fever, Zika</div></div>
       <div class="stat-cell"><div class="label">Post-infectious syndromes</div><div class="value">{pais}</div><div class="sub">PAIS-type</div></div>
       <div class="stat-cell"><div class="label">Updated</div><div class="value" style="font-size:1rem">{UPDATED}</div></div>
     </div>
     <section>
-      <h2 class="section-title">Ranked diseases</h2>
+      <h2 class="section-title">WHO NTD diseases (ranked)</h2>
       <p class="section-sub">Sorted by DALYs (then deaths). Persistence % is curated from peer-reviewed literature — see each disease page for citations.</p>
       <div class="table-wrap">
         <table class="data-table">
           <thead><tr><th>Disease</th><th>Pathogen</th><th>Deaths/yr</th><th>DALYs/yr</th><th>Post-infectious</th><th>Persist %</th><th>Syndrome</th></tr></thead>
-          <tbody>{''.join(body)}</tbody>
+          <tbody>{_index_rows(who_rows)}</tbody>
         </table>
       </div>
     </section>
+    {viral_section}
     <p class="disclaimer">Burden: IHME GBD · Therapeutics: Open Targets / ChEMBL · Post-infectious persistence: curated literature. Associations, not a diagnostic test.</p>
   </main>
   <footer>Generated by OSMF NTD Intelligence Pipeline · Open Source Medicine Foundation</footer>

@@ -56,6 +56,17 @@ footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-
 .muted{color:var(--muted)}
 .source-soc{color:var(--green);font-size:.78rem;font-weight:600}
 .source-ot{color:var(--muted);font-size:.78rem}
+.stage-heading{font-size:1.05rem;font-weight:700;margin:1.75rem 0 .75rem;color:var(--text)}
+.stage-heading:first-of-type{margin-top:1rem}
+.evidence-toggle{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1.25rem;cursor:pointer;user-select:none}
+.evidence-toggle input{accent-color:var(--accent);width:1rem;height:1rem}
+.evidence-badge{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 6px;border-radius:4px;margin-left:.35rem}
+.evidence-published{background:rgba(34,197,94,.15);color:var(--green)}
+.evidence-pipeline{background:rgba(245,158,11,.12);color:var(--amber)}
+.evidence-preliminary{background:rgba(136,146,164,.15);color:var(--muted)}
+.agent-row.evidence-pipeline,.agent-row.evidence-preliminary{display:none}
+body.show-unpublished .agent-row.evidence-pipeline,body.show-unpublished .agent-row.evidence-preliminary{display:table-row}
+.hidden-count{color:var(--amber);font-size:.82rem;margin-left:.5rem}
 @media(max-width:720px){
 .nav-container{height:auto;min-height:60px;padding:.75rem 1rem;flex-wrap:wrap;gap:.5rem}
 .nav-links{width:100%;justify-content:flex-start}
@@ -74,7 +85,7 @@ footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-
   <header class="page-hero">
     <div class="hero-eyebrow">NTD Intelligence</div>
     <h1>Foodborne trematodiases</h1>
-    <p>Neglected tropical disease intelligence: burden, top therapeutic hits, and documented post-infectious syndrome with literature persistence rates.</p>
+    <p>Neglected tropical disease intelligence: burden, staged therapeutics with published-evidence filter, and documented post-infectious syndrome with literature persistence rates.</p>
   </header>
   <main>
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -105,17 +116,27 @@ footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-
       <div class="pi-src">Source: IARC group-1 carcinogen; WHO</div>
     </div>
     </section>
-    <section>
-      <h2 class="section-title">Therapeutic agents</h2>
-      <p class="section-sub">WHO-recognized and standard-of-care agents are listed first; Open Targets clinical-pipeline candidates follow when relevant.</p>
-      <h3 class="section-title" style="font-size:1.05rem;margin-top:1.5rem">Standard of care &amp; WHO-recognized agents</h3>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead>
-          <tbody><tr><td><strong>Praziquantel</strong></td><td class='muted'>Anthelmintic</td><td>Approved</td><td class='muted'>Opisthorchiasis, clonorchiasis, paragonimiasis</td><td><span class='source-soc'>WHO EML / standard of care</span></td></tr><tr><td><strong>Triclabendazole</strong></td><td class='muted'>Anthelmintic</td><td>Approved</td><td class='muted'>Fascioliasis (liver fluke)</td><td><span class='source-soc'>WHO EML / standard of care</span></td></tr></tbody>
-        </table>
-      </div>
+    <section id="therapeutics">
+      <h2 class="section-title">Therapeutic agents by stage</h2>
+      <p class="section-sub">Vector control, prevention, acute treatment, and post-infectious care. Only agents with published evidence are shown by default.</p>
       
+      <label class="evidence-toggle">
+        <input type="checkbox" id="show-unpublished" aria-controls="therapeutics-stages">
+        <span>Show pipeline &amp; preliminary agents</span>
+        <span class="hidden-count" id="hidden-agent-count"></span>
+      </label>
+      <script>
+        (function(){
+          var cb = document.getElementById('show-unpublished');
+          var cnt = document.getElementById('hidden-agent-count');
+          var hidden = document.querySelectorAll('.agent-row.evidence-pipeline,.agent-row.evidence-preliminary').length;
+          if (cnt && hidden) cnt.textContent = '(' + hidden + ' hidden)';
+          if (cb) cb.addEventListener('change', function(){
+            document.body.classList.toggle('show-unpublished', cb.checked);
+          });
+        })();
+      </script>
+      <div id="therapeutics-stages"><h3 class="stage-heading">Prevention</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead><tbody><tr class='agent-row evidence-published'><td><strong>Food safety &amp; cooking education</strong></td><td class='muted'>Prevention</td><td>Approved</td><td class='muted'>Prevent raw-fish / aquatic plant ingestion</td><td><span class='source-soc'>WHO EML / standard of care</span></td></tr></tbody></table></div><h3 class="stage-heading">Acute phase</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead><tbody><tr class='agent-row evidence-published'><td><strong>Praziquantel</strong></td><td class='muted'>Anthelmintic</td><td>Approved</td><td class='muted'>Opisthorchiasis, clonorchiasis, paragonimiasis</td><td><span class='source-soc'>WHO EML / standard of care</span></td></tr><tr class='agent-row evidence-published'><td><strong>Triclabendazole</strong></td><td class='muted'>Anthelmintic</td><td>Approved</td><td class='muted'>Fascioliasis (liver fluke)</td><td><span class='source-soc'>WHO EML / standard of care</span></td></tr></tbody></table></div><h3 class="stage-heading">Post-infectious phase</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Agent</th><th>Type</th><th>Status</th><th>Mechanism / role</th><th>Source</th></tr></thead><tbody><tr class='agent-row evidence-published'><td><strong>Cholangiocarcinoma surveillance (Opisthorchis/Clonorchis)</strong></td><td class='muted'>Oncology follow-up</td><td>Approved</td><td class='muted'>Chronic biliary sequelae</td><td><span class='source-soc'>IARC; WHO</span></td></tr></tbody></table></div></div>
       <p class="muted" style="font-size:.84rem;margin-top:1rem">Associated drug targets (Open Targets): EGFR, SERPINA1, S100A8, PTGS2, TLR2, GRN</p>
     </section>
     <p class="disclaimer">Burden: IHME GBD (indicative seed unless refreshed) · Therapeutics: curated WHO EML / SOC + Open Targets pipeline · Post-infectious data: curated peer-reviewed literature · Ontology: MONDO_0005884 · Updated 2026-07-10. Associations, not a diagnostic test.</p>

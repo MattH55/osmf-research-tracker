@@ -146,6 +146,28 @@ PERSISTENCE = {
         timeframe="at/after diagnosis",
         strength="moderate",
         sources=["WHO leprosy guidelines / weekly epidemiological record"]),
+
+    "measles": Persistence(
+        syndrome="SSPE; post-measles immune amnesia; chronic lung sequelae",
+        pct="~1 per 100,000 cases (SSPE)",
+        denominator="measles cases",
+        detail="SSPE is rare but devastating (1:100,000–1:10,000 cases); immune amnesia "
+               "affects broader survivor population; bronchiectasis in a subset of survivors.",
+        timeframe="months to years post-infection",
+        strength="moderate",
+        sources=["Campbell 2019 Lancet Infect Dis (SSPE)",
+                 "Laksono 2020 Science (immune amnesia)",
+                 "WHO measles"]),
+
+    "zika": Persistence(
+        syndrome="Guillain-Barré syndrome; congenital Zika syndrome",
+        pct="~1 in 4,000–7,000 (GBS); ~5–10% maternal infections (CZS risk)",
+        denominator="Zika infections / pregnancies",
+        detail="GBS incidence elevated in outbreak settings; congenital syndrome risk "
+               "highest with first-trimester maternal infection.",
+        timeframe="days to months post-acute",
+        strength="moderate-strong",
+        sources=["Cao-Lormeau 2016 NEJM", "WHO PAHO Zika"]),
 }
 
 

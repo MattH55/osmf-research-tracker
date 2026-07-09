@@ -87,6 +87,31 @@ NTD_LIST = [
         ["yaws", "endemic treponematosis"]),
 ]
 
+# Supplemental viral diseases — high global burden, same page template as NTDs
+# but not on the official WHO NTD list (shown in a separate index section).
+SUPPLEMENTAL_VIRAL = [
+    NTD("measles", "Measles", "virus",
+        ["measles", "rubeola"], efo_hint="EFO_0007184",
+        note="Supplemental viral disease — not on WHO NTD list; included for post-viral research parity."),
+    NTD("yellow_fever", "Yellow fever", "virus",
+        ["yellow fever"], efo_hint="EFO_0007187",
+        note="Supplemental viral disease — not on WHO NTD list."),
+    NTD("zika", "Zika virus disease", "virus",
+        ["zika", "zika virus infection", "zika fever"], efo_hint="EFO_0007690",
+        note="Supplemental viral disease — not on WHO NTD list."),
+]
+
+SUPPLEMENTAL_KEYS = {n.key for n in SUPPLEMENTAL_VIRAL}
+
+
+def all_diseases() -> list:
+    """WHO NTD rows plus supplemental viral diseases for rendering."""
+    return NTD_LIST + SUPPLEMENTAL_VIRAL
+
+
+def is_supplemental(key: str) -> bool:
+    return key in SUPPLEMENTAL_KEYS
+
 
 # --- Post-acute / chronic-sequela knowledge table -----------------------------
 # kind:
@@ -194,6 +219,18 @@ POST_ACUTE = {
         "Essentially uniformly fatal once symptomatic - no post-acute phase",
         "-",
         "WHO rabies"),
+    "measles": PostAcute(True, "sequela",
+        "Subacute sclerosing panencephalitis (SSPE); post-measles immune amnesia; bronchiectasis",
+        "months-to-years post-infection",
+        "WHO measles; Laksono 2020 Science; Campbell 2019"),
+    "yellow_fever": PostAcute(True, "sequela",
+        "Post-vaccine neurological events (YEL-AND); chronic fatigue in survivors (rare)",
+        "days-to-weeks post-vaccine or post-infection",
+        "WHO yellow fever; Lindsey 2016"),
+    "zika": PostAcute(True, "PAIS",
+        "Guillain-Barré syndrome; congenital Zika syndrome (vertical transmission)",
+        "days-to-months post-acute",
+        "Cao-Lormeau 2016 NEJM; WHO Zika"),
 }
 
 

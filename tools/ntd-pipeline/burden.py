@@ -53,6 +53,9 @@ CAUSE_TO_KEY = {
     "Yaws": "yaws",
     # snakebite lives under "Animal contact"/"Venomous animal contact" in GBD
     "Venomous animal contact": "snakebite",
+    "Measles": "measles",
+    "Yellow fever": "yellow_fever",
+    "Zika virus": "zika",
 }
 
 
