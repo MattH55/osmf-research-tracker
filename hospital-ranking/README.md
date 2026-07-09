@@ -62,13 +62,43 @@ TURQUOISE_API_KEY=
 GOOGLE_MAPS_API_KEY=
 ```
 
-## Deploy
+## Deploy (Vercel → opensourcemed.info/hospital-ranking)
 
-Optimized for [Vercel](https://vercel.com):
+This app uses `basePath: /hospital-ranking` and lives in the **research-tracker** monorepo subdirectory.
+
+### 1. Create the Vercel project
+
+In [Vercel Dashboard](https://vercel.com/new):
+
+1. Import `MattH55/osmf-research-tracker`
+2. Set **Root Directory** → `hospital-ranking`
+3. Framework: Next.js (auto-detected)
+4. Deploy
+
+### 2. Route from opensourcemed.info
+
+On the **opensourcemed.info** Vercel project, add rewrites (see `vercel-parent-rewrite.example.json`):
+
+```json
+{
+  "rewrites": [
+    { "source": "/hospital-ranking", "destination": "https://YOUR-HOSPITAL-RANKING.vercel.app/hospital-ranking" },
+    { "source": "/hospital-ranking/:path*", "destination": "https://YOUR-HOSPITAL-RANKING.vercel.app/hospital-ranking/:path*" }
+  ]
+}
+```
+
+Or use Vercel **Microfrontends** / path routing in Team → Domains.
+
+### 3. CLI deploy (from this folder)
 
 ```bash
-npm run build
+cd hospital-ranking
+npx vercel link
+npx vercel --prod
 ```
+
+**Production URL:** https://opensourcemed.info/hospital-ranking
 
 ## License
 
