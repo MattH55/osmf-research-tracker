@@ -3,7 +3,7 @@ import type { Hospital, ProcedurePrice } from "./types";
 const ESTIMATE_VINTAGE = "2025-09-15";
 
 /** National cash medians derived from published shoppable-service benchmarks. */
-const NATIONAL_MEDIANS: Record<
+export const NATIONAL_MEDIANS: Record<
   string,
   { cashMedian: number; oopPpoRatio: number; oopHdhpRatio: number }
 > = {
@@ -86,6 +86,11 @@ function hospitalJitter(hospitalId: string): number {
 
 function roundPrice(n: number): number {
   return Math.round(n / 10) * 10;
+}
+
+/** U.S. national cash median benchmark for a procedure (medical-tourism comparison baseline). */
+export function getUsReferenceMedian(procedureId: string): number | undefined {
+  return NATIONAL_MEDIANS[procedureId]?.cashMedian;
 }
 
 export function isReportedPrice(price: ProcedurePrice): boolean {

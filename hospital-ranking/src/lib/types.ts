@@ -82,3 +82,41 @@ export interface ZipCentroid {
   city: string;
   state: string;
 }
+
+export type TourismClinicStatus = "coming_soon" | "active";
+
+export interface TourismClinic {
+  id: string;
+  name: string | null;
+  city: string;
+  url: string | null;
+  accreditation?: string;
+  status: TourismClinicStatus;
+}
+
+export interface TourismDestination {
+  id: string;
+  country: string;
+  flagEmoji: string;
+  region: string;
+  hubCities: string[];
+  accreditationNote: string;
+  travelFromUs: string;
+  multipliers: { low: number; median: number; high: number };
+  clinics: TourismClinic[];
+}
+
+export interface TourismEstimate {
+  procedureId: string;
+  destinationId: string;
+  destination: TourismDestination;
+  cashLow: number;
+  cashMedian: number;
+  cashHigh: number;
+  usReferenceMedian: number;
+  savingsPercent: number;
+  packageIncludes: string[];
+  packageExcludes: string[];
+  priceSource: "medical_tourism_estimate";
+  priceVintage: string;
+}

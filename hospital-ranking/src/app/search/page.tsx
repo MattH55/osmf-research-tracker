@@ -1,10 +1,13 @@
 import { Suspense } from "react";
 import { Disclaimer } from "@/components/disclaimer";
 import { HospitalResultCard } from "@/components/hospital-result-card";
+import { MedicalTourismPanel } from "@/components/medical-tourism-panel";
 import { SearchFilters } from "@/components/search-filters";
 import { SearchPagination } from "@/components/search-pagination";
 import { SearchForm } from "@/components/search-form";
 import { getProcedures } from "@/lib/data";
+import { medianUsCashFromResults } from "@/lib/medical-tourism";
+import { isReportedPrice } from "@/lib/pricing";
 import { DEFAULT_RESULT_LIMIT, searchHospitals } from "@/lib/search";
 import type { InsuranceType, SearchParams } from "@/lib/types";
 
@@ -59,6 +62,14 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
   const { results, procedure, zip, origin, warnings, total, limit, offset } =
     searchHospitals(params);
 
+  const localUsMedian = procedure
+    ? medianUsCashFromResults(
+        results
+          .filter((r) => r.price && isReportedPrice(r.price))
+          .map((r) => r.price?.cashMedian),
+      )
+    : undefined;
+
   if (!params.procedure || !params.zip) {
     return (
       <p className="text-slate-600">
@@ -94,6 +105,12 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
           {w}
         </p>
       ))}
+
+      {procedure && (
+        <MedicalTourismPanel procedure={procedure} usBaseline={localUsMedian} />
+      )}
+
+      <h2 className="text-lg font-semibold text-slate-900">U.S. hospitals near you</h2>
 
       <FiltersBar />
 

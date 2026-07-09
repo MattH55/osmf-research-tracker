@@ -6,6 +6,7 @@ import {
   getMrfPriceMeta,
   getProcedures,
 } from "@/lib/data";
+import { TOURISM_METHODOLOGY } from "@/lib/medical-tourism";
 import { ESTIMATE_METHODOLOGY } from "@/lib/pricing";
 
 export const metadata = {
@@ -142,6 +143,30 @@ export default function AboutPage() {
           </ol>
         </div>
 
+        <div id="medical-tourism">
+          <h2 className="text-xl font-semibold text-slate-900">Medical tourism estimates</h2>
+          <p className="mt-2 text-sm">{TOURISM_METHODOLOGY.summary}</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+            {TOURISM_METHODOLOGY.sources.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm text-slate-600">
+            Search results show typical all-inclusive package ranges for{" "}
+            {procedures.length} procedures across six destinations (Mexico, Costa Rica,
+            Colombia, India, Thailand, Turkey). When local U.S. hospital prices are
+            available, savings are calculated against your area median; otherwise we use
+            U.S. national benchmarks. Data vintage: {TOURISM_METHODOLOGY.vintage}.
+          </p>
+          <p className="mt-2 text-sm text-slate-600">
+            <strong>Clinic listings:</strong> Individual accredited facilities with direct
+            booking links will be added to{" "}
+            <code className="text-xs">data/seed/medical-tourism.json</code> under each
+            destination&apos;s <code className="text-xs">clinics</code> array. API:{" "}
+            <code className="text-xs">/api/medical-tourism?procedure=knee-replacement</code>
+          </p>
+        </div>
+
         <div>
           <h2 className="text-xl font-semibold text-slate-900">
             Deprecated: modeled estimates
@@ -157,6 +182,7 @@ export default function AboutPage() {
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Roadmap</h2>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm">
+            <li>Verified medical-tourism clinic profiles with accreditation and booking links</li>
             <li>Run full Trilliant consolidated ingest for all ~5,000+ ORIA hospitals</li>
             <li>Automated CMS quality ETL (`etl/cms_quality.py`)</li>
             <li>PostgreSQL + PostGIS, Meilisearch procedure index</li>

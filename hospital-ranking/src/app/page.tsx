@@ -33,8 +33,10 @@ export default function HomePage() {
             Compare CMS quality ratings across{" "}
             <span className="font-medium text-slate-800">
               {hospitalCount.toLocaleString()} U.S. hospitals
-            </span>{" "}
-            with cash and insured price estimates for{" "}
+            </span>
+            , see hospital-reported prices, and explore{" "}
+            <span className="font-medium text-slate-800">medical tourism</span>{" "}
+            package estimates abroad for{" "}
             <span className="font-medium text-slate-800">
               {procedures.length} shoppable procedures
             </span>{" "}
@@ -74,8 +76,8 @@ export default function HomePage() {
               body: "Cash medians, negotiated ranges, and rough out-of-pocket estimates for shoppable services.",
             },
             {
-              title: "Built for real decisions",
-              body: "Filter by distance, stars, and budget. No account required. No PHI stored.",
+              title: "Consider care abroad",
+              body: "See typical package estimates in Mexico, Costa Rica, India, Thailand, and more — with verified clinic listings on the roadmap.",
             },
           ].map((card) => (
             <div
