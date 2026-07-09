@@ -78,16 +78,32 @@ const priceByHospitalProcedure = new Map(
   prices.map((p) => [`${p.hospitalId}:${p.procedureId}`, p]),
 );
 
-/** Real prices scraped from hospital MRF files (etl/ingest_mrf_prices.py) */
-const mrfPrices = readJson<ProcedurePrice[]>(path.join(CMS_DIR, "mrf-prices.json")) ?? [];
-const mrfByCmsAndProcedure = new Map<string, ProcedurePrice>();
-const mrfByHospitalProcedure = new Map<string, ProcedurePrice>();
-for (const p of mrfPrices) {
-  mrfByHospitalProcedure.set(`${p.hospitalId}:${p.procedureId}`, p);
+/** Direct hospital MRF scrape (etl/ingest_mrf_prices.py) — highest priority */
+const directMrfPrices =
+  readJson<ProcedurePrice[]>(path.join(CMS_DIR, "mrf-prices.json")) ?? [];
+const directMrfByCmsAndProcedure = new Map<string, ProcedurePrice>();
+const directMrfByHospitalProcedure = new Map<string, ProcedurePrice>();
+for (const p of directMrfPrices) {
+  if (p.priceSource !== "hospital_mrf") continue;
+  directMrfByHospitalProcedure.set(`${p.hospitalId}:${p.procedureId}`, p);
   const cmsId =
     p.cmsProviderId ?? p.hospitalId.replace(/^hosp-cms-/, "");
-  if (cmsId) mrfByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, p);
+  if (cmsId) directMrfByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, p);
 }
+
+/** Trilliant ORIA bulk ingest (etl/ingest_trilliant.py) — nationwide MRF coverage */
+const trilliantPrices =
+  readJson<ProcedurePrice[]>(path.join(CMS_DIR, "trilliant-prices.json")) ?? [];
+const trilliantByCmsAndProcedure = new Map<string, ProcedurePrice>();
+const trilliantByHospitalProcedure = new Map<string, ProcedurePrice>();
+for (const p of trilliantPrices) {
+  trilliantByHospitalProcedure.set(`${p.hospitalId}:${p.procedureId}`, p);
+  const cmsId =
+    p.cmsProviderId ?? p.hospitalId.replace(/^hosp-cms-/, "");
+  if (cmsId) trilliantByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, p);
+}
+
+const mrfPrices = [...trilliantPrices, ...directMrfPrices];
 
 const ALLOW_MODELED_ESTIMATES = process.env.ALLOW_MODELED_ESTIMATES === "1";
 
@@ -115,13 +131,29 @@ export function getPrice(
   hospitalId: string,
   procedureId: string,
 ): ProcedurePrice | undefined {
-  const mrfDirect = mrfByHospitalProcedure.get(`${hospitalId}:${procedureId}`);
-  if (mrfDirect) return mrfDirect;
+  const directMrf = directMrfByHospitalProcedure.get(
+    `${hospitalId}:${procedureId}`,
+  );
+  if (directMrf) return directMrf;
 
   const h = hospitalMap().get(hospitalId);
   if (h?.cmsProviderId) {
-    const mrfCms = mrfByCmsAndProcedure.get(`${h.cmsProviderId}:${procedureId}`);
-    if (mrfCms) return mrfCms;
+    const directCms = directMrfByCmsAndProcedure.get(
+      `${h.cmsProviderId}:${procedureId}`,
+    );
+    if (directCms) return directCms;
+  }
+
+  const trilliantDirect = trilliantByHospitalProcedure.get(
+    `${hospitalId}:${procedureId}`,
+  );
+  if (trilliantDirect) return trilliantDirect;
+
+  if (h?.cmsProviderId) {
+    const trilliantCms = trilliantByCmsAndProcedure.get(
+      `${h.cmsProviderId}:${procedureId}`,
+    );
+    if (trilliantCms) return trilliantCms;
   }
 
   const direct = priceByHospitalProcedure.get(`${hospitalId}:${procedureId}`);
@@ -139,10 +171,15 @@ export function getPrice(
 
 export function getMrfPriceMeta(): {
   count: number;
+  directCount: number;
+  trilliantCount: number;
   allowModeledEstimates: boolean;
 } {
   return {
     count: mrfPrices.length,
+    directCount: directMrfPrices.filter((p) => p.priceSource === "hospital_mrf")
+      .length,
+    trilliantCount: trilliantPrices.length,
     allowModeledEstimates: ALLOW_MODELED_ESTIMATES,
   };
 }

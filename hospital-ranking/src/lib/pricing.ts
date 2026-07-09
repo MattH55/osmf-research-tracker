@@ -90,12 +90,15 @@ function roundPrice(n: number): number {
 
 export function isReportedPrice(price: ProcedurePrice): boolean {
   return (
-    price.priceSource === "hospital_mrf" || price.priceSource === "sample_mrf"
+    price.priceSource === "hospital_mrf" ||
+    price.priceSource === "trilliant_mrf" ||
+    price.priceSource === "sample_mrf"
   );
 }
 
 export function priceSourceLabel(source: string): string {
   if (source === "hospital_mrf") return "Hospital MRF (published)";
+  if (source === "trilliant_mrf") return "Hospital MRF (Trilliant ORIA)";
   if (source === "sample_mrf") return "Hospital MRF (sample)";
   if (source === "estimated") return "Modeled estimate (not hospital-reported)";
   return source;

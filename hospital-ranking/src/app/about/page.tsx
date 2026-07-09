@@ -52,21 +52,35 @@ export default function AboutPage() {
               Hospital General Information.
             </li>
             <li>
-              <strong>Prices:</strong> Scraped directly from each hospital&apos;s CMS-required{" "}
+              <strong>Prices:</strong> Hospital-reported charges from CMS-required{" "}
               <a
                 href="https://www.cms.gov/priorities/key-initiatives/hospital-price-transparency"
                 className="text-teal-700 hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Machine-Readable File (MRF)
+                Machine-Readable Files (MRF)
+              </a>
+              . Nationwide coverage via{" "}
+              <a
+                href="https://oria-data.trillianthealth.com/docs"
+                className="text-teal-700 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Trilliant Health ORIA
               </a>{" "}
-              via <code className="text-xs">cms-hpt.txt</code> discovery (
-              <code className="text-xs">etl/ingest_mrf_prices.py</code>).{" "}
-              {mrfMeta.count > 0
-                ? `${mrfMeta.count.toLocaleString()} hospital-reported procedure prices ingested.`
-                : "Run the MRF ingest pipeline to populate prices."}{" "}
-              We do <strong>not</strong> show modeled guesses unless{" "}
+              parsed DuckDB bulk ingest (
+              <code className="text-xs">etl/ingest_trilliant.py</code>
+              {mrfMeta.trilliantCount > 0
+                ? ` — ${mrfMeta.trilliantCount.toLocaleString()} prices`
+                : ""}
+              ). Per-hospital direct scrape via <code className="text-xs">cms-hpt.txt</code> (
+              <code className="text-xs">etl/ingest_mrf_prices.py</code>
+              {mrfMeta.directCount > 0
+                ? ` — ${mrfMeta.directCount.toLocaleString()} prices`
+                : ""}
+              ). We do <strong>not</strong> show modeled guesses unless{" "}
               <code className="text-xs">ALLOW_MODELED_ESTIMATES=1</code> is set.
             </li>
             <li>
@@ -78,33 +92,54 @@ export default function AboutPage() {
 
         <div>
           <h2 className="text-xl font-semibold text-slate-900">How prices are ingested</h2>
-          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm">
+          <p className="mt-2 text-sm font-medium text-slate-800">
+            Primary: Trilliant ORIA bulk dataset
+          </p>
+          <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm">
             <li>
-              Fetch <code className="text-xs">cms-hpt.txt</code> from each hospital domain
-              (e.g. <code className="text-xs">https://example.org/cms-hpt.txt</code>)
+              Download the consolidated DuckDB archive from{" "}
+              <a
+                href="https://oria.trillianthealth.com/full-data-download"
+                className="text-teal-700 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Oria Full Data Download
+              </a>{" "}
+              (free account) and place it under{" "}
+              <code className="text-xs">data/trilliant/</code>
             </li>
-            <li>Read the <code className="text-xs">mrf-url</code> field for each campus</li>
             <li>
-              Download the hospital&apos;s published JSON/CSV MRF and extract CPT &amp; DRG
-              codes mapped to our {procedures.length} procedures
+              Run{" "}
+              <code className="text-xs">
+                npm run ingest:trilliant -- --consolidated data/trilliant/consolidated.duckdb
+              </code>{" "}
+              — or use <code className="text-xs">--oria</code> to pull per-hospital parsed
+              DuckDB files from the public directory
             </li>
             <li>
-              Store cash (<code className="text-xs">discounted_cash</code>) and negotiated
-              rates exactly as published — no modification
+              Query <code className="text-xs">standard_charges</code> for our{" "}
+              {procedures.length} CPT/DRG codes and match facilities to CMS hospitals by
+              name, state, and ZIP
+            </li>
+            <li>
+              Output <code className="text-xs">data/cms/trilliant-prices.json</code> with{" "}
+              <code className="text-xs">priceSource: trilliant_mrf</code>
             </li>
           </ol>
-          <p className="mt-3 text-sm text-slate-600">
-            Bulk reference directory:{" "}
-            <a
-              href="https://oria-data.trillianthealth.com/docs"
-              className="text-teal-700 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Trilliant Health ORIA MRF directory
-            </a>{" "}
-            (optional consolidated DuckDB download).
+          <p className="mt-4 text-sm font-medium text-slate-800">
+            Supplemental: direct per-hospital MRF scrape
           </p>
+          <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm">
+            <li>
+              Fetch <code className="text-xs">cms-hpt.txt</code> from hospital domains
+            </li>
+            <li>Download each <code className="text-xs">mrf-url</code> and extract CPT/DRG</li>
+            <li>
+              Direct scrape wins when both sources have a price for the same hospital +
+              procedure
+            </li>
+          </ol>
         </div>
 
         <div>
@@ -122,7 +157,7 @@ export default function AboutPage() {
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Roadmap</h2>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm">
-            <li>Scale MRF ingest to all ~5,400 hospitals (batch job + hospital domain index)</li>
+            <li>Run full Trilliant consolidated ingest for all ~5,000+ ORIA hospitals</li>
             <li>Automated CMS quality ETL (`etl/cms_quality.py`)</li>
             <li>PostgreSQL + PostGIS, Meilisearch procedure index</li>
             <li>Insurance plan selector for personalized OOP</li>

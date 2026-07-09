@@ -50,7 +50,8 @@ export async function GET(request: NextRequest) {
       priceSource: r.price?.priceSource ?? null,
       isReported:
         r.price?.priceSource === "sample_mrf" ||
-        r.price?.priceSource === "hospital_mrf",
+        r.price?.priceSource === "hospital_mrf" ||
+        r.price?.priceSource === "trilliant_mrf",
     })),
   });
 }
