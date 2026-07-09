@@ -95,8 +95,15 @@ def stars_to_safety_score(worse: str, better: str, total: str) -> float | None:
 
 
 def load_zip_centroids() -> dict[str, dict]:
+    cached = OUT / "zip-centroids.json"
     print("Downloading U.S. ZIP centroids …")
-    text = fetch_bytes(ZIP_CENTROIDS_CSV).decode("utf-8", errors="replace")
+    try:
+        text = fetch_bytes(ZIP_CENTROIDS_CSV).decode("utf-8", errors="replace")
+    except Exception as exc:
+        if cached.exists():
+            print(f"  Download failed ({exc}); using cached {cached.name}")
+            return json.loads(cached.read_text(encoding="utf-8"))
+        raise
     reader = csv.DictReader(text.splitlines())
     out: dict[str, dict] = {}
     for row in reader:
