@@ -1,5 +1,11 @@
 import { Disclaimer } from "@/components/disclaimer";
-import { DATA_VINTAGE, getDataMeta, getHospitalCount, PRICE_VINTAGE } from "@/lib/data";
+import {
+  DATA_VINTAGE,
+  getDataMeta,
+  getHospitalCount,
+  getProcedures,
+  PRICE_VINTAGE,
+} from "@/lib/data";
 
 export const metadata = {
   title: "About & data sources",
@@ -8,6 +14,8 @@ export const metadata = {
 export default function AboutPage() {
   const meta = getDataMeta();
   const hospitalCount = meta.hospitalCount ?? getHospitalCount();
+  const procedures = getProcedures();
+  const categories = [...new Set(procedures.map((p) => p.category))].sort();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
@@ -56,8 +64,8 @@ export default function AboutPage() {
               prices ({PRICE_VINTAGE}) while MRF ingestion is built out.
             </li>
             <li>
-              <strong>Procedures:</strong> CPT / DRG mapping for CMS shoppable services and
-              common electives (knee/hip, cataract, colonoscopy, MRI, hernia).
+              <strong>Procedures:</strong> {procedures.length} CMS-aligned shoppable services
+              with CPT / DRG mapping across {categories.join(", ")}.
             </li>
           </ul>
         </div>

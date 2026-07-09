@@ -27,7 +27,7 @@ export function SearchForm({
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
 
-  const suggestions = matchProcedures(query, procedures).slice(0, 8);
+  const suggestions = matchProcedures(query, procedures).slice(0, 10);
   const showList = open && suggestions.length > 0;
 
   const selectProcedure = useCallback((p: Procedure) => {
@@ -95,7 +95,7 @@ export function SearchForm({
               activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined
             }
             required
-            placeholder="Start typing: knee, colonoscopy, 27447…"
+            placeholder="Start typing: knee, mammogram, C-section, 27447…"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);

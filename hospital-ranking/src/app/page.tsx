@@ -5,8 +5,12 @@ import Link from "next/link";
 
 const FEATURED = [
   { slug: "knee-replacement", zip: "10016", label: "Knee replacement · NYC" },
+  { slug: "c-section", zip: "90210", label: "C-section · LA" },
+  { slug: "mammogram", zip: "33139", label: "Mammogram · Miami" },
+  { slug: "gallbladder-removal", zip: "78701", label: "Gallbladder · Austin" },
   { slug: "colonoscopy", zip: "77030", label: "Colonoscopy · Houston" },
-  { slug: "cataract-surgery", zip: "85054", label: "Cataract surgery · Phoenix" },
+  { slug: "heart-bypass", zip: "48202", label: "Heart bypass · Detroit" },
+  { slug: "cataract-surgery", zip: "85054", label: "Cataract · Phoenix" },
   { slug: "mri-brain", zip: "60611", label: "Brain MRI · Chicago" },
 ];
 
@@ -30,8 +34,11 @@ export default function HomePage() {
             <span className="font-medium text-slate-800">
               {hospitalCount.toLocaleString()} U.S. hospitals
             </span>{" "}
-            with cash and insured price estimates for common elective procedures — all in
-            plain language.
+            with cash and insured price estimates for{" "}
+            <span className="font-medium text-slate-800">
+              {procedures.length} shoppable procedures
+            </span>{" "}
+            — all in plain language.
           </p>
         </div>
         <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">

@@ -1,13 +1,19 @@
 import type { Procedure } from "./types";
 
+function normalizeQuery(query: string): string {
+  return query.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
 export function matchProcedures(query: string, procedures: Procedure[]): Procedure[] {
-  const q = query.trim().toLowerCase();
+  const q = normalizeQuery(query);
   if (!q) return procedures;
+
+  const slugGuess = q.replace(/\s+/g, "-");
 
   const scored = procedures
     .map((p) => {
       let score = 0;
-      if (p.slug === q) score += 100;
+      if (p.slug === q || p.slug === slugGuess) score += 100;
       if (p.plainName.toLowerCase() === q) score += 90;
       if (p.name.toLowerCase() === q) score += 85;
       if (p.plainName.toLowerCase().startsWith(q)) score += 60;

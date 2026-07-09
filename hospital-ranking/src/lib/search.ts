@@ -8,6 +8,7 @@ import {
 } from "./data";
 import { distanceMiles, inRadiusBox, lookupZip, normalizeZip } from "./geo";
 import { estimateOop } from "./format";
+import { matchProcedures } from "./procedure-match";
 import { isReportedPrice } from "./pricing";
 import type { Hospital, InsuranceType, Procedure, SearchParams, SearchResult } from "./types";
 
@@ -16,23 +17,11 @@ export const DEFAULT_RESULT_LIMIT = 50;
 export const MAX_RESULT_LIMIT = 100;
 
 function matchProcedure(query: string): Procedure | undefined {
-  const q = query.trim().toLowerCase();
+  const q = query.trim();
   if (!q) return undefined;
-
   const bySlug = getProcedure(q);
   if (bySlug) return bySlug;
-
-  const all = getProcedures();
-  return all.find(
-    (p) =>
-      p.plainName.toLowerCase() === q ||
-      p.name.toLowerCase() === q ||
-      p.slug === q ||
-      p.searchTerms.some((t) => t.toLowerCase() === q) ||
-      p.searchTerms.some((t) => t.toLowerCase().includes(q)) ||
-      p.plainName.toLowerCase().includes(q) ||
-      p.cptCodes.some((c) => c === q),
-  );
+  return matchProcedures(q, getProcedures())[0];
 }
 
 function hospitalCandidates(
@@ -76,7 +65,7 @@ export function searchHospitals(
       zip: normalizeZip(raw.zip),
       origin: null,
       warnings: [
-        "We couldn't match that procedure. Try knee replacement, cataract surgery, or colonoscopy.",
+        "We couldn't match that procedure. Try knee replacement, C-section, mammogram, or gallbladder removal.",
       ],
       total: 0,
       limit,
@@ -182,14 +171,10 @@ export function searchHospitals(
   };
 }
 
-export function procedureSuggestions(query: string): Procedure[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return getProcedures().slice(0, 6);
-  return getProcedures().filter(
-    (p) =>
-      p.plainName.toLowerCase().includes(q) ||
-      p.searchTerms.some((t) => t.toLowerCase().includes(q)),
-  );
+export function procedureSuggestions(query: string, limit = 10): Procedure[] {
+  const all = getProcedures();
+  if (!query.trim()) return all.slice(0, limit);
+  return matchProcedures(query, all).slice(0, limit);
 }
 
 export { getHospital, getProcedure, getHospitalCount };
