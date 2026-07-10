@@ -28,11 +28,14 @@ USAGE:
 from __future__ import annotations
 
 import argparse
+import atexit
 import json
+import os
 import re
 import statistics
 import sys
 import tempfile
+import time
 import urllib.request
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -72,15 +75,74 @@ def fetch_text(url: str, timeout: int = 120) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
+def atomic_write_text(path: Path, content: str, retries: int = 8) -> None:
+    """Write via temp file + replace to avoid Windows/OneDrive lock errors."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
+    for attempt in range(retries):
+        try:
+            tmp.write_text(content, encoding="utf-8")
+            tmp.replace(path)
+            return
+        except OSError:
+            if attempt == retries - 1:
+                raise
+            time.sleep(1.5 * (attempt + 1))
+        finally:
+            if tmp.exists() and not path.exists():
+                try:
+                    tmp.unlink()
+                except OSError:
+                    pass
+
+
 def download_file(url: str, dest: Path, timeout: int = 600) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
+    part = dest.with_suffix(dest.suffix + f".part.{os.getpid()}")
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=timeout) as resp, open(dest, "wb") as out:
-        while True:
-            chunk = resp.read(1024 * 1024)
-            if not chunk:
-                break
-            out.write(chunk)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp, open(part, "wb") as out:
+            while True:
+                chunk = resp.read(1024 * 1024)
+                if not chunk:
+                    break
+                out.write(chunk)
+        part.replace(dest)
+    finally:
+        if part.exists():
+            try:
+                part.unlink()
+            except OSError:
+                pass
+
+
+RUN_LOCK = CMS_DIR / ".trilliant-ingest.lock"
+
+
+def acquire_run_lock(force: bool) -> bool:
+    if RUN_LOCK.exists() and not force:
+        try:
+            holder = RUN_LOCK.read_text(encoding="utf-8").strip()
+        except OSError:
+            holder = "unknown"
+        print(
+            f"\nAnother Trilliant ingest may be running (lock: {RUN_LOCK}, pid {holder}).\n"
+            "Stop other python ingest processes, then retry.\n"
+            "If nothing is running, pass --force to clear the lock.\n",
+            file=sys.stderr,
+        )
+        return False
+    CMS_DIR.mkdir(parents=True, exist_ok=True)
+    RUN_LOCK.write_text(str(os.getpid()), encoding="utf-8")
+    return True
+
+
+def release_run_lock() -> None:
+    try:
+        if RUN_LOCK.exists() and RUN_LOCK.read_text(encoding="utf-8").strip() == str(os.getpid()):
+            RUN_LOCK.unlink()
+    except OSError:
+        pass
 
 
 def normalize_name(name: str) -> set[str]:
@@ -493,6 +555,9 @@ def process_oria_hospital(
         except Exception as exc:
             return [], {"skipped": True, "reason": str(exc)[:120]}, slug
 
+    if not cache_path.exists() or cache_path.stat().st_size < 1000:
+        return [], {"skipped": True, "reason": "incomplete_download"}, slug
+
     index_cms = match_oria_entry(entry, matcher)
 
     prices, stats = ingest_duckdb_file(
@@ -677,7 +742,22 @@ def main() -> int:
         help="Merge with existing trilliant-prices.json instead of replacing",
     )
     ap.add_argument("--merge", action="store_true", help="Merge into data/cms/mrf-prices.json")
+    ap.add_argument(
+        "--force",
+        action="store_true",
+        help="Ignore stale lock file if no other ingest is running",
+    )
     args = ap.parse_args()
+
+    if args.force and RUN_LOCK.exists():
+        try:
+            RUN_LOCK.unlink()
+        except OSError:
+            pass
+
+    if not acquire_run_lock(args.force):
+        return 1
+    atexit.register(release_run_lock)
 
     if not HOSPITALS_JSON.exists():
         print(f"Missing {HOSPITALS_JSON} — run: npm run build:data", file=sys.stderr)
@@ -712,12 +792,19 @@ def main() -> int:
         )
 
     if args.append and OUT_PRICES.exists():
-        existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
+        for attempt in range(8):
+            try:
+                existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
+                break
+            except OSError:
+                if attempt == 7:
+                    raise
+                time.sleep(1.5 * (attempt + 1))
         all_prices = dedupe_prices(existing + all_prices)
     else:
         all_prices = dedupe_prices(all_prices)
     CMS_DIR.mkdir(parents=True, exist_ok=True)
-    OUT_PRICES.write_text(json.dumps(all_prices, indent=2), encoding="utf-8")
+    atomic_write_text(OUT_PRICES, json.dumps(all_prices, indent=2))
 
     meta = {
         "priceCount": len(all_prices),
@@ -733,7 +820,7 @@ def main() -> int:
             "https://oria.trillianthealth.com/full-data-download"
         ),
     }
-    OUT_META.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    atomic_write_text(OUT_META, json.dumps(meta, indent=2))
     print(f"\nWrote {len(all_prices)} Trilliant prices → {OUT_PRICES}")
 
     if args.merge:
