@@ -103,7 +103,7 @@ async def enrich_one(path: Path, opts: PipelineOptions, *, write_html: bool) -> 
     if extra_meta.get("gmi_articles"):
         summary["gmi_articles"] = extra_meta["gmi_articles"]
     sources = summary.setdefault("sources_queried", [])
-    for src in ("GreenMedInfo", "Examine.com"):
+    for src in ("Examine.com",):
         if src not in sources:
             sources.append(src)
 
@@ -144,7 +144,7 @@ async def run_batch(opts: PipelineOptions, *, write_html: bool, only_slug: str |
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Enrich disease pages with GreenMedInfo and Examine.com natural product lookups"
+        description="Enrich disease pages with Examine.com natural product lookups"
     )
     parser.add_argument("--slug", help="Run a single disease slug only")
     parser.add_argument("--concurrency", type=int, default=1)
@@ -164,7 +164,7 @@ def main(argv: list[str] | None = None) -> int:
         skip_pubchem_enrich=True,
         skip_clinical_np=True,
         skip_mechanistic_np=True,
-        skip_greenmedinfo=False,
+        skip_greenmedinfo=True,
         skip_examine=False,
         skip_np_evidence=False,
         max_np_evidence=20,

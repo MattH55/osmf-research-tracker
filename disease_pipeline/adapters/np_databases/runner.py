@@ -164,12 +164,14 @@ async def build_np_repurposing_leads(
     if extra_meta is not None:
         extra_meta["np_lookup_links"] = {
             k: v for k, v in {
-                "GreenMedInfo": gmi_url,
                 "Examine.com": ex_url,
             }.items() if v
         }
-        if gmi_articles:
-            extra_meta["gmi_articles"] = gmi_articles
+        if not opts.skip_greenmedinfo:
+            if gmi_url:
+                extra_meta["np_lookup_links"]["GreenMedInfo"] = gmi_url
+            if gmi_articles:
+                extra_meta["gmi_articles"] = gmi_articles
         extra_meta["np_source_counts"] = {k: len(v) for k, v in all_raw.items() if v}
 
     log.info("[NP-20] %d natural products for '%s' from 20-database pipeline", len(nps), identifiers.name)

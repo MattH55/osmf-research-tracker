@@ -108,7 +108,7 @@ async def enrich_one(path: Path, opts: PipelineOptions, local_data: dict, *, wri
         summary["np_source_counts"] = extra_meta["np_source_counts"]
     sources = summary.setdefault("sources_queried", [])
     for src in (
-        "GreenMedInfo", "Examine.com", "NCCIH", "ClinicalTrials.gov", "PubMed",
+        "Examine.com", "NCCIH", "ClinicalTrials.gov", "PubMed",
         "TCMSP", "BATMAN-TCM", "IMPPAT", "ETCM", "SymMap",
         "LOTUS", "COCONUT", "NPASS", "ChEMBL-NP", "PubChem BioAssay",
         "Dr. Duke's", "KNApSAcK", "DSLD", "Phenol-Explorer", "FooDB",

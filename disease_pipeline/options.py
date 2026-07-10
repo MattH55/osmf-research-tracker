@@ -29,7 +29,7 @@ class PipelineOptions:
     skip_natural_products: bool = False
     skip_llm_extract: bool = False
     skip_pubchem_enrich: bool = False
-    skip_greenmedinfo: bool = False
+    skip_greenmedinfo: bool = True
     skip_examine: bool = False
     skip_clinical_np: bool = False
     skip_mechanistic_np: bool = False

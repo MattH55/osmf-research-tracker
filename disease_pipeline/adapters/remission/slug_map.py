@@ -55,6 +55,8 @@ EXTRA_DISPLAY_NAMES: dict[str, tuple[str, str]] = {
     "cancer": ("Cancer", "Cancer"),
     "measles": ("Measles", "Measles"),
     "sarcopenia": ("Sarcopenia", "Sarcopenia"),
+    "pots": ("POTS (Postural Orthostatic Tachycardia Syndrome)", "Postural Orthostatic Tachycardia Syndrome"),
+    "mcas": ("MCAS (Mast Cell Activation Syndrome)", "Mast Cell Activation Syndrome"),
 }
 
 

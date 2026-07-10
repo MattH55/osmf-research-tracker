@@ -134,6 +134,8 @@ def _row_from_lit(lit: dict, *, default_source: str = "PubMed") -> dict | None:
     url = (lit.get("url") or "").strip()
     if not title and not url:
         return None
+    if "greenmedinfo" in url.lower() and not lit.get("pmid") and not lit.get("pubmed_url"):
+        return None
     pmid = lit.get("pmid")
     if not pmid and url:
         pmid_match = _PUBMED_RE.search(url)
@@ -234,16 +236,23 @@ def _lit_from_stored(np: dict) -> list[dict]:
         url = _pub_url(row) or (row.get("url") or "").strip()
         if not title and not url:
             continue
+        if "greenmedinfo" in url.lower() and not row.get("pubmed_url") and not row.get("pmid"):
+            continue
+        source = row.get("source") or "Reference"
+        if source == "GreenMedInfo" or str(source).lower() == "greenmedinfo":
+            source = row.get("study_type") or "Literature"
         out = {
             "title": title or url,
             "url": url,
-            "source": row.get("source") or "Reference",
+            "source": source,
             "study_type": row.get("study_type"),
             "pmid": row.get("pmid"),
             "pubmed_url": row.get("pubmed_url"),
         }
         if out.get("pubmed_url"):
             out["url"] = out["pubmed_url"]
+        elif "greenmedinfo" in out["url"].lower():
+            continue
         pubs.append(out)
     return pubs
 
