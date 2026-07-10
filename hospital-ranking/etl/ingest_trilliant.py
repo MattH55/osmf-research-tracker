@@ -55,7 +55,9 @@ OUT_PRICES = CMS_DIR / "trilliant-prices.json"
 OUT_META = CMS_DIR / "trilliant-meta.json"
 
 ORIA_INDEX_URL = "https://oria-data.trillianthealth.com/search-index.json"
+ORIA_INDEX_CACHE = TRILLIANT_DIR / "oria-search-index.json"
 ORIA_HOSPITAL_URL = "https://oria-data.trillianthealth.com/hospital/{slug}"
+PROGRESS_JSON = CMS_DIR / "trilliant-progress.json"
 USER_AGENT = (
     "Mozilla/5.0 (compatible; OpenSourceMed-HospitalCompare/1.0; "
     "+https://opensourcemed.info; trilliant-orias-ingest)"
@@ -69,10 +71,44 @@ NAME_STOPWORDS = {
 }
 
 
-def fetch_text(url: str, timeout: int = 120) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+def fetch_text(url: str, timeout: int = 120, retries: int = 5) -> str:
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8", errors="replace")
+        except Exception as exc:
+            last_err = exc
+            if attempt == retries - 1:
+                break
+            time.sleep(2 * (attempt + 1))
+    raise last_err  # type: ignore[misc]
+
+
+def load_oria_index(refresh: bool = False) -> list[dict]:
+    """Cache ORIA search-index.json locally so batches don't re-download every run."""
+    TRILLIANT_DIR.mkdir(parents=True, exist_ok=True)
+    if not refresh and ORIA_INDEX_CACHE.exists():
+        age_h = (time.time() - ORIA_INDEX_CACHE.stat().st_mtime) / 3600
+        if age_h < 72:
+            return json.loads(ORIA_INDEX_CACHE.read_text(encoding="utf-8"))
+    print("Fetching ORIA search index…")
+    text = fetch_text(ORIA_INDEX_URL, timeout=180, retries=6)
+    atomic_write_text(ORIA_INDEX_CACHE, text)
+    return json.loads(text)
+
+
+def validate_duckdb(path: Path) -> bool:
+    try:
+        con = duckdb.connect(str(path), read_only=True)
+        try:
+            con.execute("SHOW TABLES").fetchall()
+            return True
+        finally:
+            con.close()
+    except duckdb.Error:
+        return False
 
 
 def atomic_write_text(path: Path, content: str, retries: int = 8) -> None:
@@ -549,25 +585,62 @@ def process_oria_hospital(
     if not duckdb_url:
         return [], {"skipped": True, "reason": "no_duckdb_url"}, slug
 
-    if not (use_cache and cache_path.exists() and cache_path.stat().st_size > 1000):
+    def ensure_cache() -> str | None:
+        if use_cache and cache_path.exists() and cache_path.stat().st_size > 1000:
+            if validate_duckdb(cache_path):
+                return None
+            try:
+                cache_path.unlink()
+            except OSError:
+                pass
+        try:
+            download_file(duckdb_url, cache_path)
+        except Exception as exc:
+            return str(exc)[:120]
+        if not cache_path.exists() or cache_path.stat().st_size < 1000:
+            return "incomplete_download"
+        if not validate_duckdb(cache_path):
+            try:
+                cache_path.unlink()
+            except OSError:
+                pass
+            return "corrupt_duckdb"
+        return None
+
+    cache_err = ensure_cache()
+    if cache_err:
         try:
             download_file(duckdb_url, cache_path)
         except Exception as exc:
             return [], {"skipped": True, "reason": str(exc)[:120]}, slug
-
-    if not cache_path.exists() or cache_path.stat().st_size < 1000:
-        return [], {"skipped": True, "reason": "incomplete_download"}, slug
+        if not validate_duckdb(cache_path):
+            return [], {"skipped": True, "reason": cache_err}, slug
 
     index_cms = match_oria_entry(entry, matcher)
 
-    prices, stats = ingest_duckdb_file(
-        cache_path,
-        matcher,
-        code_to_proc,
-        cpts,
-        drgs,
-        duckdb_url,
-    )
+    try:
+        prices, stats = ingest_duckdb_file(
+            cache_path,
+            matcher,
+            code_to_proc,
+            cpts,
+            drgs,
+            duckdb_url,
+        )
+    except duckdb.Error as exc:
+        try:
+            cache_path.unlink(missing_ok=True)
+            download_file(duckdb_url, cache_path)
+            prices, stats = ingest_duckdb_file(
+                cache_path,
+                matcher,
+                code_to_proc,
+                cpts,
+                drgs,
+                duckdb_url,
+            )
+        except Exception:
+            return [], {"skipped": True, "reason": f"duckdb_error: {exc}"[:120]}, slug
 
     if not prices and index_cms:
         stats["indexMatchOnly"] = True
@@ -593,9 +666,9 @@ def ingest_oria(
     offset: int = 0,
     workers: int = 4,
     use_cache: bool = True,
+    refresh_index: bool = False,
 ) -> tuple[list[dict], dict]:
-    print("Fetching ORIA search index…")
-    index = json.loads(fetch_text(ORIA_INDEX_URL))
+    index = load_oria_index(refresh=refresh_index)
     total_index = len(index)
     if offset:
         index = index[offset:]
@@ -747,6 +820,11 @@ def main() -> int:
         action="store_true",
         help="Ignore stale lock file if no other ingest is running",
     )
+    ap.add_argument(
+        "--refresh-index",
+        action="store_true",
+        help="Re-download ORIA search-index.json instead of using local cache",
+    )
     args = ap.parse_args()
 
     if args.force and RUN_LOCK.exists():
@@ -789,6 +867,7 @@ def main() -> int:
             offset=args.offset,
             workers=args.workers,
             use_cache=not args.no_cache,
+            refresh_index=args.refresh_index,
         )
 
     if args.append and OUT_PRICES.exists():
@@ -822,6 +901,22 @@ def main() -> int:
     }
     atomic_write_text(OUT_META, json.dumps(meta, indent=2))
     print(f"\nWrote {len(all_prices)} Trilliant prices → {OUT_PRICES}")
+
+    if args.oria:
+        batch_n = args.limit or int(run_stats.get("oriaHospitals", 0))
+        progress = {
+            "lastCompletedOffset": args.offset,
+            "nextOffset": args.offset + batch_n,
+            "batchLimit": args.limit,
+            "priceCount": len(all_prices),
+            "cmsHospitalsWithPrices": meta["cmsHospitalsWithPrices"],
+            "oriaIndexTotal": run_stats.get("oriaIndexTotal"),
+            "updatedAt": date.today().isoformat(),
+        }
+        atomic_write_text(PROGRESS_JSON, json.dumps(progress, indent=2))
+        print(
+            f"Progress saved → next batch: --offset {progress['nextOffset']}"
+        )
 
     if args.merge:
         existing = []
