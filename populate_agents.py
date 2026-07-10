@@ -130,7 +130,9 @@ print(f"After trials: {len(agents)} agents")
 lit_map = {
     'pacvs.json': TARGET['PACVS'],
     'long-covid.json': TARGET['Long COVID'],
-    'me-cfs.json': TARGET['ME/CFS']
+    'me-cfs.json': TARGET['ME/CFS'],
+    'pots.json': TARGET['POTS'],
+    'mcas.json': TARGET['MCAS'],
 }
 
 # Basic agent candidates (expandable)

@@ -42,6 +42,30 @@ _CLINICAL_EVIDENCE_KEYS = (
 )
 
 
+def _is_gmi_label(label: str | None) -> bool:
+    text = str(label or "")
+    return text == "GreenMedInfo" or text.startswith("GreenMedInfo (")
+
+
+def _is_gmi_url(url: str | None) -> bool:
+    return "greenmedinfo" in str(url or "").lower()
+
+
+def _filter_gmi_sources(sources: list[str]) -> list[str]:
+    return [s for s in sources if not _is_gmi_label(s)]
+
+
+def _filter_gmi_lookup(lookup: dict[str, str]) -> dict[str, str]:
+    return {label: url for label, url in lookup.items() if not _is_gmi_label(label)}
+
+
+def _filter_gmi_links(links: list[dict]) -> list[dict]:
+    return [
+        link for link in links
+        if not _is_gmi_label(link.get("label")) and not _is_gmi_url(link.get("url"))
+    ]
+
+
 def _esc(text: str | None) -> str:
     return html.escape(str(text or ""))
 
@@ -69,11 +93,12 @@ def _type_badge(t: str, label: str) -> str:
 
 
 def _links_html(links: list[dict]) -> str:
-    if not links:
+    filtered = _filter_gmi_links(links)
+    if not filtered:
         return '<span class="muted">—</span>'
     return " ".join(
         f'<a href="{_esc(l["url"])}" target="_blank" rel="noopener" class="ext-link">{_esc(l["label"])}</a>'
-        for l in links[:4]
+        for l in filtered[:4]
     )
 
 
@@ -291,7 +316,7 @@ def _therapeutics_table(
           <td>{_tier_badge(d['evidence_tier'], d['evidence_tier_label'])}</td>
           <td><span class="score">{d.get('score', 0)}</span></td>
           {f"<td>{ev_cell}</td>" if has_evidence else ""}
-          <td class="muted">{', '.join(_esc(s) for s in d.get('sources', [])[:3])}</td>
+          <td class="muted">{', '.join(_esc(s) for s in _filter_gmi_sources(d.get('sources', []))[:3])}</td>
           <td class="links-cell">{_links_html(d.get('external_links', []))}</td>
         </tr>""")
     ev_th = "<th>Trials &amp; literature</th>" if has_evidence else ""
@@ -310,9 +335,9 @@ def _therapeutics_table(
 def _np_source_links(np: dict) -> str:
     links = np.get("source_links") or {}
     bits = []
-    for src in np.get("sources", []):
+    for src in _filter_gmi_sources(np.get("sources", [])):
         url = links.get(src)
-        if url:
+        if url and not _is_gmi_url(url):
             bits.append(f'<a href="{_esc(url)}" target="_blank" rel="noopener">{_esc(src)}</a>')
         else:
             bits.append(_esc(src))
@@ -320,7 +345,7 @@ def _np_source_links(np: dict) -> str:
 
 
 def _np_lookup_links(summary: dict) -> str:
-    lookup = summary.get("np_lookup_links") or {}
+    lookup = _filter_gmi_lookup(summary.get("np_lookup_links") or {})
     if not lookup:
         return ""
     bits = [
@@ -480,7 +505,7 @@ def _summary_cards(data: dict) -> str:
         f'<div class="stat-cell"><div class="label">{_esc(lbl)}</div><div class="value">{_esc(val)}</div></div>'
         for lbl, val in cells
     )
-    sources = ", ".join(s.get("sources_queried", [])[:8]) or "Open Targets"
+    sources = ", ".join(_filter_gmi_sources(s.get("sources_queried", []))[:8]) or "Open Targets"
     return f"""
     <div class="overview-card">
       <h2>Disease overview</h2>
@@ -538,7 +563,7 @@ def build_html(data: dict) -> str:
         natural_panel = f'<div class="tab-panel" id="tab-natural">{_therapeutics_table(natural)}</div>'
 
     nps = data.get("natural_products", [])
-    gmi_articles = summary.get("gmi_articles") or []
+    gmi_articles: list[dict] = []
     np_extra_evidence = data.get("natural_product_evidence") or {}
     disease_name = (data.get("condition") or {}).get("name") or short
     np_count = summary.get("natural_product_count", len(nps))
@@ -772,7 +797,7 @@ def build_index_html(pages: list[dict]) -> str:
             extra.append(f"{nat_n} OSMF review agents")
         extra_txt = f" · {' · '.join(extra)}" if extra else ""
         rows.append(f"""
-        <a class="disease-card" href="{_esc(slug)}.html">
+        <a class="disease-card" href="{_esc(slug)}.html" data-slug="{_esc(slug)}">
           <h3>{_esc(short)}</h3>
           <p class="muted">{' · '.join(marker_bits)} · {tc['merged']} therapeutics{extra_txt}</p>
           <p class="date">Updated {_esc(p['page']['dateModified'])}</p>
@@ -811,6 +836,18 @@ def build_index_html(pages: list[dict]) -> str:
     .disease-card:hover{{border-color:var(--accent)}}
     .disease-card h3{{color:var(--accent);margin-bottom:.5rem}}
     .muted{{color:var(--muted);font-size:.9rem}} .date{{font-size:.8rem;color:var(--muted);margin-top:.5rem}}
+    .search-bar{{margin-bottom:1.25rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}}
+    .search-wrap{{flex:1;min-width:220px;position:relative}}
+    .search-wrap input{{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.65rem 2.5rem .65rem 2.25rem;color:var(--text);font:inherit;font-size:.95rem}}
+    .search-wrap input:focus{{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(74,158,255,.15)}}
+    .search-wrap input::placeholder{{color:var(--muted)}}
+    .search-icon{{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;pointer-events:none}}
+    .search-clear{{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.5rem .9rem;font:inherit;cursor:pointer}}
+    .search-clear:hover{{border-color:var(--accent);color:var(--text)}}
+    .search-meta{{color:var(--muted);font-size:.85rem}}
+    .disease-card.hidden{{display:none}}
+    .search-empty{{display:none;grid-column:1/-1;text-align:center;padding:2.5rem 1rem;color:var(--muted);border:1px dashed var(--border);border-radius:12px;background:var(--surface)}}
+    .search-empty.visible{{display:block}}
   </style>
 </head>
 <body>
@@ -818,8 +855,71 @@ def build_index_html(pages: list[dict]) -> str:
 <main>
   <h1>{_esc(REPURPOS_BRAND)}</h1>
   <p class="sub">{_esc(REPURPOS_TAGLINE)} — structured biomarkers, ranked therapeutics, natural products, and clinical evidence for {count_label} from Open Targets, HPO, ChEMBL, DGIdb, ClinicalTrials.gov, and OSMF narrative reviews.</p>
-  <div class="grid">{''.join(rows)}</div>
+  <div class="search-bar">
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">&#8981;</span>
+      <input id="condition-search" type="search" placeholder="Search conditions by name, abbreviation, or keyword…" autocomplete="off" spellcheck="false" aria-label="Search conditions">
+    </div>
+    <button type="button" class="search-clear" id="search-clear" hidden>Clear</button>
+    <p class="search-meta" id="search-meta" aria-live="polite"></p>
+  </div>
+  <div class="grid" id="condition-grid">{''.join(rows)}
+    <div class="search-empty" id="search-empty">No conditions match your search. Try a different name or abbreviation.</div>
+  </div>
 </main>
+<script>
+(function() {{
+  const input = document.getElementById('condition-search');
+  const grid = document.getElementById('condition-grid');
+  const meta = document.getElementById('search-meta');
+  const clearBtn = document.getElementById('search-clear');
+  const emptyEl = document.getElementById('search-empty');
+  const cards = Array.from(grid.querySelectorAll('.disease-card'));
+
+  function normalize(value) {{
+    return value.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
+  }}
+
+  function cardText(card) {{
+    const slug = card.getAttribute('data-slug') || (card.getAttribute('href') || '').replace(/\\.html$/, '');
+    return normalize(card.textContent + ' ' + slug.replace(/-/g, ' '));
+  }}
+
+  function filterCards() {{
+    const query = normalize(input.value.trim());
+    let visible = 0;
+    cards.forEach(function(card) {{
+      const show = !query || cardText(card).includes(query);
+      card.classList.toggle('hidden', !show);
+      if (show) visible += 1;
+    }});
+    emptyEl.classList.toggle('visible', !!query && visible === 0);
+    meta.textContent = query
+      ? 'Showing ' + visible + ' of ' + cards.length
+      : cards.length + ' conditions';
+    clearBtn.hidden = !query;
+  }}
+
+  input.addEventListener('input', filterCards);
+  clearBtn.addEventListener('click', function() {{
+    input.value = '';
+    input.focus();
+    filterCards();
+  }});
+  document.addEventListener('keydown', function(event) {{
+    if (event.key === '/' && document.activeElement !== input) {{
+      event.preventDefault();
+      input.focus();
+    }}
+    if (event.key === 'Escape' && document.activeElement === input) {{
+      input.value = '';
+      input.blur();
+      filterCards();
+    }}
+  }});
+  filterCards();
+}})();
+</script>
 </body>
 </html>"""
 

@@ -18,8 +18,9 @@ except ImportError:
     print("ERROR: pymed not installed. Run: pip install pymed")
     raise
 
-# Output directory
-DATA_DIR = Path(__file__).parent / "data"
+# Output directory (repo root data/, not scripts/data/)
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
 # PubMed configuration
@@ -86,6 +87,24 @@ CONDITIONS = {
             '"gulf war" OR lyme OR "gulf war illness")'
         ),
         "description": "Research on other post-viral and post-infectious syndromes (non-COVID, non-Lyme, non-GWI).",
+    },
+    "pots": {
+        "display_name": "POTS – Postural Orthostatic Tachycardia Syndrome",
+        "short_name": "POTS",
+        "query": (
+            '("postural orthostatic tachycardia syndrome" OR "postural tachycardia syndrome" OR '
+            '("POTS" AND (dysautonomia OR orthostatic OR autonomic OR tachycardia)))'
+        ),
+        "description": "Studies on POTS, dysautonomia, and orthostatic intolerance.",
+    },
+    "mcas": {
+        "display_name": "MCAS – Mast Cell Activation Syndrome",
+        "short_name": "MCAS",
+        "query": (
+            '("mast cell activation syndrome" OR MCAS OR "mast cell activation" OR '
+            '("mast cell" AND (activation OR mediator OR histamine)))'
+        ),
+        "description": "Research on Mast Cell Activation Syndrome and mast cell mediator disorders.",
     },
 }
 
