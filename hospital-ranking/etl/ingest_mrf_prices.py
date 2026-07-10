@@ -361,10 +361,26 @@ def ingest_hospital(
     return results
 
 
+def merge_direct_prices(existing: list[dict], new: list[dict]) -> list[dict]:
+    by_key: dict[tuple[str, str], dict] = {}
+    for p in existing:
+        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
+        by_key[key] = p
+    for p in new:
+        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
+        by_key[key] = p
+    return list(by_key.values())
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0, help="Max hospital systems to process")
     ap.add_argument("--hospital", help="CMS provider id (e.g. 330214)")
+    ap.add_argument(
+        "--append",
+        action="store_true",
+        help="Merge with existing mrf-prices.json (newer scrape wins per hospital+procedure)",
+    )
     args = ap.parse_args()
 
     by_id, cpts, drgs = load_procedure_index()
@@ -387,6 +403,9 @@ def main() -> int:
 
     OUT.mkdir(parents=True, exist_ok=True)
     out_path = OUT / "mrf-prices.json"
+    if args.append and out_path.exists():
+        existing = json.loads(out_path.read_text(encoding="utf-8"))
+        all_prices = merge_direct_prices(existing, all_prices)
     out_path.write_text(json.dumps(all_prices, indent=2), encoding="utf-8")
     meta_path = OUT / "mrf-meta.json"
     meta = {

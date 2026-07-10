@@ -74,7 +74,7 @@ export default function AboutPage() {
               parsed DuckDB bulk ingest (
               <code className="text-xs">etl/ingest_trilliant.py</code>
               {mrfMeta.trilliantCount > 0
-                ? ` — ${mrfMeta.trilliantCount.toLocaleString()} prices`
+                ? ` — ${mrfMeta.trilliantCount.toLocaleString()} prices (growing via ORIA batch ingest; ~7,600 hospitals in source)`
                 : ""}
               ). Per-hospital direct scrape via <code className="text-xs">cms-hpt.txt</code> (
               <code className="text-xs">etl/ingest_mrf_prices.py</code>

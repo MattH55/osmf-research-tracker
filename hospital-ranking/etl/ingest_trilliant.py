@@ -98,6 +98,23 @@ def extract_zip(text: str) -> str | None:
     return m.group(1) if m else None
 
 
+def extract_street_number(text: str) -> str | None:
+    m = re.search(r"\b(\d{1,6})\b", text or "")
+    return m.group(1) if m else None
+
+
+def parse_city_from_address(address: str) -> str:
+    """Parse '420 Thomson Circle, Abbeville, SC 29620' → Abbeville."""
+    if not address:
+        return ""
+    parts = [p.strip() for p in address.split(",") if p.strip()]
+    if len(parts) >= 2:
+        city_part = parts[-2] if ZIP_RE.search(parts[-1]) else parts[-1]
+        city_part = re.sub(r"\b[A-Z]{2}\b", "", city_part).strip()
+        return city_part
+    return ""
+
+
 def flatten_address(addr) -> str:
     if addr is None:
         return ""
@@ -168,9 +185,11 @@ class CmsMatcher:
         state = (state or "").upper()
         if not state:
             return None
-        zip5 = extract_zip(address) or extract_zip(city) or extract_zip(name)
+        parsed_city = city or parse_city_from_address(address)
+        zip5 = extract_zip(address) or extract_zip(parsed_city) or extract_zip(name)
         name_tokens = normalize_name(name)
         addr_tokens = normalize_address(address)
+        street_num = extract_street_number(address)
 
         candidates: list[dict] = []
         if zip5 and (state, zip5) in self.by_zip:
@@ -194,15 +213,60 @@ class CmsMatcher:
                 if addr_tokens and h_addr
                 else 0.0
             )
-            zip_bonus = 0.25 if zip5 and (h.get("zip") or "")[:5] == zip5 else 0.0
-            score = name_overlap * 0.65 + addr_overlap * 0.25 + zip_bonus
+            h_zip = (h.get("zip") or "")[:5]
+            zip_match = zip5 and h_zip == zip5
+            zip_bonus = 0.3 if zip_match else 0.0
+            city_bonus = (
+                0.12
+                if parsed_city
+                and parsed_city.lower() in (h.get("city") or "").lower()
+                else 0.0
+            )
+            street_bonus = (
+                0.15
+                if street_num and street_num == extract_street_number(h.get("address", ""))
+                else 0.0
+            )
+            score = (
+                name_overlap * 0.55
+                + addr_overlap * 0.2
+                + zip_bonus
+                + city_bonus
+                + street_bonus
+            )
             if score > best_score:
                 best_score = score
                 best = h
 
-        if best_score < 0.28:
+        threshold = 0.18 if zip5 and best and (best.get("zip") or "")[:5] == zip5 else 0.26
+        if best_score < threshold:
             return None
         return best
+
+
+def match_oria_entry(entry: dict, matcher: CmsMatcher) -> dict | None:
+    name = entry.get("locationName") or entry.get("hospitalName") or ""
+    address = entry.get("address") or ""
+    state = entry.get("state") or ""
+    city = entry.get("city") or parse_city_from_address(address)
+    return matcher.match(name, address, state, city)
+
+
+def remap_prices_to_cms(prices: list[dict], cms: dict) -> list[dict]:
+    cms_id = cms["cmsProviderId"]
+    remapped: list[dict] = []
+    seen: set[str] = set()
+    for p in prices:
+        proc = p["procedureId"]
+        if proc in seen:
+            continue
+        seen.add(proc)
+        remapped.append({
+            **p,
+            "hospitalId": f"hosp-cms-{cms_id}",
+            "cmsProviderId": cms_id,
+        })
+    return remapped
 
 
 def hospital_columns(con: duckdb.DuckDBPyConnection) -> set[str]:
@@ -429,6 +493,8 @@ def process_oria_hospital(
         except Exception as exc:
             return [], {"skipped": True, "reason": str(exc)[:120]}, slug
 
+    index_cms = match_oria_entry(entry, matcher)
+
     prices, stats = ingest_duckdb_file(
         cache_path,
         matcher,
@@ -437,7 +503,19 @@ def process_oria_hospital(
         drgs,
         duckdb_url,
     )
+
+    if not prices and index_cms:
+        stats["indexMatchOnly"] = True
+
+    if index_cms and prices:
+        duckdb_cms_ids = {p.get("cmsProviderId") for p in prices if p.get("cmsProviderId")}
+        if not duckdb_cms_ids or index_cms["cmsProviderId"] not in duckdb_cms_ids:
+            prices = remap_prices_to_cms(prices, index_cms)
+            stats["remappedViaIndex"] = True
+
     stats["name"] = name
+    if index_cms:
+        stats["indexCmsId"] = index_cms["cmsProviderId"]
     return prices, stats, slug
 
 
@@ -447,22 +525,32 @@ def ingest_oria(
     cpts: set[str],
     drgs: set[str],
     limit: int = 0,
+    offset: int = 0,
     workers: int = 4,
     use_cache: bool = True,
 ) -> tuple[list[dict], dict]:
     print("Fetching ORIA search index…")
     index = json.loads(fetch_text(ORIA_INDEX_URL))
+    total_index = len(index)
+    if offset:
+        index = index[offset:]
     if limit:
         index = index[:limit]
-    print(f"Processing {len(index)} ORIA hospitals ({workers} workers)…")
+    print(
+        f"Processing {len(index)} ORIA hospitals "
+        f"(offset {offset}, index total {total_index}, {workers} workers)…"
+    )
 
     all_prices: list[dict] = []
     stats_agg = {
+        "oriaIndexTotal": total_index,
         "oriaHospitals": len(index),
+        "offset": offset,
         "processed": 0,
         "skipped": 0,
         "matchedFacilities": 0,
         "unmatchedFacilities": 0,
+        "indexRemapped": 0,
         "cmsHospitals": set(),
         "errors": 0,
     }
@@ -499,6 +587,8 @@ def ingest_oria(
             stats_agg["processed"] += 1
             stats_agg["matchedFacilities"] += stats.get("matched", 0)
             stats_agg["unmatchedFacilities"] += stats.get("unmatched", 0)
+            if stats.get("remappedViaIndex"):
+                stats_agg["indexRemapped"] += 1
             stats_agg["cmsHospitals"].update(
                 p["cmsProviderId"] for p in prices if p.get("cmsProviderId")
             )
@@ -577,9 +667,15 @@ def main() -> int:
     src.add_argument("--consolidated", metavar="PATH", help="Consolidated Oria DuckDB file")
     src.add_argument("--duckdb-dir", metavar="PATH", help="Directory of per-hospital DuckDB files")
     src.add_argument("--oria", action="store_true", help="Download from ORIA public directory")
-    ap.add_argument("--limit", type=int, default=0, help="Max ORIA hospitals (smoke test)")
+    ap.add_argument("--limit", type=int, default=0, help="Max ORIA hospitals per batch")
+    ap.add_argument("--offset", type=int, default=0, help="Skip first N ORIA index entries")
     ap.add_argument("--workers", type=int, default=4, help="Parallel ORIA downloads")
     ap.add_argument("--no-cache", action="store_true", help="Re-download ORIA DuckDB files")
+    ap.add_argument(
+        "--append",
+        action="store_true",
+        help="Merge with existing trilliant-prices.json instead of replacing",
+    )
     ap.add_argument("--merge", action="store_true", help="Merge into data/cms/mrf-prices.json")
     args = ap.parse_args()
 
@@ -610,11 +706,16 @@ def main() -> int:
             cpts,
             drgs,
             limit=args.limit,
+            offset=args.offset,
             workers=args.workers,
             use_cache=not args.no_cache,
         )
 
-    all_prices = dedupe_prices(all_prices)
+    if args.append and OUT_PRICES.exists():
+        existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
+        all_prices = dedupe_prices(existing + all_prices)
+    else:
+        all_prices = dedupe_prices(all_prices)
     CMS_DIR.mkdir(parents=True, exist_ok=True)
     OUT_PRICES.write_text(json.dumps(all_prices, indent=2), encoding="utf-8")
 
