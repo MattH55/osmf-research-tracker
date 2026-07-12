@@ -282,8 +282,859 @@
 
 <script>
 
+
 // Disease data populated from RepurpOS database
-const diseases = [];
+const diseases = [
+  {
+    "name": "Mast Cell Activation Syndrome",
+    "slug": "mast-cell-activation-syndrome",
+    "mondo_id": "MONDO:0800103",
+    "genes": 49,
+    "agents": 0,
+    "has_agents": false
+  },
+  {
+    "name": "Mastocytosis with KIT D816V Mutation",
+    "slug": "mastocytosis-with-kit-d816v-mutation",
+    "mondo_id": "N/A",
+    "genes": 1,
+    "agents": 0,
+    "has_agents": false
+  },
+  {
+    "name": "Sj\u00f6gren's Syndrome",
+    "slug": "sj\u00f6grens-syndrome",
+    "mondo_id": "N/A",
+    "genes": 10,
+    "agents": 0,
+    "has_agents": false
+  },
+  {
+    "name": "Measles",
+    "slug": "measles",
+    "mondo_id": "MONDO:0005850",
+    "genes": 24,
+    "agents": 11,
+    "has_agents": true
+  },
+  {
+    "name": "Mast Cell Activation Syndrome",
+    "slug": "mcas",
+    "mondo_id": "MONDO:0800103",
+    "genes": 49,
+    "agents": 24,
+    "has_agents": true
+  },
+  {
+    "name": "Celiac Disease",
+    "slug": "celiac-disease",
+    "mondo_id": "MONDO:0005130",
+    "genes": 103,
+    "agents": 73,
+    "has_agents": true
+  },
+  {
+    "name": "Hypothyroidism",
+    "slug": "hypothyroidism",
+    "mondo_id": "MONDO:0005420",
+    "genes": 159,
+    "agents": 81,
+    "has_agents": true
+  },
+  {
+    "name": "Sarcopenia",
+    "slug": "sarcopenia",
+    "mondo_id": "MONDO:0002331",
+    "genes": 190,
+    "agents": 82,
+    "has_agents": true
+  },
+  {
+    "name": "Vitiligo",
+    "slug": "vitiligo",
+    "mondo_id": "MONDO:0008661",
+    "genes": 108,
+    "agents": 88,
+    "has_agents": true
+  },
+  {
+    "name": "autoimmune gastritis",
+    "slug": "autoimmune-gastritis",
+    "mondo_id": "MONDO:0031014",
+    "genes": 100,
+    "agents": 109,
+    "has_agents": true
+  },
+  {
+    "name": "Lyme Disease",
+    "slug": "lyme-disease",
+    "mondo_id": "MONDO:0019632",
+    "genes": 127,
+    "agents": 113,
+    "has_agents": true
+  },
+  {
+    "name": "Myalgic Encephalomyelitis / Chronic Fatigue Syndrome",
+    "slug": "myalgic-encephalomyelitis-chronic-fatigue-syndrome",
+    "mondo_id": "MONDO:0005404",
+    "genes": 107,
+    "agents": 126,
+    "has_agents": true
+  },
+  {
+    "name": "Primary Sclerosing Cholangitis",
+    "slug": "sclerosing-cholangitis",
+    "mondo_id": "MONDO:0018646",
+    "genes": 187,
+    "agents": 127,
+    "has_agents": true
+  },
+  {
+    "name": "Venous Thromboembolism",
+    "slug": "venous-thromboembolism",
+    "mondo_id": "MONDO:0005399",
+    "genes": 105,
+    "agents": 135,
+    "has_agents": true
+  },
+  {
+    "name": "Postural Orthostatic Tachycardia Syndrome",
+    "slug": "pots",
+    "mondo_id": "MONDO:0100242",
+    "genes": 136,
+    "agents": 137,
+    "has_agents": true
+  },
+  {
+    "name": "Polycystic Kidney Disease",
+    "slug": "polycystic-kidney-disease",
+    "mondo_id": "MONDO:0020642",
+    "genes": 166,
+    "agents": 143,
+    "has_agents": true
+  },
+  {
+    "name": "Carpal Tunnel Syndrome",
+    "slug": "carpal-tunnel-syndrome",
+    "mondo_id": "MONDO:0007275",
+    "genes": 136,
+    "agents": 146,
+    "has_agents": true
+  },
+  {
+    "name": "Ankylosing Spondylitis",
+    "slug": "ankylosing-spondylitis",
+    "mondo_id": "MONDO:0005306",
+    "genes": 115,
+    "agents": 151,
+    "has_agents": true
+  },
+  {
+    "name": "Dermatomyositis",
+    "slug": "dermatomyositis",
+    "mondo_id": "MONDO:0016367",
+    "genes": 194,
+    "agents": 162,
+    "has_agents": true
+  },
+  {
+    "name": "Chronic Venous Insufficiency",
+    "slug": "chronic-venous-insufficiency",
+    "mondo_id": "MONDO:0000492",
+    "genes": 117,
+    "agents": 167,
+    "has_agents": true
+  },
+  {
+    "name": "Alpha-1 Antitrypsin Deficiency",
+    "slug": "alpha-1-antitrypsin-deficiency",
+    "mondo_id": "MONDO:0013282",
+    "genes": 141,
+    "agents": 173,
+    "has_agents": true
+  },
+  {
+    "name": "Polycystic Ovary Syndrome",
+    "slug": "polycystic-ovary-syndrome",
+    "mondo_id": "MONDO:0008487",
+    "genes": 116,
+    "agents": 177,
+    "has_agents": true
+  },
+  {
+    "name": "Alopecia Areata",
+    "slug": "alopecia-areata",
+    "mondo_id": "MONDO:0005340",
+    "genes": 126,
+    "agents": 178,
+    "has_agents": true
+  },
+  {
+    "name": "Hemophilia",
+    "slug": "hemophilia",
+    "mondo_id": "MONDO:0018660",
+    "genes": 155,
+    "agents": 181,
+    "has_agents": true
+  },
+  {
+    "name": "Diabetic Neuropathy",
+    "slug": "diabetic-neuropathy",
+    "mondo_id": "MONDO:0006626",
+    "genes": 109,
+    "agents": 186,
+    "has_agents": true
+  },
+  {
+    "name": "Gout",
+    "slug": "gout",
+    "mondo_id": "MONDO:0005393",
+    "genes": 114,
+    "agents": 186,
+    "has_agents": true
+  },
+  {
+    "name": "Epilepsy",
+    "slug": "epilepsy",
+    "mondo_id": "MONDO:0005027",
+    "genes": 203,
+    "agents": 187,
+    "has_agents": true
+  },
+  {
+    "name": "Interstitial Cystitis",
+    "slug": "interstitial-cystitis",
+    "mondo_id": "MONDO:0018301",
+    "genes": 123,
+    "agents": 195,
+    "has_agents": true
+  },
+  {
+    "name": "Inflammatory Bowel Disease",
+    "slug": "inflammatory-bowel-disease",
+    "mondo_id": "MONDO:0005265",
+    "genes": 178,
+    "agents": 200,
+    "has_agents": true
+  },
+  {
+    "name": "Restless Legs Syndrome",
+    "slug": "restless-legs-syndrome",
+    "mondo_id": "MONDO:0005391",
+    "genes": 109,
+    "agents": 200,
+    "has_agents": true
+  },
+  {
+    "name": "Gastroparesis",
+    "slug": "gastroparesis",
+    "mondo_id": "MONDO:0006769",
+    "genes": 107,
+    "agents": 202,
+    "has_agents": true
+  },
+  {
+    "name": "Gastroesophageal Reflux Disease",
+    "slug": "gastroesophageal-reflux-disease",
+    "mondo_id": "MONDO:0007186",
+    "genes": 111,
+    "agents": 203,
+    "has_agents": true
+  },
+  {
+    "name": "Psoriatic Arthritis",
+    "slug": "psoriatic-arthritis",
+    "mondo_id": "MONDO:0011849",
+    "genes": 155,
+    "agents": 211,
+    "has_agents": true
+  },
+  {
+    "name": "Chronic Pancreatitis",
+    "slug": "chronic-pancreatitis",
+    "mondo_id": "MONDO:0005003",
+    "genes": 134,
+    "agents": 215,
+    "has_agents": true
+  },
+  {
+    "name": "Tinnitus",
+    "slug": "tinnitus",
+    "mondo_id": "N/A",
+    "genes": 118,
+    "agents": 219,
+    "has_agents": true
+  },
+  {
+    "name": "Osteoporosis",
+    "slug": "osteoporosis",
+    "mondo_id": "MONDO:0005291",
+    "genes": 142,
+    "agents": 221,
+    "has_agents": true
+  },
+  {
+    "name": "Irritable Bowel Syndrome",
+    "slug": "irritable-bowel-syndrome",
+    "mondo_id": "MONDO:0005052",
+    "genes": 111,
+    "agents": 228,
+    "has_agents": true
+  },
+  {
+    "name": "Lupus Nephritis",
+    "slug": "lupus-nephritis",
+    "mondo_id": "MONDO:0005556",
+    "genes": 110,
+    "agents": 235,
+    "has_agents": true
+  },
+  {
+    "name": "Obstructive Sleep Apnea",
+    "slug": "obstructive-sleep-apnea-syndrome",
+    "mondo_id": "MONDO:0007147",
+    "genes": 108,
+    "agents": 237,
+    "has_agents": true
+  },
+  {
+    "name": "Psoriasis Vulgaris",
+    "slug": "psoriasis-vulgaris",
+    "mondo_id": "N/A",
+    "genes": 121,
+    "agents": 242,
+    "has_agents": true
+  },
+  {
+    "name": "HIV/AIDS",
+    "slug": "hivaids",
+    "mondo_id": "MONDO:0005109",
+    "genes": 138,
+    "agents": 249,
+    "has_agents": true
+  },
+  {
+    "name": "Kidney Stones",
+    "slug": "nephrolithiasis",
+    "mondo_id": "MONDO:0008171",
+    "genes": 127,
+    "agents": 268,
+    "has_agents": true
+  },
+  {
+    "name": "Systemic Lupus Erythematosus",
+    "slug": "systemic-lupus-erythematosus",
+    "mondo_id": "MONDO:0007915",
+    "genes": 189,
+    "agents": 276,
+    "has_agents": true
+  },
+  {
+    "name": "Polycythemia Vera",
+    "slug": "acquired-polycythemia-vera",
+    "mondo_id": "MONDO:0009891",
+    "genes": 144,
+    "agents": 277,
+    "has_agents": true
+  },
+  {
+    "name": "Myasthenia Gravis",
+    "slug": "myasthenia-gravis",
+    "mondo_id": "MONDO:0009688",
+    "genes": 174,
+    "agents": 281,
+    "has_agents": true
+  },
+  {
+    "name": "Opioid Use Disorder",
+    "slug": "opioid-use-disorder",
+    "mondo_id": "MONDO:0005530",
+    "genes": 107,
+    "agents": 289,
+    "has_agents": true
+  },
+  {
+    "name": "Metabolic Dysfunction-Associated Steatohepatitis",
+    "slug": "metabolic-dysfunction-associated-steatohepatitis",
+    "mondo_id": "MONDO:0007027",
+    "genes": 104,
+    "agents": 292,
+    "has_agents": true
+  },
+  {
+    "name": "Peripheral Arterial Disease",
+    "slug": "peripheral-arterial-disease",
+    "mondo_id": "MONDO:0005386",
+    "genes": 130,
+    "agents": 292,
+    "has_agents": true
+  },
+  {
+    "name": "Atopic Eczema",
+    "slug": "atopic-eczema",
+    "mondo_id": "MONDO:0004980",
+    "genes": 124,
+    "agents": 294,
+    "has_agents": true
+  },
+  {
+    "name": "Osteoarthritis",
+    "slug": "osteoarthritis",
+    "mondo_id": "MONDO:0005178",
+    "genes": 128,
+    "agents": 302,
+    "has_agents": true
+  },
+  {
+    "name": "Amyotrophic Lateral Sclerosis",
+    "slug": "amyotrophic-lateral-sclerosis",
+    "mondo_id": "MONDO:0004976",
+    "genes": 168,
+    "agents": 305,
+    "has_agents": true
+  },
+  {
+    "name": "Attention Deficit-Hyperactivity Disorder",
+    "slug": "attention-deficit-hyperactivity-disorder",
+    "mondo_id": "MONDO:0007743",
+    "genes": 117,
+    "agents": 305,
+    "has_agents": true
+  },
+  {
+    "name": "Insomnia",
+    "slug": "insomnia",
+    "mondo_id": "MONDO:0013600",
+    "genes": 167,
+    "agents": 317,
+    "has_agents": true
+  },
+  {
+    "name": "Thyroid Cancer",
+    "slug": "thyroid-cancer",
+    "mondo_id": "MONDO:0002108",
+    "genes": 189,
+    "agents": 321,
+    "has_agents": true
+  },
+  {
+    "name": "Type 1 Diabetes Mellitus",
+    "slug": "type-1-diabetes",
+    "mondo_id": "MONDO:0005147",
+    "genes": 121,
+    "agents": 324,
+    "has_agents": true
+  },
+  {
+    "name": "Low Back Pain",
+    "slug": "low-back-pain",
+    "mondo_id": "N/A",
+    "genes": 130,
+    "agents": 331,
+    "has_agents": true
+  },
+  {
+    "name": "Atrial Fibrillation",
+    "slug": "atrial-fibrillation",
+    "mondo_id": "MONDO:0004981",
+    "genes": 140,
+    "agents": 332,
+    "has_agents": true
+  },
+  {
+    "name": "Cystic Fibrosis",
+    "slug": "cystic-fibrosis",
+    "mondo_id": "MONDO:0009061",
+    "genes": 176,
+    "agents": 332,
+    "has_agents": true
+  },
+  {
+    "name": "Glaucoma",
+    "slug": "glaucoma",
+    "mondo_id": "MONDO:0005041",
+    "genes": 169,
+    "agents": 339,
+    "has_agents": true
+  },
+  {
+    "name": "Hepatitis C",
+    "slug": "hepatitis-c",
+    "mondo_id": "MONDO:0005231",
+    "genes": 107,
+    "agents": 357,
+    "has_agents": true
+  },
+  {
+    "name": "Hepatitis B",
+    "slug": "hepatitis-b-virus-infection",
+    "mondo_id": "MONDO:0005344",
+    "genes": 109,
+    "agents": 363,
+    "has_agents": true
+  },
+  {
+    "name": "Obesity",
+    "slug": "obesity",
+    "mondo_id": "N/A",
+    "genes": 130,
+    "agents": 368,
+    "has_agents": true
+  },
+  {
+    "name": "Multiple Sclerosis",
+    "slug": "multiple-sclerosis",
+    "mondo_id": "MONDO:0005301",
+    "genes": 123,
+    "agents": 371,
+    "has_agents": true
+  },
+  {
+    "name": "Alcohol Abuse",
+    "slug": "alcohol-abuse",
+    "mondo_id": "MONDO:0002046",
+    "genes": 116,
+    "agents": 375,
+    "has_agents": true
+  },
+  {
+    "name": "Essential Hypertension",
+    "slug": "essential-hypertension",
+    "mondo_id": "MONDO:0001134",
+    "genes": 114,
+    "agents": 376,
+    "has_agents": true
+  },
+  {
+    "name": "Migraine Disorder",
+    "slug": "migraine-disorder",
+    "mondo_id": "MONDO:0005277",
+    "genes": 174,
+    "agents": 377,
+    "has_agents": true
+  },
+  {
+    "name": "Bipolar Disorder",
+    "slug": "bipolar-disorder",
+    "mondo_id": "MONDO:0004985",
+    "genes": 108,
+    "agents": 389,
+    "has_agents": true
+  },
+  {
+    "name": "Huntington Disease",
+    "slug": "huntington-disease",
+    "mondo_id": "MONDO:0007739",
+    "genes": 177,
+    "agents": 418,
+    "has_agents": true
+  },
+  {
+    "name": "Pulmonary Arterial Hypertension",
+    "slug": "pulmonary-arterial-hypertension",
+    "mondo_id": "MONDO:0015924",
+    "genes": 183,
+    "agents": 421,
+    "has_agents": true
+  },
+  {
+    "name": "Cervical Cancer",
+    "slug": "cervical-cancer",
+    "mondo_id": "MONDO:0002974",
+    "genes": 110,
+    "agents": 425,
+    "has_agents": true
+  },
+  {
+    "name": "Chronic Spontaneous Urticaria",
+    "slug": "chronic-idiopathic-urticaria",
+    "mondo_id": "MONDO:0044212",
+    "genes": 130,
+    "agents": 431,
+    "has_agents": true
+  },
+  {
+    "name": "Age-Related Macular Degeneration",
+    "slug": "age-related-macular-degeneration",
+    "mondo_id": "MONDO:0001208",
+    "genes": 153,
+    "agents": 450,
+    "has_agents": true
+  },
+  {
+    "name": "Fibromyalgia",
+    "slug": "fibromyalgia",
+    "mondo_id": "MONDO:0005546",
+    "genes": 107,
+    "agents": 462,
+    "has_agents": true
+  },
+  {
+    "name": "Lung Cancer",
+    "slug": "lung-cancer",
+    "mondo_id": "MONDO:0008903",
+    "genes": 133,
+    "agents": 465,
+    "has_agents": true
+  },
+  {
+    "name": "Endometriosis",
+    "slug": "endometriosis",
+    "mondo_id": "MONDO:0005133",
+    "genes": 116,
+    "agents": 477,
+    "has_agents": true
+  },
+  {
+    "name": "Schizophrenia",
+    "slug": "schizophrenia",
+    "mondo_id": "MONDO:0005154",
+    "genes": 156,
+    "agents": 499,
+    "has_agents": true
+  },
+  {
+    "name": "Chronic Obstructive Pulmonary Disease",
+    "slug": "chronic-obstructive-pulmonary-disease",
+    "mondo_id": "MONDO:0005002",
+    "genes": 156,
+    "agents": 505,
+    "has_agents": true
+  },
+  {
+    "name": "Sickle Cell Disease",
+    "slug": "sickle-cell-disease",
+    "mondo_id": "MONDO:0011382",
+    "genes": 168,
+    "agents": 508,
+    "has_agents": true
+  },
+  {
+    "name": "Overactive Bladder",
+    "slug": "overactive-bladder",
+    "mondo_id": "MONDO:0006624",
+    "genes": 116,
+    "agents": 516,
+    "has_agents": true
+  },
+  {
+    "name": "Sepsis",
+    "slug": "sepsis",
+    "mondo_id": "N/A",
+    "genes": 106,
+    "agents": 518,
+    "has_agents": true
+  },
+  {
+    "name": "Chronic Kidney Disease",
+    "slug": "chronic-kidney-disease",
+    "mondo_id": "MONDO:0005300",
+    "genes": 100,
+    "agents": 534,
+    "has_agents": true
+  },
+  {
+    "name": "Anxiety",
+    "slug": "anxiety",
+    "mondo_id": "MONDO:0005090",
+    "genes": 139,
+    "agents": 535,
+    "has_agents": true
+  },
+  {
+    "name": "Acne Vulgaris",
+    "slug": "acne",
+    "mondo_id": "MONDO:0011438",
+    "genes": 113,
+    "agents": 538,
+    "has_agents": true
+  },
+  {
+    "name": "Parkinson Disease",
+    "slug": "parkinson-disease",
+    "mondo_id": "MONDO:0005180",
+    "genes": 165,
+    "agents": 540,
+    "has_agents": true
+  },
+  {
+    "name": "Rheumatoid Arthritis",
+    "slug": "rheumatoid-arthritis",
+    "mondo_id": "MONDO:0008383",
+    "genes": 186,
+    "agents": 544,
+    "has_agents": true
+  },
+  {
+    "name": "Immune Thrombocytopenia",
+    "slug": "autoimmune-thrombocytopenic-purpura",
+    "mondo_id": "MONDO:0008558",
+    "genes": 130,
+    "agents": 551,
+    "has_agents": true
+  },
+  {
+    "name": "Myelodysplastic Syndrome",
+    "slug": "myelodysplastic-syndrome",
+    "mondo_id": "MONDO:0018881",
+    "genes": 178,
+    "agents": 576,
+    "has_agents": true
+  },
+  {
+    "name": "Ischemic Stroke",
+    "slug": "ischemic-stroke",
+    "mondo_id": "MONDO:1060198",
+    "genes": 112,
+    "agents": 577,
+    "has_agents": true
+  },
+  {
+    "name": "Major Depressive Disorder",
+    "slug": "major-depressive-disorder",
+    "mondo_id": "MONDO:0002009",
+    "genes": 122,
+    "agents": 580,
+    "has_agents": true
+  },
+  {
+    "name": "Heart Failure",
+    "slug": "heart-failure",
+    "mondo_id": "MONDO:0005252",
+    "genes": 124,
+    "agents": 616,
+    "has_agents": true
+  },
+  {
+    "name": "Benign Prostatic Hyperplasia",
+    "slug": "benign-prostatic-hyperplasia",
+    "mondo_id": "MONDO:0010811",
+    "genes": 112,
+    "agents": 635,
+    "has_agents": true
+  },
+  {
+    "name": "Asthma",
+    "slug": "asthma",
+    "mondo_id": "MONDO:0004979",
+    "genes": 113,
+    "agents": 642,
+    "has_agents": true
+  },
+  {
+    "name": "Bladder Cancer",
+    "slug": "urinary-bladder-carcinoma",
+    "mondo_id": "MONDO:0004986",
+    "genes": 126,
+    "agents": 662,
+    "has_agents": true
+  },
+  {
+    "name": "Pancreatic Cancer",
+    "slug": "exocrine-pancreatic-carcinoma",
+    "mondo_id": "MONDO:0005192",
+    "genes": 126,
+    "agents": 672,
+    "has_agents": true
+  },
+  {
+    "name": "Post-Acute COVID/Vaccination Syndrome",
+    "slug": "post-acute-covidvaccination-syndrome",
+    "mondo_id": "MONDO:0100096",
+    "genes": 104,
+    "agents": 675,
+    "has_agents": true
+  },
+  {
+    "name": "Alzheimer's Disease and Other Dementias",
+    "slug": "alzheimers-disease-and-other-dementias",
+    "mondo_id": "MONDO:0004975",
+    "genes": 155,
+    "agents": 705,
+    "has_agents": true
+  },
+  {
+    "name": "Non-Hodgkin Lymphoma",
+    "slug": "non-hodgkin-lymphoma",
+    "mondo_id": "MONDO:0018908",
+    "genes": 188,
+    "agents": 734,
+    "has_agents": true
+  },
+  {
+    "name": "Multiple Myeloma",
+    "slug": "plasma-cell-myeloma",
+    "mondo_id": "MONDO:0009693",
+    "genes": 155,
+    "agents": 764,
+    "has_agents": true
+  },
+  {
+    "name": "Type 2 Diabetes Mellitus",
+    "slug": "type-2-diabetes",
+    "mondo_id": "MONDO:0005148",
+    "genes": 127,
+    "agents": 767,
+    "has_agents": true
+  },
+  {
+    "name": "Chronic Lymphocytic Leukemia",
+    "slug": "b-cell-chronic-lymphocytic-leukemia",
+    "mondo_id": "MONDO:0004948",
+    "genes": 110,
+    "agents": 807,
+    "has_agents": true
+  },
+  {
+    "name": "Ovarian Cancer",
+    "slug": "ovarian-cancer",
+    "mondo_id": "MONDO:0008170",
+    "genes": 124,
+    "agents": 1037,
+    "has_agents": true
+  },
+  {
+    "name": "Melanoma",
+    "slug": "melanoma",
+    "mondo_id": "MONDO:0005105",
+    "genes": 133,
+    "agents": 1068,
+    "has_agents": true
+  },
+  {
+    "name": "Colorectal Cancer",
+    "slug": "colorectal-cancer",
+    "mondo_id": "MONDO:0005575",
+    "genes": 190,
+    "agents": 1212,
+    "has_agents": true
+  },
+  {
+    "name": "Prostate Cancer",
+    "slug": "prostate-cancer",
+    "mondo_id": "MONDO:0008315",
+    "genes": 105,
+    "agents": 1217,
+    "has_agents": true
+  },
+  {
+    "name": "Cancer",
+    "slug": "cancer",
+    "mondo_id": "MONDO:0004992",
+    "genes": 197,
+    "agents": 1226,
+    "has_agents": true
+  },
+  {
+    "name": "Breast Cancer",
+    "slug": "breast-cancer",
+    "mondo_id": "MONDO:0007254",
+    "genes": 106,
+    "agents": 1462,
+    "has_agents": true
+  }
+];
+
 
 
 // Load disease data from JSON files

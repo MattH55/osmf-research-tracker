@@ -57,7 +57,7 @@ const diseases = {diseases_json};
 
     # Replace the old diseases declaration
     updated = template.replace(
-        "// Disease data - will be populated from RepurpOS database\nconst diseases = [];",
+        "// Disease data populated from RepurpOS database\nconst diseases = [];",
         js_section
     )
 
