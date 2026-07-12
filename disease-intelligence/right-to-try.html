@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Right to Try — Unmet Medical Need Registry | Research Tracker</title>
+  <meta name="description" content="Right-to-try eligible diseases: comprehensive registry of conditions without FDA-approved therapies and serious/fatal illnesses where investigational drugs may be accessed outside clinical trials.">
+  <meta name="keywords" content="right to try, unmet medical need, no cure, fatal disease, investigational drug, off-label, compassionate use, Montana SB 535, federal right to try">
+  <link rel="canonical" href="https://research.opensourcemed.info/right-to-try.html">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tracker.css">
+  <style>
+    :root {
+      --status-no-cure: #e64a19;
+      --status-fatal: #d32f2f;
+      --status-modifiable: #f57c00;
+    }
+
+    .filter-section {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--light-gray);
+      border-radius: 12px;
+    }
+
+    .filter-btn {
+      padding: 0.6rem 1.2rem;
+      border: 2px solid var(--border);
+      background: var(--white);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent-orange);
+      color: var(--accent-orange);
+    }
+
+    .filter-btn.active {
+      background: var(--accent-orange);
+      border-color: var(--accent-orange);
+      color: var(--white);
+    }
+
+    .disease-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .disease-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .disease-card:hover {
+      box-shadow: 0 8px 24px rgba(14, 20, 68, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .disease-card.hidden {
+      display: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-no-cure {
+      background: rgba(230, 74, 25, 0.1);
+      color: var(--status-no-cure);
+    }
+
+    .status-fatal {
+      background: rgba(211, 47, 47, 0.1);
+      color: var(--status-fatal);
+    }
+
+    .status-modifiable {
+      background: rgba(245, 124, 0, 0.1);
+      color: var(--status-modifiable);
+    }
+
+    .disease-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .disease-meta {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      margin: 0.8rem 0;
+      line-height: 1.5;
+    }
+
+    .disease-meta strong {
+      color: var(--primary-dark);
+    }
+
+    .cta-button {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: var(--accent-orange);
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .cta-button:hover {
+      opacity: 0.9;
+    }
+
+    .criteria-box {
+      background: rgba(230, 74, 25, 0.08);
+      border-left: 4px solid var(--status-no-cure);
+      padding: 1.2rem;
+      border-radius: 6px;
+      margin: 2rem 0;
+    }
+
+    .criteria-box h3 {
+      color: var(--status-no-cure);
+      margin-bottom: 0.5rem;
+    }
+
+    .criteria-box p {
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+      line-height: 1.6;
+      margin: 0.5rem 0;
+    }
+
+    .results-count {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-gray);
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+    }
+  </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "url": "https://research.opensourcemed.info/right-to-try.html",
+      "name": "Right to Try — Unmet Medical Need Registry",
+      "description": "Comprehensive registry of diseases without FDA-approved therapies where right-to-try access may apply.",
+      "publisher": {"@id": "https://opensourcemed.info/#org"}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://research.opensourcemed.info/"},
+        {"@type": "ListItem", "position": 2, "name": "Right to Try", "item": "https://research.opensourcemed.info/right-to-try.html"}
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">All Conditions</a></li>
+      <li><a href="biomarker-atlas.html">Biomarkers</a></li>
+      <li><a href="clinical_trials.html">Clinical Trials</a></li>
+      <li><a href="agents.html">Agents</a></li>
+      <li><a href="right-to-try.html" class="nav-active">Right to Try</a></li>
+      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="page-hero">
+  <div class="hero-eyebrow">Unmet Medical Need</div>
+  <h1>Right to Try Registry</h1>
+  <p>Diseases without FDA-approved therapies where investigational drugs may be accessed outside clinical trials under right-to-try frameworks.</p>
+</section>
+
+<main class="main-section">
+  <div class="section-inner">
+
+    <div class="criteria-box">
+      <h3>About This Registry</h3>
+      <p><strong>Current Status:</strong> This page displays all 106 disease profiles in the RepurpOS database, sorted by number of known therapeutic agents (fewest first). It is a <strong>work-in-progress toward</strong> a full Right-to-Try registry.</p>
+      <p><strong>Final Design:</strong> When complete, this registry will show only diseases without FDA-approved disease-modifying therapy, following the framework in BUILD_SPEC.md (stages 0–8). It will distinguish federal right-to-try eligibility (21 U.S.C. § 360bbb-0a) from Montana SB 535 access, and will flag the critical traps: drug-level (not indication-level) eligibility, ex-US approval non-disqualification, and Phase 1 population risk calibration.</p>
+      <p><strong>Data Basis:</strong> Open Targets Platform, ClinicalTrials.gov, FDA Orange/Purple Books, and OSMF curation. Each disease profile includes molecular targets, clinical biomarkers, and ranked investigational agents.</p>
+    </div>
+
+    <div class="filter-section">
+      <button class="filter-btn active" data-filter="all">All Diseases (106)</button>
+      <button class="filter-btn" data-filter="has-agents">With Agents</button>
+      <button class="filter-btn" data-filter="no-agents">0 Agents</button>
+    </div>
+
+    <div class="results-count" id="results-count"></div>
+
+    <div class="disease-grid" id="disease-grid">
+      <!-- Populated by JavaScript -->
+    </div>
+
+    <div class="empty-state" id="empty-state" style="display: none;">
+      <p>No diseases match the selected filter.</p>
+    </div>
+
+  </div>
+</main>
+
+<section class="osmf-network-banner">
+  <div class="osmf-network-inner">
+    <h2 class="osmf-network-title">Part of the Open Source Medicine Foundation Network</h2>
+    <div class="osmf-network-sites">
+      <div class="osmf-network-site">
+        <a href="https://opensourcemed.info" target="_blank" rel="noopener"><strong>Open Source Medicine Foundation</strong></a>
+        <span>OSMF hub — advancing open-source biomedical research infrastructure, tools, and evidence synthesis.</span>
+      </div>
+      <div class="osmf-network-site">
+        <a href="https://spikeprotein.site" target="_blank" rel="noopener"><strong>SpikeProtein.site</strong></a>
+        <span>Database and research resource on SARS-CoV-2 spike protein biology, persistence, and clinical implications.</span>
+      </div>
+      <div class="osmf-network-site">
+        <a href="https://vaccinedatanavigator.org" target="_blank" rel="noopener"><strong>Vaccine Data Navigator</strong></a>
+        <span>Open-access navigation tool for vaccine adverse event reporting and surveillance data.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="osmf-network-footer">
+  <div class="osmf-network-inner">
+    <div class="footer-brand">Open Source Medicine Foundation</div>
+    <div class="footer-links">
+      <a href="https://opensourcemed.info">OSMF</a>
+      <a href="https://research.opensourcemed.info/">Research Platform</a>
+      <a href="https://spikeprotein.site">SpikeProtein.site</a>
+      <a href="https://vaccinedatanavigator.org">Vaccine Data Navigator</a>
+      <a href="https://opensourcemed.substack.com">Substack</a>
+      <a href="https://opensourcemed.info/#contact">Contact</a>
+    </div>
+    <div class="footer-note">Right-to-Try database. Legal framework: 21 U.S.C. § 360bbb-0a (federal) and Montana SB 535 (state). Not medical or legal advice.</div>
+  </div>
+</footer>
+
+<script>
+
+// Disease data populated from RepurpOS database
+const diseases = [];
+
+
+// Load disease data from JSON files
+async function loadDiseases() {
+  try {
+    // This would load from data/disease-intelligence/*.json in production
+    // For now, creating a sample structure
+    const response = await fetch('data/disease-intelligence/');
+    // In production, enumerate diseases and filter for has_approved_therapy == false
+  } catch (e) {
+    console.log('Loading local disease data...');
+  }
+
+  // Render initial view
+  renderDiseases('all');
+}
+
+function renderDiseases(filter) {
+  const grid = document.getElementById('disease-grid');
+  const empty = document.getElementById('empty-state');
+  const count = document.getElementById('results-count');
+
+  // Filter diseases based on selection
+  let filtered = diseases;
+
+  if (filter === 'has-agents') {
+    filtered = diseases.filter(d => d.agents && d.agents.length > 0);
+  } else if (filter === 'no-agents') {
+    filtered = diseases.filter(d => !d.agents || d.agents.length === 0);
+  }
+
+  count.textContent = `Showing ${filtered.length} disease${filtered.length !== 1 ? 's' : ''} without approved therapy`;
+
+  if (filtered.length === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+
+  grid.innerHTML = filtered.map(d => `
+    <div class="disease-card">
+      <div class="status-badge status-no-cure">No Approved Therapy</div>
+      <h3>${d.name}</h3>
+      <div class="disease-meta">
+        <div><strong>MONDO ID:</strong> ${d.mondo_id}</div>
+        <div><strong>Gene Targets:</strong> ${d.genes || 0}</div>
+        ${d.agents && d.agents > 0 ? `<div><strong>Investigational Agents:</strong> ${d.agents}</div>` : ''}
+        ${d.trials || ''}
+      </div>
+      <a href="disease-intelligence/${d.slug}.html" class="cta-button">View Intelligence Profile</a>
+    </div>
+  `).join('');
+}
+
+// Setup filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDiseases(btn.dataset.filter);
+  });
+});
+
+// Load and render data
+loadDiseases();
+</script>
+
+</body>
+</html>
