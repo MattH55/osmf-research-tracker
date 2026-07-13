@@ -239,13 +239,13 @@
     <div class="criteria-box">
       <h3>Unmet Medical Needs</h3>
       <p><strong>Definition:</strong> Diseases with <strong>no FDA-approved (Phase 4) therapeutic agents</strong> in the RepurpOS database. These represent true unmet medical needs where right-to-try and compassionate use frameworks may apply.</p>
-      <p><strong>Status:</strong> This registry identifies diseases from 106 condition profiles. Diseases are filtered by presence of Phase 4 (approved) agents; those with Phase 1-3 investigational agents are highlighted as having promising candidates for right-to-try consideration.</p>
+      <p><strong>Status:</strong> This registry identifies 82 diseases from 106 condition profiles without indication-specific FDA approval. Diseases are filtered by presence of Phase 4 (approved) agents; those with Phase 1-3 investigational agents are highlighted as having promising candidates for right-to-try consideration.</p>
       <p><strong>Legal Framework:</strong> Federal right-to-try eligibility (21 U.S.C. § 360bbb-0a) and Montana SB 535 access. Critical distinctions: drug-level eligibility (not indication-level), ex-US approval non-disqualification, and Phase 1 population risk calibration for dose escalation trials in oncology.</p>
       <p><strong>Data Sources:</strong> Open Targets Platform (gene-to-drug mapping), ClinicalTrials.gov, FDA Orange/Purple Books, and OSMF curation. Phase 1-3 agents are investigational—not licensed therapy.</p>
     </div>
 
     <div class="filter-section">
-      <button class="filter-btn active" data-filter="all">All (3) Unmet Needs</button>
+      <button class="filter-btn active" data-filter="all">All (82) Unmet Needs</button>
       <button class="filter-btn" data-filter="has-agents">With Agents</button>
       <button class="filter-btn" data-filter="no-agents">0 Agents</button>
     </div>
@@ -304,28 +304,660 @@
 // Disease data populated from RepurpOS database
 const diseases = [
   {
+    "name": "Post-Acute COVID/Vaccination Syndrome",
+    "slug": "post-acute-covidvaccination-syndrome",
+    "genes": 104,
+    "phase_3": 210,
+    "phase_4": 105,
+    "agents": 315
+  },
+  {
+    "name": "Chronic Kidney Disease",
+    "slug": "chronic-kidney-disease",
+    "genes": 100,
+    "phase_3": 101,
+    "phase_4": 194,
+    "agents": 295
+  },
+  {
+    "name": "Alzheimer's Disease and Other Dementias",
+    "slug": "alzheimers-disease-and-other-dementias",
+    "genes": 155,
+    "phase_3": 99,
+    "phase_4": 233,
+    "agents": 332
+  },
+  {
+    "name": "Ischemic Stroke",
+    "slug": "ischemic-stroke",
+    "genes": 112,
+    "phase_3": 90,
+    "phase_4": 318,
+    "agents": 408
+  },
+  {
+    "name": "Anxiety",
+    "slug": "anxiety",
+    "genes": 139,
+    "phase_3": 84,
+    "phase_4": 154,
+    "agents": 238
+  },
+  {
+    "name": "Schizophrenia",
+    "slug": "schizophrenia",
+    "genes": 156,
+    "phase_3": 76,
+    "phase_4": 139,
+    "agents": 215
+  },
+  {
+    "name": "Sepsis",
+    "slug": "sepsis",
+    "genes": 106,
+    "phase_3": 71,
+    "phase_4": 283,
+    "agents": 354
+  },
+  {
+    "name": "Low Back Pain",
+    "slug": "low-back-pain",
+    "genes": 130,
+    "phase_3": 71,
+    "phase_4": 199,
+    "agents": 270
+  },
+  {
+    "name": "Chronic Obstructive Pulmonary Disease",
+    "slug": "chronic-obstructive-pulmonary-disease",
+    "genes": 156,
+    "phase_3": 68,
+    "phase_4": 163,
+    "agents": 231
+  },
+  {
+    "name": "Major Depressive Disorder",
+    "slug": "major-depressive-disorder",
+    "genes": 122,
+    "phase_3": 62,
+    "phase_4": 213,
+    "agents": 275
+  },
+  {
+    "name": "Osteoarthritis",
+    "slug": "osteoarthritis",
+    "genes": 128,
+    "phase_3": 61,
+    "phase_4": 70,
+    "agents": 131
+  },
+  {
+    "name": "Obesity",
+    "slug": "obesity",
+    "genes": 130,
+    "phase_3": 54,
+    "phase_4": 56,
+    "agents": 110
+  },
+  {
+    "name": "Bipolar Disorder",
+    "slug": "bipolar-disorder",
+    "genes": 108,
+    "phase_3": 53,
+    "phase_4": 192,
+    "agents": 245
+  },
+  {
+    "name": "Age-Related Macular Degeneration",
+    "slug": "age-related-macular-degeneration",
+    "genes": 153,
+    "phase_3": 43,
+    "phase_4": 306,
+    "agents": 349
+  },
+  {
+    "name": "Atopic Eczema",
+    "slug": "atopic-eczema",
+    "genes": 124,
+    "phase_3": 42,
+    "phase_4": 50,
+    "agents": 92
+  },
+  {
+    "name": "Psoriasis Vulgaris",
+    "slug": "psoriasis-vulgaris",
+    "genes": 121,
+    "phase_3": 41,
+    "phase_4": 58,
+    "agents": 99
+  },
+  {
+    "name": "Peripheral Arterial Disease",
+    "slug": "peripheral-arterial-disease",
+    "genes": 130,
+    "phase_3": 40,
+    "phase_4": 174,
+    "agents": 214
+  },
+  {
+    "name": "Melanoma",
+    "slug": "melanoma",
+    "genes": 133,
+    "phase_3": 40,
+    "phase_4": 40,
+    "agents": 80
+  },
+  {
+    "name": "Myelodysplastic Syndrome",
+    "slug": "myelodysplastic-syndrome",
+    "genes": 178,
+    "phase_3": 40,
+    "phase_4": 40,
+    "agents": 80
+  },
+  {
+    "name": "Non-Hodgkin Lymphoma",
+    "slug": "non-hodgkin-lymphoma",
+    "genes": 188,
+    "phase_3": 40,
+    "phase_4": 40,
+    "agents": 80
+  },
+  {
+    "name": "Multiple Myeloma",
+    "slug": "plasma-cell-myeloma",
+    "genes": 155,
+    "phase_3": 40,
+    "phase_4": 40,
+    "agents": 80
+  },
+  {
+    "name": "Systemic Lupus Erythematosus",
+    "slug": "systemic-lupus-erythematosus",
+    "genes": 189,
+    "phase_3": 39,
+    "phase_4": 49,
+    "agents": 88
+  },
+  {
+    "name": "Metabolic Dysfunction-Associated Steatohepatitis",
+    "slug": "metabolic-dysfunction-associated-steatohepatitis",
+    "genes": 104,
+    "phase_3": 38,
+    "phase_4": 95,
+    "agents": 133
+  },
+  {
+    "name": "Chronic Lymphocytic Leukemia",
+    "slug": "b-cell-chronic-lymphocytic-leukemia",
+    "genes": 110,
+    "phase_3": 36,
+    "phase_4": 40,
+    "agents": 76
+  },
+  {
+    "name": "Polycystic Ovary Syndrome",
+    "slug": "polycystic-ovary-syndrome",
+    "genes": 116,
+    "phase_3": 34,
+    "phase_4": 46,
+    "agents": 80
+  },
+  {
+    "name": "Insomnia",
+    "slug": "insomnia",
+    "genes": 167,
+    "phase_3": 33,
+    "phase_4": 188,
+    "agents": 221
+  },
+  {
+    "name": "Pancreatic Cancer",
+    "slug": "exocrine-pancreatic-carcinoma",
+    "genes": 126,
+    "phase_3": 33,
+    "phase_4": 40,
+    "agents": 73
+  },
+  {
+    "name": "Hepatitis B",
+    "slug": "hepatitis-b-virus-infection",
+    "genes": 109,
+    "phase_3": 30,
+    "phase_4": 40,
+    "agents": 70
+  },
+  {
+    "name": "Immune Thrombocytopenia",
+    "slug": "autoimmune-thrombocytopenic-purpura",
+    "genes": 130,
+    "phase_3": 28,
+    "phase_4": 40,
+    "agents": 68
+  },
+  {
+    "name": "Endometriosis",
+    "slug": "endometriosis",
+    "genes": 116,
+    "phase_3": 27,
+    "phase_4": 40,
+    "agents": 67
+  },
+  {
+    "name": "Sickle Cell Disease",
+    "slug": "sickle-cell-disease",
+    "genes": 168,
+    "phase_3": 27,
+    "phase_4": 40,
+    "agents": 67
+  },
+  {
+    "name": "Opioid Use Disorder",
+    "slug": "opioid-use-disorder",
+    "genes": 107,
+    "phase_3": 25,
+    "phase_4": 160,
+    "agents": 185
+  },
+  {
+    "name": "Ankylosing Spondylitis",
+    "slug": "ankylosing-spondylitis",
+    "genes": 115,
+    "phase_3": 25,
+    "phase_4": 76,
+    "agents": 101
+  },
+  {
+    "name": "Amyotrophic Lateral Sclerosis",
+    "slug": "amyotrophic-lateral-sclerosis",
+    "genes": 168,
+    "phase_3": 25,
+    "phase_4": 40,
+    "agents": 65
+  },
+  {
+    "name": "Cystic Fibrosis",
+    "slug": "cystic-fibrosis",
+    "genes": 176,
+    "phase_3": 25,
+    "phase_4": 40,
+    "agents": 65
+  },
+  {
+    "name": "Myasthenia Gravis",
+    "slug": "myasthenia-gravis",
+    "genes": 174,
+    "phase_3": 24,
+    "phase_4": 40,
+    "agents": 64
+  },
+  {
+    "name": "Irritable Bowel Syndrome",
+    "slug": "irritable-bowel-syndrome",
+    "genes": 111,
+    "phase_3": 22,
+    "phase_4": 93,
+    "agents": 115
+  },
+  {
+    "name": "Fibromyalgia",
+    "slug": "fibromyalgia",
+    "genes": 107,
+    "phase_3": 22,
+    "phase_4": 40,
+    "agents": 62
+  },
+  {
+    "name": "Lupus Nephritis",
+    "slug": "lupus-nephritis",
+    "genes": 110,
+    "phase_3": 22,
+    "phase_4": 40,
+    "agents": 62
+  },
+  {
+    "name": "Obstructive Sleep Apnea",
+    "slug": "obstructive-sleep-apnea-syndrome",
+    "genes": 108,
+    "phase_3": 22,
+    "phase_4": 40,
+    "agents": 62
+  },
+  {
+    "name": "Attention Deficit-Hyperactivity Disorder",
+    "slug": "attention-deficit-hyperactivity-disorder",
+    "genes": 117,
+    "phase_3": 21,
+    "phase_4": 157,
+    "agents": 178
+  },
+  {
+    "name": "Inflammatory Bowel Disease",
+    "slug": "inflammatory-bowel-disease",
+    "genes": 178,
+    "phase_3": 18,
+    "phase_4": 51,
+    "agents": 69
+  },
+  {
+    "name": "Psoriatic Arthritis",
+    "slug": "psoriatic-arthritis",
+    "genes": 155,
+    "phase_3": 17,
+    "phase_4": 40,
+    "agents": 57
+  },
+  {
+    "name": "Diabetic Neuropathy",
+    "slug": "diabetic-neuropathy",
+    "genes": 109,
+    "phase_3": 16,
+    "phase_4": 98,
+    "agents": 114
+  },
+  {
+    "name": "Benign Prostatic Hyperplasia",
+    "slug": "benign-prostatic-hyperplasia",
+    "genes": 112,
+    "phase_3": 16,
+    "phase_4": 40,
+    "agents": 56
+  },
+  {
+    "name": "Bladder Cancer",
+    "slug": "urinary-bladder-carcinoma",
+    "genes": 126,
+    "phase_3": 16,
+    "phase_4": 40,
+    "agents": 56
+  },
+  {
+    "name": "Acne Vulgaris",
+    "slug": "acne",
+    "genes": 113,
+    "phase_3": 15,
+    "phase_4": 40,
+    "agents": 55
+  },
+  {
+    "name": "Carpal Tunnel Syndrome",
+    "slug": "carpal-tunnel-syndrome",
+    "genes": 136,
+    "phase_3": 14,
+    "phase_4": 40,
+    "agents": 54
+  },
+  {
+    "name": "Venous Thromboembolism",
+    "slug": "venous-thromboembolism",
+    "genes": 105,
+    "phase_3": 13,
+    "phase_4": 40,
+    "agents": 53
+  },
+  {
+    "name": "Gout",
+    "slug": "gout",
+    "genes": 114,
+    "phase_3": 12,
+    "phase_4": 103,
+    "agents": 115
+  },
+  {
+    "name": "Gastroesophageal Reflux Disease",
+    "slug": "gastroesophageal-reflux-disease",
+    "genes": 111,
+    "phase_3": 12,
+    "phase_4": 90,
+    "agents": 102
+  },
+  {
+    "name": "Polycythemia Vera",
+    "slug": "acquired-polycythemia-vera",
+    "genes": 144,
+    "phase_3": 12,
+    "phase_4": 40,
+    "agents": 52
+  },
+  {
+    "name": "Chronic Spontaneous Urticaria",
+    "slug": "chronic-idiopathic-urticaria",
+    "genes": 130,
+    "phase_3": 12,
+    "phase_4": 40,
+    "agents": 52
+  },
+  {
+    "name": "Alcohol Abuse",
+    "slug": "alcohol-abuse",
+    "genes": 116,
+    "phase_3": 11,
+    "phase_4": 277,
+    "agents": 288
+  },
+  {
+    "name": "Huntington Disease",
+    "slug": "huntington-disease",
+    "genes": 177,
+    "phase_3": 11,
+    "phase_4": 40,
+    "agents": 51
+  },
+  {
+    "name": "Interstitial Cystitis",
+    "slug": "interstitial-cystitis",
+    "genes": 123,
+    "phase_3": 11,
+    "phase_4": 40,
+    "agents": 51
+  },
+  {
+    "name": "Kidney Stones",
+    "slug": "nephrolithiasis",
+    "genes": 127,
+    "phase_3": 11,
+    "phase_4": 40,
+    "agents": 51
+  },
+  {
+    "name": "Restless Legs Syndrome",
+    "slug": "restless-legs-syndrome",
+    "genes": 109,
+    "phase_3": 11,
+    "phase_4": 40,
+    "agents": 51
+  },
+  {
+    "name": "Alopecia Areata",
+    "slug": "alopecia-areata",
+    "genes": 126,
+    "phase_3": 10,
+    "phase_4": 40,
+    "agents": 50
+  },
+  {
+    "name": "Dermatomyositis",
+    "slug": "dermatomyositis",
+    "genes": 194,
+    "phase_3": 9,
+    "phase_4": 40,
+    "agents": 49
+  },
+  {
+    "name": "Overactive Bladder",
+    "slug": "overactive-bladder",
+    "genes": 116,
+    "phase_3": 9,
+    "phase_4": 40,
+    "agents": 49
+  },
+  {
+    "name": "Primary Sclerosing Cholangitis",
+    "slug": "sclerosing-cholangitis",
+    "genes": 187,
+    "phase_3": 8,
+    "phase_4": 40,
+    "agents": 48
+  },
+  {
+    "name": "Vitiligo",
+    "slug": "vitiligo",
+    "genes": 108,
+    "phase_3": 7,
+    "phase_4": 19,
+    "agents": 26
+  },
+  {
+    "name": "Myalgic Encephalomyelitis / Chronic Fatigue Syndrome",
+    "slug": "myalgic-encephalomyelitis-chronic-fatigue-syndrome",
+    "genes": 107,
+    "phase_3": 5,
+    "phase_4": 75,
+    "agents": 80
+  },
+  {
+    "name": "Hypothyroidism",
+    "slug": "hypothyroidism",
+    "genes": 159,
+    "phase_3": 5,
+    "phase_4": 46,
+    "agents": 51
+  },
+  {
+    "name": "Gastroparesis",
+    "slug": "gastroparesis",
+    "genes": 107,
+    "phase_3": 5,
+    "phase_4": 40,
+    "agents": 45
+  },
+  {
+    "name": "Tinnitus",
+    "slug": "tinnitus",
+    "genes": 118,
+    "phase_3": 5,
+    "phase_4": 40,
+    "agents": 45
+  },
+  {
+    "name": "Chronic Pancreatitis",
+    "slug": "chronic-pancreatitis",
+    "genes": 134,
+    "phase_3": 3,
+    "phase_4": 40,
+    "agents": 43
+  },
+  {
+    "name": "Hemophilia",
+    "slug": "hemophilia",
+    "genes": 155,
+    "phase_3": 3,
+    "phase_4": 40,
+    "agents": 43
+  },
+  {
+    "name": "Sarcopenia",
+    "slug": "sarcopenia",
+    "genes": 190,
+    "phase_3": 3,
+    "phase_4": 35,
+    "agents": 38
+  },
+  {
+    "name": "Postural Orthostatic Tachycardia Syndrome",
+    "slug": "pots",
+    "genes": 136,
+    "phase_3": 2,
+    "phase_4": 108,
+    "agents": 110
+  },
+  {
+    "name": "autoimmune gastritis",
+    "slug": "autoimmune-gastritis",
+    "genes": 100,
+    "phase_3": 2,
+    "phase_4": 86,
+    "agents": 88
+  },
+  {
+    "name": "Alpha-1 Antitrypsin Deficiency",
+    "slug": "alpha-1-antitrypsin-deficiency",
+    "genes": 141,
+    "phase_3": 2,
+    "phase_4": 40,
+    "agents": 42
+  },
+  {
+    "name": "Lyme Disease",
+    "slug": "lyme-disease",
+    "genes": 127,
+    "phase_3": 2,
+    "phase_4": 40,
+    "agents": 42
+  },
+  {
+    "name": "Celiac Disease",
+    "slug": "celiac-disease",
+    "genes": 103,
+    "phase_3": 2,
+    "phase_4": 38,
+    "agents": 40
+  },
+  {
+    "name": "Measles",
+    "slug": "measles",
+    "genes": 24,
+    "phase_3": 2,
+    "phase_4": 1,
+    "agents": 3
+  },
+  {
+    "name": "Chronic Venous Insufficiency",
+    "slug": "chronic-venous-insufficiency",
+    "genes": 117,
+    "phase_3": 1,
+    "phase_4": 40,
+    "agents": 41
+  },
+  {
+    "name": "Polycystic Kidney Disease",
+    "slug": "polycystic-kidney-disease",
+    "genes": 166,
+    "phase_3": 0,
+    "phase_4": 40,
+    "agents": 40
+  },
+  {
+    "name": "Mast Cell Activation Syndrome",
+    "slug": "mcas",
+    "genes": 49,
+    "phase_3": 0,
+    "phase_4": 8,
+    "agents": 8
+  },
+  {
     "name": "Mast Cell Activation Syndrome",
     "slug": "mast-cell-activation-syndrome",
-    "mondo_id": "MONDO:0800103",
     "genes": 49,
-    "agents": 0,
-    "has_agents": false
+    "phase_3": 0,
+    "phase_4": 0,
+    "agents": 0
   },
   {
     "name": "Mastocytosis with KIT D816V Mutation",
     "slug": "mastocytosis-with-kit-d816v-mutation",
-    "mondo_id": "N/A",
     "genes": 1,
-    "agents": 0,
-    "has_agents": false
+    "phase_3": 0,
+    "phase_4": 0,
+    "agents": 0
   },
   {
     "name": "Sjögren's Syndrome",
     "slug": "sjögrens-syndrome",
-    "mondo_id": "N/A",
     "genes": 10,
-    "agents": 0,
-    "has_agents": false
+    "phase_3": 0,
+    "phase_4": 0,
+    "agents": 0
   }
 
 ];
