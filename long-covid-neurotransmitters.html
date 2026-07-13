@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neurotransmitter Alterations in Long COVID | Serotonin, Dopamine, Glutamate &amp; More</title>
+  <meta name="description" content="What neurotransmitter and neuromodulator systems are altered in Long COVID: serotonin, dopamine, glutamate, GABA, acetylcholine, norepinephrine, and histamine, with literature evidence and citations.">
+  <meta name="keywords" content="long covid neurotransmitters, long covid serotonin, long covid dopamine, VMAT2 long covid, long covid glutamate, long covid GABA, long covid brain fog mechanism, PASC neurochemistry">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --surface-light: #fcfcfb;
+      --surface-dark: #1a1a19;
+      --text-primary-light: #0b0b0b;
+      --text-primary-dark: #ffffff;
+      --text-secondary-light: #52514e;
+      --text-secondary-dark: #c3c2b7;
+      --text-muted: #898781;
+      --gridline-light: #e1e0d9;
+      --gridline-dark: #2c2c2a;
+      --baseline-light: #c3c2b7;
+      --baseline-dark: #383835;
+      --series-normal-light: #2a78d6;
+      --series-normal-dark: #3987e5;
+      --series-lc-light: #1baf7a;
+      --series-lc-dark: #199e70;
+      --border-light: rgba(11,11,11,0.10);
+      --border-dark: rgba(255,255,255,0.10);
+      --page-light: #f9f9f7;
+      --page-dark: #0d0d0d;
+    }
+
+    html { color-scheme: light; }
+    html.dark-mode { color-scheme: dark; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: var(--surface-light);
+      color: var(--text-primary-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    html.dark-mode body {
+      background: var(--surface-dark);
+      color: var(--text-primary-dark);
+    }
+
+    .nav-minimal {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      padding: 0.75rem 1.5rem;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .nav-container .logo img { display: block; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover, .nav-link.active { color: white; }
+
+    @media (max-width: 768px) {
+      .nav-links .nav-link { display: none; }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      color: white;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .header p {
+      font-size: 1.0625rem;
+      opacity: 0.92;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding: 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    html.dark-mode .controls {
+      background: #2a2a29;
+      border-color: var(--gridline-dark);
+    }
+
+    .theme-toggle {
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--baseline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+    }
+
+    html.dark-mode .theme-toggle {
+      background: #383835;
+      border-color: #383835;
+      color: var(--text-secondary-dark);
+    }
+
+    .viz-container {
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    html.dark-mode .viz-container {
+      background: #2a2a29;
+      border-color: var(--gridline-dark);
+    }
+
+    .viz-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary-light);
+    }
+
+    html.dark-mode .viz-title { color: var(--text-primary-dark); }
+
+    svg { overflow: visible; }
+
+    .box { stroke-width: 2px; fill-opacity: 0.7; }
+    .whisker { stroke-width: 2px; stroke-linecap: round; }
+    .median { stroke-width: 2px; stroke-linecap: round; }
+
+    .axis-label { font-size: 0.75rem; fill: var(--text-secondary-light); }
+    html.dark-mode .axis-label { fill: var(--text-secondary-dark); }
+
+    .gridline { stroke: var(--gridline-light); stroke-width: 1px; }
+    html.dark-mode .gridline { stroke: var(--gridline-dark); }
+
+    .legend {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gridline-light);
+      flex-wrap: wrap;
+      font-size: 0.875rem;
+    }
+
+    html.dark-mode .legend { border-top-color: var(--gridline-dark); }
+
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-swatch { width: 16px; height: 16px; border-radius: 2px; }
+
+    .info-box {
+      background: #f1f5f9;
+      border-left: 3px solid var(--series-normal-light);
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary-light);
+      line-height: 1.6;
+    }
+
+    html.dark-mode .info-box {
+      background: #2c2c2a;
+      border-left-color: var(--series-normal-dark);
+      color: var(--text-secondary-dark);
+    }
+
+    .info-box strong { color: var(--text-primary-light); }
+    html.dark-mode .info-box strong { color: var(--text-primary-dark); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.875rem; }
+    table thead { background: var(--surface-light); border-bottom: 2px solid var(--gridline-light); }
+    html.dark-mode table thead { background: #3a3a38; border-bottom-color: var(--gridline-dark); }
+    table th { padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary-light); }
+    html.dark-mode table th { color: var(--text-primary-dark); }
+    table td { padding: 0.75rem; border-bottom: 1px solid var(--gridline-light); }
+    html.dark-mode table td { border-bottom-color: var(--gridline-dark); }
+    .stat-value { font-variant-numeric: tabular-nums; font-weight: 500; }
+
+    /* Directional evidence cards */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .evidence-card {
+      background: var(--page-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    html.dark-mode .evidence-card {
+      background: #232322;
+      border-color: var(--gridline-dark);
+    }
+
+    .evidence-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      flex-wrap: wrap;
+    }
+
+    .evidence-card p {
+      font-size: 0.85rem;
+      color: var(--text-secondary-light);
+      margin-bottom: 0.5rem;
+    }
+
+    html.dark-mode .evidence-card p { color: var(--text-secondary-dark); }
+
+    .evidence-card .direction {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .direction-down { color: #dc2626; }
+    .direction-up { color: #059669; }
+    .direction-mixed { color: #a16207; }
+
+    .evidence-card .refs {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--gridline-light);
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    html.dark-mode .evidence-card .refs { border-top-color: var(--gridline-dark); }
+
+    .evidence-card .refs a { color: var(--series-normal-light); text-decoration: none; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-established { background: #d1fae5; color: #065f46; }
+    .badge-supported { background: #dbeafe; color: #1e3a8a; }
+    .badge-emerging { background: #fef3c7; color: #78350f; }
+    .badge-contested { background: #fee2e2; color: #991b1b; }
+    .badge-mechanistic { background: #ede9fe; color: #6b21a8; }
+
+    @media (max-width: 768px) {
+      .header { padding: 2rem 1.5rem; }
+      .header h1 { font-size: 1.5rem; }
+      .viz-container { padding: 1rem; overflow-x: scroll; }
+      .legend { flex-direction: column; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav-minimal" aria-label="Main navigation">
+  <div class="nav-container">
+    <a href="https://vitalscan4pacvs.com/" class="logo" title="VitalScan4PACVS Home">
+      <img src="vitalscan-logo.svg" alt="VitalScan4PACVS - Long COVID and PACVS Research" width="140" height="28" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="https://vitalscan4pacvs.com/" class="nav-link">Home</a>
+      <a href="the-science.html" class="nav-link">The Science</a>
+      <a href="the-protocol.html" class="nav-link">The Protocol</a>
+      <a href="candidate-therapeutics.html" class="nav-link">Candidate Agents</a>
+      <a href="long-covid-endotypes.html" class="nav-link">Endotypes</a>
+      <a href="biomarker-atlas.html" class="nav-link">Biomarker Atlases</a>
+      <a href="biomarker-distribution-plots.html" class="nav-link">Biomarker Data</a>
+      <a href="long-covid-metabolites.html" class="nav-link">Metabolites</a>
+      <a href="long-covid-neurotransmitters.html" class="nav-link active">Neurotransmitters</a>
+    </div>
+  </div>
+</nav>
+<div style="background:#fef3c7;color:#78350f;text-align:center;padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;border-bottom:2px solid #f59e0b;line-height:1.5;">Status: In preparation. Protocol OSMF-VS4P-001. Registration and ethics review pending. Not currently enrolling.</div>
+
+<div class="header">
+  <h1>Neurotransmitter Alterations in Long COVID</h1>
+  <p>What is known &ndash; with real numbers where they exist &ndash; about serotonin, dopamine, glutamate, GABA, acetylcholine, norepinephrine, and histamine in Long COVID (PASC)</p>
+</div>
+
+<div class="container">
+  <div class="info-box">
+    <strong>How to read this page:</strong> Only two neurotransmitter systems currently have a published, matched healthy-vs-Long-COVID quantitative comparison with enough detail to plot as a distribution: <strong>dopamine</strong> (PET imaging of VMAT2 binding) and <strong>glutamate</strong> (brain MRS). Their box plots below use the literal reported mean &plusmn; SD (or SE, noted where relevant); the box approximates the interquartile range assuming a roughly normal distribution, since the source studies did not report quartiles directly. The other systems &ndash; serotonin, GABA, acetylcholine, norepinephrine, histamine &ndash; have real, cited evidence of a directional change but no clean matched numeric pair we could verify, so they are presented as directional evidence cards instead of fabricated box plots.
+  </div>
+
+  <div class="controls">
+    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title" id="vizTitle">Quantitative Comparisons (2 systems, 3 measures)</div>
+    <svg id="plotSvg" width="100%" height="500"></svg>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: var(--series-normal-light); border: 1px solid var(--series-normal-light);"></div>
+        <span>Healthy Control</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: var(--series-lc-light); border: 1px solid var(--series-lc-light);"></div>
+        <span>Long COVID Patients</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Summary Statistics</div>
+    <table id="statsTable">
+      <thead>
+        <tr>
+          <th>Measure</th>
+          <th>Class</th>
+          <th>Group</th>
+          <th>Mean</th>
+          <th>Approx. IQR</th>
+          <th>Approx. Range</th>
+          <th>N</th>
+        </tr>
+      </thead>
+      <tbody id="statsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Directional Evidence: Systems Without a Clean Quantitative Pair</div>
+    <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      These neurotransmitter/neuromodulator systems have real, cited evidence of altered function in Long COVID, but the published studies report significance, prevalence, or single-arm values rather than a matched mean&plusmn;SD pair suitable for a box plot. Evidence tier reflects how solid the finding is, not how large the effect looks.
+    </p>
+    <div class="evidence-grid">
+
+      <div class="evidence-card">
+        <h3>Serotonin (5-HT) <span class="badge badge-contested">Contested</span></h3>
+        <div class="direction direction-down">&darr; Reported reduced &ndash; but methodology disputed</div>
+        <p>Type-I-interferon-driven inflammation reduces gut tryptophan absorption, platelet hyperactivation depletes the body's main serotonin store, and MAO turnover increases &ndash; all plausible routes to lower circulating serotonin. Disrupted vagal signaling from this is proposed to impair hippocampal function, contributing to brain fog, memory problems, and fatigue.</p>
+        <p style="font-size:0.8rem;"><strong>Caveat:</strong> the most-cited quantitative study (Wong et al., <em>Cell</em> 2023) has been challenged on methodological grounds &ndash; incomplete platelet depletion may have inflated absolute values 30&ndash;60&times; above biological plausibility (Andres et al., <em>J Inflamm Res</em> 2024). A separate cohort of 457 controls found no significant serotonin reduction. The direction (lower in Long COVID) is plausible and mechanistically supported; the exact magnitude is not settled.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.1016/j.cell.2023.09.013" target="_blank">Wong et al., Cell 2023</a> &middot;
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11019386/" target="_blank">Andres et al., J Inflamm Res 2024 (critique)</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>GABA <span class="badge badge-emerging">Emerging</span></h3>
+        <div class="direction direction-down">&darr; Reduced cortical GABA</div>
+        <p>Intracortical inhibitory (GABAergic) signaling appears impaired in post-acute COVID syndrome, measured via MEGA-PRESS MRS in occipital cortex. Combined with excess glutamate, this points toward a cortical excitation/inhibition imbalance that may underlie hyperarousal, anxiety, and reduced inhibition of excitatory signaling.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> Long COVID (n=18) had significantly lower occipital GABA+/water ratio than controls (n=20), F(1,33)=6.15, p=0.018. Exact means are reported only in a figure, not extractable as text.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.3390/brainsci13121666" target="_blank">Marinkovic et al., Brain Sciences 2023</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Acetylcholine / Cholinergic System <span class="badge badge-mechanistic">Mechanistic</span></h3>
+        <div class="direction direction-mixed">&harr; Disrupted signaling proposed</div>
+        <p>A 2025 review proposes cholinergic dysfunction &ndash; via impaired nicotinic acetylcholine receptor (nAChR) signaling &ndash; as a potentially central mechanism, since cholinergic tone modulates the release of dopamine, serotonin, glutamate, and GABA. This could help explain the overlapping symptom pattern (cognition, dysautonomia, fatigue) shared across Long COVID and ME/CFS.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> The one case-control study with a quantitative autoantibody assay (anti-muscarinic receptor M3, n=100 Long COVID vs n=20 controls) did <strong>not</strong> reach statistical significance (p&gt;0.05), though a related beta2-adrenergic receptor autoantibody trended toward elevation (p=0.0634). Reported here transparently rather than selectively.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.3390/biom15020300" target="_blank">Han et al., Biomolecules 2025</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Norepinephrine <span class="badge badge-supported">Supported</span></h3>
+        <div class="direction direction-mixed">&uarr; Elevated in a hyperadrenergic subset</div>
+        <p>Signs of catecholamine dysregulation are well-documented in Long COVID dysautonomia, particularly the POTS-like phenotype: orthostatic intolerance, palpitations, and autonomic imbalance, plausibly linked to endothelial dysfunction and altered cerebral blood flow.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> No matched case-control study with clean mean&plusmn;SD plasma/CSF norepinephrine (Long COVID vs healthy controls) was found. A deep-phenotyping study found 38% of Long-COVID-POTS patients (n=24) met the &gt;600 pg/mL standing norepinephrine threshold that clinically defines "hyperadrenergic POTS" &ndash; a subset finding, not a population mean comparison.</p>
+        <div class="refs">Deep-phenotyping POTS cohort, medRxiv 2025 preprint (clinical threshold study, not a matched control comparison)</div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Histamine (via Mast Cell Activation) <span class="badge badge-emerging">Emerging</span></h3>
+        <div class="direction direction-up">&uarr; Excessive release proposed</div>
+        <p>Mast cell activation syndrome (MCAS) or mast cell hyperactivation is prevalent in a subset of Long COVID patients, plausibly driving neuroinflammation, allergic-type symptoms, cardiovascular issues, GI problems, brain fog, and fatigue. Many patients report symptomatic improvement with H1/H2 antihistamines, which is suggestive but not diagnostic of a histamine-driven mechanism.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> No verified case-control study with matched mean&plusmn;SD plasma histamine (Long COVID vs healthy controls) was found. Elevated histamine (case series, ~34% of tested patients) and MCAS-consistent symptom prevalence are documented, but not as a population-level quantitative comparison.</p>
+        <div class="refs">MCAS/Long COVID clinical case series literature (symptom-prevalence and single-patient assay data only)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; padding: 1rem; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 0.8rem; color: #92400e; line-height: 1.6;">
+    <strong style="color: #78350f;">Important caveats:</strong>
+    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+      <li><strong>Interconnected systems:</strong> inflammation affects multiple neurotransmitter systems at once; cholinergic dysfunction is proposed to influence dopamine, serotonin, glutamate, and GABA release simultaneously &ndash; these are not independent findings.</li>
+      <li><strong>Individual variation:</strong> not every Long COVID patient shows the same neurochemical pattern; endotype (see Endotypes page) likely explains much of the heterogeneity.</li>
+      <li><strong>Overlap with ME/CFS:</strong> most of these findings are shared with, or were first described in, myalgic encephalomyelitis/chronic fatigue syndrome.</li>
+      <li><strong>Early-stage evidence:</strong> as of 2026, this field is still evolving; several of the studies above are single-cohort findings awaiting replication.</li>
+      <li><strong>Not a treatment guide:</strong> interventions referenced here (SSRIs, antihistamines, dopamine-supportive approaches) show promise in subsets of patients but are not universally effective and should only be pursued under medical supervision.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const measures = [
+    {
+      id: "vmat2",
+      name: "Dopamine (VMAT2 binding potential, striatum PET)",
+      unit: "BPND (unitless)",
+      class: "neurotransmitter",
+      normal: { median: 1.91, q1: 1.768, q3: 2.052, min: 1.49, max: 2.33 },
+      lc: { median: 1.60, q1: 1.398, q3: 1.802, min: 1.00, max: 2.20 },
+      n: "n=24 per group",
+      refs: "Liu et al., eBioMedicine 2026; (+)[11C]DTBZ PET, combined striatal analysis; -16% reduction, p=0.000038; correlated with apathy, motor slowing, fatigue, and memory difficulty. Approximate quartiles derived from reported mean &plusmn; SD.",
+      links: [
+        { title: "Liu et al. 2026", url: "https://doi.org/10.1016/j.ebiom.2026.106339" }
+      ]
+    },
+    {
+      id: "glutamate-pgacc",
+      name: "Glutamate (pregenual anterior cingulate cortex, 7T MRS)",
+      unit: "mmol/kg",
+      class: "neurotransmitter",
+      normal: { median: 13.78, q1: 12.95, q3: 14.61, min: 11.33, max: 16.23 },
+      lc: { median: 14.12, q1: 13.29, q3: 14.95, min: 11.65, max: 16.59 },
+      n: "HC n=24, LC n=21",
+      refs: "7T MRS study, pregenual ACC; values reported as mean(SE) in source, SD estimated as SE&times;&radic;n for visualization; modest elevation trend consistent with glutamate excitotoxicity hypothesis.",
+      links: [
+        { title: "Mol Psychiatry 2025", url: "https://doi.org/10.1038/s41380-025-03108-8" }
+      ]
+    },
+    {
+      id: "glutamate-dacc",
+      name: "Glutamate (dorsal anterior cingulate cortex, 7T MRS)",
+      unit: "mmol/kg",
+      class: "neurotransmitter",
+      normal: { median: 13.36, q1: 12.80, q3: 13.92, min: 11.71, max: 15.01 },
+      lc: { median: 13.43, q1: 12.62, q3: 14.24, min: 11.04, max: 15.82 },
+      n: "HC n=21, LC n=17",
+      refs: "Same 7T MRS study, second brain region; values reported as mean(SE), SD estimated as SE&times;&radic;n.",
+      links: [
+        { title: "Mol Psychiatry 2025", url: "https://doi.org/10.1038/s41380-025-03108-8" }
+      ]
+    }
+  ];
+
+  let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const themeToggle = document.getElementById("themeToggle");
+  themeToggle.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    document.documentElement.classList.toggle("dark-mode", isDarkMode);
+    themeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
+    render();
+  });
+  if (isDarkMode) {
+    document.documentElement.classList.add("dark-mode");
+    themeToggle.textContent = "☀️ Light";
+  }
+
+  function getComputedColor(group) {
+    const colors = { normal: ["#2a78d6", "#3987e5"], lc: ["#1baf7a", "#199e70"] };
+    return colors[group][isDarkMode ? 1 : 0];
+  }
+
+  function render() {
+    const svg = d3.select("#plotSvg");
+    const container = document.querySelector(".viz-container");
+    const width = container.offsetWidth - 30;
+    const height = Math.max(300, measures.length * 110);
+    svg.attr("height", height);
+
+    const margin = { top: 30, right: 40, bottom: 30, left: 300 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+
+    const yScale = d3.scaleBand()
+      .domain(measures.map((_, i) => i))
+      .range([0, plotHeight])
+      .padding(0.4);
+
+    svg.selectAll("*").remove();
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    g.selectAll(".y-label")
+      .data(measures)
+      .enter()
+      .append("text")
+      .attr("class", "axis-label")
+      .attr("x", -10)
+      .attr("y", (_, i) => yScale(i) + yScale.bandwidth() / 2)
+      .attr("text-anchor", "end")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", "0.75rem")
+      .text(m => m.name);
+
+    const boxWidth = yScale.bandwidth() / 2.5;
+
+    measures.forEach((m, idx) => {
+      const yPos = yScale(idx) + yScale.bandwidth() / 2;
+      const domainMin = Math.min(m.normal.min, m.lc.min);
+      const domainMax = Math.max(m.normal.max, m.lc.max);
+      const pad = (domainMax - domainMin) * 0.15;
+      const xScale = d3.scaleLinear()
+        .domain([domainMin - pad, domainMax + pad])
+        .range([0, plotWidth]);
+
+      g.selectAll(`.gridline-${idx}`)
+        .data(xScale.ticks(4))
+        .enter()
+        .append("line")
+        .attr("class", `gridline gridline-${idx}`)
+        .attr("x1", d => xScale(d))
+        .attr("x2", d => xScale(d))
+        .attr("y1", yPos - yScale.bandwidth() / 2)
+        .attr("y2", yPos + yScale.bandwidth() / 2);
+
+      const axisGroup = g.append("g")
+        .attr("transform", `translate(0,${yPos + yScale.bandwidth() / 2 + 5})`);
+      axisGroup.call(d3.axisBottom(xScale).ticks(4).tickSize(0))
+        .attr("font-size", "0.65rem")
+        .call(gg => gg.select(".domain").remove());
+
+      const normalY = yPos - boxWidth;
+      const nd = m.normal;
+      g.append("line").attr("class", "whisker").attr("x1", xScale(nd.min)).attr("x2", xScale(nd.max)).attr("y1", normalY).attr("y2", normalY).attr("stroke", getComputedColor("normal"));
+      g.append("rect").attr("class", "box").attr("x", xScale(nd.q1)).attr("y", normalY - boxWidth / 2).attr("width", xScale(nd.q3) - xScale(nd.q1)).attr("height", boxWidth).attr("fill", getComputedColor("normal")).attr("stroke", getComputedColor("normal"));
+      g.append("line").attr("class", "median").attr("x1", xScale(nd.median)).attr("x2", xScale(nd.median)).attr("y1", normalY - boxWidth / 2).attr("y2", normalY + boxWidth / 2).attr("stroke", "white").attr("stroke-width", 2.5);
+
+      const lcY = yPos + boxWidth;
+      const ld = m.lc;
+      g.append("line").attr("class", "whisker").attr("x1", xScale(ld.min)).attr("x2", xScale(ld.max)).attr("y1", lcY).attr("y2", lcY).attr("stroke", getComputedColor("lc"));
+      g.append("rect").attr("class", "box").attr("x", xScale(ld.q1)).attr("y", lcY - boxWidth / 2).attr("width", xScale(ld.q3) - xScale(ld.q1)).attr("height", boxWidth).attr("fill", getComputedColor("lc")).attr("stroke", getComputedColor("lc"));
+      g.append("line").attr("class", "median").attr("x1", xScale(ld.median)).attr("x2", xScale(ld.median)).attr("y1", lcY - boxWidth / 2).attr("y2", lcY + boxWidth / 2).attr("stroke", "white").attr("stroke-width", 2.5);
+    });
+
+    updateStatsTable();
+  }
+
+  function updateStatsTable() {
+    const tbody = document.getElementById("statsBody");
+    tbody.innerHTML = measures.map(m => {
+      let linkStr = '';
+      if (m.links && m.links.length > 0) {
+        linkStr = m.links.map(ln => '<a href=' + ln.url + ' target=_blank style="color:var(--series-normal-light);">' + ln.title + '</a>').join(' | ');
+      }
+      return '<tr><td><strong>' + m.name + '</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">' + m.unit + '</span></td><td style="font-size:0.8rem;color:var(--text-muted);">' + m.class + '</td><td><strong>Healthy</strong></td><td class="stat-value">' + m.normal.median + '</td><td class="stat-value">' + m.normal.q1.toFixed(2) + '-' + m.normal.q3.toFixed(2) + '</td><td class="stat-value">' + m.normal.min.toFixed(2) + '-' + m.normal.max.toFixed(2) + '</td><td class="stat-value">' + m.n + '</td></tr>' +
+             '<tr style="background:var(--page-light);"><td></td><td></td><td><strong>Long COVID</strong></td><td class="stat-value">' + m.lc.median + '</td><td class="stat-value">' + m.lc.q1.toFixed(2) + '-' + m.lc.q3.toFixed(2) + '</td><td class="stat-value">' + m.lc.min.toFixed(2) + '-' + m.lc.max.toFixed(2) + '</td><td class="stat-value">' + m.n + '</td></tr>' +
+             '<tr style="border-bottom:2px solid var(--gridline-light);"><td colspan="7" style="font-size:0.75rem;color:var(--text-muted);padding-top:0.5rem;padding-bottom:1rem;">' + (linkStr ? '<div style="margin-bottom:0.5rem;">' + linkStr + '</div>' : '') + '<div>Ref: ' + m.refs + '</div></td></tr>';
+    }).join('');
+  }
+
+  render();
+  window.addEventListener("resize", render);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metabolite Alterations in Long COVID | Lipids, Amino Acids &amp; Energy Metabolism</title>
+  <meta name="description" content="What metabolites are altered in Long COVID: cholesterol/lipids, homocysteine, tryptophan and the kynurenine pathway, TCA cycle intermediates, amino acids, and acylcarnitines, with literature evidence and citations.">
+  <meta name="keywords" content="long covid metabolites, long covid cholesterol, long covid homocysteine, long covid tryptophan, long covid kynurenine, long covid TCA cycle, long covid acylcarnitines, PASC metabolomics">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --surface-light: #fcfcfb;
+      --surface-dark: #1a1a19;
+      --text-primary-light: #0b0b0b;
+      --text-primary-dark: #ffffff;
+      --text-secondary-light: #52514e;
+      --text-secondary-dark: #c3c2b7;
+      --text-muted: #898781;
+      --gridline-light: #e1e0d9;
+      --gridline-dark: #2c2c2a;
+      --baseline-light: #c3c2b7;
+      --baseline-dark: #383835;
+      --series-normal-light: #2a78d6;
+      --series-normal-dark: #3987e5;
+      --series-lc-light: #1baf7a;
+      --series-lc-dark: #199e70;
+      --border-light: rgba(11,11,11,0.10);
+      --border-dark: rgba(255,255,255,0.10);
+      --page-light: #f9f9f7;
+      --page-dark: #0d0d0d;
+    }
+
+    html { color-scheme: light; }
+    html.dark-mode { color-scheme: dark; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: var(--surface-light);
+      color: var(--text-primary-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    html.dark-mode body {
+      background: var(--surface-dark);
+      color: var(--text-primary-dark);
+    }
+
+    .nav-minimal {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      padding: 0.75rem 1.5rem;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .nav-container .logo img { display: block; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover, .nav-link.active { color: white; }
+
+    @media (max-width: 768px) {
+      .nav-links .nav-link { display: none; }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      color: white;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .header p {
+      font-size: 1.0625rem;
+      opacity: 0.92;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding: 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 8px;
+      align-items: center;
+    }
+
+    html.dark-mode .controls {
+      background: #2a2a29;
+      border-color: var(--gridline-dark);
+    }
+
+    .control-group { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+
+    .control-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .filter-btn {
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--baseline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+      transition: all 0.15s;
+    }
+
+    html.dark-mode .filter-btn {
+      background: #383835;
+      border-color: #383835;
+      color: var(--text-secondary-dark);
+    }
+
+    .filter-btn:hover { border-color: var(--series-normal-light); color: var(--series-normal-light); }
+
+    .filter-btn.active {
+      background: var(--series-normal-light);
+      border-color: var(--series-normal-light);
+      color: white;
+    }
+
+    html.dark-mode .filter-btn.active {
+      background: var(--series-normal-dark);
+      border-color: var(--series-normal-dark);
+    }
+
+    .theme-toggle {
+      margin-left: auto;
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--baseline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+    }
+
+    html.dark-mode .theme-toggle {
+      background: #383835;
+      border-color: #383835;
+      color: var(--text-secondary-dark);
+    }
+
+    .viz-container {
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    html.dark-mode .viz-container {
+      background: #2a2a29;
+      border-color: var(--gridline-dark);
+    }
+
+    .viz-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary-light);
+    }
+
+    html.dark-mode .viz-title { color: var(--text-primary-dark); }
+
+    svg { overflow: visible; }
+    .box { stroke-width: 2px; fill-opacity: 0.7; }
+    .whisker { stroke-width: 2px; stroke-linecap: round; }
+    .median { stroke-width: 2px; stroke-linecap: round; }
+    .axis-label { font-size: 0.75rem; fill: var(--text-secondary-light); }
+    html.dark-mode .axis-label { fill: var(--text-secondary-dark); }
+    .gridline { stroke: var(--gridline-light); stroke-width: 1px; }
+    html.dark-mode .gridline { stroke: var(--gridline-dark); }
+
+    .legend {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gridline-light);
+      flex-wrap: wrap;
+      font-size: 0.875rem;
+    }
+
+    html.dark-mode .legend { border-top-color: var(--gridline-dark); }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-swatch { width: 16px; height: 16px; border-radius: 2px; }
+
+    .info-box {
+      background: #f1f5f9;
+      border-left: 3px solid var(--series-normal-light);
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary-light);
+      line-height: 1.6;
+    }
+
+    html.dark-mode .info-box {
+      background: #2c2c2a;
+      border-left-color: var(--series-normal-dark);
+      color: var(--text-secondary-dark);
+    }
+
+    .info-box strong { color: var(--text-primary-light); }
+    html.dark-mode .info-box strong { color: var(--text-primary-dark); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.875rem; }
+    table thead { background: var(--surface-light); border-bottom: 2px solid var(--gridline-light); }
+    html.dark-mode table thead { background: #3a3a38; border-bottom-color: var(--gridline-dark); }
+    table th { padding: 0.75rem; text-align: left; font-weight: 600; color: var(--text-primary-light); }
+    html.dark-mode table th { color: var(--text-primary-dark); }
+    table td { padding: 0.75rem; border-bottom: 1px solid var(--gridline-light); }
+    html.dark-mode table td { border-bottom-color: var(--gridline-dark); }
+    .stat-value { font-variant-numeric: tabular-nums; font-weight: 500; }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .evidence-card {
+      background: var(--page-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    html.dark-mode .evidence-card {
+      background: #232322;
+      border-color: var(--gridline-dark);
+    }
+
+    .evidence-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      flex-wrap: wrap;
+    }
+
+    .evidence-card p {
+      font-size: 0.85rem;
+      color: var(--text-secondary-light);
+      margin-bottom: 0.5rem;
+    }
+
+    html.dark-mode .evidence-card p { color: var(--text-secondary-dark); }
+
+    .evidence-card .direction { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .direction-down { color: #dc2626; }
+    .direction-up { color: #059669; }
+    .direction-mixed { color: #a16207; }
+
+    .evidence-card .refs {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--gridline-light);
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    html.dark-mode .evidence-card .refs { border-top-color: var(--gridline-dark); }
+    .evidence-card .refs a { color: var(--series-normal-light); text-decoration: none; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-established { background: #d1fae5; color: #065f46; }
+    .badge-supported { background: #dbeafe; color: #1e3a8a; }
+    .badge-emerging { background: #fef3c7; color: #78350f; }
+    .badge-contested { background: #fee2e2; color: #991b1b; }
+    .badge-mechanistic { background: #ede9fe; color: #6b21a8; }
+
+    @media (max-width: 768px) {
+      .header { padding: 2rem 1.5rem; }
+      .header h1 { font-size: 1.5rem; }
+      .controls { flex-direction: column; align-items: flex-start; }
+      .theme-toggle { margin-left: 0; }
+      .viz-container { padding: 1rem; overflow-x: scroll; }
+      .legend { flex-direction: column; gap: 0.75rem; }
+    }
+
+    /* Mitochondria diagram */
+    .mito-wrap {
+      display: grid;
+      grid-template-columns: minmax(280px, 480px) 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .mito-wrap { grid-template-columns: 1fr; }
+    }
+
+    .mito-svg-holder svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    .mito-outer { fill: var(--page-light); stroke: var(--text-secondary-light); stroke-width: 2.5; }
+    html.dark-mode .mito-outer { fill: #232322; stroke: var(--text-secondary-dark); }
+
+    .mito-crista { fill: none; stroke: var(--text-secondary-light); stroke-width: 2; opacity: 0.55; }
+    html.dark-mode .mito-crista { stroke: var(--text-secondary-dark); }
+
+    .mito-dot { stroke: var(--surface-light); stroke-width: 2; }
+    html.dark-mode .mito-dot { stroke: var(--surface-dark); }
+
+    .mito-leader { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3,2; }
+
+    .mito-label {
+      font-size: 11.5px;
+      fill: var(--text-secondary-light);
+      font-family: inherit;
+    }
+
+    html.dark-mode .mito-label { fill: var(--text-secondary-dark); }
+
+    .mito-label tspan.mito-label-title {
+      font-weight: 700;
+      fill: var(--text-primary-light);
+    }
+
+    html.dark-mode .mito-label tspan.mito-label-title { fill: var(--text-primary-dark); }
+
+    .mito-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .mito-list-item {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      font-size: 0.85rem;
+      color: var(--text-secondary-light);
+      line-height: 1.55;
+    }
+
+    html.dark-mode .mito-list-item { color: var(--text-secondary-dark); }
+
+    .mito-list-item .dot {
+      flex: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: 0.3rem;
+    }
+
+    .mito-list-item strong { color: var(--text-primary-light); }
+    html.dark-mode .mito-list-item strong { color: var(--text-primary-dark); }
+
+    .mito-list-item a { color: var(--series-normal-light); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav class="nav-minimal" aria-label="Main navigation">
+  <div class="nav-container">
+    <a href="https://vitalscan4pacvs.com/" class="logo" title="VitalScan4PACVS Home">
+      <img src="vitalscan-logo.svg" alt="VitalScan4PACVS - Long COVID and PACVS Research" width="140" height="28" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="https://vitalscan4pacvs.com/" class="nav-link">Home</a>
+      <a href="the-science.html" class="nav-link">The Science</a>
+      <a href="the-protocol.html" class="nav-link">The Protocol</a>
+      <a href="candidate-therapeutics.html" class="nav-link">Candidate Agents</a>
+      <a href="long-covid-endotypes.html" class="nav-link">Endotypes</a>
+      <a href="biomarker-atlas.html" class="nav-link">Biomarker Atlases</a>
+      <a href="biomarker-distribution-plots.html" class="nav-link">Biomarker Data</a>
+      <a href="long-covid-metabolites.html" class="nav-link active">Metabolites</a>
+      <a href="long-covid-neurotransmitters.html" class="nav-link">Neurotransmitters</a>
+    </div>
+  </div>
+</nav>
+<div style="background:#fef3c7;color:#78350f;text-align:center;padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;border-bottom:2px solid #f59e0b;line-height:1.5;">Status: In preparation. Protocol OSMF-VS4P-001. Registration and ethics review pending. Not currently enrolling.</div>
+
+<div class="header">
+  <h1>Metabolite Alterations in Long COVID</h1>
+  <p>Lipids, amino acids, one-carbon metabolism, and energy pathway metabolites altered in Long COVID (PASC), with literature values and citations</p>
+</div>
+
+<div class="container">
+  <div class="info-box">
+    <strong>How to read this page:</strong> Each metabolite is plotted as a box-and-whisker distribution: <strong>Healthy Control (blue)</strong> vs. <strong>Long COVID (teal)</strong>. The TCA-cycle, amino-acid, and acylcarnitine entries below are built from the <strong>raw per-sample supplementary data</strong> of Guntur et al. 2022 (n=30 healthy controls, n=29 PASC) &ndash; true quartiles and ranges from LC-MS peak-area measurements, not literature-reported summary statistics. Lipid, homocysteine, and tryptophan entries instead use a published mean &plusmn; SD (or SE), with the box approximating the interquartile range assuming a roughly normal distribution &ndash; the underlying mean, SD, and n are always given in the reference row so you can check the source directly. A separate section below covers metabolites with real, cited significance but no extractable absolute values (mostly untargeted studies reporting only fold-change and p-value).
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Where It Goes Wrong: The Mitochondrion in Long COVID</div>
+    <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      A cutaway of a single mitochondrion, annotated with eight sites of documented dysfunction in PACS/PACVS &ndash; from impaired protein import at the outer membrane through to disrupted fission/fusion dynamics and compensatory mitophagy. Directions shown are <span style="color:#dc2626;font-weight:600;">reduced</span>, <span style="color:#059669;font-weight:600;">elevated</span>, or <span style="color:#a16207;font-weight:600;">mixed/compartment-dependent</span>.
+    </p>
+    <div class="mito-wrap">
+      <div class="mito-svg-holder">
+        <svg viewBox="0 0 700 420" role="img" aria-labelledby="mitoSvgTitle mitoSvgDesc">
+          <title id="mitoSvgTitle">Cutaway diagram of a mitochondrion</title>
+          <desc id="mitoSvgDesc">Eight labeled sites of mitochondrial dysfunction in Long COVID: protein import, electron transport chain, TCA cycle, beta-oxidation, ROS/antioxidants, mtDNA, mitochondrial dynamics, and mitophagy.</desc>
+
+          <!-- Outer + inner membrane (bean shape) -->
+          <path class="mito-outer" d="M110,210 C110,95 250,45 350,45 C475,45 590,100 590,210 C590,315 475,375 350,375 C235,375 110,320 110,210 Z" />
+
+          <!-- Cristae (folded inner membrane) -->
+          <path class="mito-crista" d="M170,140 Q205,120 240,140 T310,140 T380,140 T450,140 T520,140" />
+          <path class="mito-crista" d="M160,185 Q195,165 230,185 T300,185 T370,185 T440,185 T510,185" />
+          <path class="mito-crista" d="M160,235 Q195,215 230,235 T300,235 T370,235 T440,235 T510,235" />
+          <path class="mito-crista" d="M170,280 Q205,260 240,280 T310,280 T380,280 T450,280 T520,280" />
+          <path class="mito-crista" d="M195,320 Q225,304 255,320 T315,320 T375,320 T435,320" />
+
+          <!-- Hotspot: Protein import (TOM70/ORF9b) - top, outer membrane -->
+          <circle class="mito-dot" cx="350" cy="47" r="7" fill="#dc2626" />
+          <line class="mito-leader" x1="350" y1="47" x2="350" y2="18" />
+          <text class="mito-label" x="350" y="13" text-anchor="middle"><tspan class="mito-label-title">Protein import</tspan></text>
+
+          <!-- Hotspot: mtDNA copy number - matrix left -->
+          <circle class="mito-dot" cx="230" cy="210" r="7" fill="#dc2626" />
+          <line class="mito-leader" x1="230" y1="210" x2="90" y2="235" />
+          <text class="mito-label" x="10" y="230"><tspan class="mito-label-title">mtDNA copy number</tspan></text>
+          <text class="mito-label" x="10" y="246">Reduced</text>
+
+          <!-- Hotspot: ETC / ATP production - right crista -->
+          <circle class="mito-dot" cx="460" cy="185" r="7" fill="#dc2626" />
+          <line class="mito-leader" x1="460" y1="185" x2="620" y2="150" />
+          <text class="mito-label" x="628" y="146"><tspan class="mito-label-title">Electron transport / ATP</tspan></text>
+          <text class="mito-label" x="628" y="162">Reduced</text>
+
+          <!-- Hotspot: TCA cycle - matrix center -->
+          <circle class="mito-dot" cx="340" cy="255" r="7" fill="#a16207" />
+          <line class="mito-leader" x1="340" y1="255" x2="628" y2="235" />
+          <text class="mito-label" x="628" y="231"><tspan class="mito-label-title">TCA cycle intermediates</tspan></text>
+          <text class="mito-label" x="628" y="247">Mixed by compartment</text>
+
+          <!-- Hotspot: Beta-oxidation / acylcarnitines - lower inner membrane -->
+          <circle class="mito-dot" cx="280" cy="310" r="7" fill="#a16207" />
+          <line class="mito-leader" x1="280" y1="310" x2="628" y2="320" />
+          <text class="mito-label" x="628" y="316"><tspan class="mito-label-title">&beta;-oxidation / acylcarnitines</tspan></text>
+          <text class="mito-label" x="628" y="332">Mixed by chain length</text>
+
+          <!-- Hotspot: ROS & antioxidants - upper right crista -->
+          <circle class="mito-dot" cx="500" cy="140" r="7" fill="#a16207" />
+          <line class="mito-leader" x1="500" y1="140" x2="628" y2="90" />
+          <text class="mito-label" x="628" y="86"><tspan class="mito-label-title">ROS &amp; antioxidants</tspan></text>
+          <text class="mito-label" x="628" y="102">SOD &uarr; / CoQ10 &darr;</text>
+
+          <!-- Hotspot: Mitochondrial dynamics (MFN2/DRP1) - outer membrane right -->
+          <circle class="mito-dot" cx="575" cy="230" r="7" fill="#059669" />
+          <line class="mito-leader" x1="575" y1="230" x2="628" y2="400" />
+          <text class="mito-label" x="628" y="396" text-anchor="start"><tspan class="mito-label-title">Fission / fusion balance</tspan></text>
+          <text class="mito-label" x="628" y="412">MFN2 &amp; DRP1 elevated</text>
+
+          <!-- Hotspot: Mitophagy (ATG4B) - outer membrane left -->
+          <circle class="mito-dot" cx="130" cy="230" r="7" fill="#059669" />
+          <line class="mito-leader" x1="130" y1="230" x2="10" y2="370" />
+          <text class="mito-label" x="10" y="386"><tspan class="mito-label-title">Mitophagy (ATG4B)</tspan></text>
+          <text class="mito-label" x="10" y="402">Elevated</text>
+        </svg>
+      </div>
+
+      <div class="mito-list">
+        <div class="mito-list-item"><span class="dot" style="background:#dc2626;"></span><div><strong>Protein import (TOM70&ndash;Hsp90):</strong> reduced &ndash; SARS-CoV-2 ORF9b blocks TOM70's interaction with Hsp90, impairing mitochondrial protein import and downstream oxidative phosphorylation. <a href="https://doi.org/10.1016/j.biochi.2022.05.009" target="_blank">Ayinde et al. 2022</a></div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#dc2626;"></span><div><strong>mtDNA copy number:</strong> reduced &ndash; associated with impaired oxidative phosphorylation and metabolic inflexibility; lower copy number also predicts weaker immune response after vaccination. <a href="https://doi.org/10.1016/j.isci.2023.107094" target="_blank">Ikezaki et al. 2023</a></div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#dc2626;"></span><div><strong>Electron transport chain / ATP production:</strong> reduced &ndash; ME/CFS and PACS biopsy studies show impaired electron transport, reduced ATP production, and disrupted mitochondrial membrane potential.</div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#a16207;"></span><div><strong>TCA cycle intermediates:</strong> mixed by compartment &ndash; succinate, citrate, malate, pyruvate, and lactate reduced in PASC plasma (<a href="https://doi.org/10.3390/metabo12111026" target="_blank">Guntur et al. 2022</a>), but malate, citrate, and alpha-ketoglutarate elevated in COVID-19 monocytes (Ambikan et al. 2022) &ndash; tissue- and compartment-dependent.</div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#a16207;"></span><div><strong>&beta;-oxidation / acylcarnitines:</strong> mixed by chain length &ndash; short-chain C2/C3 acylcarnitines reduced (impaired initial flux into &beta;-oxidation), while medium- and long-chain acylcarnitines (C8&ndash;C18) and free fatty acids are elevated, consistent with incomplete oxidation and malonyl-CoA-mediated CPT-1 inhibition. <a href="https://doi.org/10.3390/metabo12111026" target="_blank">Guntur et al. 2022</a></div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#a16207;"></span><div><strong>ROS &amp; antioxidants:</strong> superoxide dismutase elevated (compensatory), while CoQ10 and glutathione are depleted; F2-isoprostanes and malondialdehyde (oxidative damage markers) are elevated.</div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#059669;"></span><div><strong>Fission/fusion balance (MFN2, DRP1):</strong> both elevated &ndash; suggesting a disrupted balance between mitochondrial fusion and fission and reduced structural integrity of the electron transport chain.</div></div>
+        <div class="mito-list-item"><span class="dot" style="background:#059669;"></span><div><strong>Mitophagy (ATG4B):</strong> elevated &ndash; consistent with enhanced mitochondrial recycling as a compensatory response to accumulated damage.</div></div>
+      </div>
+    </div>
+    <p style="margin-top:1.25rem; font-size:0.75rem; color:var(--text-muted);">Sources: Gracidas, Levy, Varon &amp; Halma, "Lactate, Capnia, and Fat Oxidation as therapeutic axes for SARS-CoV-2 spike protein-induced sequelae," <em>Hormone and Metabolic Research</em> (in review); Guntur et al., <em>Metabolites</em> 2022; Ambikan et al., <em>Cell Systems</em> 2022; Ikezaki et al., <em>iScience</em> 2023; Ayinde et al., <em>Biochimie</em> 2022; Szögi et al., <em>GeroScience</em> 2024.</p>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <span class="control-label">Filter by class:</span>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="lipid">Lipids</button>
+      <button class="filter-btn" data-filter="amino-acid">Amino Acids</button>
+      <button class="filter-btn" data-filter="tryptophan-pathway">Tryptophan Pathway</button>
+      <button class="filter-btn" data-filter="tca-cycle">TCA Cycle</button>
+      <button class="filter-btn" data-filter="acylcarnitine">Acylcarnitines</button>
+    </div>
+    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title" id="vizTitle">All Metabolites (5)</div>
+    <svg id="plotSvg" width="100%" height="500"></svg>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: var(--series-normal-light); border: 1px solid var(--series-normal-light);"></div>
+        <span>Healthy Control</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: var(--series-lc-light); border: 1px solid var(--series-lc-light);"></div>
+        <span>Long COVID Patients</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Summary Statistics</div>
+    <table id="statsTable">
+      <thead>
+        <tr>
+          <th>Metabolite</th>
+          <th>Class</th>
+          <th>Group</th>
+          <th>Mean</th>
+          <th>Approx. IQR</th>
+          <th>Approx. Range</th>
+          <th>N</th>
+        </tr>
+      </thead>
+      <tbody id="statsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Directional Evidence: Metabolites Without an Extractable Absolute Value</div>
+    <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      Most Long COVID metabolomics studies are untargeted mass-spectrometry panels that report relative abundance, fold-change, and FDR-corrected p-values &ndash; not absolute concentrations in standard units. The findings below are real and cited, but shown as direction-of-change rather than box plots, since the source papers do not expose plottable numbers in their text (only in supplementary tables or figure images).
+    </p>
+    <div class="evidence-grid">
+
+      <div class="evidence-card">
+        <h3>Kynurenine / Tryptophan Ratio <span class="badge badge-established">Established</span></h3>
+        <div class="direction direction-up">&uarr; Elevated &ndash; large, replicated effect</div>
+        <p>The kynurenine pathway diverts tryptophan away from serotonin synthesis. Its activation is one of the most consistently replicated metabolic findings in Long COVID, cross-validated by an independent meta-analysis.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> z-score of KYN/TRP ratio rises with severity: controls &minus;0.104&plusmn;0.889, mild Long COVID &minus;0.302&plusmn;0.876, severe Long COVID 0.760&plusmn;1.043 (p&lt;0.001, n=30/40/20). Meta-analysis of 14 studies (480 Long COVID vs 687 controls): SMD 0.755 [0.119, 1.392] for the ratio; kynurenine alone SMD 1.176; tryptophan alone SMD &minus;0.520.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.3389/fnmol.2023.1194769" target="_blank">Al-Hakeim et al., Front Mol Neurosci 2023</a> &middot;
+          <a href="https://doi.org/10.1016/j.neuroscience.2024.10.021" target="_blank">Almulla et al., Neuroscience 2024 (meta-analysis)</a>
+        </div>
+      </div>
+
+
+      <div class="evidence-card">
+        <h3>Glucose, Pyruvic Acid, Putrescine <span class="badge badge-emerging">Emerging</span></h3>
+        <div class="direction direction-up">&uarr; Elevated two years post-infection</div>
+        <p>In a two-year follow-up cohort, glucose, kynurenine, pyruvic acid, and putrescine were all elevated in Long COVID compared to healthy controls, while glutamic acid and taurine were reduced &ndash; showing that some metabolic disturbances persist well beyond the acute and early post-acute phases.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> Long COVID n=48 vs. healthy controls n=37, two years post-infection. Glucose p=5&times;10&#8315;&#8309;, kynurenine p=3&times;10&#8315;&#8308;, pyruvic acid p=0.01, putrescine p=0.01; glutamic acid p=2.9&times;10&#8315;&#8308;, taurine p=1.3&times;10&#8315;&#179;.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.1038/s41598-023-39049-x" target="_blank">L&oacute;pez-Hern&aacute;ndez et al., Sci Rep 2023</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Vitamin B12 &amp; Folate <span class="badge badge-contested">Contested</span></h3>
+        <div class="direction direction-mixed">&harr; Lower means observed, not statistically significant</div>
+        <p>Reported for completeness: both B12 and folate trended lower in long-term post-COVID recovery, but neither reached statistical significance in the one study identified &ndash; unlike homocysteine (see chart above), which was significantly elevated in the same cohort.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> B12: controls 201&plusmn;10 ng/L (n=64) vs. long-term recovered 184&plusmn;7 ng/L (n=62), p=0.593. Folate: controls 6.19&plusmn;0.86 &mu;g/L vs. recovered 5.47&plusmn;0.71 &mu;g/L, p=0.275.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.3390/jpm13030503" target="_blank">Oner et al., J Pers Med 2023</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Sarcosine, Phenylalanine &amp; Spermidine <span class="badge badge-emerging">Emerging</span></h3>
+        <div class="direction direction-down">&darr; Depleted, correlates with symptom severity</div>
+        <p>Sarcosine and phenylalanine are reduced in PACS, and sarcosine levels are inversely correlated with depression, anxiety, and cognitive dysfunction scores &ndash; making it one of the few metabolites with a direct symptom-severity link rather than just a group-mean difference. Spermidine is separately reported as reduced in a plasma fatty-acid/amino-acid survey of Long COVID patients.</p>
+        <p style="font-size:0.8rem;"><strong>Data:</strong> Reported as significant reductions (exact means not extractable from published text) in amino-acid/post-translational-modification serum panels (Mikuteit et al., n reported per cohort) and metabolomic/immune profiling in Long COVID with chronic fatigue syndrome (Saito et al.). Synthesized in a 2025 mechanistic review proposing sarcosine (0.5&ndash;2&nbsp;g/day) and serine repletion as candidate interventions.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.1007/s00726-023-03303-8" target="_blank">Mikuteit et al., Amino Acids 2023</a> &middot;
+          <a href="https://doi.org/10.3389/fimmu.2024.1341843" target="_blank">Saito et al., Front Immunol 2024</a> &middot;
+          <a href="https://doi.org/10.1016/j.biopha.2025.118864" target="_blank">Halma &amp; Varon, Biomed Pharmacother 2025</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; padding: 1rem; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 0.8rem; color: #92400e; line-height: 1.6;">
+    <strong style="color: #78350f;">Clinical interpretation:</strong>
+    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+      <li><strong>Severity gradient matters:</strong> several of these metabolites (tryptophan, KYN/TRP ratio, HDL-cholesterol) shift non-monotonically or more strongly with Long COVID severity &ndash; a single "Long COVID" number can mask a mild-vs-severe split reported in the source study (noted in each reference row).</li>
+      <li><strong>Approximated distributions:</strong> box plots above are derived from published mean &plusmn; SD (or SE), not literal reported quartiles &ndash; treat the box edges as an approximation of typical spread, not an exact IQR.</li>
+      <li><strong>Untargeted vs targeted assays:</strong> the "Directional Evidence" metabolites come from untargeted metabolomics (relative abundance) rather than targeted, calibrated assays (absolute concentration) &ndash; useful for direction and mechanism, not for individual patient interpretation.</li>
+      <li><strong>Research-only:</strong> most of these assays are not part of routine clinical care; homocysteine, B12, folate, and the lipid panel are the exceptions and are available through standard clinical labs.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const metabolites = [
+    {
+      id: "hdl",
+      name: "HDL-Cholesterol",
+      unit: "mmol/L",
+      class: "lipid",
+      normal: { median: 1.5, q1: 1.163, q3: 1.837, min: 0.5, max: 2.5 },
+      lc: { median: 1.3, q1: 1.030, q3: 1.570, min: 0.5, max: 2.1 },
+      n: "HC n=29, LC n=55",
+      refs: "Al-Zadjali et al., Clinics (Sao Paulo) 2024; mild/moderate Long COVID, p<0.05; severe subgroup (n=33) lower still at 1.1&plusmn;0.2 mmol/L, p<0.001",
+      links: [{ title: "Al-Zadjali 2024", url: "https://doi.org/10.1016/j.clinsp.2024.100344" }]
+    },
+    {
+      id: "ldl",
+      name: "LDL-Cholesterol",
+      unit: "mmol/L",
+      class: "lipid",
+      normal: { median: 3.1, q1: 2.493, q3: 3.707, min: 1.3, max: 4.9 },
+      lc: { median: 3.0, q1: 2.325, q3: 3.675, min: 1.0, max: 5.0 },
+      n: "HC n=29, LC n=55",
+      refs: "Al-Zadjali et al., Clinics (Sao Paulo) 2024; not statistically significant (n.s.)",
+      links: [{ title: "Al-Zadjali 2024", url: "https://doi.org/10.1016/j.clinsp.2024.100344" }]
+    },
+    {
+      id: "totalchol",
+      name: "Total Cholesterol",
+      unit: "mmol/L",
+      class: "lipid",
+      normal: { median: 5.2, q1: 4.526, q3: 5.874, min: 3.2, max: 7.2 },
+      lc: { median: 5.1, q1: 4.358, q3: 5.842, min: 2.9, max: 7.3 },
+      n: "HC n=29, LC n=55",
+      refs: "Al-Zadjali et al., Clinics (Sao Paulo) 2024; not statistically significant (n.s.)",
+      links: [{ title: "Al-Zadjali 2024", url: "https://doi.org/10.1016/j.clinsp.2024.100344" }]
+    },
+    {
+      id: "homocysteine",
+      name: "Homocysteine",
+      unit: "&mu;mol/L",
+      class: "amino-acid",
+      normal: { median: 11.313, q1: 8.802, q3: 13.824, min: 3.87, max: 18.75 },
+      lc: { median: 19.065, q1: 15.905, q3: 22.225, min: 9.71, max: 28.43 },
+      n: "HC n=64, LC n=62",
+      refs: "Oner, Yilmaz &amp; Do&#287;an, J Pers Med 2023; p<0.001; +68.5% elevation; associated with cognitive impairment in long-term post-COVID recovery",
+      links: [{ title: "Oner et al. 2023", url: "https://doi.org/10.3390/jpm13030503" }]
+    },
+    {
+      id: "tryptophan",
+      name: "Tryptophan (severe Long COVID vs. no-Long-COVID controls)",
+      unit: "ng/mL",
+      class: "tryptophan-pathway",
+      normal: { median: 11.65, q1: 8.978, q3: 14.322, min: 3.73, max: 19.57 },
+      lc: { median: 8.81, q1: 7.269, q3: 10.351, min: 4.25, max: 13.37 },
+      n: "No-LC n=30, severe LC n=20",
+      refs: "Al-Hakeim et al., Front Mol Neurosci 2023; overall p=0.007; biphasic by severity &ndash; mild Long COVID (n=40) showed a paradoxical increase to 12.93&plusmn;6.47 ng/mL before falling in severe cases; severe-group value shown here as the mechanistically consistent (serotonin-precursor-depletion) endpoint",
+      links: [{ title: "Al-Hakeim et al. 2023", url: "https://doi.org/10.3389/fnmol.2023.1194769" }]
+    },
+    {
+      id: "succinate",
+      name: "Succinate (TCA cycle)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "tca-cycle",
+      normal: { median: 0.1421, q1: 0.1274, q3: 0.1535, min: 0.0771, max: 0.2165 },
+      lc: { median: 0.1178, q1: 0.1035, q3: 0.1260, min: 0.0879, max: 0.1725 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in PASC plasma, consistent with impaired TCA cycle flux",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "citrate",
+      name: "Citrate (TCA cycle)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "tca-cycle",
+      normal: { median: 13.4792, q1: 10.9953, q3: 15.0856, min: 8.6895, max: 18.2870 },
+      lc: { median: 9.8144, q1: 7.8978, q3: 11.6861, min: 6.2311, max: 15.3863 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in PASC plasma",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "malate",
+      name: "Malate (TCA cycle)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "tca-cycle",
+      normal: { median: 0.4589, q1: 0.3737, q3: 0.5531, min: 0.2219, max: 0.8427 },
+      lc: { median: 0.3250, q1: 0.2952, q3: 0.3902, min: 0.2159, max: 0.4860 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in PASC plasma &ndash; note: opposite direction reported in COVID-19 monocytes (Ambikan et al. 2022), a tissue/compartment difference",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "pyruvate_tca",
+      name: "Pyruvate (glycolysis)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "tca-cycle",
+      normal: { median: 1.6939, q1: 1.3266, q3: 1.9711, min: 0.7636, max: 3.0735 },
+      lc: { median: 1.0120, q1: 0.8901, q3: 1.2133, min: 0.7094, max: 1.7178 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in PASC plasma",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "lactate_tca",
+      name: "Lactate (glycolysis)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "tca-cycle",
+      normal: { median: 28.6383, q1: 25.3387, q3: 33.7013, min: 14.4963, max: 43.6475 },
+      lc: { median: 17.9837, q1: 15.1410, q3: 21.2136, min: 12.2838, max: 27.0591 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in resting PASC plasma &ndash; note this is distinct from the exercise-induced early lactate rise seen on CPET",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "tyrosine",
+      name: "L-Tyrosine",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "amino-acid",
+      normal: { median: 5.6884, q1: 4.6159, q3: 7.0297, min: 2.8462, max: 11.4346 },
+      lc: { median: 4.3566, q1: 3.8526, q3: 5.0827, min: 2.4304, max: 6.9561 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in PASC plasma",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "isoleucine_leucine",
+      name: "L-Isoleucine/Leucine",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "amino-acid",
+      normal: { median: 63.3264, q1: 53.6278, q3: 90.2426, min: 28.9750, max: 148.8014 },
+      lc: { median: 57.1976, q1: 45.7220, q3: 68.0697, min: 31.7773, max: 99.6693 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced branched-chain amino acid in PASC plasma",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "valine_aa",
+      name: "L-Valine",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "amino-acid",
+      normal: { median: 72.5450, q1: 59.9614, q3: 88.4249, min: 53.4984, max: 103.8560 },
+      lc: { median: 64.9151, q1: 59.1571, q3: 75.2047, min: 51.6565, max: 98.2501 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced branched-chain amino acid in PASC plasma",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "taurine_raw",
+      name: "Taurine",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "amino-acid",
+      normal: { median: 0.0586, q1: 0.0456, q3: 0.0728, min: 0.0190, max: 0.3669 },
+      lc: { median: 0.0484, q1: 0.0382, q3: 0.0603, min: 0.0235, max: 0.1619 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); reduced in PASC plasma, matching the taurine-depletion signal reported across multiple PACS/PACVS cohorts",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "spermidine",
+      name: "Spermidine",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "amino-acid",
+      normal: { median: 0.0753, q1: 0.0551, q3: 0.1273, min: 0.0390, max: 0.3475 },
+      lc: { median: 0.1290, q1: 0.0974, q3: 0.1902, min: 0.0437, max: 0.3719 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); elevated in PASC plasma in this cohort &ndash; note this runs counter to some narrative reviews describing polyamine depletion; reported here as the directly measured value",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "spermine",
+      name: "Spermine",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "amino-acid",
+      normal: { median: 0.0471, q1: 0.0360, q3: 0.0714, min: 0.0248, max: 1.1347 },
+      lc: { median: 0.0646, q1: 0.0483, q3: 0.1018, min: 0.0327, max: 0.1901 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); median elevated in PASC vs. healthy controls in this cohort (healthy-control mean is skewed upward by one extreme outlier, 1.13&times;10&sup6; AU); direction should be read from the median/IQR, not the mean",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "ac30",
+      name: "Acylcarnitine C3:0 (propionylcarnitine)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "acylcarnitine",
+      normal: { median: 1.4616, q1: 1.2263, q3: 1.8666, min: 0.7119, max: 3.6111 },
+      lc: { median: 1.2256, q1: 0.8998, q3: 1.5957, min: 0.4398, max: 3.2936 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); short-chain acylcarnitine reduced in PASC, consistent with diminished flux through initial &beta;-oxidation",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "ac80",
+      name: "Acylcarnitine C8:0 (octanoylcarnitine)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "acylcarnitine",
+      normal: { median: 0.1919, q1: 0.1223, q3: 0.3014, min: 0.0480, max: 0.7562 },
+      lc: { median: 0.4278, q1: 0.3031, q3: 0.5925, min: 0.1322, max: 1.5541 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); medium-chain acylcarnitine elevated ~2.2&times; in PASC, consistent with incomplete &beta;-oxidation",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "ac100",
+      name: "Acylcarnitine C10:0 (decanoylcarnitine)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "acylcarnitine",
+      normal: { median: 0.5560, q1: 0.3645, q3: 0.9125, min: 0.0872, max: 2.5542 },
+      lc: { median: 1.7540, q1: 1.0590, q3: 2.3205, min: 0.5611, max: 5.0268 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); medium-chain acylcarnitine elevated ~3.2&times; in PASC, the largest fold-change among the acylcarnitines measured",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "ac141",
+      name: "Acylcarnitine C14:1 (tetradecenoylcarnitine)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "acylcarnitine",
+      normal: { median: 0.4045, q1: 0.2612, q3: 0.6288, min: 0.1220, max: 1.0435 },
+      lc: { median: 0.8734, q1: 0.6190, q3: 1.1720, min: 0.1917, max: 1.6948 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); long-chain acylcarnitine elevated ~2.2&times; in PASC",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    },
+    {
+      id: "ac161",
+      name: "Acylcarnitine C16:1 (palmitoleylcarnitine)",
+      unit: "&times;10&sup6; AU (LC-MS peak area)",
+      class: "acylcarnitine",
+      normal: { median: 0.1400, q1: 0.1088, q3: 0.1747, min: 0.0654, max: 0.2737 },
+      lc: { median: 0.2203, q1: 0.1508, q3: 0.2956, min: 0.0669, max: 0.4235 },
+      n: "HC n=30, PASC n=29",
+      refs: "Guntur et al., Metabolites 2022 &ndash; raw supplementary data (Table S1); long-chain acylcarnitine elevated ~1.6&times; in PASC",
+      links: [{ title: "Guntur 2022 (raw data)", url: "https://www.mdpi.com/2218-1989/12/11/1026" }]
+    }
+  ];
+
+  let activeFilter = "all";
+  let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const themeToggle = document.getElementById("themeToggle");
+  themeToggle.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    document.documentElement.classList.toggle("dark-mode", isDarkMode);
+    themeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
+    render();
+  });
+  if (isDarkMode) {
+    document.documentElement.classList.add("dark-mode");
+    themeToggle.textContent = "☀️ Light";
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  function getFiltered() {
+    return metabolites.filter(m => activeFilter === "all" || m.class === activeFilter);
+  }
+
+  function getComputedColor(group) {
+    const colors = { normal: ["#2a78d6", "#3987e5"], lc: ["#1baf7a", "#199e70"] };
+    return colors[group][isDarkMode ? 1 : 0];
+  }
+
+  function render() {
+    const filtered = getFiltered();
+    const svg = d3.select("#plotSvg");
+    const container = document.querySelector(".viz-container");
+    const width = container.offsetWidth - 30;
+    const height = Math.max(300, filtered.length * 100);
+    svg.attr("height", height);
+
+    const margin = { top: 30, right: 40, bottom: 30, left: 300 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+
+    const yScale = d3.scaleBand()
+      .domain(filtered.map((_, i) => i))
+      .range([0, plotHeight])
+      .padding(0.4);
+
+    svg.selectAll("*").remove();
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    g.selectAll(".y-label")
+      .data(filtered)
+      .enter()
+      .append("text")
+      .attr("class", "axis-label")
+      .attr("x", -10)
+      .attr("y", (_, i) => yScale(i) + yScale.bandwidth() / 2)
+      .attr("text-anchor", "end")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", "0.75rem")
+      .text(m => m.name);
+
+    const boxWidth = yScale.bandwidth() / 2.5;
+
+    filtered.forEach((m, idx) => {
+      const yPos = yScale(idx) + yScale.bandwidth() / 2;
+      const maxValue = Math.max(m.normal.max, m.lc.max) * 1.1;
+      const xScale = d3.scaleLinear().domain([0, maxValue]).range([0, plotWidth]);
+
+      g.selectAll(`.gridline-${idx}`)
+        .data(xScale.ticks(4))
+        .enter()
+        .append("line")
+        .attr("class", `gridline gridline-${idx}`)
+        .attr("x1", d => xScale(d))
+        .attr("x2", d => xScale(d))
+        .attr("y1", yPos - yScale.bandwidth() / 2)
+        .attr("y2", yPos + yScale.bandwidth() / 2);
+
+      const axisGroup = g.append("g")
+        .attr("transform", `translate(0,${yPos + yScale.bandwidth() / 2 + 5})`);
+      axisGroup.call(d3.axisBottom(xScale).ticks(3).tickSize(0))
+        .attr("font-size", "0.65rem")
+        .call(gg => gg.select(".domain").remove());
+
+      const normalY = yPos - boxWidth;
+      const nd = m.normal;
+      g.append("line").attr("class", "whisker").attr("x1", xScale(nd.min)).attr("x2", xScale(nd.max)).attr("y1", normalY).attr("y2", normalY).attr("stroke", getComputedColor("normal"));
+      g.append("rect").attr("class", "box").attr("x", xScale(nd.q1)).attr("y", normalY - boxWidth / 2).attr("width", xScale(nd.q3) - xScale(nd.q1)).attr("height", boxWidth).attr("fill", getComputedColor("normal")).attr("stroke", getComputedColor("normal"));
+      g.append("line").attr("class", "median").attr("x1", xScale(nd.median)).attr("x2", xScale(nd.median)).attr("y1", normalY - boxWidth / 2).attr("y2", normalY + boxWidth / 2).attr("stroke", "white").attr("stroke-width", 2.5);
+
+      const lcY = yPos + boxWidth;
+      const ld = m.lc;
+      g.append("line").attr("class", "whisker").attr("x1", xScale(ld.min)).attr("x2", xScale(ld.max)).attr("y1", lcY).attr("y2", lcY).attr("stroke", getComputedColor("lc"));
+      g.append("rect").attr("class", "box").attr("x", xScale(ld.q1)).attr("y", lcY - boxWidth / 2).attr("width", xScale(ld.q3) - xScale(ld.q1)).attr("height", boxWidth).attr("fill", getComputedColor("lc")).attr("stroke", getComputedColor("lc"));
+      g.append("line").attr("class", "median").attr("x1", xScale(ld.median)).attr("x2", xScale(ld.median)).attr("y1", lcY - boxWidth / 2).attr("y2", lcY + boxWidth / 2).attr("stroke", "white").attr("stroke-width", 2.5);
+    });
+
+    document.getElementById("vizTitle").textContent =
+      (activeFilter === "all" ? "All Metabolites" : capitalizeFirstLetter(activeFilter)) + " (" + filtered.length + ")";
+
+    updateStatsTable(filtered);
+  }
+
+  function updateStatsTable(filtered) {
+    const tbody = document.getElementById("statsBody");
+    tbody.innerHTML = filtered.map(m => {
+      let linkStr = '';
+      if (m.links && m.links.length > 0) {
+        linkStr = m.links.map(ln => '<a href=' + ln.url + ' target=_blank style="color:var(--series-normal-light);">' + ln.title + '</a>').join(' | ');
+      }
+      return '<tr><td><strong>' + m.name + '</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">' + m.unit + '</span></td><td style="font-size:0.8rem;color:var(--text-muted);">' + m.class + '</td><td><strong>Healthy</strong></td><td class="stat-value">' + m.normal.median + '</td><td class="stat-value">' + m.normal.q1.toFixed(2) + '-' + m.normal.q3.toFixed(2) + '</td><td class="stat-value">' + m.normal.min.toFixed(2) + '-' + m.normal.max.toFixed(2) + '</td><td class="stat-value">' + m.n + '</td></tr>' +
+             '<tr style="background:var(--page-light);"><td></td><td></td><td><strong>Long COVID</strong></td><td class="stat-value">' + m.lc.median + '</td><td class="stat-value">' + m.lc.q1.toFixed(2) + '-' + m.lc.q3.toFixed(2) + '</td><td class="stat-value">' + m.lc.min.toFixed(2) + '-' + m.lc.max.toFixed(2) + '</td><td class="stat-value">' + m.n + '</td></tr>' +
+             '<tr style="border-bottom:2px solid var(--gridline-light);"><td colspan="7" style="font-size:0.75rem;color:var(--text-muted);padding-top:0.5rem;padding-bottom:1rem;">' + (linkStr ? '<div style="margin-bottom:0.5rem;">' + linkStr + '</div>' : '') + '<div>Ref: ' + m.refs + '</div></td></tr>';
+    }).join('');
+  }
+
+  function capitalizeFirstLetter(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  render();
+  window.addEventListener("resize", render);
+</script>
+
+</body>
+</html>

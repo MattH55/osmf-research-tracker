@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viral Persistence in Long COVID | Antigen, RNA &amp; T-Cell Signatures, Antiviral Trial Evidence</title>
+  <meta name="description" content="Does SARS-CoV-2 persist in Long COVID? Spike/nucleocapsid antigen, tissue RNA, and T-cell signatures compared to recovered and uninfected controls, symptom associations, and antiviral trial outcomes.">
+  <meta name="keywords" content="long covid viral persistence, spike protein persistence, SARS-CoV-2 antigenemia, long covid antiviral trial, nirmatrelvir long covid, paxlovid long covid, STOP-PASC, RECOVER-VITAL, long covid gut RNA">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --surface-light: #fcfcfb;
+      --surface-dark: #1a1a19;
+      --text-primary-light: #0b0b0b;
+      --text-primary-dark: #ffffff;
+      --text-secondary-light: #52514e;
+      --text-secondary-dark: #c3c2b7;
+      --text-muted: #898781;
+      --gridline-light: #e1e0d9;
+      --gridline-dark: #2c2c2a;
+      --baseline-light: #c3c2b7;
+      --baseline-dark: #383835;
+      --series-lc-light: #1baf7a;
+      --series-lc-dark: #199e70;
+      --series-recovered-light: #2a78d6;
+      --series-recovered-dark: #3987e5;
+      --series-uninfected-light: #d97706;
+      --series-uninfected-dark: #c2820a;
+      --page-light: #f9f9f7;
+      --page-dark: #0d0d0d;
+    }
+
+    html { color-scheme: light; }
+    html.dark-mode { color-scheme: dark; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: var(--surface-light);
+      color: var(--text-primary-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    html.dark-mode body {
+      background: var(--surface-dark);
+      color: var(--text-primary-dark);
+    }
+
+    .nav-minimal { background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%); padding: 0.75rem 1.5rem; }
+    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .nav-container .logo img { display: block; }
+    .nav-links { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+    .nav-link { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-link:hover, .nav-link.active { color: white; }
+    @media (max-width: 768px) { .nav-links .nav-link { display: none; } }
+
+    .header {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      color: white;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700; margin-bottom: 0.75rem; }
+    .header p { font-size: 1.0625rem; opacity: 0.92; max-width: 760px; margin: 0 auto; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+
+    .controls { display: flex; justify-content: flex-end; margin-bottom: 2rem; }
+
+    .theme-toggle {
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--baseline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+    }
+
+    html.dark-mode .theme-toggle { background: #383835; border-color: #383835; color: var(--text-secondary-dark); }
+
+    .info-box {
+      background: #f1f5f9;
+      border-left: 3px solid var(--series-recovered-light);
+      padding: 1.25rem 1.5rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary-light);
+      line-height: 1.7;
+    }
+
+    html.dark-mode .info-box { background: #2c2c2a; border-left-color: var(--series-recovered-dark); color: var(--text-secondary-dark); }
+    .info-box strong { color: var(--text-primary-light); }
+    html.dark-mode .info-box strong { color: var(--text-primary-dark); }
+
+    .viz-container {
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    html.dark-mode .viz-container { background: #2a2a29; border-color: var(--gridline-dark); }
+
+    .viz-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary-light); }
+    html.dark-mode .viz-title { color: var(--text-primary-dark); }
+
+    .viz-subtitle { font-size: 0.875rem; color: var(--text-secondary-light); margin-bottom: 1.5rem; line-height: 1.6; }
+    html.dark-mode .viz-subtitle { color: var(--text-secondary-dark); }
+
+    svg { overflow: visible; }
+    .bar-label { font-size: 0.72rem; font-weight: 600; fill: var(--text-primary-light); }
+    html.dark-mode .bar-label { fill: var(--text-primary-dark); }
+    .axis-label { font-size: 0.75rem; fill: var(--text-secondary-light); }
+    html.dark-mode .axis-label { fill: var(--text-secondary-dark); }
+    .gridline { stroke: var(--gridline-light); stroke-width: 1px; }
+    html.dark-mode .gridline { stroke: var(--gridline-dark); }
+
+    .legend { display: flex; gap: 1.75rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--gridline-light); flex-wrap: wrap; font-size: 0.85rem; }
+    html.dark-mode .legend { border-top-color: var(--gridline-dark); }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-tile {
+      background: var(--page-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+
+    html.dark-mode .stat-tile { background: #232322; border-color: var(--gridline-dark); }
+
+    .stat-tile .stat-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary-light); }
+    html.dark-mode .stat-tile .stat-num { color: var(--text-primary-dark); }
+    .stat-tile .stat-lbl { font-size: 0.8rem; color: var(--text-secondary-light); margin-top: 0.2rem; }
+    html.dark-mode .stat-tile .stat-lbl { color: var(--text-secondary-dark); }
+
+    .evidence-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
+
+    .evidence-card { background: var(--page-light); border: 1px solid var(--gridline-light); border-radius: 10px; padding: 1.25rem; }
+    html.dark-mode .evidence-card { background: #232322; border-color: var(--gridline-dark); }
+    .evidence-card h3 { font-size: 1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.625rem; flex-wrap: wrap; }
+    .evidence-card p { font-size: 0.85rem; color: var(--text-secondary-light); margin-bottom: 0.5rem; }
+    html.dark-mode .evidence-card p { color: var(--text-secondary-dark); }
+    .evidence-card .direction { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .direction-down { color: #dc2626; }
+    .direction-up { color: #059669; }
+    .direction-mixed { color: #a16207; }
+    .evidence-card .refs { font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--gridline-light); padding-top: 0.5rem; margin-top: 0.5rem; }
+    html.dark-mode .evidence-card .refs { border-top-color: var(--gridline-dark); }
+    .evidence-card .refs a { color: var(--series-recovered-light); text-decoration: none; }
+
+    .badge { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .badge-established { background: #d1fae5; color: #065f46; }
+    .badge-supported { background: #dbeafe; color: #1e3a8a; }
+    .badge-emerging { background: #fef3c7; color: #78350f; }
+    .badge-contested { background: #fee2e2; color: #991b1b; }
+    .badge-mechanistic { background: #ede9fe; color: #6b21a8; }
+    .badge-null { background: #e5e7eb; color: #374151; }
+    .badge-positive { background: #d1fae5; color: #065f46; }
+    .badge-mixed { background: #fef3c7; color: #78350f; }
+    .badge-preliminary { background: #ede9fe; color: #6b21a8; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem; }
+    table thead { background: var(--surface-light); border-bottom: 2px solid var(--gridline-light); }
+    html.dark-mode table thead { background: #3a3a38; border-bottom-color: var(--gridline-dark); }
+    table th { padding: 0.7rem; text-align: left; font-weight: 600; color: var(--text-primary-light); }
+    html.dark-mode table th { color: var(--text-primary-dark); }
+    table td { padding: 0.7rem; border-bottom: 1px solid var(--gridline-light); vertical-align: top; }
+    html.dark-mode table td { border-bottom-color: var(--gridline-dark); }
+    .stat-value { font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 768px) {
+      .header { padding: 2rem 1.5rem; }
+      .header h1 { font-size: 1.5rem; }
+      .viz-container { padding: 1rem; overflow-x: scroll; }
+      table { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav-minimal" aria-label="Main navigation">
+  <div class="nav-container">
+    <a href="https://vitalscan4pacvs.com/" class="logo" title="VitalScan4PACVS Home">
+      <img src="vitalscan-logo.svg" alt="VitalScan4PACVS - Long COVID and PACVS Research" width="140" height="28" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="https://vitalscan4pacvs.com/" class="nav-link">Home</a>
+      <a href="the-science.html" class="nav-link">The Science</a>
+      <a href="the-protocol.html" class="nav-link">The Protocol</a>
+      <a href="candidate-therapeutics.html" class="nav-link">Candidate Agents</a>
+      <a href="long-covid-endotypes.html" class="nav-link">Endotypes</a>
+      <a href="long-covid-hypotheses.html" class="nav-link">Hypotheses</a>
+      <a href="biomarker-atlas.html" class="nav-link">Biomarker Atlases</a>
+      <a href="biomarker-distribution-plots.html" class="nav-link">Biomarker Data</a>
+      <a href="long-covid-metabolites.html" class="nav-link">Metabolites</a>
+      <a href="long-covid-neurotransmitters.html" class="nav-link">Neurotransmitters</a>
+      <a href="long-covid-viral-persistence.html" class="nav-link active">Viral Persistence</a>
+    </div>
+  </div>
+</nav>
+<div style="background:#fef3c7;color:#78350f;text-align:center;padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;border-bottom:2px solid #f59e0b;line-height:1.5;">Status: In preparation. Protocol OSMF-VS4P-001. Registration and ethics review pending. Not currently enrolling.</div>
+
+<div class="header">
+  <h1>Viral Persistence in Long COVID</h1>
+  <p>Does SARS-CoV-2 stick around? Circulating antigen, tissue RNA, and T-cell signatures compared across Long COVID, recovered, and uninfected groups &ndash; including where studies directly disagree, and what antiviral trials have (and haven't) shown.</p>
+</div>
+
+<div class="container">
+  <div class="controls">
+    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+  </div>
+
+  <div class="info-box">
+    <strong>How to read this page:</strong> Viral persistence is one of the most actively contested mechanisms in Long COVID research &ndash; two well-designed studies below reach opposite conclusions about whether antigen positivity even associates with symptoms. Rather than resolve that disagreement, this page reports both findings side by side. The antiviral-trial section separates two different questions that are easy to conflate: treating <em>already-diagnosed</em> Long COVID with antivirals (uniformly null so far) versus giving antivirals <em>during acute infection</em> to prevent Long COVID from developing (a modest positive signal in some studies).
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Circulating Viral Antigen Positivity Over Time</div>
+    <div class="viz-subtitle">2-year blinded longitudinal study: Long COVID (n=167) vs. recovered-without-sequelae (n=148) vs. never-infected controls (n=110). Antigen positivity falls sharply in all groups by 18&ndash;24 months, but stays highest in Long COVID at every timepoint measured.</div>
+    <svg id="plotSvg" width="100%" height="380"></svg>
+    <div class="legend" id="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background: var(--series-lc-light);"></div><span>Long COVID</span></div>
+      <div class="legend-item"><div class="legend-swatch" style="background: var(--series-recovered-light);"></div><span>Recovered, no sequelae</span></div>
+      <div class="legend-item"><div class="legend-swatch" style="background: var(--series-uninfected-light);"></div><span>Never infected</span></div>
+    </div>
+    <p style="margin-top:1rem; font-size:0.75rem; color:var(--text-muted);">Source: "Blinded 2-Year Longitudinal Evaluation of SARS-CoV-2 Antigenemia in Long COVID," <em>Clin Microbiol Infect</em> 2026. This study found <strong>no significant association</strong> between antigen positivity and symptom number, symptom type, antibody titers, or vaccination status &ndash; see the conflicting-evidence card below.</p>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Antigen Positivity &amp; Symptom Burden: A Second, Conflicting Study</div>
+    <div class="viz-subtitle">A separate multicohort analysis (Peluso et al., 1,569 samples from 706 individuals across LIINC, MGB, Allen, and RECOVER cohorts) found the opposite: antigen positivity <em>was</em> associated with symptom burden.</div>
+    <div class="stat-row">
+      <div class="stat-tile"><div class="stat-num">21%</div><div class="stat-lbl">Overall antigen positivity across all samples (95% CI 18&ndash;24%)</div></div>
+      <div class="stat-tile"><div class="stat-num">43%</div><div class="stat-lbl">Positivity among those with cardiopulmonary, musculoskeletal, or neurologic symptoms</div></div>
+      <div class="stat-tile"><div class="stat-num">OR 1.8</div><div class="stat-lbl">Odds ratio for antigen positivity and &ge;1 PASC symptom (95% CI 1.4&ndash;2.2), adjusted for age/sex/time/cohort</div></div>
+      <div class="stat-tile"><div class="stat-num">4&ndash;7mo</div><div class="stat-lbl">Time post-infection when spike antigen positivity peaked (~20%)</div></div>
+    </div>
+    <p style="margin-top:1.25rem; font-size:0.75rem; color:var(--text-muted);">Source: Peluso MJ et al., "Measurement of circulating viral antigens post-SARS-CoV-2 infection in a multicohort study," PMID 39389851.</p>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Directional Evidence: Other Persistence Signatures</div>
+    <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      These findings are real and cited, but reported as direction/effect rather than a box-and-whisker plot &ndash; either because the underlying measure is categorical (tissue positivity, T-cell fold-change over time) or because two studies directly disagree and averaging them would misrepresent both.
+    </p>
+    <div class="evidence-grid">
+
+      <div class="evidence-card">
+        <h3>Spike-Specific T-Cell Responses <span class="badge badge-contested">Contested</span></h3>
+        <div class="direction direction-mixed">&harr; Elevated in one cohort, absent in another</div>
+        <p>A Yale cohort found spike-specific CD4+ T cells 3.9&times; higher in Long COVID at 3 months post-infection (falling to 2.2&times; at 8mo, 1.5&times; at 24mo), and CD8+ T cells 2.8&times; higher at 3mo, rising to 5.6&times; at 8mo, with exhaustion markers (PD-1/TIM-3) elevated at 3&ndash;8 months before normalizing by 24 months.</p>
+        <p style="font-size:0.8rem;"><strong>Conflicting finding:</strong> A study of 86 healthcare workers with mild/asymptomatic infection found <strong>no difference</strong> in spike/N antibody, neutralization, or T-cell responses between those with vs. without persistent symptoms at 18 weeks or 1 year &ndash; suggesting the T-cell signal may depend on index infection severity and cohort selection.</p>
+        <div class="refs">
+          Klein et al., <em>Nature Immunology</em> 2023 &middot;
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10447583/" target="_blank">Scurr et al., Nat Commun 2023 (PMID 37612310)</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Anti-Nucleocapsid vs. Anti-Spike Antibody Trajectory <span class="badge badge-emerging">Emerging</span></h3>
+        <div class="direction direction-mixed">&darr; Lower anti-N linked to worse fatigue &ndash; counter to the naive prediction</div>
+        <p>In a cohort of 107 Long COVID patients, anti-N IgG was significantly <em>lower</em> in those with severe fatigue vs. non-severe fatigue (34 vs. 100 U/mL, p&lt;0.001), and remained an independent predictor of symptom improvement at follow-up (OR 0.337, 95% CI 0.120&ndash;0.946, p=0.039). Anti-spike showed no persistent association.</p>
+        <p style="font-size:0.8rem;"><strong>Why this matters:</strong> a simple "more antibody = more antigen = worse symptoms" model predicts the opposite direction. The authors interpret this via vaccine-boosted clearance of residual antigen &ndash; the empirical relationship between antibody trajectory and persistence is more complicated than it first appears.</p>
+        <div class="refs">
+          <a href="https://doi.org/10.3390/vaccines10020165" target="_blank">Varnai et al., Vaccines 2022</a>
+        </div>
+      </div>
+
+      <div class="evidence-card">
+        <h3>Gastrointestinal Tissue RNA/Antigen <span class="badge badge-emerging">Emerging</span></h3>
+        <div class="direction direction-up">&uarr; Detected in a majority of biopsied Long COVID patients</div>
+        <p>Colorectal biopsies in 5 Long COVID patients found single-stranded spike RNA in 4/5 (80%) at 158&ndash;676 days post-infection, with double-stranded (replicating) RNA in 3/4. A separate endoscopy study of 249 patients (median 17 months post-infection) found nucleocapsid protein in 31% of biopsies overall (37.3% upper GI vs. 16.9% lower GI).</p>
+        <p style="font-size:0.8rem;"><strong>Limitation:</strong> the 5-patient biopsy study had no non-Long-COVID comparator, so no direct symptom association could be statistically tested. The 249-patient endoscopy study did not use validated Long COVID diagnostic criteria, so it cannot establish a symptom link either &ndash; both are consistent with persistence, neither proves it drives symptoms.</p>
+        <div class="refs">
+          Peluso et al., <em>Sci Transl Med</em> 2024;16(754):eadk3295 &middot;
+          <a href="https://doi.org/10.1055/a-2180-9872" target="_blank">Hany et al., Endosc Int Open 2024</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Antiviral Trials: Treating Established Long COVID</div>
+    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      Every controlled trial testing an antiviral as a <strong>treatment for already-diagnosed</strong> Long COVID has so far returned a null result.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Trial</th><th>Drug &amp; regimen</th><th>N</th><th>Outcome measured</th><th>Result</th><th>Citation</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>STOP-PASC</strong></td>
+          <td>Nirmatrelvir-ritonavir, 15 days</td>
+          <td class="stat-value">155 (102 tx / 53 placebo)</td>
+          <td>Pooled severity of 6 PASC symptoms (fatigue, brain fog, dyspnea, body aches, GI, cardiovascular) at 10 weeks</td>
+          <td><span class="badge badge-null">Null</span><br><span style="font-size:0.75rem;">brain fog numerically worse on drug (post-hoc)</span></td>
+          <td><a href="https://doi.org/10.1001/jamainternmed.2024.2007" target="_blank" style="color:var(--series-recovered-light);">Geng et al., JAMA Intern Med 2024</a></td>
+        </tr>
+        <tr>
+          <td><strong>PAX LC</strong></td>
+          <td>Nirmatrelvir-ritonavir, 15 days</td>
+          <td class="stat-value">Decentralized RCT, US-wide</td>
+          <td>Health outcomes at day 28</td>
+          <td><span class="badge badge-null">Null</span><br><span style="font-size:0.75rem;">more treatment-emergent AEs: 76% vs 55%</span></td>
+          <td>Sawano, Iwasaki, Krumholz et al., <em>Lancet Infect Dis</em> 2025</td>
+        </tr>
+        <tr>
+          <td><strong>RECOVER-VITAL</strong></td>
+          <td>Nirmatrelvir-ritonavir, 15-day &amp; 25-day arms</td>
+          <td class="stat-value">Large platform trial</td>
+          <td>PEM, cognitive dysfunction, orthostatic intolerance</td>
+          <td><span class="badge badge-preliminary">Preliminary</span><br><span style="font-size:0.75rem;">results posted ~March 2026; not yet peer-reviewed</span></td>
+          <td>NCT05595369 (registry only)</td>
+        </tr>
+        <tr>
+          <td><strong>SOLIDARITY Finland</strong></td>
+          <td>Remdesivir (during hospitalization)</td>
+          <td class="stat-value">208 randomized, 181 (92%) at 1yr</td>
+          <td>Self-reported recovery, QoL, symptoms at 1 year</td>
+          <td><span class="badge badge-null">Null</span><br><span style="font-size:0.75rem;">85% vs 86% recovered</span></td>
+          <td>SOLIDARITY Finland trial reports (PMC9752133)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">A Different Question: Early Antiviral Treatment to <em>Prevent</em> Long COVID</div>
+    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      These studies gave antivirals <strong>during acute infection</strong>, not to people who already have Long COVID &ndash; a different research question from the trials above, with a more encouraging (though still modest) signal.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Study</th><th>Drug</th><th>N</th><th>Outcome</th><th>Result</th><th>Citation</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PANORAMIC</strong></td>
+          <td>Molnupiravir, 5 days, given acutely</td>
+          <td class="stat-value">25,783 randomized; 23,008 (89.2%) followed</td>
+          <td>Symptom severity/duration at 3 &amp; 6 months</td>
+          <td><span class="badge badge-mixed">Modest positive</span><br><span style="font-size:0.75rem;">no difference in hospitalization</span></td>
+          <td><a href="https://doi.org/10.1016/S1473-3099(24)00431-6" target="_blank" style="color:var(--series-recovered-light);">Harris et al., Lancet Infect Dis 2024</a></td>
+        </tr>
+        <tr>
+          <td><strong>Retrospective meta-analysis</strong></td>
+          <td>Nirmatrelvir/ritonavir, molnupiravir, remdesivir, given acutely</td>
+          <td class="stat-value">6 cohorts, ~3.35M participants</td>
+          <td>PASC occurrence</td>
+          <td><span class="badge badge-mixed">Modest positive</span><br><span style="font-size:0.75rem;">27.5% lower PASC occurrence, OR 0.725 (95% CI 0.409&ndash;0.747)</span></td>
+          <td>Choi et al., <em>J Clin Med</em> 2023;12(23):7375</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 1.5rem; padding: 1rem; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 0.8rem; color: #92400e; line-height: 1.6;">
+    <strong style="color: #78350f;">Important caveats:</strong>
+    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+      <li><strong>Field-level disagreement is the finding, not a gap:</strong> two well-designed studies above reach opposite conclusions about whether antigen positivity associates with symptoms. This page reports both rather than picking a winner.</li>
+      <li><strong>Severity-dependent T-cell signal:</strong> the strongest T-cell persistence signal comes from cohorts with moderate/severe index infection; a mild-infection healthcare-worker cohort found no signal at all.</li>
+      <li><strong>Prevention &ne; treatment:</strong> antivirals given during acute infection show a modest protective signal against developing Long COVID; antivirals given to people who already have Long COVID have not worked in any completed trial.</li>
+      <li><strong>Sample sizes vary widely:</strong> some persistence findings come from cohorts as small as 4&ndash;5 biopsied patients; treat effect sizes from small studies as hypothesis-generating, not confirmatory.</li>
+      <li><strong>RECOVER-VITAL is unpublished:</strong> its results are registry-only as of mid-2026 and should be treated as preliminary until peer-reviewed.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const antigenData = {
+    timepoints: ["6–12 months", "18–24 months"],
+    series: [
+      { key: "lc", label: "Long COVID", color: { light: "#1baf7a", dark: "#199e70" }, values: [31, 3] },
+      { key: "recovered", label: "Recovered, no sequelae", color: { light: "#2a78d6", dark: "#3987e5" }, values: [20, 0] },
+      { key: "uninfected", label: "Never infected", color: { light: "#d97706", dark: "#c2820a" }, values: [5.4, 0] }
+    ]
+  };
+
+  let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const themeToggle = document.getElementById("themeToggle");
+  themeToggle.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    document.documentElement.classList.toggle("dark-mode", isDarkMode);
+    themeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
+    render();
+  });
+  if (isDarkMode) {
+    document.documentElement.classList.add("dark-mode");
+    themeToggle.textContent = "☀️ Light";
+  }
+
+  function render() {
+    const svg = d3.select("#plotSvg");
+    const container = document.querySelector(".viz-container");
+    const width = container.offsetWidth - 30;
+    const height = 340;
+    svg.attr("height", height);
+
+    const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+
+    svg.selectAll("*").remove();
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x0 = d3.scaleBand().domain(antigenData.timepoints).range([0, plotWidth]).padding(0.3);
+    const x1 = d3.scaleBand().domain(antigenData.series.map(s => s.key)).range([0, x0.bandwidth()]).padding(0.12);
+    const yMax = d3.max(antigenData.series.flatMap(s => s.values));
+    const y = d3.scaleLinear().domain([0, yMax * 1.2]).range([plotHeight, 0]);
+
+    g.selectAll(".gridline")
+      .data(y.ticks(5))
+      .enter()
+      .append("line")
+      .attr("class", "gridline")
+      .attr("x1", 0).attr("x2", plotWidth)
+      .attr("y1", d => y(d)).attr("y2", d => y(d));
+
+    g.append("g")
+      .attr("transform", `translate(0,${plotHeight})`)
+      .call(d3.axisBottom(x0).tickSize(0))
+      .attr("font-size", "0.8rem")
+      .call(gg => gg.select(".domain").remove());
+
+    g.append("g")
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + "%").tickSize(0))
+      .attr("font-size", "0.75rem")
+      .call(gg => gg.select(".domain").remove());
+
+    const tpGroups = g.selectAll(".tp-group")
+      .data(antigenData.timepoints)
+      .enter()
+      .append("g")
+      .attr("transform", d => `translate(${x0(d)},0)`);
+
+    antigenData.series.forEach(s => {
+      const color = isDarkMode ? s.color.dark : s.color.light;
+      tpGroups.each(function(tp, i) {
+        const val = s.values[i];
+        d3.select(this).append("rect")
+          .attr("x", x1(s.key))
+          .attr("y", y(val))
+          .attr("width", x1.bandwidth())
+          .attr("height", plotHeight - y(val))
+          .attr("fill", color)
+          .attr("rx", 3);
+        d3.select(this).append("text")
+          .attr("class", "bar-label")
+          .attr("x", x1(s.key) + x1.bandwidth() / 2)
+          .attr("y", y(val) - 8)
+          .attr("text-anchor", "middle")
+          .text(val + "%");
+      });
+    });
+  }
+
+  render();
+  window.addEventListener("resize", render);
+</script>
+
+</body>
+</html>

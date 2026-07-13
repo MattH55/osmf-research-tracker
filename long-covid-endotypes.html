@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-202S9N21TE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-202S9N21TE');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Long COVID Endotypes & Symptoms Atlas | Mechanistic Map — VitalScan4PACVS</title>
+  <meta name="description" content="Interactive atlas of Long COVID endotypes and root mechanisms. Navigate from body systems → mechanisms → metabolites → therapeutics. Evidence-based reference linking tissue pathology to clinical symptoms.">
+  <meta name="keywords" content="Long COVID, endotypes, mechanisms, symptoms, biomarkers, post-exertional malaise, viral persistence, metabolic dysfunction, autoimmune, microclots">
+  <meta name="author" content="VitalScan4PACVS / Open Source Medicine Foundation">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://vitalscan4pacvs.com/long-covid-endotypes.html">
+  <link rel="icon" type="image/svg+xml" href="vitalscan-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt site summary">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "MedicalWebPage",
+        "@id": "https://vitalscan4pacvs.com/long-covid-endotypes.html#webpage",
+        "url": "https://vitalscan4pacvs.com/long-covid-endotypes.html",
+        "name": "Long COVID Endotypes and Symptoms Atlas",
+        "description": "Interactive mechanistic atlas mapping Long COVID endotypes to body systems, mechanisms, and therapeutic targets.",
+        "inLanguage": "en",
+        "isPartOf": {"@id": "https://vitalscan4pacvs.com/#website"},
+        "about": {
+          "@type": "MedicalCondition",
+          "name": "Long COVID",
+          "alternateName": ["PASC", "post-acute sequelae of COVID-19", "post-COVID-19 condition"],
+          "url": "https://en.wikipedia.org/wiki/Long_COVID"
+        },
+        "publisher": {"@id": "https://opensourcemed.info/#org"},
+        "dateModified": "2026-07-11"
+      },
+      {
+        "@type": ["Organization","NGO"],
+        "@id": "https://opensourcemed.info/#org",
+        "name": "Open Source Medicine Foundation",
+        "alternateName": "OSMF",
+        "url": "https://opensourcemed.info/"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://vitalscan4pacvs.com/#website",
+        "url": "https://vitalscan4pacvs.com/",
+        "name": "VitalScan4PACVS",
+        "inLanguage": "en",
+        "publisher": {"@id": "https://opensourcemed.info/#org"}
+      }
+    ]
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0068f8;
+      --primary-dark: #0052c7;
+      --secondary: #ff9800;
+      --secondary-dark: #e99314;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --text-muted: #9ca3af;
+      --bg-light: #f9fafb;
+      --bg-white: #ffffff;
+      --border: #e5e7eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background: var(--bg-white);
+    }
+
+    /* NAV */
+    .nav-minimal {
+      background: var(--primary);
+      padding: 0.75rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 28px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+    }
+
+    .nav-cta {
+      background: var(--secondary);
+      color: white !important;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .nav-cta:hover {
+      background: var(--secondary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      color: white;
+      padding: 3.5rem 1.5rem 4rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 700;
+      margin-bottom: 0.875rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.0625rem;
+      opacity: 0.92;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .section {
+      padding: 2.5rem 1.5rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.875rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+    }
+
+    .section-header p {
+      color: var(--text-light);
+      font-size: 1.0625rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* INFO BOX */
+    .info-box {
+      background: #f0f7ff;
+      border-left: 3px solid var(--primary);
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.9375rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .info-box strong {
+      color: var(--text-dark);
+    }
+
+    /* FILTER CONTROLS */
+    .filter-controls {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-right: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--border);
+      background: var(--bg-white);
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* BODY MAP SECTION */
+    .body-map-wrapper {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .body-map-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+
+    .body-map-svg {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      margin: 1.5rem auto;
+      display: block;
+    }
+
+    .body-map-svg g[data-system] {
+      cursor: pointer;
+    }
+
+    .body-map-svg g[data-system]:hover circle {
+      r: 8;
+      filter: drop-shadow(0 0 8px rgba(0,104,248,0.6));
+    }
+
+    .body-map-hotspot {
+      stroke: var(--primary);
+      stroke-width: 2;
+      fill: var(--primary);
+      opacity: 0.8;
+    }
+
+    .system-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    /* ENDOTYPE CARDS */
+    .endotype-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .endotype-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .endotype-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-left-color: var(--secondary);
+    }
+
+    .endotype-card h3 {
+      font-size: 1.125rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .endotype-card p {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .endotype-mechanisms {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .mechanism-badge {
+      display: inline-block;
+      background: #f3f4f6;
+      color: var(--text-dark);
+      padding: 0.25rem 0.625rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* MECHANISM CARDS */
+    .mechanism-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .mechanism-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: box-shadow 0.2s;
+    }
+
+    .mechanism-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .mechanism-card h3 {
+      font-size: 1.125rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .evidence-badge {
+      display: inline-block;
+      padding: 0.25rem 0.625rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .evidence-established {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .evidence-supported {
+      background: #dbeafe;
+      color: #1e3a8a;
+    }
+
+    .evidence-emerging {
+      background: #fef3c7;
+      color: #78350f;
+    }
+
+    .evidence-contested {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .mechanism-card p {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .systems-affected {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .system-tag {
+      display: inline-block;
+      background: #f3f4f6;
+      color: var(--text-dark);
+      padding: 0.25rem 0.625rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* METABOLITE TABLE */
+    .metabolite-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .metabolite-table thead {
+      background: var(--bg-light);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .metabolite-table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .metabolite-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metabolite-table tbody tr:hover {
+      background: var(--bg-light);
+    }
+
+    .direction-up {
+      color: var(--error);
+      font-weight: 600;
+    }
+
+    .direction-down {
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    /* TIER BADGES */
+    .tier-badge {
+      display: inline-block;
+      padding: 0.25rem 0.625rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tier-rct-positive {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .tier-rct-mixed {
+      background: #dbeafe;
+      color: #1e3a8a;
+    }
+
+    .tier-open-label {
+      background: #fef3c7;
+      color: #78350f;
+    }
+
+    .tier-mechanistic {
+      background: #ede9fe;
+      color: #6b21a8;
+    }
+
+    .tier-preclinical {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #1f2937;
+      color: #9ca3af;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      margin-top: 3rem;
+    }
+
+    footer a {
+      color: #d1d5db;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 2rem 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .filter-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .endotype-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mechanism-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media print {
+      nav, .filter-controls {
+        display: none;
+      }
+
+      .endotype-card, .mechanism-card {
+        page-break-inside: avoid;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav-minimal" aria-label="Main navigation">
+  <div class="nav-container">
+    <a href="https://vitalscan4pacvs.com/" class="logo" title="VitalScan4PACVS Home">
+      <img src="vitalscan-logo.svg" alt="VitalScan4PACVS - Long COVID and PACVS Research" width="140" height="28" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="https://vitalscan4pacvs.com/" class="nav-link">Home</a>
+      <a href="the-science.html" class="nav-link">The Science</a>
+      <a href="the-protocol.html" class="nav-link">The Protocol</a>
+      <a href="candidate-therapeutics.html" class="nav-link">Candidate Agents</a>
+      <a href="long-covid-endotypes.html" class="nav-link active">Endotypes</a>
+      <a href="long-covid-hypotheses.html" class="nav-link">Hypotheses</a>
+      <a href="biomarker-atlas.html" class="nav-link">Biomarker Atlases</a>
+      <a href="biomarker-distribution-plots.html" class="nav-link">Biomarker Data</a>
+      <a href="long-covid-metabolites.html" class="nav-link">Metabolites</a>
+      <a href="long-covid-neurotransmitters.html" class="nav-link">Neurotransmitters</a>
+      <a href="long-covid-viral-persistence.html" class="nav-link">Viral Persistence</a>
+    </div>
+  </div>
+</nav>
+<div style="background:#fef3c7;color:#78350f;text-align:center;padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;border-bottom:2px solid #f59e0b;line-height:1.5;">Status: In preparation. Protocol OSMF-VS4P-001. Registration and ethics review pending. Not currently enrolling.</div>
+
+<section class="hero">
+  <h1>Long COVID: Endotypes & Mechanisms</h1>
+  <p>An evidence-based atlas mapping body systems → pathophysiology → biomarker signatures → targeted therapeutics. Four distinct endotypes explain the heterogeneity of Long COVID and guide treatment selection.</p>
+</section>
+
+<div class="container section">
+  <div class="info-box">
+    <strong>What this atlas is:</strong> A reference map of what goes wrong in Long COVID at the tissue and molecular level, and which therapies target each mechanism. Every therapeutic claim carries an evidence grade — a mechanistically-plausible hypothesis looks different from a positive Phase 3 RCT.
+  </div>
+
+  <!-- ENDOTYPES SECTION -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Four Distinct Endotypes</h2>
+      <p>Long COVID is not one disease. Patients cluster into four endotypes, each with characteristic symptoms, biomarkers, and therapeutic implications.</p>
+    </div>
+
+    <div class="endotype-grid">
+      <div class="endotype-card">
+        <h3>🦠 Persistence-Dominant</h3>
+        <p><strong>Biomarker:</strong> Viral RNA or spike antigen persists in tissue reservoirs (gut epithelium, lymphoid tissue). Gut-predominant symptoms, inflammatory markers elevated.</p>
+        <p><strong>Clinical hallmark:</strong> Relapsing course with viral-like episodes. GI symptoms prominent. Improved with antivirals in case series.</p>
+        <div class="endotype-mechanisms">
+          <span class="mechanism-badge">Viral persistence</span>
+          <span class="mechanism-badge">Gut dysbiosis</span>
+        </div>
+      </div>
+
+      <div class="endotype-card">
+        <h3>⚡ Autoimmune-Dominant</h3>
+        <p><strong>Biomarker:</strong> GPCR autoantibodies (β-adrenergic, muscarinic, angiotensin-1 receptor). Prominent dysautonomia and relapsing flares.</p>
+        <p><strong>Clinical hallmark:</strong> Orthostatic intolerance, palpitations, anxiety. Responds to apheresis and B-cell targeting in case reports.</p>
+        <div class="endotype-mechanisms">
+          <span class="mechanism-badge">Immune dysregulation</span>
+          <span class="mechanism-badge">Autoantibodies</span>
+        </div>
+      </div>
+
+      <div class="endotype-card">
+        <h3>🧠 Metabolic / PEM-Dominant</h3>
+        <p><strong>Biomarker:</strong> Acylcarnitine accumulation, abnormal two-day CPET with ventilatory threshold collapse. Post-exertional malaise is severe and reproducible.</p>
+        <p><strong>Clinical hallmark:</strong> Exercise intolerance, brain fog, fatigue. Heavy overlap with ME/CFS. Harmed by graded exercise therapy.</p>
+        <div class="endotype-mechanisms">
+          <span class="mechanism-badge">Bioenergetic failure</span>
+          <span class="mechanism-badge">Mitochondrial dysfunction</span>
+        </div>
+      </div>
+
+      <div class="endotype-card">
+        <h3>💉 Vascular-Dominant</h3>
+        <p><strong>Biomarker:</strong> Microclot burden, impaired endothelial function, exertional desaturation with normal resting tests. ADMA elevated, arginine low.</p>
+        <p><strong>Clinical hallmark:</strong> Breathlessness on exertion, chest tightness, cold extremities. Responds to anticoagulation and vasodilators in observational data.</p>
+        <div class="endotype-mechanisms">
+          <span class="mechanism-badge">Microclots</span>
+          <span class="mechanism-badge">Endothelial dysfunction</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MECHANISMS SECTION -->
+  <div class="section" style="margin-top: 3rem;">
+    <div class="section-header">
+      <h2>Root Mechanisms</h2>
+      <p>Five core pathophysiological processes that underlie Long COVID. Many patients have multiple mechanisms; identifying which dominate guides therapy.</p>
+    </div>
+
+    <div class="mechanism-grid">
+      <div class="mechanism-card">
+        <div class="evidence-badge evidence-supported">Supported</div>
+        <h3>Viral Persistence</h3>
+        <p>SARS-CoV-2 RNA detected in gut epithelium, lymphoid tissue, and bone marrow months to years post-infection. Provides a continuous immune stimulus. Sits upstream of both immune dysregulation and secondary microclot formation.</p>
+        <div class="systems-affected">
+          <span class="system-tag">Gut microbiome</span>
+          <span class="system-tag">Lymphoid tissue</span>
+        </div>
+      </div>
+
+      <div class="mechanism-card">
+        <div class="evidence-badge evidence-established">Established</div>
+        <h3>Bioenergetic Failure</h3>
+        <p>Impaired fatty acid oxidation, reduced TCA cycle flux, early lactate accumulation. The most reproducible metabolomic finding in exertion-intolerant patients. Directly linked to post-exertional malaise.</p>
+        <div class="systems-affected">
+          <span class="system-tag">Skeletal muscle</span>
+          <span class="system-tag">Brain</span>
+        </div>
+      </div>
+
+      <div class="mechanism-card">
+        <div class="evidence-badge evidence-contested">Contested</div>
+        <h3>Microclots & Endotheliopathy</h3>
+        <p>Fibrinaloid microclots resistant to fibrinolysis, platelet hyperactivation, reduced red cell deformability. Impairs capillary perfusion and oxygen offloading. Standard coagulation panels are normal — this requires specialized assays.</p>
+        <div class="systems-affected">
+          <span class="system-tag">Blood</span>
+          <span class="system-tag">Heart</span>
+          <span class="system-tag">Lungs</span>
+        </div>
+      </div>
+
+      <div class="mechanism-card">
+        <div class="evidence-badge evidence-emerging">Emerging</div>
+        <h3>Gut Dysbiosis & Serotonin Axis</h3>
+        <p>Reduced short-chain fatty acid producers, increased permeability, tryptophan diverted from serotonin toward kynurenine. Peripheral serotonin depletion links gut antigen persistence to cognitive and mood symptoms via the vagus nerve.</p>
+        <div class="systems-affected">
+          <span class="system-tag">Gut</span>
+          <span class="system-tag">Brain</span>
+        </div>
+      </div>
+
+      <div class="mechanism-card">
+        <div class="evidence-badge evidence-supported">Supported</div>
+        <h3>Immune Dysregulation</h3>
+        <p>T-cell exhaustion, altered monocyte populations, latent herpesvirus reactivation (EBV, CMV, HHV6), and GPCR-targeting autoantibodies. Drives both autoimmune symptoms and secondary metabolic dysfunction.</p>
+        <div class="systems-affected">
+          <span class="system-tag">Lymphoid tissue</span>
+          <span class="system-tag">Multiple systems</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY SYSTEMS & BIOMARKERS -->
+  <div class="section" style="margin-top: 3rem;">
+    <div class="section-header">
+      <h2>Affected Body Systems & Biomarkers</h2>
+      <p>Long COVID touches multiple organ systems. Each shows a characteristic metabolite signature and responds to different therapeutic strategies.</p>
+    </div>
+
+    <table class="metabolite-table">
+      <thead>
+        <tr>
+          <th>Body System</th>
+          <th>Key Biomarker Changes</th>
+          <th>Clinical Correlates</th>
+          <th>Implicated Mechanisms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Skeletal Muscle</strong></td>
+          <td><span class="direction-up">↑</span> Acylcarnitines<br><span class="direction-down">↓</span> TCA flux</td>
+          <td>Post-exertional malaise, exercise intolerance</td>
+          <td>Bioenergetic failure, Microclots</td>
+        </tr>
+        <tr>
+          <td><strong>Gut & Microbiome</strong></td>
+          <td><span class="direction-down">↓</span> Serotonin<br><span class="direction-down">↓</span> Butyrate</td>
+          <td>Altered bowel habits, bloating, food intolerance</td>
+          <td>Viral persistence, Dysbiosis</td>
+        </tr>
+        <tr>
+          <td><strong>Blood & Coagulation</strong></td>
+          <td>Microclots<br><span class="direction-down">↓</span> RBC deformability</td>
+          <td>Exertional breathlessness, cold extremities</td>
+          <td>Microclots, Endotheliopathy</td>
+        </tr>
+        <tr>
+          <td><strong>Brain & Brainstem</strong></td>
+          <td><span class="direction-up">↑</span> Kynurenine<br><span class="direction-up">↑</span> Quinolinic acid</td>
+          <td>Cognitive slowing, unrefreshing sleep, dysautonomia</td>
+          <td>Dysbiosis, Neuroinflammation</td>
+        </tr>
+        <tr>
+          <td><strong>Heart & Endothelium</strong></td>
+          <td><span class="direction-down">↓</span> Arginine<br><span class="direction-up">↑</span> ADMA</td>
+          <td>Palpitations, chest tightness, orthostatic intolerance</td>
+          <td>Endothelial dysfunction</td>
+        </tr>
+        <tr>
+          <td><strong>Lungs</strong></td>
+          <td><span class="direction-up">↑</span> Lactate<br>Impaired gas exchange</td>
+          <td>Breathlessness on exertion, air hunger</td>
+          <td>Microclots, Vascular mismatch</td>
+        </tr>
+        <tr>
+          <td><strong>Lymphoid Tissue</strong></td>
+          <td>Spike antigen, HERV reactivation</td>
+          <td>Tender lymph nodes, sore throat, flu-like relapses</td>
+          <td>Viral persistence, Immune dysregulation</td>
+        </tr>
+        <tr>
+          <td><strong>Liver & Bile Acids</strong></td>
+          <td><span class="direction-down">↓</span> Bile acids<br><span class="direction-up">↑</span> Sphingolipids</td>
+          <td>Alcohol intolerance, post-prandial fatigue</td>
+          <td>Dysbiosis, Metabolic remodelling</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- KEY TAKEAWAYS -->
+  <div class="section" style="margin-top: 3rem;">
+    <div class="section-header">
+      <h2>Clinical Implications</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+      <div class="info-box" style="margin: 0; border-left-color: var(--success);">
+        <strong style="color: var(--success);">✓ Accurate phenotyping is essential.</strong> A unselected trial of antivirals will dilute the benefit in the persistence-dominant group. Endotype-stratified trials are needed.
+      </div>
+
+      <div class="info-box" style="margin: 0; border-left-color: var(--warning);">
+        <strong style="color: var(--warning);">⚠ Exercise is not universally beneficial.</strong> Graded exercise therapy harms the metabolic/PEM-dominant group. Tailor based on endotype.
+      </div>
+
+      <div class="info-box" style="margin: 0; border-left-color: var(--secondary);">
+        <strong style="color: var(--secondary);">🔍 Biomarkers are not yet standard.</strong> Diagnosis remains clinical. Specialty metabolomic and immunological assays exist but are not routine — a major gap in translation.
+      </div>
+
+      <div class="info-box" style="margin: 0; border-left-color: var(--primary);">
+        <strong style="color: var(--primary);">📋 Multiple mechanisms can co-exist.</strong> Patients often have overlapping endotypes. Treatment should target the dominant mechanism first, then address secondary pathology.
+      </div>
+    </div>
+  </div>
+
+  <!-- EVIDENCE TIERS GUIDE -->
+  <div class="section" style="margin-top: 3rem;">
+    <div class="section-header">
+      <h2>How to Read Therapeutic Evidence</h2>
+    </div>
+
+    <p style="margin-bottom: 1.5rem; color: var(--text-light);">On the <a href="candidate-therapeutics.html" style="color: var(--primary);">Candidate Therapeutics page</a>, every therapy carries an evidence tier. Here's what each tier means:</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+      <div style="padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+        <div class="evidence-badge evidence-established">Established</div>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-light);"><strong>≥1 positive Phase 3 RCT</strong> in Long COVID or directly comparable post-acute infection syndrome. Confident recommendation.</p>
+      </div>
+
+      <div style="padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+        <div class="evidence-badge evidence-supported">Supported</div>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-light);"><strong>Open-label pilot or case series</strong> with positive signal. Mechanistically sound. Warrants controlled trial.</p>
+      </div>
+
+      <div style="padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+        <div class="evidence-badge evidence-emerging">Emerging</div>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-light);"><strong>Plausible mechanism</strong> but minimal clinical data. May help; lacks trial evidence. Experimental.</p>
+      </div>
+
+      <div style="padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+        <div class="evidence-badge evidence-contested">Contested</div>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-light);"><strong>Mixed or null trial results.</strong> Mechanism plausible. Benefit unclear. Subset analysis may show benefit.</p>
+      </div>
+
+      <div style="padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+        <div class="evidence-badge" style="background: #ede9fe; color: #6b21a8;">Mechanistic</div>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-light);"><strong>Target engagement shown</strong> but no clinical outcome data. Theoretical promise. Preclinical or early-phase.</p>
+      </div>
+
+      <div style="padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+        <div class="evidence-badge" style="background: #f3f4f6; color: #4b5563;">Preclinical</div>
+        <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--text-light);"><strong>In vitro or animal data only.</strong> No human trials. Very early stage. Do not infer human efficacy.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 VitalScan4PACVS. Evidence-based reference for Long COVID research and clinical practice.</p>
+  <p>
+    <a href="https://opensourcemed.info/" target="_blank" rel="noopener">Open Source Medicine Foundation</a> •
+    <a href="https://vitalscan4pacvs.com/">Join the Study</a> •
+    <a href="the-science.html">The Science</a>
+  </p>
+  <p style="margin-top: 1rem; font-size: 0.75rem; color: #6b7280;">
+    This atlas is a reference document, not medical advice. Every claim cites peer-reviewed literature in the references. Consult a qualified clinician before starting any treatment.
+  </p>
+</footer>
+
+<script src="js/osmf-network.js"></script>
+
+</body>
+</html>
