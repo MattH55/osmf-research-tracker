@@ -53,7 +53,7 @@ def read_progress() -> dict | None:
         return None
 
 
-def run_batch(offset: int, batch_size: int, workers: int, retries: int) -> int:
+def run_batch(offset: int, batch_size: int, workers: int, retries: int, no_cache: bool = False) -> int:
     cmd = [
         sys.executable,
         str(INGEST),
@@ -64,6 +64,8 @@ def run_batch(offset: int, batch_size: int, workers: int, retries: int) -> int:
         f"--limit={batch_size}",
         f"--workers={workers}",
     ]
+    if no_cache:
+        cmd.append("--no-cache")
     for attempt in range(1, retries + 1):
         rc = subprocess.call(cmd)
         if rc == 0:
@@ -91,6 +93,7 @@ def main() -> int:
         help="Start at nextOffset from data/cms/trilliant-progress.json",
     )
     ap.add_argument("--retries", type=int, default=3, help="Retries per batch on network errors")
+    ap.add_argument("--no-cache", action="store_true", help="Re-download ORIA DuckDB files instead of caching")
     args = ap.parse_args()
 
     progress = read_progress()
@@ -122,7 +125,7 @@ def main() -> int:
 
         batch_num += 1
         print(f"\n=== Batch {batch_num}: offset={offset} limit={args.batch_size} ===")
-        rc = run_batch(offset, args.batch_size, args.workers, args.retries)
+        rc = run_batch(offset, args.batch_size, args.workers, args.retries, args.no_cache)
         if rc != 0:
             print(
                 f"\nBatch failed at offset {offset}. Resume with:\n"

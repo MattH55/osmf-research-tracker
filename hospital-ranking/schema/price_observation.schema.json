@@ -1,0 +1,200 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Price Observation",
+  "description": "A single atomic price observation—US or international, cash or negotiated, bundled or unbundled.",
+  "type": "object",
+  "required": [
+    "observation_id",
+    "facility_id",
+    "procedure_slug",
+    "price_type",
+    "amount_native",
+    "currency",
+    "fx_rate_to_usd",
+    "fx_rate_date",
+    "amount_usd",
+    "bundle",
+    "provenance",
+    "observation_date"
+  ],
+  "properties": {
+    "observation_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this observation"
+    },
+    "facility_id": {
+      "type": "string",
+      "description": "Foreign key referencing facility.json"
+    },
+    "procedure_slug": {
+      "type": "string",
+      "description": "Foreign key referencing procedure ontology (e.g., 'tka', 'cataract')"
+    },
+    "price_type": {
+      "type": "string",
+      "enum": [
+        "discounted_cash",
+        "gross_charge",
+        "negotiated",
+        "allowed_p10",
+        "allowed_median",
+        "allowed_p90",
+        "published_package",
+        "quoted_package",
+        "tariff"
+      ],
+      "description": "Classification of this price"
+    },
+    "amount_native": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Price in native currency (source of truth)"
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 currency code, native currency ALWAYS"
+    },
+    "fx_rate_to_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Exchange rate used to convert to USD"
+    },
+    "fx_rate_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the FX rate"
+    },
+    "amount_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Derived USD amount (recomputed at read time from dated FX table)"
+    },
+    "bundle": {
+      "type": "object",
+      "required": ["includes", "completeness_score"],
+      "properties": {
+        "includes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "surgeon_fee",
+              "facility_fee",
+              "anesthesia",
+              "implant_device",
+              "inpatient_nights",
+              "pre_op_workup",
+              "post_op_physio",
+              "complication_cover",
+              "interpreter",
+              "airport_transfer",
+              "lodging",
+              "meals",
+              "transportation"
+            ]
+          },
+          "description": "Components explicitly included in this price"
+        },
+        "inpatient_nights": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Number of inpatient nights included, if specified"
+        },
+        "physio_sessions": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Number of post-op physical therapy sessions, if specified"
+        },
+        "device_brand": {
+          "type": ["string", "null"],
+          "description": "Brand of implant device (e.g., 'Zimmer Biomet Persona'), if specified"
+        },
+        "explicitly_excludes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Components explicitly NOT included"
+        },
+        "completeness_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Score indicating what % of canonical bundle is included (0.0–1.0)"
+        }
+      },
+      "description": "Bundle composition and completeness. null is NOT allowed; use explicit empty bundle if unknown."
+    },
+    "is_advertised_minimum": {
+      "type": "boolean",
+      "description": "True if this is a 'from $X' advertised floor price"
+    },
+    "is_estimate": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this price is modeled/estimated rather than observed"
+    },
+    "stale": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if observation is >18 months old"
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source_type", "source_url", "retrieved_at", "observation_date"],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "mrf",
+            "clinic_website",
+            "disclosure_form",
+            "tariff_publication",
+            "aggregator",
+            "quoted_inquiry",
+            "published_package"
+          ],
+          "description": "Source category"
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Mandatory: Live URL where price can be verified"
+        },
+        "source_document_hash": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA256 hash of source document for reproducibility"
+        },
+        "retrieved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When we retrieved/scraped the source (ISO 8601)"
+        },
+        "extracted_by": {
+          "type": "string",
+          "enum": ["adapter:*", "human", "llm_extraction"],
+          "description": "Who/what extracted this price"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.9,
+          "description": "Confidence in extraction accuracy (especially for LLM-extracted)"
+        }
+      },
+      "description": "Provenance: mandatory source URL and observation date, or entry is rejected"
+    },
+    "observation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When the price was VALID, not when we scraped it"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes"
+    }
+  },
+  "additionalProperties": false
+}

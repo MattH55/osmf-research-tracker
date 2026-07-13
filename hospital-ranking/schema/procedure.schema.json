@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Procedure",
+  "description": "A medical procedure with code mappings across multiple coding systems",
+  "type": "object",
+  "required": [
+    "procedure_id",
+    "slug",
+    "name"
+  ],
+  "properties": {
+    "procedure_id": {
+      "type": "string",
+      "description": "Unique procedure identifier (e.g., 'proc-tka')"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "URL-safe slug (e.g., 'tka', 'cataract_single_eye')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Clinical name (e.g., 'Total knee arthroplasty')"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Plain-language description"
+    },
+    "cpt_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "CPT codes (US, used in hospital MRFs and physician billing)"
+    },
+    "ms_drg_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Medicare Severity DRG codes (bundled inpatient rates)"
+    },
+    "icd10_pcs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ICD-10-PCS codes (procedure classification)"
+    },
+    "cdt_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "CDT codes (dental; e.g., D6010 for implant body)"
+    },
+    "hcpcs_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "HCPCS Level II codes"
+    },
+    "snomed_concepts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "SNOMED CT concept IDs"
+    },
+    "category": {
+      "type": ["string", "null"],
+      "description": "Medical specialty (e.g., 'Orthopedics', 'Ophthalmology', 'Dental')"
+    },
+    "is_shoppable": {
+      "type": "boolean",
+      "default": true,
+      "description": "True if price-comparable across facilities"
+    },
+    "is_pilot": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this procedure is in the initial pilot (5 procedures)"
+    },
+    "canonical_bundle": {
+      "type": ["object", "null"],
+      "description": "Reference to canonical bundle in ontology/canonical_bundles/",
+      "properties": {
+        "file_path": { "type": "string" },
+        "weight_citation": { "type": "string" }
+      }
+    },
+    "search_terms": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "User search keywords"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes"
+    }
+  },
+  "additionalProperties": false
+}

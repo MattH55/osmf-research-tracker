@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Facility",
+  "description": "A healthcare facility (hospital, clinic, surgical center, or international provider)",
+  "type": "object",
+  "required": [
+    "facility_id",
+    "name",
+    "country",
+    "city"
+  ],
+  "properties": {
+    "facility_id": {
+      "type": "string",
+      "description": "Unique facility identifier (e.g., 'hosp-cms-190318', 'intl-angeless-mx-01')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Official facility name"
+    },
+    "country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2 country code"
+    },
+    "city": {
+      "type": "string",
+      "description": "City name"
+    },
+    "state_province": {
+      "type": ["string", "null"],
+      "description": "State/province (especially for US and large countries)"
+    },
+    "address": {
+      "type": ["string", "null"],
+      "description": "Full mailing address"
+    },
+    "coordinates": {
+      "type": ["object", "null"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "description": "GPS coordinates"
+    },
+    "npi": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{10}$",
+      "description": "US National Provider Identifier (US facilities only)"
+    },
+    "cms_provider_id": {
+      "type": ["string", "null"],
+      "description": "CMS Provider ID / CCN (US facilities only)"
+    },
+    "accreditations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "JCI",
+          "AAGC",
+          "AACI",
+          "ACHC",
+          "CLIA",
+          "CAP",
+          "US_State_Licensed",
+          "ISO_9001",
+          "Other"
+        ]
+      },
+      "description": "Accreditation bodies (e.g., JCI for international, CLIA for US labs)"
+    },
+    "ownership": {
+      "type": ["string", "null"],
+      "enum": ["for_profit", "nonprofit", "government", "university", "foreign_government", "unknown"],
+      "description": "Ownership structure"
+    },
+    "website": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Facility website URL"
+    },
+    "phone": {
+      "type": ["string", "null"],
+      "description": "Contact phone (preferably international format)"
+    },
+    "email": {
+      "type": ["string", "null"],
+      "format": "email",
+      "description": "Contact email"
+    },
+    "language_services": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Languages spoken (ISO 639-1 codes, e.g., 'en', 'es', 'th')"
+    },
+    "bed_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of beds"
+    },
+    "is_international_destination": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if facility caters to medical tourists"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes"
+    }
+  },
+  "additionalProperties": false
+}

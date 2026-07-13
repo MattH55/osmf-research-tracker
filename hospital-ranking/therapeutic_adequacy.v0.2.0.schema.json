@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research.opensourcemed.info/schema/therapeutic_adequacy/v0.2.0",
+  "title": "Therapeutic Adequacy Layer (TAL) — v0.2.0",
+  "description": "TWO artifact types, deliberately separated because Right-to-Try eligibility is a DRUG-level property and therapeutic adequacy is a DISEASE-level property. v0.1.0 conflated them and undercounted the eligible asset pool. Select with the `record_type` discriminator.",
+
+  "oneOf": [
+    { "$ref": "#/$defs/DiseaseRecord" },
+    { "$ref": "#/$defs/AssetRecord" }
+  ],
+
+  "$defs": {
+
+    "AssetRecord": {
+      "type": "object",
+      "title": "RTT Asset Record (drug-level)",
+      "description": "One record per investigational product. Federal RTT eligibility (21 U.S.C. 360bbb-0a(a)(2)) attaches to the DRUG, not to a drug-indication pair: 'eligible investigational drug means an investigational drug (A) for which a Phase 1 clinical trial has been completed' — no indication qualifier. The same is true of MT SB 535. Therefore this registry is computed ONCE and applies to every eligible patient regardless of their condition.",
+      "required": ["record_type", "chembl_id", "name", "eligibility", "phase1", "record_meta"],
+      "additionalProperties": false,
+      "properties": {
+        "record_type": { "const": "asset" },
+        "chembl_id": { "type": "string", "pattern": "^CHEMBL[0-9]+$" },
+        "name": { "type": "string" },
+        "synonyms": { "type": "array", "items": { "type": "string" } },
+        "sponsor": { "type": ["string", "null"] },
+        "modality": {
+          "type": ["string", "null"],
+          "enum": ["small_molecule", "antibody", "oligonucleotide", "protein", "cell_therapy", "gene_therapy", "vaccine", "device", "other", null]
+        },
+
+        "eligibility": {
+          "type": "object",
+          "required": ["phase1_completed", "approved_in_us", "federal_rtt_eligible", "montana_eligible"],
+          "additionalProperties": false,
+          "properties": {
+
+            "phase1_completed": {
+              "type": "boolean",
+              "description": "Prong (A). ANY completed Phase 1, in ANY indication, in patients OR healthy volunteers (21 CFR 312.21(a)(1) permits both)."
+            },
+
+            "approved_in_us": {
+              "type": "boolean",
+              "description": "Prong (B): 'not approved or licensed for any use under section 355 of this title or section 351 of the PHS Act'. NOTE CAREFULLY: this is US approval only. Ex-US approval does NOT disqualify. Rintatolimod is approved in Argentina and remains a fully eligible investigational drug under both federal RTT and MT SB 535. Getting this wrong shrinks the pool incorrectly."
+            },
+
+            "approved_ex_us": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "ISO country codes where approved. Informational only — carries ZERO weight on eligibility, but is strong evidence for safety_transferability."
+            },
+
+            "regulatory_status": {
+              "type": ["string", "null"],
+              "enum": ["nda_bla_filed", "active_ind_pivotal_trial", "active_ind_other", "no_active_ind", "clinical_hold", "discontinued", "unknown", null],
+              "description": "Prong (C). Federal RTT requires an NDA/BLA filed OR investigation in a pivotal trial under an active IND — for ANY indication. Prong (D) requires active development, not discontinued, not on clinical hold."
+            },
+
+            "withdrawn": { "type": "boolean", "default": false },
+
+            "federal_rtt_eligible": {
+              "type": "boolean",
+              "description": "phase1_completed AND NOT approved_in_us AND NOT withdrawn AND regulatory_status IN (nda_bla_filed, active_ind_pivotal_trial) AND NOT clinical_hold."
+            },
+
+            "montana_eligible": {
+              "type": "boolean",
+              "description": "MT SB 535: successfully completed phase 1, not FDA-approved, AND (remains under investigation for FDA approval OR has a demonstrated safety record). The second disjunct is the whole point — it rescues ABANDONED-BUT-SAFE assets that federal RTT cannot touch (see BC 007 / rovunaptabin: Phase 2 missed, sponsor insolvent, safety record intact)."
+            },
+
+            "montana_only": {
+              "type": ["boolean", "null"],
+              "description": "montana_eligible AND NOT federal_rtt_eligible. THE HIGH-VALUE SET. Curate this first."
+            },
+
+            "demonstrated_safety_record": {
+              "type": ["boolean", "null"],
+              "description": "Curated. Required to invoke the Montana second disjunct for a discontinued asset. Evidence: published trial safety data, cumulative exposure, absence of program-halting toxicity."
+            }
+          }
+        },
+
+        "phase1": {
+          "type": "object",
+          "description": "THE MOST IMPORTANT BLOCK IN THIS SCHEMA AND IT EXISTS IN NO PUBLIC DATABASE. 'Completed Phase 1' is a legal checkbox that conceals radically different clinical meanings. An oncology dose-escalation deliberately titrates UP TO unacceptable toxicity in patients with terminal disease; its MTD is not a safety finding transferable to a severely disabled but non-dying ME/CFS patient. A healthy-volunteer Phase 1 transfers reasonably well. Encoding this distinction is what separates a defensible access framework from a green light.",
+          "required": ["population"],
+          "additionalProperties": false,
+          "properties": {
+            "population": {
+              "type": "string",
+              "enum": ["healthy_volunteer", "patients_target_indication", "patients_other_indication", "mixed", "unknown"]
+            },
+            "design": {
+              "type": ["string", "null"],
+              "enum": ["mtd_dose_escalation", "safety_tolerability", "sad_mad", "first_in_human_other", "unknown", null],
+              "description": "mtd_dose_escalation is the red flag: by construction it found a toxic dose."
+            },
+            "dlt_observed": {
+              "type": ["boolean", "null"],
+              "description": "Were dose-limiting toxicities observed? If true, the drug has a demonstrated ceiling of harm in humans."
+            },
+            "n_subjects": { "type": ["integer", "null"], "minimum": 1 },
+            "route": { "type": ["string", "null"] },
+            "dose_range_studied": { "type": ["string", "null"] },
+            "chronic_dosing_studied": {
+              "type": ["boolean", "null"],
+              "description": "Single/short-course IV data says nothing about the chronic dosing that a post-viral indication would require."
+            },
+            "nct_ids": { "type": "array", "items": { "type": "string" } },
+            "cumulative_human_exposure": {
+              "type": ["string", "null"],
+              "description": "Free text, e.g. rintatolimod: ~13 studies, >1200 patients, >90,000 doses. This is what a real safety record looks like and it dwarfs a single Phase 1."
+            }
+          }
+        },
+
+        "safety_transferability": {
+          "type": "object",
+          "description": "The curated judgment that turns 'cleared Phase 1' into an actual clinical statement about THIS target indication.",
+          "additionalProperties": false,
+          "properties": {
+            "target_indication": { "type": ["string", "null"], "description": "MONDO id this judgment is scoped to." },
+            "rating": {
+              "type": ["string", "null"],
+              "enum": ["high", "moderate", "low", "none", "unknown", null],
+              "description": "high: healthy-volunteer or same-indication P1, route/dose/schedule match intended use, no DLT. none: oncology MTD escalation being extrapolated to a non-fatal chronic condition — do not do this."
+            },
+            "route_matches_intended_use": { "type": ["boolean", "null"] },
+            "population_risk_calibration_mismatch": {
+              "type": ["boolean", "null"],
+              "description": "TRUE when the Phase 1 risk-benefit was calibrated against terminal disease but the target population is not dying. The single most dangerous silent assumption in the entire Montana framework."
+            },
+            "rationale": { "type": ["string", "null"], "maxLength": 2000 }
+          }
+        },
+
+        "indications_studied": {
+          "type": "array",
+          "description": "Disease ids with >= Phase 1 evidence for THIS asset. Legally unnecessary for eligibility; practically decisive for sponsor willingness and physician certification.",
+          "items": {
+            "type": "object",
+            "required": ["disease_id", "max_phase"],
+            "additionalProperties": false,
+            "properties": {
+              "disease_id": { "type": "string" },
+              "disease_label": { "type": ["string", "null"] },
+              "max_phase": { "type": "integer", "minimum": 1, "maximum": 3 },
+              "outcome": {
+                "type": ["string", "null"],
+                "enum": ["positive", "mixed", "failed_primary_endpoint", "ongoing", "terminated", "unknown", null],
+                "description": "failed_primary_endpoint does NOT remove eligibility. BC 007 failed Phase 2 and remains Montana-eligible. Efficacy failure and safety record are orthogonal — a fact the framework's critics and its cheerleaders both tend to miss."
+              }
+            }
+          }
+        },
+
+        "sponsor_supply_posture": {
+          "type": ["string", "null"],
+          "enum": ["known_willing", "existing_expanded_access", "known_unwilling", "insolvent_ip_transferred", "unknown", null],
+          "description": "THE ACTUAL BINDING CONSTRAINT. The statute grants sponsors total immunity for REFUSING access, so they bear all the downside of yes and none of the downside of no. Legal eligibility without sponsor willingness is worth nothing. 'existing_expanded_access' is double-edged: it proves willingness, but an open EAP can DEFEAT the federal 'unable to participate in a clinical trial' patient gate. Montana has no patient gate, so it is pure upside there."
+        },
+
+        "record_meta": { "$ref": "#/$defs/RecordMeta" }
+      }
+    },
+
+    "DiseaseRecord": {
+      "type": "object",
+      "title": "Therapeutic Adequacy Record (disease-level)",
+      "required": ["record_type", "mondo_id", "label", "computed", "curated", "record_meta"],
+      "additionalProperties": false,
+      "properties": {
+        "record_type": { "const": "disease" },
+        "mondo_id": { "type": "string", "pattern": "^MONDO:[0-9]{7}$" },
+        "label": { "type": "string" },
+        "synonyms": { "type": "array", "items": { "type": "string" } },
+
+        "xrefs": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "efo_id": { "type": ["string", "null"] },
+            "orphanet_id": { "type": ["string", "null"] },
+            "omim_id": { "type": ["string", "null"] },
+            "icd11_code": { "type": ["string", "null"] },
+            "umls_cui": { "type": ["string", "null"] },
+            "gard_id": { "type": ["string", "null"] }
+          }
+        },
+
+        "computed": {
+          "type": "object",
+          "required": ["max_clinical_phase", "n_drugs_by_phase", "has_approved_therapy", "generated_from"],
+          "additionalProperties": false,
+          "properties": {
+            "max_clinical_phase": { "type": "integer", "minimum": 0, "maximum": 4 },
+            "n_drugs_by_phase": {
+              "type": "object",
+              "properties": {
+                "phase_1": { "type": "integer", "minimum": 0 },
+                "phase_2": { "type": "integer", "minimum": 0 },
+                "phase_3": { "type": "integer", "minimum": 0 },
+                "phase_4": { "type": "integer", "minimum": 0 }
+              },
+              "additionalProperties": false
+            },
+            "has_approved_therapy": {
+              "type": "boolean",
+              "description": "phase_4 > 0. The ONLY question a drug-indication join can answer. Says nothing about curative vs disease-modifying vs symptomatic — that is the curated block's job."
+            },
+            "n_medrt_may_treat_drugs": { "type": ["integer", "null"], "minimum": 0 },
+            "latest_approval_year": { "type": ["integer", "null"] },
+            "n_active_trials": { "type": ["integer", "null"], "minimum": 0 },
+            "trial_countries": { "type": "array", "items": { "type": "string" } },
+            "prevalence_per_100k": { "type": ["number", "null"], "minimum": 0 },
+            "is_rare": { "type": ["boolean", "null"] },
+            "gbd_dalys": { "type": ["number", "null"], "minimum": 0 },
+
+            "indication_supported_asset_ids": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^CHEMBL[0-9]+$" },
+              "description": "Assets from the registry with >= Phase 1 evidence IN THIS DISEASE. This is the practically actionable set. It is a strict SUBSET of what is legally eligible: any federally-eligible asset in the registry may lawfully be requested for any life-threatening condition, studied or not. We store the subset, not the whole registry, because duplicating thousands of ids per disease is useless."
+            },
+
+            "n_indication_supported_assets": { "type": ["integer", "null"], "minimum": 0 },
+            "n_indication_supported_montana_only": { "type": ["integer", "null"], "minimum": 0 },
+
+            "generated_from": {
+              "type": "object",
+              "required": ["opentargets_release", "generated_at", "asset_registry_version"],
+              "additionalProperties": true,
+              "properties": {
+                "opentargets_release": { "type": "string" },
+                "asset_registry_version": { "type": "string" },
+                "aact_snapshot": { "type": ["string", "null"] },
+                "generated_at": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        },
+
+        "curated": {
+          "type": "object",
+          "required": ["curability", "therapy_intent", "lethality"],
+          "additionalProperties": false,
+          "properties": {
+            "curability": {
+              "type": "string",
+              "enum": ["curable_routinely", "curable_in_subset", "durable_remission_achievable", "not_curable_modifiable", "not_curable_unmodifiable", "self_limiting", "unknown"]
+            },
+            "therapy_intent": {
+              "type": "string",
+              "enum": ["curative", "disease_modifying", "symptomatic_only", "supportive_only", "none", "unknown"],
+              "description": "Ceiling of what BEST APPROVED therapy achieves. Parkinson's has 20+ phase-4 drugs and is symptomatic_only. This field is the entire reason the layer exists."
+            },
+            "disease_modifying_therapy_exists": { "type": "string", "enum": ["yes", "partial", "no", "unknown"] },
+            "lethality": {
+              "type": "string",
+              "enum": ["rapidly_fatal", "life_shortening", "non_fatal_severely_disabling", "non_fatal_disabling", "non_fatal_mild"],
+              "description": "Drives the FEDERAL patient gate ('life-threatening disease or condition', 21 CFR 312.81). non_fatal_severely_disabling FAILS federal RTT but may satisfy the 'severely debilitating' gate in Right to Try 2.0 statutes — and is IRRELEVANT in Montana, which has no patient eligibility gate at all since SB 422 (2023)."
+            },
+            "functional_burden": { "type": ["integer", "null"], "minimum": 0, "maximum": 4 },
+            "soc_staleness_years": { "type": ["integer", "null"], "minimum": 0 },
+            "soc_basis": { "type": ["string", "null"], "enum": ["rct_guideline", "observational_consensus", "expert_opinion", "no_established_soc", null] },
+            "repurposing_tractability": {
+              "type": ["string", "null"],
+              "enum": ["high", "moderate", "low", "unknown", null],
+              "description": "NEAR-DISJOINT FROM RTT BY CONSTRUCTION. RTT categorically excludes any drug approved for any US indication; those are exactly the drugs you would repurpose, and off-label prescribing already reaches them. High repurposing tractability therefore means RTT is IRRELEVANT here, not promising."
+            },
+
+            "rtt_gate_federal": {
+              "type": ["string", "null"],
+              "enum": ["likely_eligible", "contested", "ineligible", null],
+              "description": "Requires lethality in (rapidly_fatal, life_shortening) AND exhausted approved options AND no accessible trial AND >=1 federally eligible asset AND a willing sponsor. Note the trap: an OPEN EXPANDED ACCESS PROTOCOL can itself defeat the 'unable to participate' prong."
+            },
+            "rtt_gate_montana": {
+              "type": ["boolean", "null"],
+              "description": "Montana has no patient gate. So this is effectively: does a montana_eligible asset exist that anyone would actually administer here? Decoupled from lethality entirely."
+            },
+            "rtt_practical_actionability": {
+              "type": ["string", "null"],
+              "enum": ["indication_supported", "global_only", "none", null],
+              "description": "indication_supported = an eligible asset has been studied in THIS disease (a physician will certify, a sponsor might supply). global_only = legally reachable assets exist but none studied here; sponsors will almost always refuse, because an AE in an unstudied population pollutes their safety database and can trigger a clinical hold on the program they actually care about. none = no eligible asset. PACVS is currently 'none'."
+            },
+
+            "notes": { "type": ["string", "null"], "maxLength": 4000 },
+            "evidence": { "type": "array", "items": { "$ref": "#/$defs/Evidence" } },
+            "curation_meta": { "$ref": "#/$defs/CurationMeta" }
+          }
+        },
+
+        "record_meta": { "$ref": "#/$defs/RecordMeta" }
+      }
+    },
+
+    "Evidence": {
+      "type": "object",
+      "required": ["field", "source_type", "identifier"],
+      "additionalProperties": false,
+      "properties": {
+        "field": { "type": "string" },
+        "source_type": { "type": "string", "enum": ["pubmed", "guideline", "fda_label", "cochrane", "registry", "statute", "url"] },
+        "identifier": { "type": "string" },
+        "quote_or_gist": { "type": ["string", "null"], "maxLength": 500 }
+      }
+    },
+
+    "CurationMeta": {
+      "type": "object",
+      "required": ["method", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "method": { "type": "string", "enum": ["human", "llm_draft_human_verified", "llm_draft_unverified"] },
+        "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+        "curator": { "type": ["string", "null"] },
+        "curated_at": { "type": ["string", "null"], "format": "date-time" },
+        "model": { "type": ["string", "null"] }
+      }
+    },
+
+    "RecordMeta": {
+      "type": "object",
+      "required": ["schema_version", "record_version"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": { "const": "0.2.0" },
+        "record_version": { "type": "integer", "minimum": 1 },
+        "license": { "type": "string", "default": "CC-BY-4.0" },
+        "superseded_by": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
