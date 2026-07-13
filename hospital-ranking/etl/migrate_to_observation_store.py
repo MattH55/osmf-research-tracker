@@ -48,8 +48,14 @@ def legacy_trilliant_to_observation(row: dict, hospitals_lookup: dict, source: s
     bundle_includes = ["facility_fee"]
 
     obs_date = row.get("priceVintage")
-    if not obs_date or obs_date == "":
+    if not obs_date or obs_date == "" or obs_date is None:
         obs_date = date.today().isoformat()
+    # Ensure it's a valid date string
+    if isinstance(obs_date, (int, float)):
+        obs_date = date.today().isoformat()
+    # Extract just the date part if it has time component
+    if "T" in str(obs_date):
+        obs_date = str(obs_date).split("T")[0]
 
     return {
         "observation_id": str(uuid.uuid4()),

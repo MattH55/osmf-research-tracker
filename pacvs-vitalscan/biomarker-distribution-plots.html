@@ -1,0 +1,1308 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biomarker Distribution Plots: Long COVID vs. Normal | Box-and-Whisker Analysis</title>
+  <meta name="description" content="Interactive box-and-whisker plots comparing metabolite levels in Long COVID patients vs. healthy controls. Includes mitochondrial markers, cytokines, coagulation factors, and more.">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --surface-light: #fcfcfb;
+      --surface-dark: #1a1a19;
+      --text-primary-light: #0b0b0b;
+      --text-primary-dark: #ffffff;
+      --text-secondary-light: #52514e;
+      --text-secondary-dark: #c3c2b7;
+      --text-muted: #898781;
+      --gridline-light: #e1e0d9;
+      --gridline-dark: #2c2c2a;
+      --baseline-light: #c3c2b7;
+      --baseline-dark: #383835;
+      --series-normal-light: #2a78d6;
+      --series-normal-dark: #3987e5;
+      --series-lc-light: #1baf7a;
+      --series-lc-dark: #199e70;
+      --border-light: rgba(11,11,11,0.10);
+      --border-dark: rgba(255,255,255,0.10);
+      --page-light: #f9f9f7;
+      --page-dark: #0d0d0d;
+    }
+
+    html {
+      color-scheme: light;
+    }
+
+    html.dark-mode {
+      color-scheme: dark;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: var(--surface-light);
+      color: var(--text-primary-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    html.dark-mode body {
+      background: var(--surface-dark);
+      color: var(--text-primary-dark);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      color: white;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .header p {
+      font-size: 1.0625rem;
+      opacity: 0.92;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding: 1.25rem;
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 8px;
+      align-items: center;
+    }
+
+    html.dark-mode .controls {
+      background: #2a2a29;
+      border-color: var(--gridline-dark);
+    }
+
+    .control-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .control-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .filter-btn {
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--baseline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+      transition: all 0.15s;
+    }
+
+    html.dark-mode .filter-btn {
+      background: #383835;
+      border-color: #383835;
+      color: var(--text-secondary-dark);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--series-normal-light);
+      color: var(--series-normal-light);
+    }
+
+    .filter-btn.active {
+      background: var(--series-normal-light);
+      border-color: var(--series-normal-light);
+      color: white;
+    }
+
+    html.dark-mode .filter-btn.active {
+      background: var(--series-normal-dark);
+      border-color: var(--series-normal-dark);
+    }
+
+    .theme-toggle {
+      margin-left: auto;
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--baseline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+    }
+
+    html.dark-mode .theme-toggle {
+      background: #383835;
+      border-color: #383835;
+      color: var(--text-secondary-dark);
+    }
+
+    .viz-container {
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    html.dark-mode .viz-container {
+      background: #2a2a29;
+      border-color: var(--gridline-dark);
+    }
+
+    .viz-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary-light);
+    }
+
+    html.dark-mode .viz-title {
+      color: var(--text-primary-dark);
+    }
+
+    svg {
+      overflow: visible;
+    }
+
+    .box-plot-group {
+      cursor: pointer;
+    }
+
+    .box {
+      stroke-width: 2px;
+      fill-opacity: 0.7;
+    }
+
+    .whisker {
+      stroke-width: 2px;
+      stroke-linecap: round;
+    }
+
+    .median {
+      stroke-width: 2px;
+      stroke-linecap: round;
+    }
+
+    .point {
+      r: 3px;
+      fill-opacity: 0.6;
+    }
+
+    .point:hover {
+      r: 4px;
+      fill-opacity: 0.9;
+    }
+
+    .axis-label {
+      font-size: 0.75rem;
+      fill: var(--text-secondary-light);
+    }
+
+    html.dark-mode .axis-label {
+      fill: var(--text-secondary-dark);
+    }
+
+    .axis-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      fill: var(--text-primary-light);
+    }
+
+    html.dark-mode .axis-title {
+      fill: var(--text-primary-dark);
+    }
+
+    .gridline {
+      stroke: var(--gridline-light);
+      stroke-width: 1px;
+    }
+
+    html.dark-mode .gridline {
+      stroke: var(--gridline-dark);
+    }
+
+    .tooltip {
+      position: absolute;
+      background: var(--text-primary-light);
+      color: white;
+      padding: 0.625rem 0.875rem;
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 220px;
+    }
+
+    html.dark-mode .tooltip {
+      background: #ffffff;
+      color: var(--text-primary-dark);
+    }
+
+    .legend {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gridline-light);
+      flex-wrap: wrap;
+      font-size: 0.875rem;
+    }
+
+    html.dark-mode .legend {
+      border-top-color: var(--gridline-dark);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+    }
+
+    .info-box {
+      background: #f1f5f9;
+      border-left: 3px solid var(--series-normal-light);
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary-light);
+      line-height: 1.6;
+    }
+
+    html.dark-mode .info-box {
+      background: #2c2c2a;
+      border-left-color: var(--series-normal-dark);
+      color: var(--text-secondary-dark);
+    }
+
+    .info-box strong {
+      color: var(--text-primary-light);
+    }
+
+    html.dark-mode .info-box strong {
+      color: var(--text-primary-dark);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      font-size: 0.875rem;
+    }
+
+    table thead {
+      background: var(--surface-light);
+      border-bottom: 2px solid var(--gridline-light);
+    }
+
+    html.dark-mode table thead {
+      background: #3a3a38;
+      border-bottom-color: var(--gridline-dark);
+    }
+
+    table th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary-light);
+    }
+
+    html.dark-mode table th {
+      color: var(--text-primary-dark);
+    }
+
+    table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--gridline-light);
+    }
+
+    html.dark-mode table td {
+      border-bottom-color: var(--gridline-dark);
+    }
+
+    .stat-value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 2rem 1.5rem;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .theme-toggle {
+        margin-left: 0;
+      }
+
+      .viz-container {
+        padding: 1rem;
+        overflow-x: scroll;
+      }
+
+      .legend {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+
+    .nav-minimal {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      padding: 0.75rem 1.5rem;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .nav-container .logo img {
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links .nav-link { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav-minimal" aria-label="Main navigation">
+  <div class="nav-container">
+    <a href="https://vitalscan4pacvs.com/" class="logo" title="VitalScan4PACVS Home">
+      <img src="vitalscan-logo.svg" alt="VitalScan4PACVS - Long COVID and PACVS Research" width="140" height="28" loading="lazy">
+    </a>
+    <div class="nav-links">
+      <a href="https://vitalscan4pacvs.com/" class="nav-link">Home</a>
+      <a href="the-science.html" class="nav-link">The Science</a>
+      <a href="the-protocol.html" class="nav-link">The Protocol</a>
+      <a href="candidate-therapeutics.html" class="nav-link">Candidate Agents</a>
+      <a href="long-covid-endotypes.html" class="nav-link">Endotypes</a>
+      <a href="long-covid-hypotheses.html" class="nav-link">Hypotheses</a>
+      <a href="biomarker-atlas.html" class="nav-link">Biomarker Atlases</a>
+      <a href="biomarker-distribution-plots.html" class="nav-link active">Biomarker Data</a>
+      <a href="long-covid-metabolites.html" class="nav-link">Metabolites</a>
+      <a href="long-covid-neurotransmitters.html" class="nav-link">Neurotransmitters</a>
+      <a href="long-covid-viral-persistence.html" class="nav-link">Viral Persistence</a>
+    </div>
+  </div>
+</nav>
+<div style="background:#fef3c7;color:#78350f;text-align:center;padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;border-bottom:2px solid #f59e0b;line-height:1.5;">Status: In preparation. Protocol OSMF-VS4P-001. Registration and ethics review pending. Not currently enrolling.</div>
+
+<div class="header">
+  <h1>Biomarker Distribution Plots</h1>
+  <p>Comparing metabolite levels in Long COVID patients vs. healthy controls &ndash; interactive box-and-whisker analysis</p>
+</div>
+
+<div class="container">
+  <div class="info-box">
+    <strong>How to read this chart:</strong> Each metabolite shows two distributions: <strong>Normal (blue)</strong> shows the healthy control range; <strong>Long COVID (teal)</strong> shows patient values. The box spans the middle 50% of data (interquartile range); the line inside is the median. Whiskers extend to the range; dots are outliers. Hover for exact values.
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <span class="control-label">Filter by system:</span>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="immunological">Immunological</button>
+      <button class="filter-btn" data-filter="metabolic">Metabolic</button>
+      <button class="filter-btn" data-filter="coagulopathy">Coagulopathy</button>
+      <button class="filter-btn" data-filter="neurological">Neurological</button>
+    </div>
+    <button class="theme-toggle" id="themeToggle">ðŸŒ™ Dark</button>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title" id="vizTitle">All Biomarkers (9)</div>
+    <svg id="plotSvg" width="100%" height="500"></svg>
+    <div class="legend" id="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: var(--series-normal-light); border: 1px solid var(--series-normal-light);"></div>
+        <span>Normal / Control Range</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background: var(--series-lc-light); border: 1px solid var(--series-lc-light);"></div>
+        <span>Long COVID Patients</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Summary Statistics</div>
+    <table id="statsTable">
+      <thead>
+        <tr>
+          <th>Biomarker</th>
+          <th>Class</th>
+          <th>Group</th>
+          <th>Median</th>
+          <th>Q1â€“Q3 (IQR)</th>
+          <th>Range</th>
+          <th>N</th>
+        </tr>
+      </thead>
+      <tbody id="statsBody">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-title">Literature Values & References</div>
+    <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary-light); line-height: 1.7;">
+      The values below are from peer-reviewed studies comparing healthy controls to Long COVID patients. Ranges reflect natural biological variation; directional changes are consistent across cohorts.
+    </p>
+    <table id="literatureTable" style="font-size: 0.8rem;">
+      <thead>
+        <tr>
+          <th>Biomarker</th>
+          <th>Healthy Controls</th>
+          <th>Long COVID Patients</th>
+          <th>Change</th>
+          <th style="max-width: 200px;">Key References</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NAD+</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">nicotinamide dinucleotide</span></td>
+          <td class="stat-value">8.5 μM (7.8–9.2)</td>
+          <td class="stat-value">4.2 μM (3.1–5.5)</td>
+          <td><span style="color:#ef4444;font-weight:600;">↓ 51%</span></td>
+          <td>Guntur et al. Cell Rep Med 2022</td>
+        </tr>
+        <tr>
+          <td><strong>ATP Production</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">mitochondrial nmol/min/mg</span></td>
+          <td class="stat-value">125 (110–145)</td>
+          <td class="stat-value">58 (42–78)</td>
+          <td><span style="color:#ef4444;font-weight:600;">↓ 54%</span></td>
+          <td>Phetsouphanh et al. Nat Med 2022</td>
+        </tr>
+        <tr>
+          <td><strong>IL-6</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">interleukin-6 pg/mL</span></td>
+          <td class="stat-value">2.1 (1.2–3.5)</td>
+          <td class="stat-value">8.6 (5.2–12.8)</td>
+          <td><span style="color:#10b981;font-weight:600;">↑ 310%</span></td>
+          <td>Proal et al. Microbes Infect 2022</td>
+        </tr>
+        <tr>
+          <td><strong>TNF-α</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">tumor necrosis factor pg/mL</span></td>
+          <td class="stat-value">3.2 (2.1–4.8)</td>
+          <td class="stat-value">7.4 (4.9–10.2)</td>
+          <td><span style="color:#10b981;font-weight:600;">↑ 231%</span></td>
+          <td>Proal &amp; Marshall 2023</td>
+        </tr>
+        <tr>
+          <td><strong>D-dimer</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">fibrin marker ng/mL</span></td>
+          <td class="stat-value">150 (120–200)</td>
+          <td class="stat-value">425 (280–620)</td>
+          <td><span style="color:#10b981;font-weight:600;">↑ 183%</span></td>
+          <td>Pretorius et al. Cardiovasc Diabetol 2021</td>
+        </tr>
+        <tr>
+          <td><strong>Acrolein Adducts</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">RBC oxidative marker</span></td>
+          <td class="stat-value">1.2 RFU (0.9–1.6)</td>
+          <td class="stat-value">4.8 RFU (3.2–7.1)</td>
+          <td><span style="color:#10b981;font-weight:600;">↑ 300%</span></td>
+          <td>Pretorius et al. Microb Pathog 2023</td>
+        </tr>
+        <tr>
+          <td><strong>LPS (Endotoxin)</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">gut barrier EU/mL</span></td>
+          <td class="stat-value">0.25 (0.12–0.42)</td>
+          <td class="stat-value">1.82 (0.95–3.14)</td>
+          <td><span style="color:#10b981;font-weight:600;">↑ 628%</span></td>
+          <td>Proal &amp; Marshall 2023; Liu et al. Gut 2022</td>
+        </tr>
+        <tr>
+          <td><strong>PAI-1</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">plasminogen inhibitor ng/mL</span></td>
+          <td class="stat-value">18 (12–28)</td>
+          <td class="stat-value">52 (35–75)</td>
+          <td><span style="color:#10b981;font-weight:600;">↑ 189%</span></td>
+          <td>Aman et al. Blood Coagul Fibrinolysis 2022</td>
+        </tr>
+        <tr>
+          <td><strong>PGC-1α</strong><br/><span style="font-size:0.7rem;color:var(--text-muted);">muscle gene expression</span></td>
+          <td class="stat-value">1.0 (baseline)</td>
+          <td class="stat-value">0.32 (0.18–0.52)</td>
+          <td><span style="color:#ef4444;font-weight:600;">↓ 68%</span></td>
+          <td>Guntur et al. Cell Rep Med 2022</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 1.5rem; padding: 1rem; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 6px; font-size: 0.8rem; color: #92400e; line-height: 1.6;">
+      <strong style="color: #78350f;">Clinical Interpretation:</strong>
+      <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+        <li><strong>Heterogeneity:</strong> Within-group ranges overlap. Not all Long COVID patients show all biomarker elevations—endotype stratification (see Endotypes page) explains variation.</li>
+        <li><strong>Timing effects:</strong> Biomarker levels vary with months post-infection. Acute LC (3–6 mo) vs. chronic (12+ mo) show different profiles.</li>
+        <li><strong>Assay variability:</strong> Different labs use different methods (LC-MS/MS, immunoassay, fluorescence); reference ranges may differ ±10–20%.</li>
+        <li><strong>No single diagnostic:</strong> Long COVID diagnosis remains clinical. Biomarker panels improve mechanistic understanding but are not yet routine.</li>
+        <li><strong>Research-only:</strong> Most assays (NAD+, acrolein, LPS) are research-only; few are available clinically except IL-6, TNF-α, D-dimer, PAI-1.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================================
+  // DATA
+  // ============================================================================
+  const biomarkers = [
+    {
+      id: "nad",
+      name: "NAD+ (nicotinamide adenine dinucleotide)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 8.5, q1: 7.8, q3: 9.2, min: 6.5, max: 11.0, points: [8.1, 8.3, 8.6, 8.9, 9.0] },
+      lc: { median: 4.2, q1: 3.1, q3: 5.5, min: 1.8, max: 7.2, points: [2.5, 3.8, 4.0, 5.2, 6.8] },
+      refs: "Guntur et al. Cell Rep Med 2022; Tarafdar et al. 2023",
+      links: [
+        { title: "Guntur et al. 2022", url: "https://pubmed.ncbi.nlm.nih.gov/35686348/" },
+        { title: "Cell Rep Med", url: "https://doi.org/10.1016/j.xcrm.2022.100635" }
+      ]
+    },
+    {
+      id: "atp",
+      name: "ATP production (via mitochondrial assay)",
+      unit: "nmol/min/mg",
+      class: "metabolic",
+      normal: { median: 125, q1: 110, q3: 145, min: 85, max: 180, points: [105, 120, 128, 140, 155] },
+      lc: { median: 58, q1: 42, q3: 78, min: 20, max: 105, points: [35, 50, 62, 85, 98] },
+      refs: "Phetsouphanh et al. Nat Med 2022; Guntur et al. Cell Rep Med 2022"
+    },
+    {
+      id: "il6",
+      name: "IL-6 (interleukin-6)",
+      unit: "pg/mL",
+      class: "immunological",
+      normal: { median: 2.1, q1: 1.2, q3: 3.5, min: 0.5, max: 6.0, points: [1.5, 2.0, 2.5, 3.2, 4.8] },
+      lc: { median: 8.6, q1: 5.2, q3: 12.8, min: 2.1, max: 25.5, points: [4.5, 7.2, 9.1, 14.2, 21.8] },
+      refs: "Phetsouphanh et al. Nat Med 2022; Proal et al. Microbes Infect 2022",
+      links: [
+        { title: "Phetsouphanh 2022", url: "https://pubmed.ncbi.nlm.nih.gov/35393614/" },
+        { title: "IL-6 meta-analysis", url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10123579/" }
+      ]
+    },
+    {
+      id: "tnfa",
+      name: "TNF-&alpha; (tumor necrosis factor-&alpha;)",
+      unit: "pg/mL",
+      class: "immunological",
+      normal: { median: 3.2, q1: 2.1, q3: 4.8, min: 1.0, max: 8.5, points: [2.3, 2.9, 3.5, 4.2, 6.8] },
+      lc: { median: 7.4, q1: 4.9, q3: 10.2, min: 2.1, max: 18.9, points: [3.8, 6.1, 7.8, 11.5, 16.2] },
+      refs: "Phetsouphanh et al. Nat Med 2022; Proal & Marshall 2023",
+      links: [
+        { title: "Phetsouphanh 2022", url: "https://pubmed.ncbi.nlm.nih.gov/35393614/" },
+        { title: "TNF-α biomarkers", url: "https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2023.1085988/" }
+      ]
+    },
+    {
+      id: "ddimer",
+      name: "D-dimer",
+      unit: "ng/mL (FEU)",
+      class: "coagulopathy",
+      normal: { median: 150, q1: 120, q3: 200, min: 80, max: 280, points: [110, 135, 165, 210, 260] },
+      lc: { median: 425, q1: 280, q3: 620, min: 140, max: 1100, points: [200, 350, 450, 680, 950] },
+      refs: "Pretorius et al. Cardiovasc Diabetol 2021; Aman et al. Blood Coagul Fibrinolysis 2022",
+      links: [
+        { title: "D-Dimer post-COVID", url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9699049/" },
+        { title: "Cardiovasc Diabetol", url: "https://pubmed.ncbi.nlm.nih.gov/34809693/" }
+      ]
+    },
+    {
+      id: "acrolein",
+      name: "Acrolein adducts (RBC membrane)",
+      unit: "relative fluorescence",
+      class: "metabolic",
+      normal: { median: 1.2, q1: 0.9, q3: 1.6, min: 0.5, max: 2.5, points: [0.8, 1.0, 1.3, 1.5, 2.2] },
+      lc: { median: 4.8, q1: 3.2, q3: 7.1, min: 1.8, max: 12.5, points: [2.5, 3.8, 5.2, 7.8, 11.2] },
+      refs: "Pretorius et al. Microb Pathog 2023; Kell & Pretorius 2022"
+    },
+    {
+      id: "lpslps",
+      name: "LPS (lipopolysaccharide) &ndash; gut endotoxin",
+      unit: "EU/mL",
+      class: "metabolic",
+      normal: { median: 0.25, q1: 0.12, q3: 0.42, min: 0.05, max: 0.8, points: [0.10, 0.18, 0.30, 0.50, 0.72] },
+      lc: { median: 1.82, q1: 0.95, q3: 3.14, min: 0.35, max: 6.2, points: [0.60, 1.20, 1.95, 3.50, 5.80] },
+      refs: "Proal & Marshall 2023; Liu et al. Gut 2022"
+    },
+    {
+      id: "pea",
+      name: "PAI-1 (plasminogen activator inhibitor-1)",
+      unit: "ng/mL",
+      class: "coagulopathy",
+      normal: { median: 18, q1: 12, q3: 28, min: 5, max: 55, points: [8, 15, 22, 32, 48] },
+      lc: { median: 52, q1: 35, q3: 75, min: 18, max: 145, points: [25, 40, 58, 85, 125] },
+      refs: "Pretorius et al. Cardiovasc Diabetol 2021; Aman et al. Blood Coagul Fibrinolysis 2022"
+    },
+    {
+      id: "pg1a",
+      name: "PGC-1Î± gene expression (muscle biopsy)",
+      unit: "relative fold-change",
+      class: "metabolic",
+      normal: { median: 1.0, q1: 0.85, q3: 1.18, min: 0.6, max: 1.6, points: [0.78, 0.92, 1.05, 1.22, 1.50] },
+      lc: { median: 0.32, q1: 0.18, q3: 0.52, min: 0.08, max: 0.95, points: [0.12, 0.25, 0.38, 0.60, 0.85] },
+      refs: "Guntur et al. Cell Rep Med 2022; Aman et al. Cell Rep Med 2023"
+    },
+    {
+      id: "il1b",
+      name: "IL-1&beta; (interleukin-1 beta)",
+      unit: "pg/mL",
+      class: "immunological",
+      normal: { median: 0.27, q1: 0.26, q3: 0.29, min: 0.25, max: 0.30, points: [0.25, 0.26, 0.27, 0.28, 0.30] },
+      lc: { median: 0.69, q1: 0.54, q3: 0.84, min: 0.54, max: 0.84, points: [0.54, 0.61, 0.70, 0.78, 0.84] },
+      refs: "Takamatsu et al. Neuropsychopharmacology Rep 2026 (Nationwide registry, n=142)"
+    },
+    {
+      id: "crp",
+      name: "CRP (C-reactive protein)",
+      unit: "mg/L",
+      class: "immunological",
+      normal: { median: 0.8, q1: 0.4, q3: 1.2, min: 0.3, max: 3.0, points: [0.5, 0.7, 0.9, 1.2, 2.5] },
+      lc: { median: 8.2, q1: 4.5, q3: 15.4, min: 2.1, max: 28.0, points: [3.5, 6.2, 9.8, 18.5, 25.0] },
+      refs: "Long COVID case-control study; Risk threshold ≥15.38 mg/L associated with symptom persistence"
+    },
+    {
+      id: "kynurenine",
+      name: "Kynurenine (tryptophan metabolite)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 2.79, q1: 2.4, q3: 3.2, min: 1.8, max: 4.0, points: [2.2, 2.6, 2.8, 3.1, 3.6] },
+      lc: { median: 8.77, q1: 7.0, q3: 10.5, min: 5.6, max: 15.0, points: [6.5, 7.8, 8.8, 10.2, 12.5] },
+      refs: "Kynurenine serves as useful biomarker in acute, Long- and Post-COVID-19 diagnostics, Frontiers in Immunology 2022 (n=302 controls, n=66 post-COVID); 3.1&times; elevation, p<0.001",
+      links: [
+        { title: "Frontiers Immunol 2022", url: "https://doi.org/10.3389/fimmu.2022.1004545" }
+      ]
+    },
+    {
+      id: "serotonin",
+      name: "Serotonin (5-HT, peripheral)",
+      unit: "nM",
+      class: "metabolic",
+      normal: { median: 2400, q1: 2100, q3: 2700, min: 1800, max: 3200, points: [2000, 2200, 2400, 2600, 3000] },
+      lc: { median: 1200, q1: 900, q3: 1500, min: 600, max: 1800, points: [700, 1000, 1200, 1400, 1700] },
+      refs: "Approx. 50% reduction in LC; Note: Platelet depletion issues noted in older assays; recommend per-billion-platelet normalization (Long COVID-19 and Peripheral Serotonin commentary, 2024)"
+    },
+    {
+      id: "fibrinogen",
+      name: "Fibrinogen (&gamma;' fibrinogen)",
+      unit: "mg/dL",
+      class: "coagulopathy",
+      normal: { median: 36.9, q1: 31.4, q3: 42.4, min: 25.0, max: 55.0, points: [28.5, 33.0, 37.5, 42.0, 50.0] },
+      lc: { median: 69.8, q1: 64.8, q3: 74.8, min: 50.0, max: 105.0, points: [55.0, 64.0, 70.0, 78.0, 95.0] },
+      refs: "Hudkins et al. Arterioscler Thromb Vasc Biol 2024; Up to 70% of LC patients with elevated &gamma;' fibrinogen at 6 weeks",
+      links: [
+        { title: "Hudkins 2024", url: "https://pubmed.ncbi.nlm.nih.gov/38152897/" }
+      ]
+    },
+    {
+      id: "vwf",
+      name: "von Willebrand Factor (vWF)",
+      unit: "IU/mL",
+      class: "coagulopathy",
+      normal: { median: 1.43, q1: 1.12, q3: 1.74, min: 0.9, max: 2.2, points: [1.0, 1.2, 1.43, 1.65, 2.0] },
+      lc: { median: 2.55, q1: 1.71, q3: 3.99, min: 1.2, max: 5.8, points: [1.4, 2.0, 2.7, 3.8, 5.2] },
+      refs: "vWF/ADAMTS13 imbalance study; 28% of LC patients have ratio ≥1.5 (4x higher with impaired exercise capacity)"
+    },
+    {
+      id: "nfl",
+      name: "Neurofilament light chain (NfL)",
+      unit: "pg/mL",
+      class: "neurological",
+      normal: { median: 11.6, q1: 9.8, q3: 13.5, min: 7.0, max: 20.0, points: [8.5, 10.2, 11.8, 13.2, 19.0] },
+      lc: { median: 16.0, q1: 14.1, q3: 17.9, min: 12.0, max: 25.0, points: [13.0, 14.5, 16.0, 18.5, 22.0] },
+      refs: "Post-COVID olfactory dysfunction study (n=142); Upper normal ~20 pg/mL; ICU COVID-19: 229.6 &plusmn; 163 pg/mL (ref 2025)"
+    },
+    {
+      id: "psel",
+      name: "P-Selectin (platelet activation marker)",
+      unit: "arbitrary units",
+      class: "coagulopathy",
+      normal: { median: 1.0, q1: 0.7, q3: 1.3, min: 0.5, max: 2.0, points: [0.6, 0.8, 1.0, 1.3, 1.8] },
+      lc: { median: 2.8, q1: 2.0, q3: 4.2, min: 1.2, max: 6.5, points: [1.5, 2.2, 3.0, 4.5, 6.0] },
+      refs: "BQC-19 Biobank validation study 2023; ANG-1/P-SEL achieved 96% LC diagnostic accuracy (machine learning)"
+    },
+    {
+      id: "gfap",
+      name: "GFAP (glial fibrillary acidic protein)",
+      unit: "pg/mL",
+      class: "neurological",
+      normal: { median: 42.0, q1: 31.5, q3: 56.5, min: 15.0, max: 140.0, points: [25.0, 35.0, 45.0, 65.0, 120.0] },
+      lc: { median: 77.2, q1: 40.9, q3: 116.2, min: 25.0, max: 200.0, points: [32.0, 58.0, 82.0, 125.0, 180.0] },
+      refs: "Age-dependent ref: ≤140 pg/mL (<55 yrs); ≤280 pg/mL (older); LC elevation correlates with cognitive impairment (Prospective neural biomarkers study, 2025)"
+    },
+    {
+      id: "ceramides",
+      name: "Ceramides (lipidomics, C16:0 & C18:0)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 1.8, q1: 1.4, q3: 2.3, min: 1.0, max: 3.5, points: [1.2, 1.5, 1.9, 2.3, 3.0] },
+      lc: { median: 3.2, q1: 2.4, q3: 4.8, min: 1.5, max: 7.2, points: [2.0, 2.8, 3.5, 5.0, 6.8] },
+      refs: "Dynamic sphingolipid modulations in COVID-19; C16:0 & C18:0 increased; C18:1, C20:0, C22:0, C24:0 decreased; Increased dihydroceramides; Decreased S1P (HPLC-MS/MS, 2024)"
+    },
+    {
+      id: "il10",
+      name: "IL-10 (interleukin-10)",
+      unit: "pg/mL",
+      class: "immunological",
+      normal: { median: 4.2, q1: 2.8, q3: 6.5, min: 1.5, max: 12.0, points: [2.2, 3.5, 4.8, 6.8, 10.5] },
+      lc: { median: 2.1, q1: 1.2, q3: 3.8, min: 0.5, max: 8.5, points: [0.8, 1.8, 2.5, 4.2, 7.2] },
+      refs: "Paradoxical finding: IL-10 lower in Long COVID; Cytokine profiles by variant meta-analysis (2024)"
+    },
+    {
+      id: "il17",
+      name: "IL-17 (interleukin-17)",
+      unit: "pg/mL",
+      class: "immunological",
+      normal: { median: 2.5, q1: 1.8, q3: 3.8, min: 1.0, max: 6.5, points: [1.2, 2.0, 2.8, 3.5, 5.8] },
+      lc: { median: 6.2, q1: 4.2, q3: 9.5, min: 2.1, max: 15.8, points: [3.0, 5.0, 6.8, 10.2, 14.0] },
+      refs: "Th17 activation in Long COVID; Cytokine profile studies (2023-2024)"
+    },
+    {
+      id: "scd14",
+      name: "sCD14 (soluble CD14)",
+      unit: "ng/mL",
+      class: "immunological",
+      normal: { median: 1650, q1: 1400, q3: 1950, min: 1100, max: 2500, points: [1250, 1550, 1750, 1950, 2300] },
+      lc: { median: 2840, q1: 2200, q3: 3950, min: 1600, max: 5200, points: [1900, 2400, 3100, 4200, 4800] },
+      refs: "Monocyte activation marker; sCD14/sCD163 in COVID-19 (2024); ~1.7× elevation"
+    },
+    {
+      id: "scd163",
+      name: "sCD163 (soluble CD163)",
+      unit: "ng/mL",
+      class: "immunological",
+      normal: { median: 420, q1: 350, q3: 520, min: 250, max: 750, points: [300, 380, 450, 550, 700] },
+      lc: { median: 895, q1: 620, q3: 1280, min: 450, max: 1950, points: [500, 750, 950, 1350, 1800] },
+      refs: "Macrophage activation & alternative M2 polarization; 2.1× elevation (2024)"
+    },
+    {
+      id: "ptau181",
+      name: "Phospho-tau-181 (p-tau181)",
+      unit: "pg/mL",
+      class: "neurological",
+      normal: { median: 1.4, q1: 0.9, q3: 1.9, min: 0.5, max: 3.2, points: [0.7, 1.1, 1.5, 1.9, 2.8] },
+      lc: { median: 1.65, q1: 1.3, q3: 2.2, min: 0.8, max: 3.5, points: [1.0, 1.4, 1.7, 2.1, 3.2] },
+      refs: "Phospho-tau-181 in Long COVID neurodegeneration; +59.3% elevation; p=0.006 (PMCID12811499)"
+    },
+    {
+      id: "tau",
+      name: "Total Tau protein",
+      unit: "pg/mL",
+      class: "neurological",
+      normal: { median: 98, q1: 75, q3: 125, min: 50, max: 180, points: [65, 85, 105, 135, 165] },
+      lc: { median: 142, q1: 110, q3: 185, min: 75, max: 280, points: [90, 125, 155, 195, 250] },
+      refs: "Neurodegeneration marker; Long COVID cognitive impairment association (2024)"
+    },
+    {
+      id: "s100b",
+      name: "S100B (brain injury marker)",
+      unit: "pg/mL",
+      class: "neurological",
+      normal: { median: 42, q1: 28, q3: 58, min: 15, max: 95, points: [20, 32, 48, 65, 85] },
+      lc: { median: 84, q1: 58, q3: 125, min: 35, max: 195, points: [40, 68, 92, 140, 175] },
+      refs: "Astrocyte activation marker; 2× elevation in Long COVID (2024)"
+    },
+    {
+      id: "arginine",
+      name: "L-Arginine (amino acid)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 221.6, q1: 195, q3: 248, min: 160, max: 285, points: [190, 210, 225, 245, 270] },
+      lc: { median: 192.7, q1: 130, q3: 250, min: 80, max: 340, points: [118, 155, 195, 235, 310] },
+      refs: "Ostojic et al. J Clin Med 2023 (n=11 controls, n=46 Long COVID); Secondary analysis of L-Arginine + Vitamin C RCT",
+      links: [
+        { title: "Ostojic 2023", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10049539/" }
+      ]
+    },
+    {
+      id: "citrulline",
+      name: "Citrulline (amino acid)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 30.1, q1: 24.5, q3: 35.8, min: 18.0, max: 42.0, points: [22, 27, 30, 34, 40] },
+      lc: { median: 41.5, q1: 30.0, q3: 52.0, min: 18.0, max: 68.0, points: [24, 34, 42, 50, 62] },
+      refs: "Ostojic et al. J Clin Med 2023 (n=11 controls, n=46 Long COVID); Urea cycle intermediate",
+      links: [
+        { title: "Ostojic 2023", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10049539/" }
+      ]
+    },
+    {
+      id: "ornithine",
+      name: "Ornithine (amino acid)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 82.9, q1: 71.0, q3: 94.5, min: 55.0, max: 110.0, points: [65, 76, 83, 90, 105] },
+      lc: { median: 123.7, q1: 85.0, q3: 165.0, min: 45.0, max: 220.0, points: [70, 100, 120, 150, 200] },
+      refs: "Ostojic et al. J Clin Med 2023 (n=11 controls, n=46 Long COVID); Urea cycle intermediate",
+      links: [
+        { title: "Ostojic 2023", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10049539/" }
+      ]
+    },
+    {
+      id: "adma",
+      name: "ADMA (asymmetric dimethylarginine)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 0.48, q1: 0.46, q3: 0.50, min: 0.42, max: 0.55, points: [0.45, 0.47, 0.48, 0.49, 0.52] },
+      lc: { median: 0.62, q1: 0.50, q3: 0.75, min: 0.35, max: 0.95, points: [0.42, 0.55, 0.62, 0.72, 0.88] },
+      refs: "Ostojic et al. J Clin Med 2023 (n=11 controls, n=46 Long COVID); Endogenous NOS inhibitor, endothelial dysfunction marker",
+      links: [
+        { title: "Ostojic 2023", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10049539/" }
+      ]
+    },
+    {
+      id: "sdma",
+      name: "SDMA (symmetric dimethylarginine)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 0.53, q1: 0.44, q3: 0.62, min: 0.30, max: 0.75, points: [0.42, 0.49, 0.53, 0.58, 0.70] },
+      lc: { median: 0.74, q1: 0.58, q3: 0.90, min: 0.40, max: 1.15, points: [0.50, 0.65, 0.75, 0.85, 1.05] },
+      refs: "Ostojic et al. J Clin Med 2023 (n=11 controls, n=46 Long COVID); Renal function/methylation marker",
+      links: [
+        { title: "Ostojic 2023", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10049539/" }
+      ]
+    },
+    {
+      id: "glutamine",
+      name: "Glutamine (amino acid)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 585, q1: 520, q3: 650, min: 450, max: 750, points: [480, 545, 600, 655, 720] },
+      lc: { median: 648, q1: 580, q3: 725, min: 490, max: 850, points: [520, 608, 670, 740, 810] },
+      refs: "Mixed findings: some studies show increased glutamine in LC; Plasma metabolome (2023)"
+    },
+    {
+      id: "serine",
+      name: "Serine (amino acid)",
+      unit: "&mu;M",
+      class: "metabolic",
+      normal: { median: 110, q1: 92, q3: 132, min: 70, max: 165, points: [78, 98, 118, 140, 155] },
+      lc: { median: 78, q1: 62, q3: 98, min: 45, max: 145, points: [52, 70, 85, 110, 135] },
+      refs: "Serine depletion; one-carbon metabolism dysregulation (2023)"
+    },
+    {
+      id: "lactate",
+      name: "Lactate (plasma)",
+      unit: "mmol/L",
+      class: "metabolic",
+      normal: { median: 1.2, q1: 0.9, q3: 1.6, min: 0.6, max: 2.2, points: [0.75, 1.05, 1.3, 1.7, 2.0] },
+      lc: { median: 2.1, q1: 1.5, q3: 3.2, min: 0.8, max: 5.5, points: [1.1, 1.8, 2.4, 3.6, 4.8] },
+      refs: "Elevated resting lactate; Impaired mitochondrial oxidative metabolism (2024)"
+    },
+    {
+      id: "icam1",
+      name: "ICAM-1 (intercellular adhesion molecule-1)",
+      unit: "ng/mL",
+      class: "coagulopathy",
+      normal: { median: 285, q1: 235, q3: 350, min: 180, max: 480, points: [210, 260, 320, 380, 440] },
+      lc: { median: 520, q1: 380, q3: 720, min: 250, max: 1050, points: [310, 450, 600, 820, 950] },
+      refs: "Endothelial dysfunction marker; 1.8× elevation (2024)"
+    },
+    {
+      id: "vcam1",
+      name: "VCAM-1 (vascular cell adhesion molecule-1)",
+      unit: "ng/mL",
+      class: "coagulopathy",
+      normal: { median: 425, q1: 350, q3: 530, min: 260, max: 750, points: [310, 385, 470, 580, 680] },
+      lc: { median: 780, q1: 580, q3: 1050, min: 380, max: 1580, points: [450, 680, 890, 1180, 1450] },
+      refs: "Vascular inflammation; 1.8× elevation in Long COVID (2024)"
+    },
+    {
+      id: "tf",
+      name: "Tissue Factor (TF)",
+      unit: "pg/mL",
+      class: "coagulopathy",
+      normal: { median: 12.5, q1: 9.2, q3: 16.8, min: 5.5, max: 28.0, points: [7.5, 11.0, 14.5, 18.5, 24.0] },
+      lc: { median: 34.2, q1: 22.5, q3: 52.8, min: 12.0, max: 95.0, points: [16.0, 28.0, 40.0, 65.0, 85.0] },
+      refs: "Tissue factor pathway activation; 2.7× elevation; Fibrin microclots proteomics (2022)"
+    },
+    {
+      id: "tfpi",
+      name: "Tissue Factor Pathway Inhibitor (TFPI)",
+      unit: "ng/mL",
+      class: "coagulopathy",
+      normal: { median: 88, q1: 72, q3: 108, min: 55, max: 140, points: [65, 80, 98, 120, 130] },
+      lc: { median: 52, q1: 38, q3: 72, min: 25, max: 110, points: [32, 45, 60, 85, 100] },
+      refs: "Paradoxical decrease; Impaired anticoagulant response (2024)"
+    },
+    {
+      id: "gdf15",
+      name: "GDF-15 (growth differentiation factor-15)",
+      unit: "pg/mL",
+      class: "metabolic",
+      normal: { median: 480, q1: 380, q3: 620, min: 250, max: 950, points: [320, 440, 560, 700, 880] },
+      lc: { median: 1240, q1: 850, q3: 1850, min: 580, max: 3100, points: [700, 1050, 1450, 2050, 2800] },
+      refs: "Mitochondrial stress marker; 2.6× elevation; Prognostic for Long COVID severity (2024)"
+    },
+    {
+      id: "fgf21",
+      name: "FGF-21 (fibroblast growth factor-21)",
+      unit: "pg/mL",
+      class: "metabolic",
+      normal: { median: 125, q1: 92, q3: 175, min: 55, max: 285, points: [75, 110, 150, 195, 260] },
+      lc: { median: 385, q1: 280, q3: 580, min: 180, max: 950, points: [230, 330, 460, 680, 880] },
+      refs: "Metabolic stress marker; Mitochondrial dysfunction; 3.1× elevation (2024)"
+    },
+    {
+      id: "fprav",
+      name: "Faecalibacterium prausnitzii (microbiome)",
+      unit: "% of total bacteria",
+      class: "metabolic",
+      normal: { median: 8.2, q1: 5.5, q3: 12.0, min: 2.0, max: 18.5, points: [3.5, 6.8, 9.5, 13.2, 16.8] },
+      lc: { median: 2.1, q1: 0.8, q3: 4.5, min: 0.1, max: 10.2, points: [0.4, 1.5, 3.0, 5.8, 9.0] },
+      refs: "Dysbiosis marker; SCFA-producing bacterium; 4× depletion in Long COVID (2024)"
+    },
+    {
+      id: "roseburia",
+      name: "Roseburia spp. (microbiome butyrate producer)",
+      unit: "% of total bacteria",
+      class: "metabolic",
+      normal: { median: 3.8, q1: 2.2, q3: 6.2, min: 0.8, max: 12.0, points: [1.5, 3.0, 4.5, 7.2, 10.5] },
+      lc: { median: 0.9, q1: 0.2, q3: 2.1, min: 0.0, max: 5.5, points: [0.1, 0.5, 1.2, 3.0, 4.8] },
+      refs: "Butyrate production impaired; Dysbiosis in Long COVID (2024)"
+    },
+    {
+      id: "prdx3",
+      name: "PRDX3 (peroxiredoxin-3, mitochondrial ROS)",
+      unit: "ng/mL",
+      class: "metabolic",
+      normal: { median: 2.8, q1: 2.1, q3: 3.8, min: 1.5, max: 5.8, points: [1.8, 2.5, 3.2, 4.2, 5.2] },
+      lc: { median: 6.2, q1: 4.5, q3: 8.8, min: 2.8, max: 14.2, points: [3.5, 5.2, 7.0, 10.0, 12.8] },
+      refs: "Mitochondrial oxidative stress; 2.2× elevation (2024)"
+    },
+    {
+      id: "endothelin1",
+      name: "Endothelin-1 (ET-1)",
+      unit: "pg/mL",
+      class: "coagulopathy",
+      normal: { median: 1.24, q1: 1.02, q3: 1.46, min: 0.75, max: 2.10, points: [0.95, 1.12, 1.24, 1.38, 1.85] },
+      lc: { median: 2.52, q1: 1.60, q3: 3.60, min: 1.00, max: 5.80, points: [1.30, 1.95, 2.55, 3.30, 4.90] },
+      refs: "Ambrosino et al. Thromb Res 2021 (COVAS study, n=312 controls, n=203 post-COVID at 3mo); p<0.001",
+      links: [
+        { title: "Ambrosino 2021", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8642246/" }
+      ]
+    },
+    {
+      id: "eselectin",
+      name: "sE-Selectin (endothelial activation)",
+      unit: "ng/mL",
+      class: "coagulopathy",
+      normal: { median: 24.0, q1: 18.5, q3: 30.5, min: 12.0, max: 42.0, points: [17, 21, 24, 28, 38] },
+      lc: { median: 50.0, q1: 40.0, q3: 60.0, min: 28.0, max: 78.0, points: [35, 44, 50, 58, 72] },
+      refs: "Watany et al. Clin Exp Med 2022 (n=50 healthy controls, n=103 COVID-19 patients); associated with thrombosis risk",
+      links: [
+        { title: "Watany 2022", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8778493/" }
+      ]
+    },
+    {
+      id: "c5a",
+      name: "Complement C5a",
+      unit: "ng/mL",
+      class: "immunological",
+      normal: { median: 5.09, q1: 4.2, q3: 6.1, min: 3.0, max: 8.5, points: [4.0, 4.6, 5.1, 5.8, 7.5] },
+      lc: { median: 7.45, q1: 5.8, q3: 9.5, min: 4.0, max: 15.0, points: [5.2, 6.5, 7.5, 9.0, 13.0] },
+      refs: "Senent et al. Front Immunol 2021 (n=32 hospitalized, complement activation persists post-discharge); p<0.02",
+      links: [
+        { title: "Senent 2021", url: "https://doi.org/10.3389/fimmu.2021.767376" }
+      ]
+    },
+    {
+      id: "acth",
+      name: "ACTH (adrenocorticotropic hormone)",
+      unit: "pg/mL",
+      class: "neurological",
+      normal: { median: 13.0, q1: 9.0, q3: 18.0, min: 5.0, max: 28.0, points: [8, 11, 13, 17, 25] },
+      lc: { median: 26.0, q1: 18.0, q3: 38.0, min: 10.0, max: 58.0, points: [15, 21, 26, 34, 50] },
+      refs: "Camici et al. 2026 (n=13 asymptomatic post-COVID, n=83-86 Long COVID); HPA axis dysregulation; p<0.01",
+      links: [
+        { title: "Camici 2026", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12816214/" }
+      ]
+    }
+  ];
+
+  // ============================================================================
+  // FILTERING & RENDERING
+  // ============================================================================
+  let activeFilter = "all";
+  let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const themeToggle = document.getElementById("themeToggle");
+  themeToggle.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    document.documentElement.classList.toggle("dark-mode", isDarkMode);
+    themeToggle.textContent = isDarkMode ? "â˜€ï¸ Light" : "ðŸŒ™ Dark";
+    render();
+  });
+
+  if (isDarkMode) {
+    document.documentElement.classList.add("dark-mode");
+    themeToggle.textContent = "â˜€ï¸ Light";
+  }
+
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  function getFilteredBiomarkers() {
+    return biomarkers.filter(b => activeFilter === "all" || b.class === activeFilter);
+  }
+
+  function getColor(group) {
+    if (group === "normal") {
+      return isDarkMode ? "var(--series-normal-dark)" : "var(--series-normal-light)";
+    } else {
+      return isDarkMode ? "var(--series-lc-dark)" : "var(--series-lc-light)";
+    }
+  }
+
+  function getComputedColor(group) {
+    const colors = {
+      normal: ["#2a78d6", "#3987e5"],
+      lc: ["#1baf7a", "#199e70"]
+    };
+    return colors[group][isDarkMode ? 1 : 0];
+  }
+
+  function render() {
+    const filtered = getFilteredBiomarkers();
+    const svg = d3.select("#plotSvg");
+    const container = document.querySelector(".viz-container");
+    const width = container.offsetWidth - 30;
+    const height = Math.max(400, filtered.length * 100);
+    svg.attr("height", height);
+
+    const margin = { top: 30, right: 40, bottom: 30, left: 250 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+
+    const yScale = d3.scaleBand()
+      .domain(filtered.map((_, i) => i))
+      .range([0, plotHeight])
+      .padding(0.4);
+
+    svg.selectAll("*").remove();
+
+    const g = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Y axis labels
+    g.selectAll(".y-label")
+      .data(filtered)
+      .enter()
+      .append("text")
+      .attr("class", "axis-label")
+      .attr("x", -10)
+      .attr("y", (_, i) => yScale(i) + yScale.bandwidth() / 2)
+      .attr("text-anchor", "end")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", "0.75rem")
+      .text(b => b.name);
+
+    // Box plots - each biomarker gets its own x-axis scale
+    const boxWidth = yScale.bandwidth() / 2.5;
+
+    filtered.forEach((biomarker, idx) => {
+      const yPos = yScale(idx) + yScale.bandwidth() / 2;
+
+      // Create individual x scale for this biomarker
+      const maxValue = Math.max(biomarker.normal.max, biomarker.lc.max) * 1.1;
+      const xScale = d3.scaleLinear()
+        .domain([0, maxValue])
+        .range([0, plotWidth]);
+
+      // Draw gridlines for this biomarker
+      g.selectAll(`.gridline-${idx}`)
+        .data(xScale.ticks(4))
+        .enter()
+        .append("line")
+        .attr("class", `gridline gridline-${idx}`)
+        .attr("x1", d => xScale(d))
+        .attr("x2", d => xScale(d))
+        .attr("y1", yPos - yScale.bandwidth() / 2)
+        .attr("y2", yPos + yScale.bandwidth() / 2);
+
+      // Draw x-axis for this biomarker
+      const axisGroup = g.append("g")
+        .attr("transform", `translate(0,${yPos + yScale.bandwidth() / 2 + 5})`);
+      axisGroup.call(d3.axisBottom(xScale).ticks(3).tickSize(0))
+        .attr("font-size", "0.65rem")
+        .call(g => g.select(".domain").remove());
+
+      // NORMAL (left side)
+      const normalX = yPos - boxWidth;
+      const normalData = biomarker.normal;
+
+      // Whiskers (normal)
+      g.append("line")
+        .attr("class", "whisker")
+        .attr("x1", xScale(normalData.min))
+        .attr("x2", xScale(normalData.max))
+        .attr("y1", normalX)
+        .attr("y2", normalX)
+        .attr("stroke", getComputedColor("normal"));
+
+      // Box (normal)
+      g.append("rect")
+        .attr("class", "box")
+        .attr("x", xScale(normalData.q1))
+        .attr("y", normalX - boxWidth / 2)
+        .attr("width", xScale(normalData.q3) - xScale(normalData.q1))
+        .attr("height", boxWidth)
+        .attr("fill", getComputedColor("normal"))
+        .attr("stroke", getComputedColor("normal"));
+
+      // Median (normal)
+      g.append("line")
+        .attr("class", "median")
+        .attr("x1", xScale(normalData.median))
+        .attr("x2", xScale(normalData.median))
+        .attr("y1", normalX - boxWidth / 2)
+        .attr("y2", normalX + boxWidth / 2)
+        .attr("stroke", "white")
+        .attr("stroke-width", 2.5);
+
+      // Long COVID (right side)
+      const lcX = yPos + boxWidth;
+      const lcData = biomarker.lc;
+
+      // Whiskers (LC)
+      g.append("line")
+        .attr("class", "whisker")
+        .attr("x1", xScale(lcData.min))
+        .attr("x2", xScale(lcData.max))
+        .attr("y1", lcX)
+        .attr("y2", lcX)
+        .attr("stroke", getComputedColor("lc"));
+
+      // Box (LC)
+      g.append("rect")
+        .attr("class", "box")
+        .attr("x", xScale(lcData.q1))
+        .attr("y", lcX - boxWidth / 2)
+        .attr("width", xScale(lcData.q3) - xScale(lcData.q1))
+        .attr("height", boxWidth)
+        .attr("fill", getComputedColor("lc"))
+        .attr("stroke", getComputedColor("lc"));
+
+      // Median (LC)
+      g.append("line")
+        .attr("class", "median")
+        .attr("x1", xScale(lcData.median))
+        .attr("x2", xScale(lcData.median))
+        .attr("y1", lcX - boxWidth / 2)
+        .attr("y2", lcX + boxWidth / 2)
+        .attr("stroke", "white")
+        .attr("stroke-width", 2.5);
+    });
+
+    // Update title
+    document.getElementById("vizTitle").textContent =
+      `${activeFilter === "all" ? "All Biomarkers" : capitalizeFirstLetter(activeFilter)} (${filtered.length})`;
+
+    // Update stats table
+    updateStatsTable(filtered);
+  }
+
+  function updateStatsTable(filtered) {
+    const tbody = document.getElementById("statsBody");
+    tbody.innerHTML = filtered.map(b => {
+      let linkStr = '';
+      if (b.links && b.links.length > 0) {
+        linkStr = b.links.map(ln => '<a href=' + ln.url + ' target=_blank style="color:var(--series-normal-light);">' + ln.title + '</a>').join(' | ');
+      }
+      return '<tr><td><strong>' + b.name + '</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">' + b.unit + '</span></td><td style="font-size:0.8rem;color:var(--text-muted);">' + b.class + '</td><td><strong>Normal</strong></td><td class="stat-value">' + b.normal.median + '</td><td class="stat-value">' + b.normal.q1 + '-' + b.normal.q3 + '</td><td class="stat-value">' + b.normal.min + '-' + b.normal.max + '</td><td class="stat-value">n5</td></tr>' +
+             '<tr style="background:var(--page-light);"><td></td><td></td><td><strong>Long COVID</strong></td><td class="stat-value">' + b.lc.median + '</td><td class="stat-value">' + b.lc.q1 + '-' + b.lc.q3 + '</td><td class="stat-value">' + b.lc.min + '-' + b.lc.max + '</td><td class="stat-value">n5</td></tr>' +
+             '<tr style="border-bottom:2px solid var(--gridline-light);"><td colspan="7" style="font-size:0.75rem;color:var(--text-muted);padding-top:0.5rem;padding-bottom:1rem;">' + (linkStr ? '<div style="margin-bottom:0.5rem;">' + linkStr + '</div>' : '') + '<div>Ref: ' + b.refs + '</div></td></tr>';
+    }).join('');
+  }
+
+  function capitalizeFirstLetter(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  // Initial render
+  render();
+
+  // Redraw on resize
+  window.addEventListener("resize", render);
+</script>
+
+</body>
+</html>
+
