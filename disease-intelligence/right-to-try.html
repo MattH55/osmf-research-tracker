@@ -98,6 +98,23 @@
       color: var(--status-modifiable);
     }
 
+    .severity-fatal {
+      background: rgba(211, 47, 47, 0.15);
+      color: #c62828;
+    }
+
+    .severity-serious {
+      background: rgba(245, 127, 23, 0.15);
+      color: #e65100;
+    }
+
+    .severity-badge-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+    }
+
     .disease-card h3 {
       font-size: 1.1rem;
       font-weight: 700;
@@ -1178,9 +1195,36 @@ function renderDiseases(filter) {
   grid.style.display = 'grid';
   empty.style.display = 'none';
 
-  grid.innerHTML = filtered.map(d => `
+  // Severity reference
+  const severityData = {
+    "amyotrophic-lateral-sclerosis": "Rapidly fatal",
+    "parkinsons-disease": "Serious/Progressive",
+    "alzheimers-disease-and-other-dementias": "Serious/Progressive",
+    "cystic-fibrosis": "Serious/Progressive",
+    "multiple-sclerosis": "Serious/Progressive",
+    "sickle-cell-disease": "Serious/Progressive",
+    "hemophilia": "Serious/Progressive",
+    "breast-cancer": "Potentially fatal",
+    "lung-cancer": "Potentially fatal",
+    "colorectal-cancer": "Potentially fatal",
+    "pancreatic-cancer": "Potentially fatal",
+    "hepatitis-c": "Potentially fatal",
+    "hivaids": "Potentially fatal",
+    "stroke": "Potentially fatal",
+    "myocardial-infarction": "Potentially fatal"
+  };
+
+  grid.innerHTML = filtered.map(d => {
+    const severity = severityData[d.slug] || null;
+    const severityBadgeClass = severity === "Rapidly fatal" ? "severity-fatal" :
+                               severity === "Serious/Progressive" ? "severity-serious" : "";
+
+    return `
     <div class="disease-card">
-      <div class="status-badge status-no-cure">No Approved Therapy</div>
+      <div class="severity-badge-group">
+        <div class="status-badge status-no-cure">No Approved Therapy</div>
+        ${severity ? `<div class="status-badge ${severityBadgeClass}">${severity}</div>` : ''}
+      </div>
       <h3>${d.name}</h3>
       <div class="disease-meta">
         <div><strong>MONDO ID:</strong> ${d.mondo_id}</div>
@@ -1190,7 +1234,8 @@ function renderDiseases(filter) {
       </div>
       <a href="disease-intelligence/${d.slug}.html" class="cta-button">View Intelligence Profile</a>
     </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // Setup filter buttons
