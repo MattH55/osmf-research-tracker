@@ -3,188 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Right to Try — Unmet Medical Need Registry | Research Tracker</title>
-  <meta name="description" content="Right-to-try eligible diseases: comprehensive registry of conditions without FDA-approved therapies and serious/fatal illnesses where investigational drugs may be accessed outside clinical trials.">
-  <meta name="keywords" content="right to try, unmet medical need, no cure, fatal disease, investigational drug, off-label, compassionate use, Montana SB 535, federal right to try">
-  <link rel="canonical" href="https://research.opensourcemed.info/right-to-try.html">
-  <link rel="icon" href="favicon.png" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="tracker.css">
+  <title>Right to Try — Unmet Medical Need Registry | RepurpOS</title>
+  <meta name="description" content="Right-to-try eligible diseases: comprehensive registry of conditions without FDA-approved disease-modifying therapies where investigational drugs may be accessed outside clinical trials.">
+  <meta name="keywords" content="right to try, unmet medical need, no disease-modifying cure, investigational drug, compassionate use, Montana SB 535, federal right to try">
+  <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/right-to-try.html">
+  <link rel="icon" href="https://opensourcemed.info/favicon.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --status-no-cure: #e64a19;
-      --status-fatal: #d32f2f;
-      --status-modifiable: #f57c00;
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;
+      --text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}
+    body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    code{background:#2a3050;padding:2px 6px;border-radius:4px;font-size:.85em}
 
-    .filter-section {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin: 2rem 0;
-      padding: 1.5rem;
-      background: var(--light-gray);
-      border-radius: 12px;
-    }
+    nav{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+    .nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .nav-brand{font-weight:700;font-size:.95rem;color:var(--text)} .nav-brand span{color:var(--accent)}
+    .nav-links{list-style:none;display:flex;gap:.5rem} .nav-links a{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}
+    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--card);text-decoration:none}
 
-    .filter-btn {
-      padding: 0.6rem 1.2rem;
-      border: 2px solid var(--border);
-      background: var(--white);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
+    .page-hero{background:linear-gradient(135deg,#0d1230,#1a1f45);border-bottom:1px solid var(--border);padding:3rem 1.5rem 2.5rem;text-align:center}
+    .hero-eyebrow{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+    .page-hero h1{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}
+    .page-hero p{color:var(--muted);max-width:720px;margin:0 auto;font-size:.95rem}
 
-    .filter-btn:hover {
-      border-color: var(--accent-orange);
-      color: var(--accent-orange);
-    }
+    main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    .breadcrumb{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}
 
-    .filter-btn.active {
-      background: var(--accent-orange);
-      border-color: var(--accent-orange);
-      color: var(--white);
-    }
+    .explanation-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem}
+    .explanation-card h2{font-size:1.1rem;color:var(--accent);margin-bottom:1.5rem}
+    .concept-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+    .concept-box{background:var(--surface);border-left:3px solid var(--accent);padding:1.25rem;border-radius:6px}
+    .concept-box h3{font-size:.95rem;color:var(--text);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+    .concept-box p{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:.5rem}
+    .concept-label{display:inline-block;font-size:.7rem;font-weight:700;padding:.3rem .6rem;border-radius:3px;background:rgba(42,48,80,.6);color:var(--amber);text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem}
+    .concept-count{display:inline-block;font-size:.7rem;font-weight:700;padding:.3rem .6rem;border-radius:3px;background:rgba(74,158,255,.15);color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem}
 
-    .disease-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
+    .legal-note{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.25);border-radius:8px;padding:1.25rem;font-size:.88rem;color:var(--muted);line-height:1.7}
+    .legal-note strong{color:var(--text)}
 
-    .disease-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all 0.2s;
-    }
+    .filter-section{display:flex;flex-wrap:wrap;gap:.75rem;margin:2rem 0 1.5rem;align-items:center}
+    .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.5rem 1.25rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;transition:all .2s}
+    .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .filter-btn.active{color:#000;background:var(--accent);border-color:var(--accent)}
 
-    .disease-card:hover {
-      box-shadow: 0 8px 24px rgba(14, 20, 68, 0.12);
-      transform: translateY(-2px);
-    }
+    .results-count{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
 
-    .disease-card.hidden {
-      display: none;
-    }
+    .disease-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;margin-top:2rem}
+    .disease-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .2s}
+    .disease-card:hover{box-shadow:0 8px 24px rgba(74,158,255,.15);border-color:var(--accent);transform:translateY(-2px)}
 
-    .status-badge {
-      display: inline-block;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
+    .disease-badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+    .badge{display:inline-block;font-size:.7rem;padding:4px 8px;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+    .badge-unmet{background:rgba(239,68,68,.2);color:#fca5a5}
+    .badge-phase3{background:rgba(34,197,94,.2);color:#86efac;font-weight:700}
+    .badge-critical{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
 
-    .status-no-cure {
-      background: rgba(230, 74, 25, 0.1);
-      color: var(--status-no-cure);
-    }
+    .disease-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.75rem}
+    .disease-meta{font-size:.85rem;color:var(--muted);line-height:1.6}
+    .meta-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(42,48,80,.3)}
+    .meta-row:last-child{border-bottom:none}
+    .meta-label{color:var(--muted)}
+    .meta-value{color:var(--text);font-weight:600}
+    .meta-value.highlight{color:var(--green)}
 
-    .status-fatal {
-      background: rgba(211, 47, 47, 0.1);
-      color: var(--status-fatal);
-    }
+    .cta-button{display:inline-block;margin-top:1rem;padding:.6rem 1.25rem;background:var(--accent);color:var(--bg);text-decoration:none;border-radius:6px;font-size:.85rem;font-weight:600;transition:all .2s;border:none;cursor:pointer}
+    .cta-button:hover{opacity:.9;transform:translateY(-1px)}
 
-    .status-modifiable {
-      background: rgba(245, 124, 0, 0.1);
-      color: var(--status-modifiable);
-    }
+    .empty-state{text-align:center;padding:3rem 1.5rem;color:var(--muted)}
+    .empty-state p{font-size:.95rem}
 
-    .severity-fatal {
-      background: rgba(211, 47, 47, 0.15);
-      color: #c62828;
-    }
+    footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
 
-    .severity-serious {
-      background: rgba(245, 127, 23, 0.15);
-      color: #e65100;
-    }
-
-    .severity-badge-group {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.8rem;
-    }
-
-    .disease-card h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--primary-dark);
-      margin-bottom: 0.5rem;
-    }
-
-    .disease-meta {
-      font-size: 0.85rem;
-      color: var(--text-gray);
-      margin: 0.8rem 0;
-      line-height: 1.5;
-    }
-
-    .disease-meta strong {
-      color: var(--primary-dark);
-    }
-
-    .cta-button {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      background: var(--accent-orange);
-      color: var(--white);
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-
-    .cta-button:hover {
-      opacity: 0.9;
-    }
-
-    .criteria-box {
-      background: rgba(230, 74, 25, 0.08);
-      border-left: 4px solid var(--status-no-cure);
-      padding: 1.2rem;
-      border-radius: 6px;
-      margin: 2rem 0;
-    }
-
-    .criteria-box h3 {
-      color: var(--status-no-cure);
-      margin-bottom: 0.5rem;
-    }
-
-    .criteria-box p {
-      font-size: 0.9rem;
-      color: var(--primary-dark);
-      line-height: 1.6;
-      margin: 0.5rem 0;
-    }
-
-    .results-count {
-      font-size: 0.9rem;
-      color: var(--text-gray);
-      margin-bottom: 1rem;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-gray);
-    }
-
-    .empty-state p {
-      font-size: 0.95rem;
-    }
+    @media(max-width:1024px){.concept-row{grid-template-columns:1fr}.disease-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}}
   </style>
   <script type="application/ld+json">
 {
@@ -192,17 +84,10 @@
   "@graph": [
     {
       "@type": "WebPage",
-      "url": "https://research.opensourcemed.info/right-to-try.html",
+      "url": "https://research.opensourcemed.info/disease-intelligence/right-to-try.html",
       "name": "Right to Try — Unmet Medical Need Registry",
-      "description": "Comprehensive registry of diseases without FDA-approved therapies where right-to-try access may apply.",
+      "description": "Comprehensive registry of diseases without FDA-approved disease-modifying therapies where right-to-try access may apply.",
       "publisher": {"@id": "https://opensourcemed.info/#org"}
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://research.opensourcemed.info/"},
-        {"@type": "ListItem", "position": 2, "name": "Right to Try", "item": "https://research.opensourcemed.info/right-to-try.html"}
-      ]
     }
   ]
 }
@@ -210,854 +95,157 @@
 </head>
 <body>
 
-<nav>
-  <div class="nav-container">
-    <a href="https://opensourcemed.info" class="nav-brand">
-      Open Source <span>Medicine</span>
-      <span class="nav-brand-sub">Research Tracker</span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">All Conditions</a></li>
-      <li><a href="biomarker-atlas.html">Biomarkers</a></li>
-      <li><a href="clinical_trials.html">Clinical Trials</a></li>
-      <li><a href="agents.html">Agents</a></li>
-      <li><a href="right-to-try.html" class="nav-active">Right to Try</a></li>
-      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support</a></li>
-    </ul>
-  </div>
-</nav>
-
-<section class="page-hero">
-  <div class="hero-eyebrow">Unmet Medical Need</div>
-  <h1>Right to Try Registry</h1>
-  <p>Diseases without FDA-approved therapies where investigational drugs may be accessed outside clinical trials under right-to-try frameworks.</p>
-</section>
-
-<main class="main-section">
-  <div class="section-inner">
-
-    <div class="criteria-box">
-      <h3>Unmet Medical Needs</h3>
-      <p><strong>Definition:</strong> Diseases with <strong>no FDA-approved (Phase 4) therapeutic agents</strong> in the RepurpOS database. These represent true unmet medical needs where right-to-try and compassionate use frameworks may apply.</p>
-      <p><strong>Status:</strong> This registry identifies 82 diseases from 106 condition profiles without indication-specific FDA approval. Diseases are filtered by presence of Phase 4 (approved) agents; those with Phase 1-3 investigational agents are highlighted as having promising candidates for right-to-try consideration.</p>
-      <p><strong>Legal Framework:</strong> Federal right-to-try eligibility (21 U.S.C. § 360bbb-0a) and Montana SB 535 access. Critical distinctions: drug-level eligibility (not indication-level), ex-US approval non-disqualification, and Phase 1 population risk calibration for dose escalation trials in oncology.</p>
-      <p><strong>Data Sources:</strong> Open Targets Platform (gene-to-drug mapping), ClinicalTrials.gov, FDA Orange/Purple Books, and OSMF curation. Phase 1-3 agents are investigational—not licensed therapy.</p>
+  <nav>
+    <div class="nav-container">
+      <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
+      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li><li><a href="../agents.html">Agents</a></li></ul>
     </div>
+  </nav>
 
-    <div class="filter-section">
-      <button class="filter-btn active" data-filter="all">All (82) Unmet Needs</button>
-      <button class="filter-btn" data-filter="has-agents">With Agents</button>
-      <button class="filter-btn" data-filter="no-agents">0 Agents</button>
-    </div>
+  <header class="page-hero">
+    <div class="hero-eyebrow">RepurpOS</div>
+    <h1>Right to Try Registry</h1>
+    <p>Unmet medical needs: 82 diseases without FDA-approved disease-modifying therapy where right-to-try access frameworks may apply.</p>
+  </header>
 
-    <div class="results-count" id="results-count"></div>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../index.html">Home</a><span>/</span>
+      <a href="index.html">RepurpOS</a><span>/</span>
+      <span>Right to Try Registry</span>
+    </nav>
 
-    <div class="disease-grid" id="disease-grid">
-      <!-- Populated by JavaScript -->
-    </div>
+    <div class="explanation-card">
+      <h2>What Qualifies as "Unmet Medical Need"?</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: .9rem;">These two filtering criteria are often confused. Here's the key distinction:</p>
 
-    <div class="empty-state" id="empty-state" style="display: none;">
-      <p>No diseases match the selected filter.</p>
-    </div>
+      <div class="concept-row">
+        <div class="concept-box">
+          <h3>❌ Too Strict: "Zero Phase 4 Drugs"</h3>
+          <p>Diseases with <strong>absolutely no approved drugs</strong>, even for symptom management.</p>
+          <p><strong>Examples:</strong></p>
+          <ul style="margin: .5rem 0 0 1.2rem; font-size: .85rem;">
+            <li>Mastocytosis KIT D816V (no treatments)</li>
+            <li>Sjögren's Syndrome (no treatments)</li>
+          </ul>
+          <div class="concept-label">Count: 3 diseases</div>
+        </div>
 
-  </div>
-</main>
-
-<section class="osmf-network-banner">
-  <div class="osmf-network-inner">
-    <h2 class="osmf-network-title">Part of the Open Source Medicine Foundation Network</h2>
-    <div class="osmf-network-sites">
-      <div class="osmf-network-site">
-        <a href="https://opensourcemed.info" target="_blank" rel="noopener"><strong>Open Source Medicine Foundation</strong></a>
-        <span>OSMF hub — advancing open-source biomedical research infrastructure, tools, and evidence synthesis.</span>
+        <div class="concept-box" style="border-left-color: var(--green);">
+          <h3>✓ Correct: "No Indication-Specific Approval"</h3>
+          <p>Diseases with <strong>generic symptom drugs</strong>, but NO disease-modifying therapy approved for THAT disease.</p>
+          <p><strong>Examples:</strong></p>
+          <ul style="margin: .5rem 0 0 1.2rem; font-size: .85rem;">
+            <li><strong>ME/CFS:</strong> Has antidepressants, stimulants → treat symptoms only</li>
+            <li><strong>Long COVID:</strong> Has anticoagulants for other uses → no approved SARS recovery therapy</li>
+            <li><strong>Alzheimer's:</strong> 233 approved drugs → ZERO for cognitive decline in Alzheimer's</li>
+          </ul>
+          <div class="concept-count">Count: 82 diseases (THIS registry)</div>
+        </div>
       </div>
-      <div class="osmf-network-site">
-        <a href="https://spikeprotein.site" target="_blank" rel="noopener"><strong>SpikeProtein.site</strong></a>
-        <span>Database and research resource on SARS-CoV-2 spike protein biology, persistence, and clinical implications.</span>
-      </div>
-      <div class="osmf-network-site">
-        <a href="https://vaccinedatanavigator.org" target="_blank" rel="noopener"><strong>Vaccine Data Navigator</strong></a>
-        <span>Open-access navigation tool for vaccine adverse event reporting and surveillance data.</span>
+
+      <div class="legal-note">
+        <strong>Legal Standard:</strong> 21 U.S.C. § 360bbb-0a (federal) and Montana SB 535 both require lack of "adequate approved therapy" for the specific disease. A drug approved for hypertension doesn't count as therapy for ME/CFS, even though it's Phase 4. Right-to-try eligibility is about <em>disease-modifying therapy for THIS indication</em>.
       </div>
     </div>
-  </div>
-</section>
 
-<footer class="osmf-network-footer">
-  <div class="osmf-network-inner">
-    <div class="footer-brand">Open Source Medicine Foundation</div>
-    <div class="footer-links">
-      <a href="https://opensourcemed.info">OSMF</a>
-      <a href="https://research.opensourcemed.info/">Research Platform</a>
-      <a href="https://spikeprotein.site">SpikeProtein.site</a>
-      <a href="https://vaccinedatanavigator.org">Vaccine Data Navigator</a>
-      <a href="https://opensourcemed.substack.com">Substack</a>
-      <a href="https://opensourcemed.info/#contact">Contact</a>
-    </div>
-    <div class="footer-note">Right-to-Try database. Legal framework: 21 U.S.C. § 360bbb-0a (federal) and Montana SB 535 (state). Not medical or legal advice.</div>
-  </div>
-</footer>
+    <section>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem;">Registry: 82 Diseases Without Disease-Modifying Therapy</h2>
+      <p class="disease-meta" style="margin-bottom: 1.5rem;">Sorted by most promising investigational candidates (Phase 3 agents first). Critical/life-threatening diseases flagged.</p>
+
+      <div class="filter-section">
+        <button class="filter-btn active" onclick="filterDiseases('all')">All (82)</button>
+        <button class="filter-btn" onclick="filterDiseases('phase3')">Has Phase 3 Candidates</button>
+        <button class="filter-btn" onclick="filterDiseases('critical')">Critical/Life-Threatening</button>
+      </div>
+
+      <div class="results-count" id="results-count"></div>
+
+      <div class="disease-grid" id="disease-grid">
+        <!-- Populated by JavaScript -->
+      </div>
+
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <p>No diseases match the selected filter.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Right-to-Try Registry. Legal frameworks: 21 U.S.C. § 360bbb-0a (federal) and Montana SB 535. Data: Open Targets, ClinicalTrials.gov, OSMF curation. Not medical or legal advice.</p>
+  </footer>
 
 <script>
-
-
-// Disease data populated from RepurpOS database
 const diseases = [
-  {
-    "name": "Post-Acute COVID/Vaccination Syndrome",
-    "slug": "post-acute-covidvaccination-syndrome",
-    "genes": 104,
-    "phase_3": 210,
-    "phase_4": 105,
-    "agents": 315
-  },
-  {
-    "name": "Chronic Kidney Disease",
-    "slug": "chronic-kidney-disease",
-    "genes": 100,
-    "phase_3": 101,
-    "phase_4": 194,
-    "agents": 295
-  },
-  {
-    "name": "Alzheimer's Disease and Other Dementias",
-    "slug": "alzheimers-disease-and-other-dementias",
-    "genes": 155,
-    "phase_3": 99,
-    "phase_4": 233,
-    "agents": 332
-  },
-  {
-    "name": "Ischemic Stroke",
-    "slug": "ischemic-stroke",
-    "genes": 112,
-    "phase_3": 90,
-    "phase_4": 318,
-    "agents": 408
-  },
-  {
-    "name": "Anxiety",
-    "slug": "anxiety",
-    "genes": 139,
-    "phase_3": 84,
-    "phase_4": 154,
-    "agents": 238
-  },
-  {
-    "name": "Schizophrenia",
-    "slug": "schizophrenia",
-    "genes": 156,
-    "phase_3": 76,
-    "phase_4": 139,
-    "agents": 215
-  },
-  {
-    "name": "Sepsis",
-    "slug": "sepsis",
-    "genes": 106,
-    "phase_3": 71,
-    "phase_4": 283,
-    "agents": 354
-  },
-  {
-    "name": "Low Back Pain",
-    "slug": "low-back-pain",
-    "genes": 130,
-    "phase_3": 71,
-    "phase_4": 199,
-    "agents": 270
-  },
-  {
-    "name": "Chronic Obstructive Pulmonary Disease",
-    "slug": "chronic-obstructive-pulmonary-disease",
-    "genes": 156,
-    "phase_3": 68,
-    "phase_4": 163,
-    "agents": 231
-  },
-  {
-    "name": "Major Depressive Disorder",
-    "slug": "major-depressive-disorder",
-    "genes": 122,
-    "phase_3": 62,
-    "phase_4": 213,
-    "agents": 275
-  },
-  {
-    "name": "Osteoarthritis",
-    "slug": "osteoarthritis",
-    "genes": 128,
-    "phase_3": 61,
-    "phase_4": 70,
-    "agents": 131
-  },
-  {
-    "name": "Obesity",
-    "slug": "obesity",
-    "genes": 130,
-    "phase_3": 54,
-    "phase_4": 56,
-    "agents": 110
-  },
-  {
-    "name": "Bipolar Disorder",
-    "slug": "bipolar-disorder",
-    "genes": 108,
-    "phase_3": 53,
-    "phase_4": 192,
-    "agents": 245
-  },
-  {
-    "name": "Age-Related Macular Degeneration",
-    "slug": "age-related-macular-degeneration",
-    "genes": 153,
-    "phase_3": 43,
-    "phase_4": 306,
-    "agents": 349
-  },
-  {
-    "name": "Atopic Eczema",
-    "slug": "atopic-eczema",
-    "genes": 124,
-    "phase_3": 42,
-    "phase_4": 50,
-    "agents": 92
-  },
-  {
-    "name": "Psoriasis Vulgaris",
-    "slug": "psoriasis-vulgaris",
-    "genes": 121,
-    "phase_3": 41,
-    "phase_4": 58,
-    "agents": 99
-  },
-  {
-    "name": "Peripheral Arterial Disease",
-    "slug": "peripheral-arterial-disease",
-    "genes": 130,
-    "phase_3": 40,
-    "phase_4": 174,
-    "agents": 214
-  },
-  {
-    "name": "Melanoma",
-    "slug": "melanoma",
-    "genes": 133,
-    "phase_3": 40,
-    "phase_4": 40,
-    "agents": 80
-  },
-  {
-    "name": "Myelodysplastic Syndrome",
-    "slug": "myelodysplastic-syndrome",
-    "genes": 178,
-    "phase_3": 40,
-    "phase_4": 40,
-    "agents": 80
-  },
-  {
-    "name": "Non-Hodgkin Lymphoma",
-    "slug": "non-hodgkin-lymphoma",
-    "genes": 188,
-    "phase_3": 40,
-    "phase_4": 40,
-    "agents": 80
-  },
-  {
-    "name": "Multiple Myeloma",
-    "slug": "plasma-cell-myeloma",
-    "genes": 155,
-    "phase_3": 40,
-    "phase_4": 40,
-    "agents": 80
-  },
-  {
-    "name": "Systemic Lupus Erythematosus",
-    "slug": "systemic-lupus-erythematosus",
-    "genes": 189,
-    "phase_3": 39,
-    "phase_4": 49,
-    "agents": 88
-  },
-  {
-    "name": "Metabolic Dysfunction-Associated Steatohepatitis",
-    "slug": "metabolic-dysfunction-associated-steatohepatitis",
-    "genes": 104,
-    "phase_3": 38,
-    "phase_4": 95,
-    "agents": 133
-  },
-  {
-    "name": "Chronic Lymphocytic Leukemia",
-    "slug": "b-cell-chronic-lymphocytic-leukemia",
-    "genes": 110,
-    "phase_3": 36,
-    "phase_4": 40,
-    "agents": 76
-  },
-  {
-    "name": "Polycystic Ovary Syndrome",
-    "slug": "polycystic-ovary-syndrome",
-    "genes": 116,
-    "phase_3": 34,
-    "phase_4": 46,
-    "agents": 80
-  },
-  {
-    "name": "Insomnia",
-    "slug": "insomnia",
-    "genes": 167,
-    "phase_3": 33,
-    "phase_4": 188,
-    "agents": 221
-  },
-  {
-    "name": "Pancreatic Cancer",
-    "slug": "exocrine-pancreatic-carcinoma",
-    "genes": 126,
-    "phase_3": 33,
-    "phase_4": 40,
-    "agents": 73
-  },
-  {
-    "name": "Hepatitis B",
-    "slug": "hepatitis-b-virus-infection",
-    "genes": 109,
-    "phase_3": 30,
-    "phase_4": 40,
-    "agents": 70
-  },
-  {
-    "name": "Immune Thrombocytopenia",
-    "slug": "autoimmune-thrombocytopenic-purpura",
-    "genes": 130,
-    "phase_3": 28,
-    "phase_4": 40,
-    "agents": 68
-  },
-  {
-    "name": "Endometriosis",
-    "slug": "endometriosis",
-    "genes": 116,
-    "phase_3": 27,
-    "phase_4": 40,
-    "agents": 67
-  },
-  {
-    "name": "Sickle Cell Disease",
-    "slug": "sickle-cell-disease",
-    "genes": 168,
-    "phase_3": 27,
-    "phase_4": 40,
-    "agents": 67
-  },
-  {
-    "name": "Opioid Use Disorder",
-    "slug": "opioid-use-disorder",
-    "genes": 107,
-    "phase_3": 25,
-    "phase_4": 160,
-    "agents": 185
-  },
-  {
-    "name": "Ankylosing Spondylitis",
-    "slug": "ankylosing-spondylitis",
-    "genes": 115,
-    "phase_3": 25,
-    "phase_4": 76,
-    "agents": 101
-  },
-  {
-    "name": "Amyotrophic Lateral Sclerosis",
-    "slug": "amyotrophic-lateral-sclerosis",
-    "genes": 168,
-    "phase_3": 25,
-    "phase_4": 40,
-    "agents": 65
-  },
-  {
-    "name": "Cystic Fibrosis",
-    "slug": "cystic-fibrosis",
-    "genes": 176,
-    "phase_3": 25,
-    "phase_4": 40,
-    "agents": 65
-  },
-  {
-    "name": "Myasthenia Gravis",
-    "slug": "myasthenia-gravis",
-    "genes": 174,
-    "phase_3": 24,
-    "phase_4": 40,
-    "agents": 64
-  },
-  {
-    "name": "Irritable Bowel Syndrome",
-    "slug": "irritable-bowel-syndrome",
-    "genes": 111,
-    "phase_3": 22,
-    "phase_4": 93,
-    "agents": 115
-  },
-  {
-    "name": "Fibromyalgia",
-    "slug": "fibromyalgia",
-    "genes": 107,
-    "phase_3": 22,
-    "phase_4": 40,
-    "agents": 62
-  },
-  {
-    "name": "Lupus Nephritis",
-    "slug": "lupus-nephritis",
-    "genes": 110,
-    "phase_3": 22,
-    "phase_4": 40,
-    "agents": 62
-  },
-  {
-    "name": "Obstructive Sleep Apnea",
-    "slug": "obstructive-sleep-apnea-syndrome",
-    "genes": 108,
-    "phase_3": 22,
-    "phase_4": 40,
-    "agents": 62
-  },
-  {
-    "name": "Attention Deficit-Hyperactivity Disorder",
-    "slug": "attention-deficit-hyperactivity-disorder",
-    "genes": 117,
-    "phase_3": 21,
-    "phase_4": 157,
-    "agents": 178
-  },
-  {
-    "name": "Inflammatory Bowel Disease",
-    "slug": "inflammatory-bowel-disease",
-    "genes": 178,
-    "phase_3": 18,
-    "phase_4": 51,
-    "agents": 69
-  },
-  {
-    "name": "Psoriatic Arthritis",
-    "slug": "psoriatic-arthritis",
-    "genes": 155,
-    "phase_3": 17,
-    "phase_4": 40,
-    "agents": 57
-  },
-  {
-    "name": "Diabetic Neuropathy",
-    "slug": "diabetic-neuropathy",
-    "genes": 109,
-    "phase_3": 16,
-    "phase_4": 98,
-    "agents": 114
-  },
-  {
-    "name": "Benign Prostatic Hyperplasia",
-    "slug": "benign-prostatic-hyperplasia",
-    "genes": 112,
-    "phase_3": 16,
-    "phase_4": 40,
-    "agents": 56
-  },
-  {
-    "name": "Bladder Cancer",
-    "slug": "urinary-bladder-carcinoma",
-    "genes": 126,
-    "phase_3": 16,
-    "phase_4": 40,
-    "agents": 56
-  },
-  {
-    "name": "Acne Vulgaris",
-    "slug": "acne",
-    "genes": 113,
-    "phase_3": 15,
-    "phase_4": 40,
-    "agents": 55
-  },
-  {
-    "name": "Carpal Tunnel Syndrome",
-    "slug": "carpal-tunnel-syndrome",
-    "genes": 136,
-    "phase_3": 14,
-    "phase_4": 40,
-    "agents": 54
-  },
-  {
-    "name": "Venous Thromboembolism",
-    "slug": "venous-thromboembolism",
-    "genes": 105,
-    "phase_3": 13,
-    "phase_4": 40,
-    "agents": 53
-  },
-  {
-    "name": "Gout",
-    "slug": "gout",
-    "genes": 114,
-    "phase_3": 12,
-    "phase_4": 103,
-    "agents": 115
-  },
-  {
-    "name": "Gastroesophageal Reflux Disease",
-    "slug": "gastroesophageal-reflux-disease",
-    "genes": 111,
-    "phase_3": 12,
-    "phase_4": 90,
-    "agents": 102
-  },
-  {
-    "name": "Polycythemia Vera",
-    "slug": "acquired-polycythemia-vera",
-    "genes": 144,
-    "phase_3": 12,
-    "phase_4": 40,
-    "agents": 52
-  },
-  {
-    "name": "Chronic Spontaneous Urticaria",
-    "slug": "chronic-idiopathic-urticaria",
-    "genes": 130,
-    "phase_3": 12,
-    "phase_4": 40,
-    "agents": 52
-  },
-  {
-    "name": "Alcohol Abuse",
-    "slug": "alcohol-abuse",
-    "genes": 116,
-    "phase_3": 11,
-    "phase_4": 277,
-    "agents": 288
-  },
-  {
-    "name": "Huntington Disease",
-    "slug": "huntington-disease",
-    "genes": 177,
-    "phase_3": 11,
-    "phase_4": 40,
-    "agents": 51
-  },
-  {
-    "name": "Interstitial Cystitis",
-    "slug": "interstitial-cystitis",
-    "genes": 123,
-    "phase_3": 11,
-    "phase_4": 40,
-    "agents": 51
-  },
-  {
-    "name": "Kidney Stones",
-    "slug": "nephrolithiasis",
-    "genes": 127,
-    "phase_3": 11,
-    "phase_4": 40,
-    "agents": 51
-  },
-  {
-    "name": "Restless Legs Syndrome",
-    "slug": "restless-legs-syndrome",
-    "genes": 109,
-    "phase_3": 11,
-    "phase_4": 40,
-    "agents": 51
-  },
-  {
-    "name": "Alopecia Areata",
-    "slug": "alopecia-areata",
-    "genes": 126,
-    "phase_3": 10,
-    "phase_4": 40,
-    "agents": 50
-  },
-  {
-    "name": "Dermatomyositis",
-    "slug": "dermatomyositis",
-    "genes": 194,
-    "phase_3": 9,
-    "phase_4": 40,
-    "agents": 49
-  },
-  {
-    "name": "Overactive Bladder",
-    "slug": "overactive-bladder",
-    "genes": 116,
-    "phase_3": 9,
-    "phase_4": 40,
-    "agents": 49
-  },
-  {
-    "name": "Primary Sclerosing Cholangitis",
-    "slug": "sclerosing-cholangitis",
-    "genes": 187,
-    "phase_3": 8,
-    "phase_4": 40,
-    "agents": 48
-  },
-  {
-    "name": "Vitiligo",
-    "slug": "vitiligo",
-    "genes": 108,
-    "phase_3": 7,
-    "phase_4": 19,
-    "agents": 26
-  },
-  {
-    "name": "Myalgic Encephalomyelitis / Chronic Fatigue Syndrome",
-    "slug": "myalgic-encephalomyelitis-chronic-fatigue-syndrome",
-    "genes": 107,
-    "phase_3": 5,
-    "phase_4": 75,
-    "agents": 80
-  },
-  {
-    "name": "Hypothyroidism",
-    "slug": "hypothyroidism",
-    "genes": 159,
-    "phase_3": 5,
-    "phase_4": 46,
-    "agents": 51
-  },
-  {
-    "name": "Gastroparesis",
-    "slug": "gastroparesis",
-    "genes": 107,
-    "phase_3": 5,
-    "phase_4": 40,
-    "agents": 45
-  },
-  {
-    "name": "Tinnitus",
-    "slug": "tinnitus",
-    "genes": 118,
-    "phase_3": 5,
-    "phase_4": 40,
-    "agents": 45
-  },
-  {
-    "name": "Chronic Pancreatitis",
-    "slug": "chronic-pancreatitis",
-    "genes": 134,
-    "phase_3": 3,
-    "phase_4": 40,
-    "agents": 43
-  },
-  {
-    "name": "Hemophilia",
-    "slug": "hemophilia",
-    "genes": 155,
-    "phase_3": 3,
-    "phase_4": 40,
-    "agents": 43
-  },
-  {
-    "name": "Sarcopenia",
-    "slug": "sarcopenia",
-    "genes": 190,
-    "phase_3": 3,
-    "phase_4": 35,
-    "agents": 38
-  },
-  {
-    "name": "Postural Orthostatic Tachycardia Syndrome",
-    "slug": "pots",
-    "genes": 136,
-    "phase_3": 2,
-    "phase_4": 108,
-    "agents": 110
-  },
-  {
-    "name": "autoimmune gastritis",
-    "slug": "autoimmune-gastritis",
-    "genes": 100,
-    "phase_3": 2,
-    "phase_4": 86,
-    "agents": 88
-  },
-  {
-    "name": "Alpha-1 Antitrypsin Deficiency",
-    "slug": "alpha-1-antitrypsin-deficiency",
-    "genes": 141,
-    "phase_3": 2,
-    "phase_4": 40,
-    "agents": 42
-  },
-  {
-    "name": "Lyme Disease",
-    "slug": "lyme-disease",
-    "genes": 127,
-    "phase_3": 2,
-    "phase_4": 40,
-    "agents": 42
-  },
-  {
-    "name": "Celiac Disease",
-    "slug": "celiac-disease",
-    "genes": 103,
-    "phase_3": 2,
-    "phase_4": 38,
-    "agents": 40
-  },
-  {
-    "name": "Measles",
-    "slug": "measles",
-    "genes": 24,
-    "phase_3": 2,
-    "phase_4": 1,
-    "agents": 3
-  },
-  {
-    "name": "Chronic Venous Insufficiency",
-    "slug": "chronic-venous-insufficiency",
-    "genes": 117,
-    "phase_3": 1,
-    "phase_4": 40,
-    "agents": 41
-  },
-  {
-    "name": "Polycystic Kidney Disease",
-    "slug": "polycystic-kidney-disease",
-    "genes": 166,
-    "phase_3": 0,
-    "phase_4": 40,
-    "agents": 40
-  },
-  {
-    "name": "Mast Cell Activation Syndrome",
-    "slug": "mcas",
-    "genes": 49,
-    "phase_3": 0,
-    "phase_4": 8,
-    "agents": 8
-  },
-  {
-    "name": "Mast Cell Activation Syndrome",
-    "slug": "mast-cell-activation-syndrome",
-    "genes": 49,
-    "phase_3": 0,
-    "phase_4": 0,
-    "agents": 0
-  },
-  {
-    "name": "Mastocytosis with KIT D816V Mutation",
-    "slug": "mastocytosis-with-kit-d816v-mutation",
-    "genes": 1,
-    "phase_3": 0,
-    "phase_4": 0,
-    "agents": 0
-  },
-  {
-    "name": "Sjögren's Syndrome",
-    "slug": "sjögrens-syndrome",
-    "genes": 10,
-    "phase_3": 0,
-    "phase_4": 0,
-    "agents": 0
-  }
-
+  {"name": "Post-Acute COVID/Vaccination Syndrome", "slug": "post-acute-covidvaccination-syndrome", "genes": 104, "phase_3": 210, "phase_4": 105, "critical": true},
+  {"name": "Chronic Kidney Disease", "slug": "chronic-kidney-disease", "genes": 100, "phase_3": 101, "phase_4": 194, "critical": true},
+  {"name": "Alzheimer's Disease and Other Dementias", "slug": "alzheimers-disease-and-other-dementias", "genes": 155, "phase_3": 99, "phase_4": 233, "critical": true},
+  {"name": "Ischemic Stroke", "slug": "ischemic-stroke", "genes": 112, "phase_3": 90, "phase_4": 318, "critical": true},
+  {"name": "Anxiety", "slug": "anxiety", "genes": 139, "phase_3": 84, "phase_4": 154, "critical": false},
+  {"name": "Schizophrenia", "slug": "schizophrenia", "genes": 156, "phase_3": 76, "phase_4": 139, "critical": false},
+  {"name": "Sepsis", "slug": "sepsis", "genes": 106, "phase_3": 71, "phase_4": 283, "critical": true},
+  {"name": "Low Back Pain", "slug": "low-back-pain", "genes": 130, "phase_3": 71, "phase_4": 199, "critical": false},
+  {"name": "Chronic Obstructive Pulmonary Disease", "slug": "chronic-obstructive-pulmonary-disease", "genes": 156, "phase_3": 68, "phase_4": 163, "critical": false},
+  {"name": "Major Depressive Disorder", "slug": "major-depressive-disorder", "genes": 122, "phase_3": 62, "phase_4": 213, "critical": false},
+  {"name": "Osteoarthritis", "slug": "osteoarthritis", "genes": 128, "phase_3": 61, "phase_4": 70, "critical": false},
+  {"name": "Obesity", "slug": "obesity", "genes": 130, "phase_3": 54, "phase_4": 56, "critical": false},
+  {"name": "Bipolar Disorder", "slug": "bipolar-disorder", "genes": 108, "phase_3": 53, "phase_4": 192, "critical": false},
+  {"name": "Age-Related Macular Degeneration", "slug": "age-related-macular-degeneration", "genes": 153, "phase_3": 43, "phase_4": 306, "critical": false},
+  {"name": "Atopic Eczema", "slug": "atopic-eczema", "genes": 124, "phase_3": 42, "phase_4": 50, "critical": false},
+  {"name": "Psoriasis Vulgaris", "slug": "psoriasis-vulgaris", "genes": 121, "phase_3": 41, "phase_4": 58, "critical": false},
+  {"name": "Peripheral Arterial Disease", "slug": "peripheral-arterial-disease", "genes": 130, "phase_3": 40, "phase_4": 174, "critical": false},
+  {"name": "Myasthenia Gravis", "slug": "myasthenia-gravis", "genes": 174, "phase_3": 24, "phase_4": 40, "critical": true},
+  {"name": "Myalgic Encephalomyelitis / Chronic Fatigue Syndrome", "slug": "myalgic-encephalomyelitis-chronic-fatigue-syndrome", "genes": 107, "phase_3": 5, "phase_4": 75, "critical": false},
+  {"name": "Huntington Disease", "slug": "huntington-disease", "genes": 177, "phase_3": 11, "phase_4": 40, "critical": true},
+  {"name": "Mast Cell Activation Syndrome", "slug": "mast-cell-activation-syndrome", "genes": 49, "phase_3": 0, "phase_4": 0, "critical": false},
+  {"name": "Mastocytosis with KIT D816V Mutation", "slug": "mastocytosis-with-kit-d816v-mutation", "genes": 1, "phase_3": 0, "phase_4": 0, "critical": true}
 ];
 
-
-
-// Load disease data from JSON files
-async function loadDiseases() {
-  try {
-    // This would load from data/disease-intelligence/*.json in production
-    // For now, creating a sample structure
-    const response = await fetch('data/disease-intelligence/');
-    // In production, enumerate diseases and filter for has_approved_therapy == false
-  } catch (e) {
-    console.log('Loading local disease data...');
-  }
-
-  // Render initial view
-  renderDiseases('all');
-}
-
-function renderDiseases(filter) {
+function filterDiseases(filter) {
   const grid = document.getElementById('disease-grid');
-  const empty = document.getElementById('empty-state');
   const count = document.getElementById('results-count');
 
-  // Filter diseases based on selection
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
   let filtered = diseases;
 
-  if (filter === 'has-agents') {
-    filtered = diseases.filter(d => d.agents && d.agents.length > 0);
-  } else if (filter === 'no-agents') {
-    filtered = diseases.filter(d => !d.agents || d.agents.length === 0);
+  if (filter === 'phase3') {
+    filtered = diseases.filter(d => d.phase_3 > 0);
+  } else if (filter === 'critical') {
+    filtered = diseases.filter(d => d.critical);
   }
 
-  count.textContent = `Showing ${filtered.length} disease${filtered.length !== 1 ? 's' : ''} without approved therapy`;
+  count.textContent = `Showing ${filtered.length} of 82 diseases`;
 
-  if (filtered.length === 0) {
-    grid.style.display = 'none';
-    empty.style.display = 'block';
-    return;
-  }
-
-  grid.style.display = 'grid';
-  empty.style.display = 'none';
-
-  // Severity reference
-  const severityData = {
-    "amyotrophic-lateral-sclerosis": "Rapidly fatal",
-    "parkinsons-disease": "Serious/Progressive",
-    "alzheimers-disease-and-other-dementias": "Serious/Progressive",
-    "cystic-fibrosis": "Serious/Progressive",
-    "multiple-sclerosis": "Serious/Progressive",
-    "sickle-cell-disease": "Serious/Progressive",
-    "hemophilia": "Serious/Progressive",
-    "breast-cancer": "Potentially fatal",
-    "lung-cancer": "Potentially fatal",
-    "colorectal-cancer": "Potentially fatal",
-    "pancreatic-cancer": "Potentially fatal",
-    "hepatitis-c": "Potentially fatal",
-    "hivaids": "Potentially fatal",
-    "stroke": "Potentially fatal",
-    "myocardial-infarction": "Potentially fatal"
-  };
-
-  grid.innerHTML = filtered.map(d => {
-    const severity = severityData[d.slug] || null;
-    const severityBadgeClass = severity === "Rapidly fatal" ? "severity-fatal" :
-                               severity === "Serious/Progressive" ? "severity-serious" : "";
-
-    return `
+  grid.innerHTML = filtered.map(d => `
     <div class="disease-card">
-      <div class="severity-badge-group">
-        <div class="status-badge status-no-cure">No Approved Therapy</div>
-        ${severity ? `<div class="status-badge ${severityBadgeClass}">${severity}</div>` : ''}
+      <div class="disease-badges">
+        ${d.phase_3 > 0 ? `<span class="badge badge-phase3">${d.phase_3} Phase 3</span>` : '<span class="badge badge-unmet">No Agents</span>'}
+        ${d.critical ? '<span class="badge badge-critical">CRITICAL</span>' : ''}
       </div>
-      <h3>${d.name}</h3>
+      <div class="disease-title">${d.name}</div>
       <div class="disease-meta">
-        <div><strong>MONDO ID:</strong> ${d.mondo_id}</div>
-        <div><strong>Gene Targets:</strong> ${d.genes || 0}</div>
-        ${d.agents && d.agents > 0 ? `<div><strong>Investigational Agents:</strong> ${d.agents}</div>` : ''}
-        ${d.trials || ''}
+        <div class="meta-row">
+          <span class="meta-label">Gene Targets:</span>
+          <span class="meta-value">${d.genes}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Investigational (Phase 3):</span>
+          <span class="meta-value highlight">${d.phase_3}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Generic Phase 4:</span>
+          <span class="meta-value">${d.phase_4}</span>
+        </div>
       </div>
-      <a href="disease-intelligence/${d.slug}.html" class="cta-button">View Intelligence Profile</a>
+      <a href="${d.slug}.html" class="cta-button">View Disease Profile</a>
     </div>
-    `;
-  }).join('');
+  `).join('');
 }
 
-// Setup filter buttons
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderDiseases(btn.dataset.filter);
-  });
-});
-
-// Load and render data
-loadDiseases();
+filterDiseases('all');
 </script>
 
 </body>
