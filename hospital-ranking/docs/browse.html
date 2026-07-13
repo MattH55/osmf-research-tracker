@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PriceOS — Browse Real US Hospital Prices</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f9fafb;
+    color: #1f2937;
+    line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+  }
+  header .inner { max-width: 1100px; margin: 0 auto; }
+  header h1 { font-size: 2rem; margin-bottom: 0.4rem; }
+  header p { opacity: 0.95; }
+  nav.top { max-width: 1100px; margin: 0.75rem auto 0; display: flex; gap: 1.2rem; }
+  nav.top a { color: white; opacity: 0.85; text-decoration: none; font-size: 0.9rem; }
+  nav.top a:hover { opacity: 1; text-decoration: underline; }
+
+  .honest-banner {
+    background: #fef3c7;
+    border-bottom: 1px solid #f59e0b;
+    padding: 0.9rem 2rem;
+  }
+  .honest-banner .inner {
+    max-width: 1100px; margin: 0 auto;
+    color: #78350f; font-size: 0.9rem;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .stat-card .num { font-size: 1.6rem; font-weight: 700; color: #667eea; }
+  .stat-card .lbl { font-size: 0.8rem; color: #6b7280; margin-top: 0.2rem; }
+
+  #procedure-select-wrap { margin-bottom: 1.5rem; }
+  label { font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 0.4rem; color: #374151; }
+  select, input[type="search"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  #proc-stats {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-size: 0.9rem;
+    color: #4b5563;
+    display: none;
+  }
+  #proc-stats.visible { display: block; }
+  #proc-stats b { color: #1f2937; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  thead th {
+    background: #f3f4f6;
+    text-align: left;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #6b7280;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  thead th:hover { color: #667eea; }
+  tbody td {
+    padding: 0.65rem 0.9rem;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.9rem;
+    vertical-align: top;
+  }
+  tbody tr:hover { background: #f9fafb; }
+  .price { font-weight: 700; color: #111827; white-space: nowrap; }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-complete { background: #e0e7ff; color: #4338ca; }
+  .badge-stale { background: #fee2e2; color: #991b1b; margin-left: 0.4rem; }
+  .src-link { color: #667eea; text-decoration: none; font-size: 0.8rem; word-break: break-all; }
+  .src-link:hover { text-decoration: underline; }
+  .empty-state { text-align: center; padding: 3rem; color: #9ca3af; }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1.25rem 0;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+  .pagination button {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pagination button:hover:not(:disabled) { border-color: #667eea; color: #667eea; }
+
+  footer {
+    max-width: 1100px;
+    margin: 3rem auto 2rem;
+    padding: 0 2rem;
+    color: #9ca3af;
+    font-size: 0.85rem;
+  }
+  footer a { color: #667eea; text-decoration: none; }
+
+  .loading { text-align: center; padding: 3rem; color: #9ca3af; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <h1>Browse Real US Hospital Prices</h1>
+    <p>Every row below is a real, sourced observation from published hospital price files. No estimates, no fabricated numbers.</p>
+    <nav class="top">
+      <a href="index.html">Home</a>
+      <a href="methodology.html">Methodology</a>
+    </nav>
+  </div>
+</header>
+
+<div class="honest-banner">
+  <div class="inner">
+    ⚠️ <strong>International comparison is not available yet.</strong> The international facility adapters (Mexico, Costa Rica, Thailand, India, Turkey) exist as code but have not collected any real prices — every target site's <code>robots.txt</code> disallowed the paths the adapters tried. This page shows <strong>US data only</strong>, and it is real.
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="summary-stats" class="stat-row"></div>
+
+  <div id="procedure-select-wrap">
+    <label for="procedure-select">Procedure</label>
+    <select id="procedure-select"></select>
+  </div>
+
+  <div class="filters">
+    <div>
+      <label for="search-box">Filter by hospital name</label>
+      <input type="search" id="search-box" placeholder="e.g. Memorial, Baptist, Regional…">
+    </div>
+    <div>
+      <label for="sort-select">Sort</label>
+      <select id="sort-select">
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="name_asc">Facility Name (A–Z)</option>
+        <option value="date_desc">Most Recent</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="proc-stats"></div>
+
+  <div id="table-wrap">
+    <div class="loading">Loading real observation data…</div>
+  </div>
+
+  <div class="pagination" id="pagination" style="display:none;">
+    <button id="prev-page">← Prev</button>
+    <span id="page-info"></span>
+    <button id="next-page">Next →</button>
+  </div>
+
+</div>
+
+<footer>
+  <p>
+    Data source: CMS Hospital Price Transparency machine-readable files, parsed via
+    <a href="https://oria.trillianthealth.com" target="_blank">Trilliant Health ORIA</a>.
+    Every "Completeness" badge reflects facility-charge-only pricing (surgeon and anesthesia fees are billed
+    separately and are not included in hospital MRFs). See
+    <a href="methodology.html">methodology</a> for the full explanation.
+  </p>
+</footer>
+
+<script>
+const PAGE_SIZE = 50;
+let allRows = [];
+let filteredRows = [];
+let currentPage = 1;
+let procedureCache = {};
+
+async function init() {
+  const summaryRes = await fetch('data/summary.json');
+  const summary = await summaryRes.json();
+
+  renderTopStats(summary);
+  populateProcedureSelect(summary.procedures);
+
+  document.getElementById('procedure-select').addEventListener('change', onProcedureChange);
+  document.getElementById('search-box').addEventListener('input', applyFilters);
+  document.getElementById('sort-select').addEventListener('change', applyFilters);
+  document.getElementById('prev-page').addEventListener('click', () => { currentPage--; renderTable(); });
+  document.getElementById('next-page').addEventListener('click', () => { currentPage++; renderTable(); });
+
+  // Load first (most common) procedure by default
+  if (summary.procedures.length) {
+    document.getElementById('procedure-select').value = summary.procedures[0].slug;
+    loadProcedure(summary.procedures[0].slug, summary);
+  }
+}
+
+function renderTopStats(summary) {
+  const el = document.getElementById('summary-stats');
+  el.innerHTML = `
+    <div class="stat-card"><div class="num">${summary.total_observations.toLocaleString()}</div><div class="lbl">Real price observations</div></div>
+    <div class="stat-card"><div class="num">${summary.total_procedures}</div><div class="lbl">Procedures</div></div>
+    <div class="stat-card"><div class="num">${new Set().size || '—'}</div><div class="lbl" style="display:none"></div></div>
+  `;
+  // Third card: hospitals (approximate from largest procedure isn't total; show international status instead)
+  el.children[2].innerHTML = `<div class="num" style="color:#dc2626">0</div><div class="lbl">International prices (not yet collected)</div>`;
+}
+
+function populateProcedureSelect(procedures) {
+  const sel = document.getElementById('procedure-select');
+  sel.innerHTML = procedures.map(p =>
+    `<option value="${p.slug}">${labelize(p.slug)} (${p.count.toLocaleString()} hospitals)</option>`
+  ).join('');
+}
+
+function labelize(slug) {
+  return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+async function onProcedureChange(e) {
+  const slug = e.target.value;
+  const summaryRes = await fetch('data/summary.json');
+  const summary = await summaryRes.json();
+  loadProcedure(slug, summary);
+}
+
+async function loadProcedure(slug, summary) {
+  document.getElementById('table-wrap').innerHTML = '<div class="loading">Loading…</div>';
+  const stat = summary.procedures.find(p => p.slug === slug);
+
+  if (!procedureCache[slug]) {
+    const res = await fetch(`data/procedures/${slug}.json`);
+    procedureCache[slug] = await res.json();
+  }
+  allRows = procedureCache[slug];
+
+  const statsEl = document.getElementById('proc-stats');
+  statsEl.classList.add('visible');
+  statsEl.innerHTML = `
+    <b>${labelize(slug)}</b> — ${stat.count.toLocaleString()} hospitals report a cash price.
+    Median: <b>$${stat.median_usd.toLocaleString()}</b> ·
+    Range: <b>$${stat.min_usd.toLocaleString()} – $${stat.max_usd.toLocaleString()}</b> ·
+    Mean: <b>$${stat.mean_usd.toLocaleString()}</b>
+    <br><span style="color:#92400e;">⚠ All facility-charge-only (completeness ~45%). Surgeon and anesthesia fees are billed separately and are not reflected here.</span>
+  `;
+
+  currentPage = 1;
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  const sortVal = document.getElementById('sort-select').value;
+
+  filteredRows = allRows.filter(r => !q || (r.facility_name || '').toLowerCase().includes(q));
+
+  filteredRows.sort((a, b) => {
+    switch (sortVal) {
+      case 'price_asc': return a.amount_usd - b.amount_usd;
+      case 'price_desc': return b.amount_usd - a.amount_usd;
+      case 'name_asc': return (a.facility_name || '').localeCompare(b.facility_name || '');
+      case 'date_desc': return (b.observation_date || '').localeCompare(a.observation_date || '');
+      default: return 0;
+    }
+  });
+
+  currentPage = 1;
+  renderTable();
+}
+
+function renderTable() {
+  const wrap = document.getElementById('table-wrap');
+  const pagEl = document.getElementById('pagination');
+
+  if (!filteredRows.length) {
+    wrap.innerHTML = '<div class="empty-state">No hospitals match this filter.</div>';
+    pagEl.style.display = 'none';
+    return;
+  }
+
+  const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+  currentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+
+  let html = `<table><thead><tr>
+    <th>Hospital</th>
+    <th>Price (Cash)</th>
+    <th>Completeness</th>
+    <th>Observed</th>
+    <th>Source</th>
+  </tr></thead><tbody>`;
+
+  for (const r of pageRows) {
+    const pct = r.completeness_score != null ? Math.round(r.completeness_score * 100) + '%' : '—';
+    html += `<tr>
+      <td>${escapeHtml(r.facility_name || r.facility_id)}</td>
+      <td class="price">$${r.amount_usd.toLocaleString()}</td>
+      <td><span class="badge badge-complete">${pct} complete</span>${r.stale ? '<span class="badge badge-stale">stale</span>' : ''}</td>
+      <td>${r.observation_date || '—'}</td>
+      <td>${r.source_url ? `<a class="src-link" href="${escapeAttr(r.source_url)}" target="_blank" rel="noopener">view source ↗</a>` : '—'}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+
+  pagEl.style.display = 'flex';
+  document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages} (${filteredRows.length.toLocaleString()} hospitals)`;
+  document.getElementById('prev-page').disabled = currentPage <= 1;
+  document.getElementById('next-page').disabled = currentPage >= totalPages;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+init();
+</script>
+
+</body>
+</html>
