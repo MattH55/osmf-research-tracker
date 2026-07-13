@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PeptideOS — Evidence and Regulatory Status for Therapeutic Peptides</title>
+  <meta name="description" content="Disinterested evidence on therapeutic peptides: efficacy tiers, regulatory status, and purity data. No dosing advice, no vendor recommendations. Class A (approved) through Class C (gray market).">
+  <meta name="keywords" content="peptides, therapeutic peptides, evidence, regulatory status, safety, clinical trials, investigational drugs">
+  <link rel="canonical" href="https://research.opensourcemed.info/peptideos/">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=Source+Serif+4:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper: #F6F7F5;
+      --paper-sunk: #ECEEEA;
+      --ink: #14161A;
+      --ink-muted: #5C6169;
+      --rule: #D5D8D2;
+
+      --e1: #10504C; --e2: #1B6B64; --e3: #2F857B;
+      --e4: #5D9C93; --e5: #8AB2AB; --e6: #A9BDB8;
+      --e7: #BFC7C4; --e8: #9AA0A6;
+
+      --signal: #B4341F;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Source Serif 4', serif;
+      line-height: 1.7;
+    }
+
+    nav {
+      background: rgba(246, 247, 245, 0.98);
+      border-bottom: 1px solid var(--rule);
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav a {
+      color: var(--ink);
+      text-decoration: none;
+      font-family: Archivo, sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      transition: border 0.2s;
+    }
+
+    nav a:hover {
+      border-bottom-color: var(--ink);
+    }
+
+    .page-hero {
+      background: var(--paper-sunk);
+      border-bottom: 2px solid var(--rule);
+      padding: 4rem 1.5rem 3rem;
+      text-align: center;
+    }
+
+    .page-hero h1 {
+      font-family: Archivo, sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--ink);
+    }
+
+    .page-hero p {
+      font-size: 1.1rem;
+      color: var(--ink-muted);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    h2 {
+      font-family: Archivo, sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 2.5rem 0 1rem;
+      color: var(--ink);
+      border-bottom: 2px solid var(--rule);
+      padding-bottom: 0.75rem;
+    }
+
+    .intro-block {
+      background: var(--paper-sunk);
+      border: 2px solid var(--rule);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .intro-block strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .three-questions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .question-card {
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem;
+      counter-increment: q;
+    }
+
+    .question-card::before {
+      content: counter(q);
+      font-family: JetBrains Mono, monospace;
+      display: inline-block;
+      background: var(--e1);
+      color: white;
+      width: 2rem;
+      height: 2rem;
+      line-height: 2rem;
+      text-align: center;
+      border-radius: 50%;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .question-card h3 {
+      font-family: Archivo, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0.5rem 0 0.75rem;
+      color: var(--ink);
+    }
+
+    .question-card p {
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    .tier-ramp {
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      font-family: JetBrains Mono, monospace;
+      font-size: 0.9rem;
+    }
+
+    .tier-scale {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1.5rem 0;
+      letter-spacing: 2px;
+    }
+
+    .tier-step {
+      text-align: center;
+      padding: 0.5rem;
+      flex: 1;
+    }
+
+    .tier-step.e1 { color: var(--e1); font-weight: 600; }
+    .tier-step.e2 { color: var(--e2); font-weight: 600; }
+    .tier-step.e3 { color: var(--e3); font-weight: 600; }
+    .tier-step.e4 { color: var(--e4); }
+    .tier-step.e5 { color: var(--e5); }
+    .tier-step.e6 { color: var(--e6); }
+    .tier-step.e7 { color: var(--e7); }
+    .tier-step.e8 { color: var(--e8); }
+
+    .class-tabs {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+      border-bottom: 2px solid var(--rule);
+      overflow-x: auto;
+    }
+
+    .class-tab {
+      font-family: Archivo, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--ink-muted);
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border 0.2s;
+    }
+
+    .class-tab:hover {
+      color: var(--ink);
+    }
+
+    .class-tab.active {
+      color: var(--ink);
+      border-bottom-color: var(--ink);
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .links-grid a {
+      display: block;
+      padding: 1.25rem;
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--ink);
+      transition: border 0.2s, background 0.2s;
+      font-family: Archivo, sans-serif;
+      font-weight: 500;
+    }
+
+    .links-grid a:hover {
+      border-color: var(--ink);
+      background: var(--paper-sunk);
+    }
+
+    .governance-section {
+      background: var(--paper-sunk);
+      border: 2px solid var(--rule);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+      border-top: 2px solid var(--rule);
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-decoration-color: var(--rule);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">← Back to Research Tracker</a>
+</nav>
+
+<header class="page-hero">
+  <h1>PeptideOS</h1>
+  <p>Evidence, regulatory status, and purity data for therapeutic peptides. Disinterested reference, no vendors.</p>
+</header>
+
+<main>
+
+<div class="intro-block">
+  <p><strong>Every peptide resource on the internet today is a storefront with a literature review bolted to the front of it.</strong> When you search for a peptide, the top results are affiliate wikis and vendor blogs — written by people who make money when you buy.</p>
+
+  <p style="margin-top: 1rem;">This is different. We make zero dollars when you do anything. We are funded by grants and public foundations only. We answer three questions, and only these three:</p>
+</div>
+
+<div class="three-questions">
+  <div class="question-card">
+    <h3>Evidence</h3>
+    <p>What is the actual evidence that it does anything in humans? Evidence tier (E1–E8) displayed prominently on every page.</p>
+  </div>
+
+  <div class="question-card">
+    <h3>Regulatory Status</h3>
+    <p>Is it approved? In which jurisdictions? Is it investigational? All regulatory claims cited to primary sources (FDA, EMA, etc.).</p>
+  </div>
+
+  <div class="question-card">
+    <h3>Purity</h3>
+    <p>If you obtained it on the gray market, what is actually in the vial? Annual purity testing programme, vendors named.</p>
+  </div>
+</div>
+
+<h2>The Evidence Tier System</h2>
+
+<div class="tier-ramp">
+  <p><strong>Every compound is positioned on the same eight-step scale. No exceptions.</strong> The scale runs from established evidence (E1) to no evidence at all (E8).</p>
+
+  <div class="tier-scale">
+    <div class="tier-step e1">E1</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e2">E2</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e3">E3</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e4">E4</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e5">E5</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e6">E6</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e7">E7</div>
+    <div style="flex: 0 0 auto; color: var(--rule);">────</div>
+    <div class="tier-step e8">E8</div>
+  </div>
+
+  <p style="margin-top: 1rem; font-size: 0.95rem; font-family: 'Source Serif 4', serif;">
+    <strong>E1:</strong> Multiple RCTs, consistent results |
+    <strong>E2:</strong> One RCT |
+    <strong>E3:</strong> Small/conflicting RCTs |
+    <strong>E4:</strong> Uncontrolled trials |
+    <strong>E5:</strong> Case series |
+    <strong>E6:</strong> Animal models |
+    <strong>E7:</strong> In vitro |
+    <strong>E8:</strong> No evidence
+  </p>
+</div>
+
+<h2>Three Classes of Peptides</h2>
+
+<div class="class-tabs">
+  <button class="class-tab active" onclick="filterClass('a')"><strong>Class A</strong> — Approved</button>
+  <button class="class-tab" onclick="filterClass('b')"><strong>Class B</strong> — Investigational</button>
+  <button class="class-tab" onclick="filterClass('c')"><strong>Class C</strong> — Gray Market</button>
+</div>
+
+<div id="class-a" class="class-content">
+  <p>Peptides with regulatory approval in at least one major jurisdiction. Standard drug monographs: indications, approved doses (from the label), pivotal trials, safety profile.</p>
+  <p style="margin-top: 1rem;"><strong>Examples:</strong> semaglutide (Ozempic), tirzepatide (Mounjaro), teriparatide (Forteo), bremelanotide (Vyleesi)</p>
+  <div class="links-grid">
+    <a href="compounds/semaglutide.html">Semaglutide</a>
+    <a href="compounds/tirzepatide.html">Tirzepatide</a>
+    <a href="compounds/teriparatide.html">Teriparatide</a>
+    <a href="compounds/bremelanotide.html">Bremelanotide</a>
+  </div>
+</div>
+
+<div id="class-b" class="class-content" style="display: none;">
+  <p>In active clinical development with a real sponsor. Not approved anywhere, but trial data exists. Trial tracker: phases, NCT numbers, readouts to date, expected filings.</p>
+  <p style="margin-top: 1rem;"><strong>⚠️ Mandatory standing notice:</strong> This compound is investigational. It is not approved in any jurisdiction. There is no lawful supply. Any material sold under this name is of unverified origin and neither manufactured nor tested to pharmaceutical standards.</p>
+  <p style="margin-top: 1rem;"><strong>Examples:</strong> retatrutide (GLP-1/GIP/GCG agonist), survodutide (GLP-1/GCG agonist), elamipretide (mitochondrial targeting)</p>
+  <div class="links-grid">
+    <a href="compounds/retatrutide.html">Retatrutide</a>
+    <a href="compounds/survodutide.html">Survodutide</a>
+    <a href="compounds/elamipretide.html">Elamipretide</a>
+  </div>
+</div>
+
+<div id="class-c" class="class-content" style="display: none;">
+  <p>No approval anywhere, no active sponsor, sold as "research chemical, not for human consumption." Evidence tier displayed prominently — for most Class C compounds, the honest answer is <strong>E8: no human evidence exists.</strong></p>
+  <p style="margin-top: 1rem;"><strong>Examples:</strong> BPC-157, TB-500, CJC-1295, melanotan II, GHK-Cu, AOD-9604</p>
+  <div class="links-grid">
+    <a href="compounds/bpc-157.html">BPC-157</a>
+    <a href="compounds/tb-500.html">TB-500</a>
+    <a href="compounds/cjc-1295.html">CJC-1295</a>
+    <a href="compounds/melanotan-ii.html">Melanotan II</a>
+  </div>
+</div>
+
+<h2>Governance & Transparency</h2>
+
+<div class="governance-section">
+  <h3 style="font-family: Archivo, sans-serif; margin-top: 0;">All Editorial Decisions Have a Signature</h3>
+  <p>Every compound record is reviewed by a named editor, dated. Corrections are logged publicly. Funding is disclosed. We are funded by grants and public foundations only — zero dollars from vendors.</p>
+
+  <div class="links-grid" style="margin-top: 1.5rem;">
+    <a href="what-we-wont-tell-you.html">What We Won't Tell You</a>
+    <a href="coi-disclosure.html">Conflict of Interest</a>
+    <a href="corrections.html">Corrections Log</a>
+    <a href="methodology.html">Methods</a>
+  </div>
+</div>
+
+<h2>Purity Testing Programme</h2>
+
+<p>Gray-market peptides are purchased blindly from retail vendors, tested by independent labs (LC-MS/MS for identity and purity, endotoxin, sterility), and results are published with vendor names. This is primary data, not aggregation — the only thing on this topic that can't be copied by affiliate sites because it requires actually buying the stuff and running the assays.</p>
+
+<p style="margin-top: 1rem;"><strong>Annual purity surveys per compound class:</strong> Results published here and in peer-reviewed journals.</p>
+
+<h2>Start Here</h2>
+
+<ul style="margin: 1.5rem 0; margin-left: 2rem; font-size: 1.05rem;">
+  <li><a href="what-we-wont-tell-you.html">Read the boundaries</a> — what we will and won't tell you, and why</li>
+  <li><a href="compounds/">Browse all compounds</a> — sorted by evidence tier</li>
+  <li><a href="compounds/retatrutide.html">See an example (Class B)</a> — retatrutide, the most-discussed investigational GLP-1 agonist</li>
+  <li><a href="compounds/bpc-157.html">See an example (Class C)</a> — BPC-157, marketed on E6 animal evidence, sold as E8 gray market</li>
+</ul>
+
+</main>
+
+<footer>
+  <p>PeptideOS — Evidence and regulatory status for therapeutic peptides</p>
+  <p style="margin-top: 0.75rem;"><a href="coi-disclosure.html">Funding & COI</a> | <a href="what-we-wont-tell-you.html">Editorial Boundaries</a> | <a href="https://github.com/OpenSourceMedicine/peptideos">GitHub</a></p>
+  <p style="margin-top: 0.75rem; font-size: 0.8rem;">Part of Open Source Medicine Foundation. No vendor funding. No affiliate links. All data CC-BY.</p>
+</footer>
+
+<script>
+  function filterClass(cls) {
+    document.querySelectorAll('.class-content').forEach(el => el.style.display = 'none');
+    document.getElementById('class-' + cls).style.display = 'block';
+    document.querySelectorAll('.class-tab').forEach(el => el.classList.remove('active'));
+    event.target.closest('.class-tab').classList.add('active');
+  }
+</script>
+
+</body>
+</html>

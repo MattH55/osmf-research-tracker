@@ -1,0 +1,262 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PeptideOS Compound Record",
+  "description": "Evidence and regulatory status record for a therapeutic peptide",
+  "type": "object",
+  "required": [
+    "slug",
+    "names",
+    "class",
+    "evidence",
+    "safety",
+    "regulatory",
+    "unknowns"
+  ],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "URL-safe identifier"
+    },
+    "names": {
+      "type": "object",
+      "required": ["common"],
+      "properties": {
+        "inn": {
+          "type": ["string", "null"],
+          "description": "International Nonproprietary Name if assigned"
+        },
+        "common": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Common names and aliases"
+        },
+        "codes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Research codes, proprietary designations"
+        },
+        "cas": {
+          "type": ["string", "null"],
+          "description": "CAS Registry Number"
+        }
+      }
+    },
+    "sequence": {
+      "type": ["string", "null"],
+      "description": "Amino acid sequence (single-letter code)"
+    },
+    "class": {
+      "type": "string",
+      "enum": ["A", "B", "C"],
+      "description": "A=Approved, B=Investigational (active clinical development), C=Gray market"
+    },
+    "structure": {
+      "type": "object",
+      "properties": {
+        "length_aa": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "modifications": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Post-translational or synthetic modifications"
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "indication",
+          "tier",
+          "summary",
+          "last_reviewed",
+          "reviewer"
+        ],
+        "properties": {
+          "indication": {
+            "type": "string",
+            "description": "Specific claimed use or indication"
+          },
+          "tier": {
+            "type": "string",
+            "enum": ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8"],
+            "description": "Evidence tier from E1 (strong) to E8 (none)"
+          },
+          "human_rcts": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of adequately-powered RCTs in this indication"
+          },
+          "human_trials_any": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total human trials (any design)"
+          },
+          "animal_studies": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "registered_trials_total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Registered on ClinicalTrials.gov or similar"
+          },
+          "registered_trials_reported": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Of registered trials, how many published results"
+          },
+          "key_citations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "DOI links to primary literature"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 150,
+            "description": "Plain, unhedged summary of evidence. No upward bias."
+          },
+          "last_reviewed": {
+            "type": "string",
+            "format": "date"
+          },
+          "reviewer": {
+            "type": "string",
+            "description": "Named reviewer"
+          }
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "required": ["grade"],
+      "properties": {
+        "grade": {
+          "type": "string",
+          "enum": ["S1", "S2", "S3", "S4", "S5"],
+          "description": "S1=extensive data, well-tolerated; S5=serious safety signal"
+        },
+        "known_signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["signal", "evidence"],
+            "properties": {
+              "signal": {
+                "type": "string",
+                "description": "Adverse event or safety concern"
+              },
+              "evidence": {
+                "type": "string",
+                "description": "Human cases, animal evidence, mechanism"
+              },
+              "citation": {
+                "type": "string",
+                "description": "DOI or PubMed link"
+              }
+            }
+          }
+        },
+        "no_data_statement": {
+          "type": "boolean",
+          "description": "True if: absence of signal ≠ evidence of safety"
+        }
+      }
+    },
+    "regulatory": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "jurisdiction",
+          "status",
+          "source_url",
+          "source_retrieved"
+        ],
+        "properties": {
+          "jurisdiction": {
+            "type": "string",
+            "enum": ["US", "EU", "UK", "Canada", "Australia", "Japan"],
+            "description": "Always per-jurisdiction, never global"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "investigational",
+              "unapproved",
+              "excluded_from_supplement_definition",
+              "503a_category_2"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "description": "Additional context (indication, approval date, etc.)"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "PRIMARY SOURCE MANDATORY. FDA Orange Book, 503A list, EMA register, etc. Not another website."
+          },
+          "source_retrieved": {
+            "type": "string",
+            "format": "date",
+            "description": "Date the source was accessed and verified"
+          },
+          "source_quote_ref": {
+            "type": "string",
+            "description": "Section/page where status is stated in primary source"
+          }
+        }
+      }
+    },
+    "sport": {
+      "type": "object",
+      "properties": {
+        "wada_status": {
+          "type": "string",
+          "enum": ["prohibited", "not_prohibited", "monitored"]
+        },
+        "wada_class": {
+          "type": "string",
+          "description": "S1-S9 classification if prohibited"
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "market": {
+      "type": "object",
+      "properties": {
+        "sold_as": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Legal disclaimers found on vendor sites"
+        },
+        "typical_presentation": {
+          "type": "string",
+          "description": "How it appears: lyophilized powder, liquid, etc."
+        },
+        "purity_test_program": {
+          "type": ["string", "null"],
+          "description": "Reference to testing results (§5)"
+        }
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string" },
+      "description": "Critical unknowns. Minimum 3. Mandatory field."
+    }
+  }
+}
