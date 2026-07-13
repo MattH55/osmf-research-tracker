@@ -6,6 +6,17 @@
 <title>PriceOS — Browse Real US Hospital Prices</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    /* dataviz tokens — single-series sequential blue, validated (see references/palette.md) */
+    --viz-surface: #fcfcfb;
+    --viz-text-primary: #0b0b0b;
+    --viz-text-secondary: #52514e;
+    --viz-text-muted: #898781;
+    --viz-gridline: #e1e0d9;
+    --viz-baseline: #c3c2b7;
+    --viz-bar: #2a78d6;
+    --viz-bar-hover: #1c5cab;
+  }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #f9fafb;
@@ -65,10 +76,51 @@
 
   .filters {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1.6fr 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1rem;
   }
+  .filter-hint { font-size: 0.78rem; color: #9ca3af; margin-top: 0.3rem; }
+
+  /* Histogram */
+  #histogram-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.25rem 1.25rem 0.75rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: none;
+  }
+  #histogram-card.visible { display: block; }
+  #histogram-card h3 {
+    font-size: 0.95rem;
+    color: #374151;
+    margin-bottom: 0.9rem;
+    font-weight: 600;
+  }
+  #histogram-card h3 .sub { font-weight: 400; color: #9ca3af; font-size: 0.85rem; }
+  .hist-svg-wrap { position: relative; }
+  .hist-bar { fill: var(--viz-bar); cursor: pointer; }
+  .hist-bar:hover { fill: var(--viz-bar-hover); }
+  .hist-axis-label { fill: var(--viz-text-muted); font-size: 10.5px; }
+  .hist-gridline { stroke: var(--viz-gridline); stroke-width: 1; }
+  .hist-baseline { stroke: var(--viz-baseline); stroke-width: 1; }
+  .hist-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--viz-text-primary);
+    color: white;
+    font-size: 0.78rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    transform: translate(-50%, -110%);
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    z-index: 5;
+  }
+  .hist-tooltip.visible { opacity: 1; }
+  .hist-tooltip b { font-variant-numeric: tabular-nums; }
 
   #proc-stats {
     background: white;
@@ -121,6 +173,7 @@
   }
   .badge-complete { background: #e0e7ff; color: #4338ca; }
   .badge-stale { background: #fee2e2; color: #991b1b; margin-left: 0.4rem; }
+  .badge-outlier { background: #fef3c7; color: #92400e; margin-left: 0.4rem; }
   .src-link { color: #667eea; text-decoration: none; font-size: 0.8rem; word-break: break-all; }
   .src-link:hover { text-decoration: underline; }
   .empty-state { text-align: center; padding: 3rem; color: #9ca3af; }
@@ -190,6 +243,11 @@
       <input type="search" id="search-box" placeholder="e.g. Memorial, Baptist, Regional…">
     </div>
     <div>
+      <label for="zip-box">Search by postal code</label>
+      <input type="search" id="zip-box" placeholder="e.g. 941 or 94110" inputmode="numeric" maxlength="5">
+      <div class="filter-hint">3 digits = region, 5 = exact ZIP</div>
+    </div>
+    <div>
       <label for="sort-select">Sort</label>
       <select id="sort-select">
         <option value="price_asc">Price: Low to High</option>
@@ -201,6 +259,11 @@
   </div>
 
   <div id="proc-stats"></div>
+
+  <div id="histogram-card">
+    <h3 id="histogram-title">Price distribution <span class="sub"></span></h3>
+    <div class="hist-svg-wrap" id="hist-svg-wrap"></div>
+  </div>
 
   <div id="table-wrap">
     <div class="loading">Loading real observation data…</div>
@@ -240,6 +303,10 @@ async function init() {
 
   document.getElementById('procedure-select').addEventListener('change', onProcedureChange);
   document.getElementById('search-box').addEventListener('input', applyFilters);
+  document.getElementById('zip-box').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
+    applyFilters();
+  });
   document.getElementById('sort-select').addEventListener('change', applyFilters);
   document.getElementById('prev-page').addEventListener('click', () => { currentPage--; renderTable(); });
   document.getElementById('next-page').addEventListener('click', () => { currentPage++; renderTable(); });
@@ -290,25 +357,148 @@ async function loadProcedure(slug, summary) {
   }
   allRows = procedureCache[slug];
 
+  const totalUsHospitals = summary.total_cms_hospitals || 5432;
+  const coveragePct = ((stat.count / totalUsHospitals) * 100).toFixed(1);
+
   const statsEl = document.getElementById('proc-stats');
   statsEl.classList.add('visible');
   statsEl.innerHTML = `
-    <b>${labelize(slug)}</b> — ${stat.count.toLocaleString()} hospitals report a cash price.
+    <b>${labelize(slug)}</b> — ${stat.count.toLocaleString()} hospitals report a cash price
+    (<b>${coveragePct}%</b> of ${totalUsHospitals.toLocaleString()} US hospitals in the CMS directory — coverage is partial by design, see note below).
     Median: <b>$${stat.median_usd.toLocaleString()}</b> ·
     Range: <b>$${stat.min_usd.toLocaleString()} – $${stat.max_usd.toLocaleString()}</b> ·
     Mean: <b>$${stat.mean_usd.toLocaleString()}</b>
     <br><span style="color:#92400e;">⚠ All facility-charge-only (completeness ~45%). Surgeon and anesthesia fees are billed separately and are not reflected here.</span>
+    ${stat.outliers_excluded > 0 ? `<br><span style="color:#92400e;">⚠ ${stat.outliers_excluded} of ${stat.total_rows} rows excluded from these stats and the histogram (implausible values — likely upstream data errors, e.g. a $999,999,999 placeholder). They remain in the table below, marked "outlier".</span>` : ''}
   `;
 
   currentPage = 1;
   applyFilters();
 }
 
+// --- Histogram (single-series, sequential blue — see dataviz skill mark spec) ---
+function renderHistogram(rows, zipFilter) {
+  const card = document.getElementById('histogram-card');
+  const wrap = document.getElementById('hist-svg-wrap');
+  const titleSub = document.querySelector('#histogram-title .sub');
+
+  if (!rows.length) {
+    card.classList.remove('visible');
+    return;
+  }
+  card.classList.add('visible');
+  titleSub.textContent = zipFilter
+    ? `— ${rows.length.toLocaleString()} hospitals matching ZIP ${zipFilter}`
+    : `— ${rows.length.toLocaleString()} hospitals`;
+
+  const prices = rows.map(r => r.amount_usd).sort((a, b) => a - b);
+  const min = prices[0], max = prices[prices.length - 1];
+
+  // Bucket into ~16 bins on a clean step
+  const BIN_COUNT = 16;
+  const rawStep = (max - min) / BIN_COUNT || 1;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const step = Math.ceil(rawStep / magnitude) * magnitude || 1;
+  const binStart = Math.floor(min / step) * step;
+  const bins = [];
+  for (let b = binStart; b <= max; b += step) bins.push({ lo: b, hi: b + step, count: 0 });
+  if (bins.length === 0) bins.push({ lo: min, hi: max + 1, count: prices.length });
+
+  for (const p of prices) {
+    let idx = Math.floor((p - binStart) / step);
+    if (idx >= bins.length) idx = bins.length - 1;
+    if (idx < 0) idx = 0;
+    bins[idx].count++;
+  }
+
+  const maxCount = Math.max(...bins.map(b => b.count));
+  const W = 1000, H = 220;
+  const marginLeft = 44, marginBottom = 34, marginTop = 10, marginRight = 10;
+  const plotW = W - marginLeft - marginRight;
+  const plotH = H - marginTop - marginBottom;
+  const barGap = 2;
+  const barW = Math.max(2, plotW / bins.length - barGap);
+
+  // clean y-axis ticks (0, and rounded max)
+  const yMax = niceCeil(maxCount);
+  const yTicks = [0, Math.round(yMax / 2), yMax];
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="220" role="img" aria-label="Histogram of prices">`;
+
+  // gridlines + y labels
+  for (const t of yTicks) {
+    const y = marginTop + plotH - (t / yMax) * plotH;
+    svg += `<line class="hist-gridline" x1="${marginLeft}" x2="${W - marginRight}" y1="${y}" y2="${y}"></line>`;
+    svg += `<text class="hist-axis-label" x="${marginLeft - 8}" y="${y + 3}" text-anchor="end">${t}</text>`;
+  }
+
+  // bars
+  bins.forEach((b, i) => {
+    const x = marginLeft + i * (plotW / bins.length) + barGap / 2;
+    const h = maxCount > 0 ? (b.count / yMax) * plotH : 0;
+    const y = marginTop + plotH - h;
+    const rx = 4;
+    svg += `<path class="hist-bar" data-i="${i}"
+      d="M${x},${marginTop + plotH}
+         L${x},${y + rx}
+         Q${x},${y} ${x + rx},${y}
+         L${x + barW - rx},${y}
+         Q${x + barW},${y} ${x + barW},${y + rx}
+         L${x + barW},${marginTop + plotH} Z" />`;
+  });
+
+  // baseline
+  svg += `<line class="hist-baseline" x1="${marginLeft}" x2="${W - marginRight}" y1="${marginTop + plotH}" y2="${marginTop + plotH}"></line>`;
+
+  // x labels: first, middle, last bin edges
+  const labelIdxs = [0, Math.floor(bins.length / 2), bins.length - 1];
+  labelIdxs.forEach(i => {
+    if (!bins[i]) return;
+    const x = marginLeft + i * (plotW / bins.length) + (plotW / bins.length) / 2;
+    svg += `<text class="hist-axis-label" x="${x}" y="${H - 12}" text-anchor="middle">$${Math.round(bins[i].lo).toLocaleString()}</text>`;
+  });
+
+  svg += `</svg>`;
+
+  wrap.innerHTML = svg + `<div class="hist-tooltip" id="hist-tooltip"></div>`;
+
+  const tooltip = document.getElementById('hist-tooltip');
+  wrap.querySelectorAll('.hist-bar').forEach(el => {
+    const i = parseInt(el.dataset.i, 10);
+    const b = bins[i];
+    el.addEventListener('pointermove', (e) => {
+      const rect = wrap.getBoundingClientRect();
+      tooltip.style.left = (e.clientX - rect.left) + 'px';
+      tooltip.style.top = (e.clientY - rect.top) + 'px';
+      tooltip.innerHTML = `$${Math.round(b.lo).toLocaleString()}–$${Math.round(b.hi).toLocaleString()}: <b>${b.count.toLocaleString()}</b> hospital${b.count === 1 ? '' : 's'}`;
+      tooltip.classList.add('visible');
+    });
+    el.addEventListener('pointerleave', () => tooltip.classList.remove('visible'));
+  });
+}
+
+function niceCeil(n) {
+  if (n <= 5) return 5;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(n)));
+  const normalized = n / magnitude;
+  let niceNorm;
+  if (normalized <= 1) niceNorm = 1;
+  else if (normalized <= 2) niceNorm = 2;
+  else if (normalized <= 5) niceNorm = 5;
+  else niceNorm = 10;
+  return niceNorm * magnitude;
+}
+
 function applyFilters() {
   const q = document.getElementById('search-box').value.trim().toLowerCase();
+  const zip = document.getElementById('zip-box').value.trim();
   const sortVal = document.getElementById('sort-select').value;
 
-  filteredRows = allRows.filter(r => !q || (r.facility_name || '').toLowerCase().includes(q));
+  filteredRows = allRows.filter(r => {
+    if (q && !(r.facility_name || '').toLowerCase().includes(q)) return false;
+    if (zip && !(r.zip || '').startsWith(zip)) return false;
+    return true;
+  });
 
   filteredRows.sort((a, b) => {
     switch (sortVal) {
@@ -321,6 +511,7 @@ function applyFilters() {
   });
 
   currentPage = 1;
+  renderHistogram(filteredRows.filter(r => !r.outlier), zip);
   renderTable();
 }
 
@@ -341,6 +532,7 @@ function renderTable() {
 
   let html = `<table><thead><tr>
     <th>Hospital</th>
+    <th>Location</th>
     <th>Price (Cash)</th>
     <th>Completeness</th>
     <th>Observed</th>
@@ -349,10 +541,13 @@ function renderTable() {
 
   for (const r of pageRows) {
     const pct = r.completeness_score != null ? Math.round(r.completeness_score * 100) + '%' : '—';
-    html += `<tr>
+    const loc = r.city ? `${escapeHtml(r.city)}, ${escapeHtml(r.state || '')} ${escapeHtml(r.zip || '')}` : '—';
+    const outlierTitle = r.outlier ? ' title="Excluded from median/histogram: value is implausible, likely an upstream data extraction error"' : '';
+    html += `<tr${outlierTitle}>
       <td>${escapeHtml(r.facility_name || r.facility_id)}</td>
+      <td>${loc}</td>
       <td class="price">$${r.amount_usd.toLocaleString()}</td>
-      <td><span class="badge badge-complete">${pct} complete</span>${r.stale ? '<span class="badge badge-stale">stale</span>' : ''}</td>
+      <td><span class="badge badge-complete">${pct} complete</span>${r.stale ? '<span class="badge badge-stale">stale</span>' : ''}${r.outlier ? '<span class="badge badge-outlier">⚠ outlier</span>' : ''}</td>
       <td>${r.observation_date || '—'}</td>
       <td>${r.source_url ? `<a class="src-link" href="${escapeAttr(r.source_url)}" target="_blank" rel="noopener">view source ↗</a>` : '—'}</td>
     </tr>`;
