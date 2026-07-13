@@ -1,0 +1,92 @@
+slug: cataract
+name: Cataract Extraction with Intraocular Lens (IOL)
+description: Outpatient cataract surgery with intraocular lens implant, one eye
+
+us_codes:
+  cpt: ["66984"]
+  ms_drg: []
+  icd10_pcs: ["08D83ZZ"]
+  facility_type: "HOPD/ASC"
+
+international_codes:
+  icd10: ["Z12.89"]
+
+components:
+  - id: surgeon_fee
+    description: Ophthalmologist
+    weight: 0.22
+    typical_range: "$800–$1,500"
+    us_codes: ["66984"]
+    notes: "Outpatient CPT code; surgeon bills separately from facility"
+
+  - id: facility_fee
+    description: Surgical facility (OR, recovery, equipment)
+    weight: 0.35
+    typical_range: "$1,000–$2,500"
+    us_codes: []
+    notes: "HOPD (Hospital Outpatient Department) or ASC (Ambulatory Surgical Center); minimal facility overhead for 15-min procedure"
+
+  - id: intraocular_lens
+    description: Intraocular lens implant (polymethylmethacrylate, acrylic, or silicone)
+    weight: 0.28
+    typical_range: "$400–$1,200"
+    us_codes: []
+    notes: "Premium IOLs (toric for astigmatism, multifocal) can cost $2,000+; basic IOLs $200–$500"
+    device_examples:
+      - "Alcon AcrySof (basic monofocal)"
+      - "Bausch + Lomb enVista (premium monofocal)"
+      - "STAAR EVO (toric/astigmatism correction)"
+      - "Johnson & Johnson RESTOR (multifocal)"
+
+  - id: anesthesia
+    description: Anesthesia (topical drops + local infiltration; no general anesthesia)
+    weight: 0.05
+    typical_range: "$100–$300"
+    us_codes: []
+    notes: "Typically topical (proparacaine/tetracaine drops) + peribulbar/sub-Tenon's local injection; no anesthesiologist required"
+
+  - id: pre_op_workup
+    description: Preoperative eye exams (refraction, biometry, IOL power calculation)
+    weight: 0.04
+    typical_range: "$300–$600"
+    us_codes: []
+    notes: "Optical coherence tomography (OCT), keratometry, A-scan biometry; done at consult visit"
+
+  - id: post_op_care
+    description: Postoperative clinic visits and topical medications
+    weight: 0.06
+    typical_range: "$200–$400"
+    us_codes: []
+    notes: "Typically 1 day, 1 week, 1 month postop visits; antibiotic and anti-inflammatory eye drops for 2–4 weeks"
+
+weights_sum: 1.00
+weights_citation: |
+  Derived from:
+  1. CMS Physician Fee Schedule for CPT 66984 and facility payment rates, 2024
+  2. American Society of Cataract and Refractive Surgery (ASCRS) benchmarking
+     survey (2023)
+  3. Ophthalmology health economics literature (Herndon et al., 2016; Rafuse et al., 2019)
+  4. Comparison of HOPD vs ASC pricing studies (Medicare Payment Advisory
+     Commission analysis, 2022)
+
+  Cataract is the most price-transparent procedure in US healthcare because:
+  - CPT code 66984 is unambiguous (vs joint replacement DRGs which bundle).
+  - Surgery is outpatient (no hospital bed cost).
+  - Implant cost is explicit and varies widely (monofocal vs premium).
+
+notes: |
+  - This is the ONLY pilot procedure where the US MRF often shows an
+    itemized IOL cost separate from surgeon/facility. Makes cataract easier to
+    compare than orthopedic bundles.
+  - Premium IOLs (toric, multifocal, extended depth of focus) dramatically
+    increase cost ($2,000–$4,000 patient out-of-pocket) but are patient choice,
+    not medical necessity.
+  - Comparison rule for cataract MUST specify IOL type; comparing "basic
+    monofocal" to "premium multifocal" is comparing different products.
+  - Second eye is NOT included in this bundle (separate CPT 66985 for
+    second eye, billed at ~80% of first eye cost).
+  - Complications (posterior capsular opacification requiring YAG capsulotomy)
+    are rare (<1%) and inexpensive ($150–$300) so not weighted separately
+    in primary bundle, but flagged in complication_risk layer.
+
+last_updated: "2026-07-12"
