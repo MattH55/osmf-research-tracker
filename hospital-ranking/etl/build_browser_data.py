@@ -26,6 +26,45 @@ OBS_DIR = ROOT / "data" / "observations"
 OUT_DIR = ROOT / "docs" / "data"
 PROC_OUT_DIR = OUT_DIR / "procedures"
 HOSPITALS_JSON = ROOT / "data" / "cms" / "hospitals.json"
+PROCEDURES_SEED = ROOT / "data" / "seed" / "procedures.json"
+
+# Same proc-id -> observation-slug aliasing used by migrate_to_observation_store.py
+PROC_ID_ALIASES = {
+    "proc-knee-replacement": "tka",
+    "proc-hip-replacement": "tha",
+    "proc-cataract-surgery": "cataract",
+    "proc-shoulder-replacement": "shoulder",
+}
+
+
+def load_procedure_code_scope() -> dict[str, dict]:
+    """slug -> {cpt_codes, drg_codes, mixed_scope} from the real procedure ontology.
+
+    The Trilliant ingest query matches each procedure by
+    `WHERE cpt IN (...) OR ms_drg IN (...)` (etl/ingest_trilliant.py) but does
+    NOT record which code type actually matched a given hospital's row before
+    it reaches trilliant-prices.json. For any procedure defined with BOTH CPT
+    and MS-DRG codes, that means some rows may be a line-item professional/
+    facility charge (CPT) and others a full bundled inpatient rate (MS-DRG) —
+    fundamentally different billing scopes. This is not fabricated or inferred
+    per-row; it's a real, checkable property of the procedure definition.
+    """
+    if not PROCEDURES_SEED.exists():
+        return {}
+    procs = json.loads(PROCEDURES_SEED.read_text(encoding="utf-8"))
+    out = {}
+    for p in procs:
+        pid = p.get("id", "")
+        slug = PROC_ID_ALIASES.get(pid, pid.replace("proc-", ""))
+        cpt_codes = p.get("cptCodes") or []
+        drg_codes = p.get("drgCodes") or []
+        out[slug] = {
+            "cpt_codes": cpt_codes,
+            "drg_codes": drg_codes,
+            "mixed_scope": bool(cpt_codes) and bool(drg_codes),
+            "multi_cpt": len(cpt_codes) > 1,
+        }
+    return out
 
 OBS_FILES = [
     OBS_DIR / "us-mrf-trilliant.jsonl",
@@ -95,6 +134,11 @@ def main() -> int:
     locations = load_facility_locations()
     print(f"Loaded locations for {len(locations)} facilities")
 
+    print("Loading procedure code scope (CPT vs MS-DRG)…")
+    code_scope = load_procedure_code_scope()
+    n_mixed = sum(1 for v in code_scope.values() if v["mixed_scope"])
+    print(f"{n_mixed}/{len(code_scope)} procedures mix CPT + MS-DRG scope")
+
     by_procedure: dict[str, list[dict]] = defaultdict(list)
     for obs in observations:
         by_procedure[obs["procedure_slug"]].append(obs)
@@ -137,20 +181,35 @@ def main() -> int:
             continue
         prices.sort()
 
+        # Trim bottom 2.5% and top 2.5% of the distribution before computing
+        # stats, so that extreme-low and extreme-high values don't skew the
+        # summary statistics or histogram range (5% total removed).
+        n_prices = len(prices)
+        trim_n = max(0, int(n_prices * 0.025))
+        trimmed_prices = prices[trim_n:n_prices - trim_n] if trim_n > 0 else prices
+        n_trimmed = n_prices - len(trimmed_prices)
+
         proc_file = PROC_OUT_DIR / f"{slug}.json"
         proc_file.write_text(json.dumps(compact_rows), encoding="utf-8")
 
         matched_zip = sum(1 for r in compact_rows if r["zip"])
+        scope = code_scope.get(slug, {})
         summary.append({
             "slug": slug,
-            "count": len(prices),
+            "count": len(prices),                  # full non-outlier count
+            "trimmed_count": len(trimmed_prices),  # count after bottom/top 2.5% trim
             "total_rows": len(compact_rows),
             "outliers_excluded": n_outliers,
-            "min_usd": round(min(prices), 2),
-            "median_usd": round(statistics.median(prices), 2),
-            "max_usd": round(max(prices), 2),
-            "mean_usd": round(statistics.mean(prices), 2),
+            "trimmed_excluded": n_trimmed,
+            "min_usd": round(min(trimmed_prices), 2),
+            "median_usd": round(statistics.median(trimmed_prices), 2),
+            "max_usd": round(max(trimmed_prices), 2),
+            "mean_usd": round(statistics.mean(trimmed_prices), 2),
             "with_zip": matched_zip,
+            "cpt_codes": scope.get("cpt_codes", []),
+            "drg_codes": scope.get("drg_codes", []),
+            "mixed_scope": scope.get("mixed_scope", False),
+            "multi_cpt": scope.get("multi_cpt", False),
         })
 
     summary.sort(key=lambda x: -x["count"])
@@ -181,11 +240,4 @@ def main() -> int:
 
     (OUT_DIR / "summary.json").write_text(json.dumps(summary_out, indent=2), encoding="utf-8")
 
-    print(f"\nWrote {len(summary)} procedure files to {PROC_OUT_DIR}")
-    print(f"Wrote summary to {OUT_DIR / 'summary.json'}")
-    print(f"\nTotal real observations published: {len(observations)}")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+    pr

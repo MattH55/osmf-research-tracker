@@ -1,8 +1,27 @@
 #!/usr/bin/env python3
 """Build right-to-try.html from disease-intelligence data - unmet medical needs only."""
 import json
+import re
 from pathlib import Path
 from collections import defaultdict
+
+# Diseases considered critical/life-threatening
+CRITICAL_SLUGS = {
+    'post-acute-covidvaccination-syndrome', 'alzheimers-disease-and-other-dementias',
+    'sepsis', 'sclerosing-cholangitis', 'mastocytosis-with-kit-d816v-mutation',
+    'alpha-1-antitrypsin-deficiency', 'chronic-kidney-disease', 'lung-cancer',
+    'breast-cancer', 'colorectal-cancer', 'ovarian-cancer', 'pancreatic-cancer',
+    'prostate-cancer', 'melanoma', 'cervical-cancer', 'thyroid-cancer',
+    'urinary-bladder-carcinoma', 'b-cell-chronic-lymphocytic-leukemia',
+    'non-hodgkin-lymphoma', 'plasma-cell-myeloma', 'myelodysplastic-syndrome',
+    'exocrine-pancreatic-carcinoma', 'ischemic-stroke', 'heart-failure',
+    'pulmonary-arterial-hypertension', 'hivaids', 'hepatitis-c',
+    'amyotrophic-lateral-sclerosis', 'huntington-disease', 'cystic-fibrosis',
+    'sickle-cell-disease', 'hemophilia', 'myasthenia-gravis',
+    'myalgic-encephalomyelitis-chronic-fatigue-syndrome', 'lupus-nephritis',
+    'systemic-lupus-erythematosus', 'autoimmune-thrombocytopenic-purpura',
+    'scleroderma', 'multiple-sclerosis', 'gastric-cancer',
+}
 
 def build_right_to_try():
     data_dir = Path(__file__).parent.parent / "data" / "disease-intelligence"
@@ -44,53 +63,60 @@ def build_right_to_try():
                                     phases[phase] += 1
                                     agents_by_phase[phase].append({
                                         'name': agent.get('name', 'Unknown'),
-                                        'mechanism': agent.get('mechanism', 'Unknown'),
+                                        'mechanism': agent.get('mechanism'),
                                         'phase': phase,
                                         'phase_label': phase_label,
                                         'source': agent.get('source'),
                                         'evidence_tier': agent.get('evidence_tier')
                                     })
 
-            # Only include diseases WITHOUT Phase 4 agents (unmet medical needs)
-            # Include both those with Phase 1-3 agents AND those with 0 agents at all
-            if 4 not in phases:
-                # Extract relevant fields
-                disease = {
-                    "name": data.get("condition", {}).get("name", json_file.stem),
-                    "slug": data.get("condition", {}).get("slug", json_file.stem),
-                    "mondo_id": data.get("identifiers", {}).get("mondo_id", "N/A"),
-                    "genes": data.get("summary", {}).get("alteration_count", 0),
-                    "phases": {
-                        "phase_1": phases.get(1, 0),
-                        "phase_2": phases.get(2, 0),
-                        "phase_3": phases.get(3, 0),
-                    },
-                    "total_agents": sum(phases.values()),
-                    "most_advanced": max(phases.keys()) if phases else 0,
-                }
+            slug = data.get("condition", {}).get("slug", json_file.stem)
 
-                # Get top Phase 2-3 agents (most promising)
-                promising = []
-                for phase in [3, 2, 1]:
-                    agents = agents_by_phase[phase]
-                    for agent in agents[:2]:  # Top 2 per phase
-                        promising.append({
-                            'name': agent['name'],
-                            'phase': agent['phase'],
-                            'mechanism': agent['mechanism']
-                        })
-                    if len(promising) >= 5:
-                        break
+            # Get top agents for prospectivedrugs (Phase 1-3 only, sorted by phase descending)
+            all_agents_sorted = []
+            for phase in [3, 2, 1]:
+                for agent in agents_by_phase[phase]:
+                    all_agents_sorted.append(agent)
+            # Deduplicate by name
+            seen_names = set()
+            unique_agents = []
+            for a in all_agents_sorted:
+                name = a['name']
+                if name not in seen_names:
+                    seen_names.add(name)
+                    unique_agents.append(a)
+            # Take top 6 prospectivedrugs
+            top_agents = unique_agents[:6]
+            prospectivedrugs = [a['name'].title() for a in top_agents]
 
-                disease["promising_agents"] = promising
+            # Highest investigational phase (1-3)
+            investigational_phases = [p for p in [3, 2, 1] if phases.get(p, 0) > 0]
+            most_investigational = max(investigational_phases) if investigational_phases else 0
 
-                diseases.append(disease)
+            # Extract relevant fields - use flat structure for JS compatibility
+            disease = {
+                "name": data.get("condition", {}).get("name", json_file.stem),
+                "slug": slug,
+                "mondo_id": data.get("identifiers", {}).get("mondo_id", "N/A"),
+                "genes": data.get("summary", {}).get("alteration_count", 0),
+                "phase_1": phases.get(1, 0),
+                "phase_2": phases.get(2, 0),
+                "phase_3": phases.get(3, 0),
+                "phase_4": phases.get(4, 0),
+                "total_agents": sum(phases.values()),
+                "investigational_agents": sum(phases.get(p, 0) for p in [1, 2, 3]),
+                "most_investigational": most_investigational,
+                "critical": slug in CRITICAL_SLUGS,
+                "prospectivedrugs": prospectivedrugs,
+            }
+
+            diseases.append(disease)
 
         except Exception as e:
             print(f"Error reading {json_file.name}: {e}")
 
-    # Sort by most advanced phase, then by total agents (descending)
-    diseases.sort(key=lambda d: (-d["most_advanced"], -d["total_agents"]))
+    # Sort by most advanced investigational phase, then by investigational agent count (descending)
+    diseases.sort(key=lambda d: (-d["most_investigational"], -d["investigational_agents"]))
 
     # Generate JavaScript data
     diseases_json = json.dumps(diseases, indent=2)
@@ -103,35 +129,65 @@ def build_right_to_try():
 
     template = template_path.read_text(encoding="utf-8")
 
-    # Replace the old diseases declaration
-    js_section = f"""
-// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS
-const diseases = {diseases_json};
-"""
+    # Replace the diseases array (between "const diseases = [" and the closing "];" before filterDiseases)
+    js_section = f"""// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS
+const diseases = {diseases_json};"""
 
-    updated = template.replace(
-        "// Disease data populated from RepurpOS database\nconst diseases = [];",
-        js_section
-    )
+    # Find the existing diseases array and replace it using string slicing
+    needle_start = "const diseases = ["
+    needle_end = "];"
+    start_pos = template.find(needle_start)
+    if start_pos == -1:
+        print("Error: Could not find 'const diseases = [' in template")
+        return
+    end_pos = template.find(needle_end, start_pos)
+    if end_pos == -1:
+        print("Error: Could not find closing '];' after 'const diseases = ['")
+        return
+    # end_pos + 2 to include "];"
+    updated = template[:start_pos] + js_section + template[end_pos + 2:]
 
-    # Also update the filter button count
+    # Also update counts in the template text
+    count = len(diseases)
+    # Fix the duplicate comment line from string slicing
     updated = updated.replace(
-        'data-filter="all">All Diseases (106)</button>',
-        f'data-filter="all">All ({len(diseases)}) Unmet Needs</button>'
+        "// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS\n// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS",
+        "// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS"
+    )
+    # Update filter button counts
+    updated = updated.replace(
+        ">All (30)</button>",
+        f">All ({count})</button>"
+    )
+    updated = updated.replace(
+        'Showing ${filtered.length} of 30 diseases',
+        f'Showing ${{filtered.length}} of {count} diseases'
+    )
+    # Update hero text
+    updated = re.sub(
+        r'\d+ diseases without FDA-approved disease-modifying therapy',
+        f'{count} diseases without FDA-approved disease-modifying therapy',
+        updated
+    )
+    # Update compendium heading and concept count
+    updated = re.sub(
+        r'Compendium: \d+ Compliant Diseases',
+        f'Compendium: {count} Compliant Diseases',
+        updated
     )
 
     # Write updated HTML
     template_path.write_text(updated, encoding="utf-8")
 
-    print(f"Built right-to-try.html with {len(diseases)} unmet medical needs (no Phase 4 agents)")
+    print(f"Built right-to-try.html with {count} unmet medical needs (no Phase 4 agents)")
     if diseases:
         print(f"\nDiseases included:")
         for d in diseases:
-            phases_str = ", ".join(f"Phase {p}: {d['phases'][f'phase_{p}']}"
-                                   for p in [3, 2, 1] if d['phases'][f'phase_{p}'] > 0)
+            phases_str = ", ".join(f"Phase {p}: {d[f'phase_{p}']}"
+                                   for p in [3, 2, 1] if d[f'phase_{p}'] > 0)
             print(f"  - {d['name']}: {phases_str} ({d['total_agents']} total)")
-            if d['promising_agents']:
-                print(f"    Top promising: {', '.join(a['name'] for a in d['promising_agents'][:3])}")
+            if d['prospectivedrugs']:
+                print(f"    Prospective drugs: {', '.join(d['prospectivedrugs'][:5])}")
 
 if __name__ == "__main__":
     build_right_to_try()

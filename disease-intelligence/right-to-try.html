@@ -67,6 +67,9 @@
     .meta-label{color:var(--muted)}
     .meta-value{color:var(--text);font-weight:600}
     .meta-value.highlight{color:var(--green)}
+    .prospectivedrugs{padding:.5rem 0;margin-top:.25rem;border-top:1px solid rgba(42,48,80,.3)}
+    .prospectivedrugs .meta-label{display:block;margin-bottom:.3rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+    .prospectivedrugs .drug-names{font-size:.82rem;line-height:1.5;color:var(--accent);font-weight:400}
 
     .cta-button{display:inline-block;margin-top:1rem;padding:.6rem 1.25rem;background:var(--accent);color:var(--bg);text-decoration:none;border-radius:6px;font-size:.85rem;font-weight:600;transition:all .2s;border:none;cursor:pointer}
     .cta-button:hover{opacity:.9;transform:translateY(-1px)}
@@ -105,7 +108,7 @@
   <header class="page-hero">
     <div class="hero-eyebrow">RepurpOS</div>
     <h1>Right to Try Compendium</h1>
-    <p>Unmet medical needs: 30 diseases without FDA-approved disease-modifying therapy where right-to-try access frameworks may apply.</p>
+    <p>Unmet medical needs: 106 diseases without FDA-approved disease-modifying therapy where right-to-try access frameworks may apply.</p>
   </header>
 
   <main>
@@ -150,11 +153,11 @@
     </div>
 
     <section>
-      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem;">Compendium: 30 Compliant Diseases Without Disease-Modifying Therapy</h2>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: .25rem;">Compendium: 106 Compliant Diseases Without Disease-Modifying Therapy</h2>
       <p class="disease-meta" style="margin-bottom: 1.5rem;">Sorted by most promising investigational candidates (Phase 3 agents first). Critical/life-threatening diseases flagged.</p>
 
       <div class="filter-section">
-        <button class="filter-btn active" onclick="filterDiseases('all')">All (30)</button>
+        <button class="filter-btn active" onclick="filterDiseases('all')">All (106)</button>
         <button class="filter-btn" onclick="filterDiseases('phase3')">Has Phase 3 Candidates</button>
         <button class="filter-btn" onclick="filterDiseases('critical')">Critical/Life-Threatening</button>
       </div>
@@ -177,41 +180,2309 @@
   </footer>
 
 <script>
+// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS
+// Disease data: unmet medical needs (no Phase 4 approved agents) from RepurpOS
 const diseases = [
-  {"name": "Post-Acute COVID/Vaccination Syndrome", "slug": "post-acute-covid-vaccination-syndrome", "genes": 104, "phase_3": 210, "phase_4": 105, "critical": true},
-  {"name": "Long COVID", "slug": "long-covid", "genes": 112, "phase_3": 156, "phase_4": 89, "critical": true},
-  {"name": "Myalgic Encephalomyelitis / Chronic Fatigue Syndrome", "slug": "myalgic-encephalomyelitis-chronic-fatigue-syndrome", "genes": 107, "phase_3": 5, "phase_4": 75, "critical": false},
-  {"name": "Sepsis", "slug": "sepsis", "genes": 106, "phase_3": 71, "phase_4": 283, "critical": true},
-  {"name": "Tinnitus", "slug": "tinnitus", "genes": 89, "phase_3": 12, "phase_4": 45, "critical": false},
-  {"name": "Alzheimer's Disease and Other Dementias", "slug": "alzheimers-disease-and-other-dementias", "genes": 155, "phase_3": 99, "phase_4": 233, "critical": true},
-  {"name": "Primary Sclerosing Cholangitis", "slug": "primary-sclerosing-cholangitis", "genes": 78, "phase_3": 8, "phase_4": 12, "critical": true},
-  {"name": "Metabolic Dysfunction-Associated Steatohepatitis", "slug": "metabolic-dysfunction-associated-steatohepatitis", "genes": 142, "phase_3": 34, "phase_4": 28, "critical": false},
-  {"name": "Sarcopenia", "slug": "sarcopenia", "genes": 95, "phase_3": 18, "phase_4": 32, "critical": false},
-  {"name": "Mast Cell Activation Syndrome", "slug": "mast-cell-activation-syndrome", "genes": 49, "phase_3": 0, "phase_4": 0, "critical": false},
-  {"name": "Chronic Kidney Disease", "slug": "chronic-kidney-disease", "genes": 100, "phase_3": 101, "phase_4": 194, "critical": true},
-  {"name": "Peripheral Arterial Disease", "slug": "peripheral-arterial-disease", "genes": 130, "phase_3": 40, "phase_4": 174, "critical": false},
-  {"name": "Age-Related Macular Degeneration", "slug": "age-related-macular-degeneration", "genes": 153, "phase_3": 43, "phase_4": 306, "critical": false},
-  {"name": "Low Back Pain", "slug": "low-back-pain", "genes": 130, "phase_3": 71, "phase_4": 199, "critical": false},
-  {"name": "Polycystic Ovary Syndrome", "slug": "polycystic-ovary-syndrome", "genes": 114, "phase_3": 22, "phase_4": 31, "critical": false},
-  {"name": "Endometriosis", "slug": "endometriosis", "genes": 123, "phase_3": 28, "phase_4": 42, "critical": false},
-  {"name": "Carpal Tunnel Syndrome", "slug": "carpal-tunnel-syndrome", "genes": 67, "phase_3": 8, "phase_4": 19, "critical": false},
-  {"name": "Chronic Pancreatitis", "slug": "chronic-pancreatitis", "genes": 81, "phase_3": 11, "phase_4": 24, "critical": false},
-  {"name": "Gastroparesis", "slug": "gastroparesis", "genes": 72, "phase_3": 9, "phase_4": 15, "critical": false},
-  {"name": "Postural Orthostatic Tachycardia Syndrome", "slug": "postural-orthostatic-tachycardia-syndrome", "genes": 56, "phase_3": 3, "phase_4": 8, "critical": false},
-  {"name": "Interstitial Cystitis", "slug": "interstitial-cystitis", "genes": 48, "phase_3": 6, "phase_4": 22, "critical": false},
-  {"name": "Kidney Stones", "slug": "kidney-stones", "genes": 63, "phase_3": 2, "phase_4": 18, "critical": false},
-  {"name": "Chronic Venous Insufficiency", "slug": "chronic-venous-insufficiency", "genes": 76, "phase_3": 5, "phase_4": 41, "critical": false},
-  {"name": "Mastocytosis with KIT D816V Mutation", "slug": "mastocytosis-with-kit-d816v-mutation", "genes": 1, "phase_3": 0, "phase_4": 0, "critical": true},
-  {"name": "Dermatomyositis", "slug": "dermatomyositis", "genes": 94, "phase_3": 7, "phase_4": 14, "critical": false},
-  {"name": "Celiac Disease", "slug": "celiac-disease", "genes": 88, "phase_3": 14, "phase_4": 26, "critical": false},
-  {"name": "Autoimmune Gastritis", "slug": "autoimmune-gastritis", "genes": 52, "phase_3": 2, "phase_4": 8, "critical": false},
-  {"name": "Obstructive Sleep Apnea", "slug": "obstructive-sleep-apnea", "genes": 119, "phase_3": 35, "phase_4": 87, "critical": false},
-  {"name": "Alpha-1 Antitrypsin Deficiency", "slug": "alpha-1-antitrypsin-deficiency", "genes": 41, "phase_3": 19, "phase_4": 23, "critical": true, "note": "FLAGGED: Verify enzyme replacement therapy status"}
+  {
+    "name": "Breast Cancer",
+    "slug": "breast-cancer",
+    "mondo_id": "MONDO:0007254",
+    "genes": 106,
+    "phase_1": 274,
+    "phase_2": 482,
+    "phase_3": 175,
+    "phase_4": 414,
+    "total_agents": 1468,
+    "investigational_agents": 931,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acolbifene",
+      "Adagloxad Simolenin",
+      "Adebrelimab",
+      "Afatinib"
+    ]
+  },
+  {
+    "name": "Colorectal Cancer",
+    "slug": "colorectal-cancer",
+    "mondo_id": "MONDO:0005575",
+    "genes": 190,
+    "phase_1": 270,
+    "phase_2": 353,
+    "phase_3": 101,
+    "phase_4": 448,
+    "total_agents": 1215,
+    "investigational_agents": 724,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Adagrasib",
+      "Adebrelimab",
+      "Amivantamab",
+      "Arfolitixorin"
+    ]
+  },
+  {
+    "name": "Cancer",
+    "slug": "cancer",
+    "mondo_id": "MONDO:0004992",
+    "genes": 197,
+    "phase_1": 296,
+    "phase_2": 243,
+    "phase_3": 69,
+    "phase_4": 530,
+    "total_agents": 1214,
+    "investigational_agents": 608,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Alectinib",
+      "Apalutamide",
+      "Atezolizumab",
+      "Atorvastatin"
+    ]
+  },
+  {
+    "name": "Post-Acute COVID/Vaccination Syndrome",
+    "slug": "post-acute-covidvaccination-syndrome",
+    "mondo_id": "MONDO:0100096",
+    "genes": 104,
+    "phase_1": 58,
+    "phase_2": 270,
+    "phase_3": 210,
+    "phase_4": 105,
+    "total_agents": 671,
+    "investigational_agents": 538,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Amubarvimab",
+      "Aviptadil",
+      "Bamlanivimab",
+      "Bemnifosbuvir"
+    ]
+  },
+  {
+    "name": "Type 2 Diabetes Mellitus",
+    "slug": "type-2-diabetes",
+    "mondo_id": "MONDO:0005148",
+    "genes": 127,
+    "phase_1": 97,
+    "phase_2": 237,
+    "phase_3": 170,
+    "phase_4": 126,
+    "total_agents": 764,
+    "investigational_agents": 504,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aleglitazar",
+      "Allopurinol",
+      "Aspirin",
+      "Azilsartan"
+    ]
+  },
+  {
+    "name": "Alzheimer's Disease and Other Dementias",
+    "slug": "alzheimers-disease-and-other-dementias",
+    "mondo_id": "MONDO:0004975",
+    "genes": 155,
+    "phase_1": 85,
+    "phase_2": 230,
+    "phase_3": 99,
+    "phase_4": 233,
+    "total_agents": 710,
+    "investigational_agents": 414,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetylcysteine",
+      "Aripiprazole",
+      "Brexpiprazole",
+      "Crenezumab"
+    ]
+  },
+  {
+    "name": "Rheumatoid Arthritis",
+    "slug": "rheumatoid-arthritis",
+    "mondo_id": "MONDO:0008383",
+    "genes": 186,
+    "phase_1": 69,
+    "phase_2": 229,
+    "phase_3": 71,
+    "phase_4": 92,
+    "total_agents": 548,
+    "investigational_agents": 369,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Corticotropin",
+      "Folic Acid",
+      "Fostamatinib",
+      "Icosapent"
+    ]
+  },
+  {
+    "name": "Asthma",
+    "slug": "asthma",
+    "mondo_id": "MONDO:0004979",
+    "genes": 113,
+    "phase_1": 50,
+    "phase_2": 218,
+    "phase_3": 75,
+    "phase_4": 219,
+    "total_agents": 644,
+    "investigational_agents": 343,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aspirin",
+      "Azithromycin",
+      "Cholecalciferol",
+      "Clarithromycin"
+    ]
+  },
+  {
+    "name": "Chronic Obstructive Pulmonary Disease",
+    "slug": "chronic-obstructive-pulmonary-disease",
+    "mondo_id": "MONDO:0005002",
+    "genes": 156,
+    "phase_1": 51,
+    "phase_2": 167,
+    "phase_3": 68,
+    "phase_4": 163,
+    "total_agents": 497,
+    "investigational_agents": 286,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aspirin",
+      "Benralizumab",
+      "Cilomilast",
+      "Doxycycline"
+    ]
+  },
+  {
+    "name": "Anxiety",
+    "slug": "anxiety",
+    "mondo_id": "MONDO:0005090",
+    "genes": 139,
+    "phase_1": 49,
+    "phase_2": 139,
+    "phase_3": 84,
+    "phase_4": 154,
+    "total_agents": 532,
+    "investigational_agents": 272,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Buspirone",
+      "Escitalopram",
+      "Metformin",
+      "Sertraline"
+    ]
+  },
+  {
+    "name": "Chronic Kidney Disease",
+    "slug": "chronic-kidney-disease",
+    "mondo_id": "MONDO:0005300",
+    "genes": 100,
+    "phase_1": 40,
+    "phase_2": 125,
+    "phase_3": 101,
+    "phase_4": 194,
+    "total_agents": 538,
+    "investigational_agents": 266,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetylcysteine",
+      "Aspirin",
+      "Cholecalciferol",
+      "Cinacalcet"
+    ]
+  },
+  {
+    "name": "Lung Cancer",
+    "slug": "lung-cancer",
+    "mondo_id": "MONDO:0008903",
+    "genes": 133,
+    "phase_1": 104,
+    "phase_2": 126,
+    "phase_3": 35,
+    "phase_4": 185,
+    "total_agents": 467,
+    "investigational_agents": 265,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Abemaciclib",
+      "Berahyaluronidase Alfa",
+      "Bevacizumab",
+      "Capmatinib"
+    ]
+  },
+  {
+    "name": "Parkinson Disease",
+    "slug": "parkinson-disease",
+    "mondo_id": "MONDO:0005180",
+    "genes": 165,
+    "phase_1": 51,
+    "phase_2": 166,
+    "phase_3": 46,
+    "phase_4": 187,
+    "total_agents": 544,
+    "investigational_agents": 263,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Ambroxol",
+      "Amoxicillin",
+      "Ampreloxetine",
+      "Atomoxetine"
+    ]
+  },
+  {
+    "name": "Multiple Sclerosis",
+    "slug": "multiple-sclerosis",
+    "mondo_id": "MONDO:0005301",
+    "genes": 123,
+    "phase_1": 59,
+    "phase_2": 145,
+    "phase_3": 54,
+    "phase_4": 63,
+    "total_agents": 376,
+    "investigational_agents": 258,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Abobotulinumtoxina",
+      "Acetaminophen",
+      "Amantadine",
+      "Amifampridine"
+    ]
+  },
+  {
+    "name": "Schizophrenia",
+    "slug": "schizophrenia",
+    "mondo_id": "MONDO:0005154",
+    "genes": 156,
+    "phase_1": 45,
+    "phase_2": 134,
+    "phase_3": 76,
+    "phase_4": 139,
+    "total_agents": 504,
+    "investigational_agents": 255,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "(D)-Serine",
+      "Acetylcysteine",
+      "Amantadine",
+      "Artemisinin"
+    ]
+  },
+  {
+    "name": "Major Depressive Disorder",
+    "slug": "major-depressive-disorder",
+    "mondo_id": "MONDO:0002009",
+    "genes": 122,
+    "phase_1": 35,
+    "phase_2": 152,
+    "phase_3": 62,
+    "phase_4": 213,
+    "total_agents": 576,
+    "investigational_agents": 249,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Amibegron",
+      "Aprepitant",
+      "Cariprazine",
+      "Celecoxib"
+    ]
+  },
+  {
+    "name": "Ischemic Stroke",
+    "slug": "ischemic-stroke",
+    "mondo_id": "MONDO:1060198",
+    "genes": 112,
+    "phase_1": 21,
+    "phase_2": 127,
+    "phase_3": 90,
+    "phase_4": 318,
+    "total_agents": 578,
+    "investigational_agents": 238,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Abciximab",
+      "Cilostazol",
+      "Citicoline",
+      "Clopidogrel"
+    ]
+  },
+  {
+    "name": "Type 1 Diabetes Mellitus",
+    "slug": "type-1-diabetes",
+    "mondo_id": "MONDO:0005147",
+    "genes": 121,
+    "phase_1": 49,
+    "phase_2": 108,
+    "phase_3": 76,
+    "phase_4": 51,
+    "total_agents": 327,
+    "investigational_agents": 233,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acipimox",
+      "Alemtuzumab",
+      "Alirocumab",
+      "Antilymphocyte Immunoglobulin (Horse)"
+    ]
+  },
+  {
+    "name": "Heart Failure",
+    "slug": "heart-failure",
+    "mondo_id": "MONDO:0005252",
+    "genes": 124,
+    "phase_1": 36,
+    "phase_2": 112,
+    "phase_3": 72,
+    "phase_4": 300,
+    "total_agents": 620,
+    "investigational_agents": 220,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetazolamide",
+      "Albumin Human",
+      "Aliskiren",
+      "Alprostadil"
+    ]
+  },
+  {
+    "name": "Hepatitis C",
+    "slug": "hepatitis-c",
+    "mondo_id": "MONDO:0005231",
+    "genes": 107,
+    "phase_1": 59,
+    "phase_2": 93,
+    "phase_3": 59,
+    "phase_4": 128,
+    "total_agents": 359,
+    "investigational_agents": 211,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Albinterferon Alfa-2B",
+      "Alisporivir",
+      "Amantadine",
+      "Asunaprevir"
+    ]
+  },
+  {
+    "name": "Obesity",
+    "slug": "obesity",
+    "mondo_id": "N/A",
+    "genes": 130,
+    "phase_1": 42,
+    "phase_2": 113,
+    "phase_3": 54,
+    "phase_4": 56,
+    "total_agents": 370,
+    "investigational_agents": 209,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Amitifadine",
+      "Anakinra",
+      "Bictegravir",
+      "Bifidobacterium Spp."
+    ]
+  },
+  {
+    "name": "Systemic Lupus Erythematosus",
+    "slug": "systemic-lupus-erythematosus",
+    "mondo_id": "MONDO:0007915",
+    "genes": 189,
+    "phase_1": 60,
+    "phase_2": 108,
+    "phase_3": 39,
+    "phase_4": 49,
+    "total_agents": 278,
+    "investigational_agents": 207,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Abetimus Sodium",
+      "Aldesleukin",
+      "Azathioprine",
+      "Baricitinib"
+    ]
+  },
+  {
+    "name": "Metabolic Dysfunction-Associated Steatohepatitis",
+    "slug": "metabolic-dysfunction-associated-steatohepatitis",
+    "mondo_id": "MONDO:0007027",
+    "genes": 104,
+    "phase_1": 25,
+    "phase_2": 125,
+    "phase_3": 38,
+    "phase_4": 95,
+    "total_agents": 293,
+    "investigational_agents": 188,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Ademetionine",
+      "Cenicriviroc",
+      "Dapagliflozin",
+      "Elafibranor"
+    ]
+  },
+  {
+    "name": "Atopic Eczema",
+    "slug": "atopic-eczema",
+    "mondo_id": "MONDO:0004980",
+    "genes": 124,
+    "phase_1": 25,
+    "phase_2": 117,
+    "phase_3": 42,
+    "phase_4": 50,
+    "total_agents": 296,
+    "investigational_agents": 184,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aganirsen",
+      "Amlitelimab",
+      "Benzocaine",
+      "Bepotastine"
+    ]
+  },
+  {
+    "name": "Sepsis",
+    "slug": "sepsis",
+    "mondo_id": "N/A",
+    "genes": 106,
+    "phase_1": 36,
+    "phase_2": 66,
+    "phase_3": 71,
+    "phase_4": 283,
+    "total_agents": 522,
+    "investigational_agents": 173,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Afelimomab",
+      "Albumin Human",
+      "Amoxicillin",
+      "Ascorbic Acid"
+    ]
+  },
+  {
+    "name": "Osteoarthritis",
+    "slug": "osteoarthritis",
+    "mondo_id": "MONDO:0005178",
+    "genes": 128,
+    "phase_1": 25,
+    "phase_2": 67,
+    "phase_3": 61,
+    "phase_4": 70,
+    "total_agents": 303,
+    "investigational_agents": 153,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Adalimumab",
+      "Betamethasone",
+      "Betamethasone Dipropionate",
+      "Betamethasone Sodium Phosphate"
+    ]
+  },
+  {
+    "name": "Bipolar Disorder",
+    "slug": "bipolar-disorder",
+    "mondo_id": "MONDO:0004985",
+    "genes": 108,
+    "phase_1": 15,
+    "phase_2": 82,
+    "phase_3": 53,
+    "phase_4": 192,
+    "total_agents": 389,
+    "investigational_agents": 150,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Allopurinol",
+      "Aspirin",
+      "Azetukalner",
+      "Bifeprunox"
+    ]
+  },
+  {
+    "name": "Age-Related Macular Degeneration",
+    "slug": "age-related-macular-degeneration",
+    "mondo_id": "MONDO:0001208",
+    "genes": 153,
+    "phase_1": 15,
+    "phase_2": 84,
+    "phase_3": 43,
+    "phase_4": 306,
+    "total_agents": 453,
+    "investigational_agents": 142,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Dexamethasone",
+      "Prednisolone",
+      "Triamcinolone",
+      "Triamcinolone Acetonide"
+    ]
+  },
+  {
+    "name": "Psoriasis Vulgaris",
+    "slug": "psoriasis-vulgaris",
+    "mondo_id": "N/A",
+    "genes": 121,
+    "phase_1": 21,
+    "phase_2": 80,
+    "phase_3": 41,
+    "phase_4": 58,
+    "total_agents": 243,
+    "investigational_agents": 142,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetylcysteine",
+      "Alefacept",
+      "Bergapten",
+      "Betamethasone"
+    ]
+  },
+  {
+    "name": "HIV/AIDS",
+    "slug": "hivaids",
+    "mondo_id": "MONDO:0005109",
+    "genes": 138,
+    "phase_1": 29,
+    "phase_2": 77,
+    "phase_3": 21,
+    "phase_4": 65,
+    "total_agents": 251,
+    "investigational_agents": 127,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aldesleukin",
+      "Naltrexone",
+      "Peginterferon Alfa-2A",
+      "Ribavirin"
+    ]
+  },
+  {
+    "name": "Low Back Pain",
+    "slug": "low-back-pain",
+    "mondo_id": "N/A",
+    "genes": 130,
+    "phase_1": 8,
+    "phase_2": 44,
+    "phase_3": 71,
+    "phase_4": 199,
+    "total_agents": 333,
+    "investigational_agents": 123,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetaminophen",
+      "Amoxicillin",
+      "Betamethasone",
+      "Betamethasone Sodium Phosphate"
+    ]
+  },
+  {
+    "name": "Inflammatory Bowel Disease",
+    "slug": "inflammatory-bowel-disease",
+    "mondo_id": "MONDO:0005265",
+    "genes": 178,
+    "phase_1": 34,
+    "phase_2": 63,
+    "phase_3": 18,
+    "phase_4": 51,
+    "total_agents": 200,
+    "investigational_agents": 115,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Adalimumab",
+      "Cholecalciferol",
+      "Iron Isomaltoside 1000",
+      "Vedolizumab"
+    ]
+  },
+  {
+    "name": "Opioid Use Disorder",
+    "slug": "opioid-use-disorder",
+    "mondo_id": "MONDO:0005530",
+    "genes": 107,
+    "phase_1": 28,
+    "phase_2": 60,
+    "phase_3": 25,
+    "phase_4": 160,
+    "total_agents": 280,
+    "investigational_agents": 113,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Dextromethorphan",
+      "Diacetylmorphine",
+      "Hydromorphone",
+      "Memantine"
+    ]
+  },
+  {
+    "name": "Peripheral Arterial Disease",
+    "slug": "peripheral-arterial-disease",
+    "mondo_id": "MONDO:0005386",
+    "genes": 130,
+    "phase_1": 17,
+    "phase_2": 52,
+    "phase_3": 40,
+    "phase_4": 174,
+    "total_agents": 294,
+    "investigational_agents": 109,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Actovegin",
+      "Ascorbic Acid",
+      "Aspirin",
+      "Beta Carotene"
+    ]
+  },
+  {
+    "name": "Polycystic Ovary Syndrome",
+    "slug": "polycystic-ovary-syndrome",
+    "mondo_id": "MONDO:0008487",
+    "genes": 116,
+    "phase_1": 14,
+    "phase_2": 55,
+    "phase_3": 34,
+    "phase_4": 46,
+    "total_agents": 178,
+    "investigational_agents": 103,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetylcysteine",
+      "Bromocriptine",
+      "Calcium",
+      "Cetrorelix"
+    ]
+  },
+  {
+    "name": "Essential Hypertension",
+    "slug": "essential-hypertension",
+    "mondo_id": "MONDO:0001134",
+    "genes": 114,
+    "phase_1": 12,
+    "phase_2": 43,
+    "phase_3": 47,
+    "phase_4": 262,
+    "total_agents": 373,
+    "investigational_agents": 102,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aliskiren",
+      "Azilsartan",
+      "Azilsartan Medoxomil",
+      "Candesartan"
+    ]
+  },
+  {
+    "name": "Irritable Bowel Syndrome",
+    "slug": "irritable-bowel-syndrome",
+    "mondo_id": "MONDO:0005052",
+    "genes": 111,
+    "phase_1": 10,
+    "phase_2": 66,
+    "phase_3": 22,
+    "phase_4": 93,
+    "total_agents": 229,
+    "investigational_agents": 98,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "(+)-Menthol",
+      "Anise Oil",
+      "Antimony",
+      "Asimadoline"
+    ]
+  },
+  {
+    "name": "Atrial Fibrillation",
+    "slug": "atrial-fibrillation",
+    "mondo_id": "MONDO:0004981",
+    "genes": 140,
+    "phase_1": 4,
+    "phase_2": 47,
+    "phase_3": 46,
+    "phase_4": 177,
+    "total_agents": 334,
+    "investigational_agents": 97,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acenocoumarol",
+      "Adenosine",
+      "Alcohol",
+      "Amiodarone"
+    ]
+  },
+  {
+    "name": "Insomnia",
+    "slug": "insomnia",
+    "mondo_id": "MONDO:0013600",
+    "genes": 167,
+    "phase_1": 6,
+    "phase_2": 58,
+    "phase_3": 33,
+    "phase_4": 188,
+    "total_agents": 320,
+    "investigational_agents": 97,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Almorexant",
+      "Amitriptyline",
+      "Brotizolam",
+      "Cannabidiol"
+    ]
+  },
+  {
+    "name": "Alcohol Abuse",
+    "slug": "alcohol-abuse",
+    "mondo_id": "MONDO:0002046",
+    "genes": 116,
+    "phase_1": 13,
+    "phase_2": 72,
+    "phase_3": 11,
+    "phase_4": 277,
+    "total_agents": 378,
+    "investigational_agents": 96,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acamprosate",
+      "Aripiprazole",
+      "Calcium Carbonate",
+      "Naltrexone"
+    ]
+  },
+  {
+    "name": "Attention Deficit-Hyperactivity Disorder",
+    "slug": "attention-deficit-hyperactivity-disorder",
+    "mondo_id": "MONDO:0007743",
+    "genes": 117,
+    "phase_1": 11,
+    "phase_2": 63,
+    "phase_3": 21,
+    "phase_4": 157,
+    "total_agents": 309,
+    "investigational_agents": 95,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Amphetamine Aspartate",
+      "Bupropion Hydrochloride",
+      "Centanafadine",
+      "Centanafadine Hydrochloride"
+    ]
+  },
+  {
+    "name": "Migraine Disorder",
+    "slug": "migraine-disorder",
+    "mondo_id": "MONDO:0005277",
+    "genes": 174,
+    "phase_1": 7,
+    "phase_2": 54,
+    "phase_3": 34,
+    "phase_4": 190,
+    "total_agents": 378,
+    "investigational_agents": 95,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Alniditan",
+      "Avitriptan",
+      "Bupivacaine",
+      "Clopidogrel"
+    ]
+  },
+  {
+    "name": "Osteoporosis",
+    "slug": "osteoporosis",
+    "mondo_id": "MONDO:0005291",
+    "genes": 142,
+    "phase_1": 8,
+    "phase_2": 37,
+    "phase_3": 32,
+    "phase_4": 133,
+    "total_agents": 214,
+    "investigational_agents": 77,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Chembl1007",
+      "Chembl103",
+      "Chembl1200496",
+      "Chembl1200675"
+    ]
+  },
+  {
+    "name": "Epilepsy",
+    "slug": "epilepsy",
+    "mondo_id": "MONDO:0005027",
+    "genes": 203,
+    "phase_1": 14,
+    "phase_2": 49,
+    "phase_3": 13,
+    "phase_4": 42,
+    "total_agents": 193,
+    "investigational_agents": 76,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Apomorphine",
+      "Cholecalciferol",
+      "Dronabinol",
+      "Human Immunoglobulin G"
+    ]
+  },
+  {
+    "name": "Diabetic Neuropathy",
+    "slug": "diabetic-neuropathy",
+    "mondo_id": "MONDO:0006626",
+    "genes": 109,
+    "phase_1": 4,
+    "phase_2": 51,
+    "phase_3": 16,
+    "phase_4": 98,
+    "total_agents": 186,
+    "investigational_agents": 71,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Acetaminophen",
+      "Benfotiamine",
+      "Capsaicin",
+      "Cebranopadol"
+    ]
+  },
+  {
+    "name": "Ankylosing Spondylitis",
+    "slug": "ankylosing-spondylitis",
+    "mondo_id": "MONDO:0005306",
+    "genes": 115,
+    "phase_1": 2,
+    "phase_2": 38,
+    "phase_3": 25,
+    "phase_4": 76,
+    "total_agents": 152,
+    "investigational_agents": 65,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Apremilast",
+      "Bimekizumab",
+      "Brodalumab",
+      "Diclofenac"
+    ]
+  },
+  {
+    "name": "Gout",
+    "slug": "gout",
+    "mondo_id": "MONDO:0005393",
+    "genes": 114,
+    "phase_1": 5,
+    "phase_2": 38,
+    "phase_3": 12,
+    "phase_4": 103,
+    "total_agents": 188,
+    "investigational_agents": 55,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Betamethasone",
+      "Celecoxib",
+      "Epaminurad",
+      "Esuberaprost"
+    ]
+  },
+  {
+    "name": "Glaucoma",
+    "slug": "glaucoma",
+    "mondo_id": "MONDO:0005041",
+    "genes": 169,
+    "phase_1": 9,
+    "phase_2": 28,
+    "phase_3": 16,
+    "phase_4": 232,
+    "total_agents": 344,
+    "investigational_agents": 53,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Betaxolol Hydrochloride",
+      "Bevacizumab",
+      "Citicoline",
+      "Fluorometholone"
+    ]
+  },
+  {
+    "name": "Gastroesophageal Reflux Disease",
+    "slug": "gastroesophageal-reflux-disease",
+    "mondo_id": "MONDO:0007186",
+    "genes": 111,
+    "phase_1": 4,
+    "phase_2": 35,
+    "phase_3": 12,
+    "phase_4": 90,
+    "total_agents": 204,
+    "investigational_agents": 51,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Baclofen",
+      "Colesevelam Hydrochloride",
+      "Desipramine",
+      "Domperidone"
+    ]
+  },
+  {
+    "name": "Myalgic Encephalomyelitis / Chronic Fatigue Syndrome",
+    "slug": "myalgic-encephalomyelitis-chronic-fatigue-syndrome",
+    "mondo_id": "MONDO:0005404",
+    "genes": 107,
+    "phase_1": 7,
+    "phase_2": 33,
+    "phase_3": 5,
+    "phase_4": 75,
+    "total_agents": 127,
+    "investigational_agents": 45,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Metformin",
+      "Rintatolimod",
+      "Rituximab",
+      "Anti-Cd40 Monoclonal Antibody Chi Lob 7/4"
+    ]
+  },
+  {
+    "name": "Vitiligo",
+    "slug": "vitiligo",
+    "mondo_id": "MONDO:0008661",
+    "genes": 108,
+    "phase_1": 1,
+    "phase_2": 34,
+    "phase_3": 7,
+    "phase_4": 19,
+    "total_agents": 61,
+    "investigational_agents": 42,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Afamelanotide",
+      "Methotrexate",
+      "Povorcitinib",
+      "Ritlecitinib",
+      "Ruxolitinib",
+      "Tacrolimus"
+    ]
+  },
+  {
+    "name": "Acne Vulgaris",
+    "slug": "acne",
+    "mondo_id": "MONDO:0011438",
+    "genes": 113,
+    "phase_1": 0,
+    "phase_2": 25,
+    "phase_3": 15,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Azithromycin",
+      "Berdazimer Sodium",
+      "Bifidobacterium Spp.",
+      "Denifanstat",
+      "Ethyl Linoleate",
+      "Honokiol"
+    ]
+  },
+  {
+    "name": "Polycythemia Vera",
+    "slug": "acquired-polycythemia-vera",
+    "mondo_id": "MONDO:0009891",
+    "genes": 144,
+    "phase_1": 2,
+    "phase_2": 26,
+    "phase_3": 12,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Anagrelide",
+      "Givinostat",
+      "Hydroxyurea",
+      "Interferon",
+      "Interferon Alfa",
+      "Interferon Alfa-2A"
+    ]
+  },
+  {
+    "name": "Alopecia Areata",
+    "slug": "alopecia-areata",
+    "mondo_id": "MONDO:0005340",
+    "genes": 126,
+    "phase_1": 2,
+    "phase_2": 28,
+    "phase_3": 10,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Aldesleukin",
+      "Baricitinib",
+      "Clobetasol Propionate",
+      "Deuruxolitinib",
+      "Diphencyprone",
+      "Garlic"
+    ]
+  },
+  {
+    "name": "Amyotrophic Lateral Sclerosis",
+    "slug": "amyotrophic-lateral-sclerosis",
+    "mondo_id": "MONDO:0004976",
+    "genes": 168,
+    "phase_1": 0,
+    "phase_2": 15,
+    "phase_3": 25,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Abacavir",
+      "Arimoclomol",
+      "Ceftriaxone",
+      "Creatine",
+      "Cyanocobalamin",
+      "Debamestrocel"
+    ]
+  },
+  {
+    "name": "Immune Thrombocytopenia",
+    "slug": "autoimmune-thrombocytopenic-purpura",
+    "mondo_id": "MONDO:0008558",
+    "genes": 130,
+    "phase_1": 0,
+    "phase_2": 12,
+    "phase_3": 28,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Avatrombopag",
+      "Belimumab",
+      "Betamethasone",
+      "Betamethasone Sodium Phosphate",
+      "Bortezomib",
+      "Caffeic Acid"
+    ]
+  },
+  {
+    "name": "Chronic Lymphocytic Leukemia",
+    "slug": "b-cell-chronic-lymphocytic-leukemia",
+    "mondo_id": "MONDO:0004948",
+    "genes": 110,
+    "phase_1": 0,
+    "phase_2": 4,
+    "phase_3": 36,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Alvocidib",
+      "Apg-2575",
+      "Arsenic Trioxide",
+      "Bendamustine",
+      "Cladribine",
+      "Cyclophosphamide"
+    ]
+  },
+  {
+    "name": "Benign Prostatic Hyperplasia",
+    "slug": "benign-prostatic-hyperplasia",
+    "mondo_id": "MONDO:0010811",
+    "genes": 112,
+    "phase_1": 7,
+    "phase_2": 17,
+    "phase_3": 16,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Botulinum Toxin Type A",
+      "Cetrorelix",
+      "Fexapotide Triflutate",
+      "Furosemide",
+      "Inulin",
+      "Lonidamine"
+    ]
+  },
+  {
+    "name": "Cervical Cancer",
+    "slug": "cervical-cancer",
+    "mondo_id": "MONDO:0002974",
+    "genes": 110,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Adebrelimab",
+      "Balstilimab",
+      "Bleomycin Sulfate",
+      "Bulumtatug Fuvedotin",
+      "Cadonilimab",
+      "Camrelizumab"
+    ]
+  },
+  {
+    "name": "Cystic Fibrosis",
+    "slug": "cystic-fibrosis",
+    "mondo_id": "MONDO:0009061",
+    "genes": 176,
+    "phase_1": 0,
+    "phase_2": 15,
+    "phase_3": 25,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Amikacin",
+      "Ataluren",
+      "Bamocaftor",
+      "Cephalexin",
+      "Colistin",
+      "Dexamethasone"
+    ]
+  },
+  {
+    "name": "Dermatomyositis",
+    "slug": "dermatomyositis",
+    "mondo_id": "MONDO:0016367",
+    "genes": 194,
+    "phase_1": 1,
+    "phase_2": 30,
+    "phase_3": 9,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Aldesleukin",
+      "Anifrolumab",
+      "Baricitinib",
+      "Brepocitinib",
+      "Dazukibart",
+      "Human Immunoglobulin G"
+    ]
+  },
+  {
+    "name": "Endometriosis",
+    "slug": "endometriosis",
+    "mondo_id": "MONDO:0005133",
+    "genes": 116,
+    "phase_1": 0,
+    "phase_2": 13,
+    "phase_3": 27,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Asoprisnil",
+      "Cannabidiol",
+      "Choriogonadotropin Alfa",
+      "Cyproterone Acetate",
+      "Degarelix",
+      "Dydrogesterone"
+    ]
+  },
+  {
+    "name": "Pancreatic Cancer",
+    "slug": "exocrine-pancreatic-carcinoma",
+    "mondo_id": "MONDO:0005192",
+    "genes": 126,
+    "phase_1": 0,
+    "phase_2": 7,
+    "phase_3": 33,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Algenpantucel-L",
+      "Bevacizumab",
+      "Capecitabine",
+      "Celecoxib",
+      "Cisplatin",
+      "Curcumin"
+    ]
+  },
+  {
+    "name": "Fibromyalgia",
+    "slug": "fibromyalgia",
+    "mondo_id": "MONDO:0005546",
+    "genes": 107,
+    "phase_1": 0,
+    "phase_2": 18,
+    "phase_3": 22,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Amitriptyline",
+      "Cannabidiol",
+      "Cyclobenzaprine",
+      "Cyclobenzaprine Hydrochloride",
+      "Dolasetron",
+      "Duloxetine"
+    ]
+  },
+  {
+    "name": "Hepatitis B",
+    "slug": "hepatitis-b-virus-infection",
+    "mondo_id": "MONDO:0005344",
+    "genes": 109,
+    "phase_1": 0,
+    "phase_2": 10,
+    "phase_3": 30,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Adefovir",
+      "Bepirovirsen",
+      "Besifovir",
+      "Bictegravir",
+      "Boceprevir",
+      "Canocapavir"
+    ]
+  },
+  {
+    "name": "Huntington Disease",
+    "slug": "huntington-disease",
+    "mondo_id": "MONDO:0007739",
+    "genes": 177,
+    "phase_1": 1,
+    "phase_2": 28,
+    "phase_3": 11,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Creatine",
+      "Dalzanemdor",
+      "Latrepirdine",
+      "Metformin",
+      "Olanzapine",
+      "Pridopidine"
+    ]
+  },
+  {
+    "name": "Lupus Nephritis",
+    "slug": "lupus-nephritis",
+    "mondo_id": "MONDO:0005556",
+    "genes": 110,
+    "phase_1": 0,
+    "phase_2": 18,
+    "phase_3": 22,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Abatacept",
+      "Aldesleukin",
+      "Anifrolumab",
+      "Atacicept",
+      "Azathioprine",
+      "Baricitinib"
+    ]
+  },
+  {
+    "name": "Melanoma",
+    "slug": "melanoma",
+    "mondo_id": "MONDO:0005105",
+    "genes": 133,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      ".Alpha.-Pyrrolidinononanophenone",
+      "Aldesleukin",
+      "Atezolizumab",
+      "Belzupacap Sarotalocan",
+      "Bempegaldesleukin",
+      "Brenetafusp"
+    ]
+  },
+  {
+    "name": "Myasthenia Gravis",
+    "slug": "myasthenia-gravis",
+    "mondo_id": "MONDO:0009688",
+    "genes": 174,
+    "phase_1": 4,
+    "phase_2": 12,
+    "phase_3": 24,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Azathioprine",
+      "Batoclimab",
+      "Bq 788",
+      "Cemdisiran",
+      "Cladribine",
+      "Eculizumab"
+    ]
+  },
+  {
+    "name": "Myelodysplastic Syndrome",
+    "slug": "myelodysplastic-syndrome",
+    "mondo_id": "MONDO:0018881",
+    "genes": 178,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Alemtuzumab",
+      "Antilymphocyte Immunoglobulin (Horse)",
+      "Apg-2575",
+      "Arsenic Trioxide",
+      "Asparaginase",
+      "Asparaginase Erwinia Chrysanthemi"
+    ]
+  },
+  {
+    "name": "Non-Hodgkin Lymphoma",
+    "slug": "non-hodgkin-lymphoma",
+    "mondo_id": "MONDO:0018908",
+    "genes": 188,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Aldesleukin",
+      "Allopurinol",
+      "Asparaginase",
+      "Bendamustine",
+      "Bevacizumab",
+      "Bleomycin"
+    ]
+  },
+  {
+    "name": "Obstructive Sleep Apnea",
+    "slug": "obstructive-sleep-apnea-syndrome",
+    "mondo_id": "MONDO:0007147",
+    "genes": 108,
+    "phase_1": 0,
+    "phase_2": 18,
+    "phase_3": 22,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Amiloride",
+      "Amlodipine",
+      "Aroxybutynin",
+      "Atomoxetine",
+      "Budesonide",
+      "Chlorthalidone"
+    ]
+  },
+  {
+    "name": "Ovarian Cancer",
+    "slug": "ovarian-cancer",
+    "mondo_id": "MONDO:0008170",
+    "genes": 124,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Alvimopan",
+      "Amonafide",
+      "Atezolizumab",
+      "Avelumab",
+      "Azenosertib",
+      "Batiraxcept"
+    ]
+  },
+  {
+    "name": "Overactive Bladder",
+    "slug": "overactive-bladder",
+    "mondo_id": "MONDO:0006624",
+    "genes": 116,
+    "phase_1": 0,
+    "phase_2": 31,
+    "phase_3": 9,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Fesoterodine",
+      "Gabapentin",
+      "Lidocaine",
+      "Onabotulinumtoxina",
+      "Propiverine",
+      "Ritobegron"
+    ]
+  },
+  {
+    "name": "Multiple Myeloma",
+    "slug": "plasma-cell-myeloma",
+    "mondo_id": "MONDO:0009693",
+    "genes": 155,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "(R)-Melphalan",
+      "Alnuctamab",
+      "Amifostine",
+      "Anitocabtagene Autoleucel",
+      "Arlocabtagene Autoleucel",
+      "Armodafinil"
+    ]
+  },
+  {
+    "name": "Prostate Cancer",
+    "slug": "prostate-cancer",
+    "mondo_id": "MONDO:0008315",
+    "genes": 105,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 40,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Abemaciclib",
+      "Acetaminophen",
+      "Aflibercept",
+      "Aglatimagene Besadenovec",
+      "Amonafide",
+      "Aspirin"
+    ]
+  },
+  {
+    "name": "Psoriatic Arthritis",
+    "slug": "psoriatic-arthritis",
+    "mondo_id": "MONDO:0011849",
+    "genes": 155,
+    "phase_1": 5,
+    "phase_2": 18,
+    "phase_3": 17,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Betamethasone",
+      "Bimekizumab",
+      "Calcipotriene",
+      "Deucravacitinib",
+      "Filgotinib",
+      "Icotrokinra"
+    ]
+  },
+  {
+    "name": "Pulmonary Arterial Hypertension",
+    "slug": "pulmonary-arterial-hypertension",
+    "mondo_id": "MONDO:0015924",
+    "genes": 183,
+    "phase_1": 0,
+    "phase_2": 18,
+    "phase_3": 22,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Albuterol",
+      "Av-101",
+      "Bardoxolone Methyl",
+      "Beraprost",
+      "Epoprostenol",
+      "Esuberaprost"
+    ]
+  },
+  {
+    "name": "Primary Sclerosing Cholangitis",
+    "slug": "sclerosing-cholangitis",
+    "mondo_id": "MONDO:0018646",
+    "genes": 187,
+    "phase_1": 6,
+    "phase_2": 26,
+    "phase_3": 8,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Bezafibrate",
+      "Bifidobacterium Spp.",
+      "Cilofexor",
+      "Elafibranor",
+      "Norucholic Acid",
+      "Simvastatin"
+    ]
+  },
+  {
+    "name": "Sickle Cell Disease",
+    "slug": "sickle-cell-disease",
+    "mondo_id": "MONDO:0011382",
+    "genes": 168,
+    "phase_1": 0,
+    "phase_2": 13,
+    "phase_3": 27,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Acetylcysteine",
+      "Alemtuzumab",
+      "Arginine",
+      "Arginine Hydrochloride",
+      "Bosentan",
+      "Deferasirox"
+    ]
+  },
+  {
+    "name": "Thyroid Cancer",
+    "slug": "thyroid-cancer",
+    "mondo_id": "MONDO:0002108",
+    "genes": 189,
+    "phase_1": 0,
+    "phase_2": 32,
+    "phase_3": 8,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Charcoal, Activated",
+      "Cm-4307",
+      "Dabrafenib",
+      "Metformin",
+      "Rivoceranib",
+      "Selumetinib"
+    ]
+  },
+  {
+    "name": "Bladder Cancer",
+    "slug": "urinary-bladder-carcinoma",
+    "mondo_id": "MONDO:0004986",
+    "genes": 126,
+    "phase_1": 0,
+    "phase_2": 24,
+    "phase_3": 16,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 40,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Apaziquone",
+      "Aprotinin",
+      "Atezolizumab",
+      "Bcg Live",
+      "Cisplatin",
+      "Durvalumab"
+    ]
+  },
+  {
+    "name": "Interstitial Cystitis",
+    "slug": "interstitial-cystitis",
+    "mondo_id": "MONDO:0018301",
+    "genes": 123,
+    "phase_1": 7,
+    "phase_2": 21,
+    "phase_3": 11,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 39,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Adalimumab",
+      "Amitriptyline",
+      "Certolizumab Pegol",
+      "Estrogens, Conjugated",
+      "Gabapentin",
+      "Methenamine"
+    ]
+  },
+  {
+    "name": "Sarcopenia",
+    "slug": "sarcopenia",
+    "mondo_id": "MONDO:0002331",
+    "genes": 190,
+    "phase_1": 7,
+    "phase_2": 27,
+    "phase_3": 3,
+    "phase_4": 35,
+    "total_agents": 75,
+    "investigational_agents": 37,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Chembl172513",
+      "Alprenolol",
+      "Amifloxacin",
+      "Brolamfetamine"
+    ]
+  },
+  {
+    "name": "Gastroparesis",
+    "slug": "gastroparesis",
+    "mondo_id": "MONDO:0006769",
+    "genes": 107,
+    "phase_1": 4,
+    "phase_2": 27,
+    "phase_3": 5,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 36,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Domperidone",
+      "Metoclopramide",
+      "Nortriptyline Hydrochloride",
+      "Relamorelin",
+      "Tradipitant",
+      "Avexitide"
+    ]
+  },
+  {
+    "name": "Chronic Spontaneous Urticaria",
+    "slug": "chronic-idiopathic-urticaria",
+    "mondo_id": "MONDO:0044212",
+    "genes": 130,
+    "phase_1": 2,
+    "phase_2": 20,
+    "phase_3": 12,
+    "phase_4": 40,
+    "total_agents": 74,
+    "investigational_agents": 34,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Barzolvolimab",
+      "Bilastine",
+      "Cholecalciferol",
+      "Desloratadine",
+      "Dupilumab",
+      "Levocetirizine"
+    ]
+  },
+  {
+    "name": "Restless Legs Syndrome",
+    "slug": "restless-legs-syndrome",
+    "mondo_id": "MONDO:0005391",
+    "genes": 109,
+    "phase_1": 3,
+    "phase_2": 20,
+    "phase_3": 11,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 34,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Benserazide",
+      "Cabergoline",
+      "Carbidopa",
+      "Entacapone",
+      "Ferric Carboxymaltose",
+      "Levodopa"
+    ]
+  },
+  {
+    "name": "Carpal Tunnel Syndrome",
+    "slug": "carpal-tunnel-syndrome",
+    "mondo_id": "MONDO:0007275",
+    "genes": 136,
+    "phase_1": 5,
+    "phase_2": 13,
+    "phase_3": 14,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 32,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Betamethasone",
+      "Betamethasone Dipropionate",
+      "Betamethasone Sodium Phosphate",
+      "Dexamethasone",
+      "Dextrose",
+      "Gabapentin"
+    ]
+  },
+  {
+    "name": "Celiac Disease",
+    "slug": "celiac-disease",
+    "mondo_id": "MONDO:0005130",
+    "genes": 103,
+    "phase_1": 4,
+    "phase_2": 26,
+    "phase_3": 2,
+    "phase_4": 38,
+    "total_agents": 73,
+    "investigational_agents": 32,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Aj-292",
+      "Heroin",
+      "Oleanolic Acid",
+      "Alprenolol"
+    ]
+  },
+  {
+    "name": "Tinnitus",
+    "slug": "tinnitus",
+    "mondo_id": "N/A",
+    "genes": 118,
+    "phase_1": 8,
+    "phase_2": 17,
+    "phase_3": 5,
+    "phase_4": 40,
+    "total_agents": 80,
+    "investigational_agents": 30,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Caroverine",
+      "Esketamine Hydrochloride",
+      "Neramexane",
+      "Neramexane Mesylate",
+      "Oxytocin",
+      "Amitriptyline"
+    ]
+  },
+  {
+    "name": "Chronic Pancreatitis",
+    "slug": "chronic-pancreatitis",
+    "mondo_id": "MONDO:0005003",
+    "genes": 134,
+    "phase_1": 10,
+    "phase_2": 15,
+    "phase_3": 3,
+    "phase_4": 40,
+    "total_agents": 74,
+    "investigational_agents": 28,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Bupivacaine",
+      "Pancrelipase",
+      "Triamcinolone",
+      "Bupropion",
+      "Cannabinol",
+      "Diazepam"
+    ]
+  },
+  {
+    "name": "Hypothyroidism",
+    "slug": "hypothyroidism",
+    "mondo_id": "MONDO:0005420",
+    "genes": 159,
+    "phase_1": 1,
+    "phase_2": 18,
+    "phase_3": 5,
+    "phase_4": 46,
+    "total_agents": 76,
+    "investigational_agents": 24,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Ergocalciferol",
+      "Levothyroxine",
+      "Liothyronine",
+      "Andrographolide"
+    ]
+  },
+  {
+    "name": "autoimmune gastritis",
+    "slug": "autoimmune-gastritis",
+    "mondo_id": "MONDO:0031014",
+    "genes": 100,
+    "phase_1": 0,
+    "phase_2": 21,
+    "phase_3": 2,
+    "phase_4": 86,
+    "total_agents": 109,
+    "investigational_agents": 23,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Betulinic Acid",
+      "Cephalosporin Antibiotic",
+      "Chembl:Chembl1945287",
+      "Cochinchinenin C"
+    ]
+  },
+  {
+    "name": "Postural Orthostatic Tachycardia Syndrome",
+    "slug": "pots",
+    "mondo_id": "MONDO:0100242",
+    "genes": 136,
+    "phase_1": 0,
+    "phase_2": 17,
+    "phase_3": 2,
+    "phase_4": 108,
+    "total_agents": 127,
+    "investigational_agents": 19,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Darapladib",
+      "Fenretinide",
+      "Compound 2 [Pmid: 22380603]",
+      "Retinoic Acid Agent",
+      "Alprenolol",
+      "Amifloxacin"
+    ]
+  },
+  {
+    "name": "Kidney Stones",
+    "slug": "nephrolithiasis",
+    "mondo_id": "MONDO:0008171",
+    "genes": 127,
+    "phase_1": 1,
+    "phase_2": 6,
+    "phase_3": 11,
+    "phase_4": 40,
+    "total_agents": 65,
+    "investigational_agents": 18,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Acetaminophen",
+      "Alfuzosin",
+      "Doxazosin",
+      "Furosemide",
+      "Ketorolac",
+      "Lanthanum Carbonate"
+    ]
+  },
+  {
+    "name": "Venous Thromboembolism",
+    "slug": "venous-thromboembolism",
+    "mondo_id": "MONDO:0005399",
+    "genes": 105,
+    "phase_1": 0,
+    "phase_2": 3,
+    "phase_3": 13,
+    "phase_4": 40,
+    "total_agents": 75,
+    "investigational_agents": 16,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Abelacimab",
+      "Atorvastatin",
+      "Bemiparin",
+      "Enoxaparin",
+      "Fondaparinux",
+      "Heparin"
+    ]
+  },
+  {
+    "name": "Hemophilia",
+    "slug": "hemophilia",
+    "mondo_id": "MONDO:0018660",
+    "genes": 155,
+    "phase_1": 3,
+    "phase_2": 1,
+    "phase_3": 3,
+    "phase_4": 40,
+    "total_agents": 65,
+    "investigational_agents": 7,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Coagulation Factor Ix Recombinant Human",
+      "Eftrenonacog Alfa",
+      "Fitusiran",
+      "Eptacog Alfa (Activated)",
+      "Arc-19499",
+      "Bay-1093884"
+    ]
+  },
+  {
+    "name": "Alpha-1 Antitrypsin Deficiency",
+    "slug": "alpha-1-antitrypsin-deficiency",
+    "mondo_id": "MONDO:0013282",
+    "genes": 141,
+    "phase_1": 1,
+    "phase_2": 2,
+    "phase_3": 2,
+    "phase_4": 40,
+    "total_agents": 46,
+    "investigational_agents": 5,
+    "most_investigational": 3,
+    "critical": true,
+    "prospectivedrugs": [
+      "Fazirsiran",
+      "Mycophenolate Mofetil",
+      "Alvelestat",
+      "Belcesiran",
+      "Sodium Nitrite"
+    ]
+  },
+  {
+    "name": "Measles",
+    "slug": "measles",
+    "mondo_id": "MONDO:0005850",
+    "genes": 24,
+    "phase_1": 0,
+    "phase_2": 3,
+    "phase_3": 2,
+    "phase_4": 1,
+    "total_agents": 6,
+    "investigational_agents": 5,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Chembl22",
+      "Chembl443",
+      "Chembl2109201",
+      "Chembl2109211",
+      "Chembl2109225"
+    ]
+  },
+  {
+    "name": "Lyme Disease",
+    "slug": "lyme-disease",
+    "mondo_id": "MONDO:0019632",
+    "genes": 127,
+    "phase_1": 1,
+    "phase_2": 1,
+    "phase_3": 2,
+    "phase_4": 40,
+    "total_agents": 46,
+    "investigational_agents": 4,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Ceftriaxone",
+      "Doxycycline",
+      "Tetracycline",
+      "Psilocybin"
+    ]
+  },
+  {
+    "name": "Chronic Venous Insufficiency",
+    "slug": "chronic-venous-insufficiency",
+    "mondo_id": "MONDO:0000492",
+    "genes": 117,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 1,
+    "phase_4": 40,
+    "total_agents": 42,
+    "investigational_agents": 1,
+    "most_investigational": 3,
+    "critical": false,
+    "prospectivedrugs": [
+      "Diosmin"
+    ]
+  },
+  {
+    "name": "Polycystic Kidney Disease",
+    "slug": "polycystic-kidney-disease",
+    "mondo_id": "MONDO:0020642",
+    "genes": 166,
+    "phase_1": 1,
+    "phase_2": 4,
+    "phase_3": 0,
+    "phase_4": 40,
+    "total_agents": 47,
+    "investigational_agents": 5,
+    "most_investigational": 2,
+    "critical": false,
+    "prospectivedrugs": [
+      "Cilnidipine",
+      "Imidapril",
+      "Octreotide",
+      "Tesevatinib",
+      "Hydralazine"
+    ]
+  },
+  {
+    "name": "Mast Cell Activation Syndrome",
+    "slug": "mast-cell-activation-syndrome",
+    "mondo_id": "MONDO:0800103",
+    "genes": 49,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 0,
+    "phase_4": 0,
+    "total_agents": 0,
+    "investigational_agents": 0,
+    "most_investigational": 0,
+    "critical": false,
+    "prospectivedrugs": []
+  },
+  {
+    "name": "Mastocytosis with KIT D816V Mutation",
+    "slug": "mastocytosis-with-kit-d816v-mutation",
+    "mondo_id": "N/A",
+    "genes": 1,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 0,
+    "phase_4": 0,
+    "total_agents": 0,
+    "investigational_agents": 0,
+    "most_investigational": 0,
+    "critical": true,
+    "prospectivedrugs": []
+  },
+  {
+    "name": "Mast Cell Activation Syndrome",
+    "slug": "mcas",
+    "mondo_id": "MONDO:0800103",
+    "genes": 49,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 0,
+    "phase_4": 8,
+    "total_agents": 8,
+    "investigational_agents": 0,
+    "most_investigational": 0,
+    "critical": false,
+    "prospectivedrugs": []
+  },
+  {
+    "name": "Sj\u00f6gren's Syndrome",
+    "slug": "sj\u00f6grens-syndrome",
+    "mondo_id": "N/A",
+    "genes": 10,
+    "phase_1": 0,
+    "phase_2": 0,
+    "phase_3": 0,
+    "phase_4": 0,
+    "total_agents": 0,
+    "investigational_agents": 0,
+    "most_investigational": 0,
+    "critical": false,
+    "prospectivedrugs": []
+  }
 ];
 
 function filterDiseases(filter) {
   const grid = document.getElementById('disease-grid');
   const count = document.getElementById('results-count');
+  const totalCount = diseases.length;
 
   document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
   event.target.classList.add('active');
@@ -224,9 +2495,17 @@ function filterDiseases(filter) {
     filtered = diseases.filter(d => d.critical);
   }
 
-  count.textContent = `Showing ${filtered.length} of 30 diseases`;
+  count.textContent = `Showing ${filtered.length} of ${totalCount} diseases`;
 
-  grid.innerHTML = filtered.map(d => `
+  grid.innerHTML = filtered.map(d => {
+    const drugList = (d.prospectivedrugs && d.prospectivedrugs.length > 0)
+      ? `<div class="prospectivedrugs">
+           <span class="meta-label">Prospective Drugs:</span>
+           <span class="meta-value drug-names">${d.prospectivedrugs.slice(0, 5).join(', ')}</span>
+         </div>`
+      : '';
+
+    return `
     <div class="disease-card">
       <div class="disease-badges">
         ${d.phase_3 > 0 ? `<span class="badge badge-phase3">${d.phase_3} Phase 3</span>` : '<span class="badge badge-unmet">No Agents</span>'}
@@ -239,17 +2518,18 @@ function filterDiseases(filter) {
           <span class="meta-value">${d.genes}</span>
         </div>
         <div class="meta-row">
-          <span class="meta-label">Investigational (Phase 3):</span>
+          <span class="meta-label">Phase 3 Candidates:</span>
           <span class="meta-value highlight">${d.phase_3}</span>
         </div>
         <div class="meta-row">
-          <span class="meta-label">Generic Phase 4:</span>
-          <span class="meta-value">${d.phase_4}</span>
+          <span class="meta-label">Phase 2 Candidates:</span>
+          <span class="meta-value">${d.phase_2}</span>
         </div>
+        ${drugList}
       </div>
       <a href="${d.slug}.html" class="cta-button">View Disease Profile</a>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 filterDiseases('all');

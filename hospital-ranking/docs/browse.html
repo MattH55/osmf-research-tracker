@@ -370,6 +370,7 @@ async function loadProcedure(slug, summary) {
     Mean: <b>$${stat.mean_usd.toLocaleString()}</b>
     <br><span style="color:#92400e;">⚠ All facility-charge-only (completeness ~45%). Surgeon and anesthesia fees are billed separately and are not reflected here.</span>
     ${stat.outliers_excluded > 0 ? `<br><span style="color:#92400e;">⚠ ${stat.outliers_excluded} of ${stat.total_rows} rows excluded from these stats and the histogram (implausible values — likely upstream data errors, e.g. a $999,999,999 placeholder). They remain in the table below, marked "outlier".</span>` : ''}
+    ${stat.trimmed_excluded > 0 ? `<br><span style="color:#6366f1;">Trimmed: bottom & upper 5% of the distribution excluded from stats/histogram (${stat.trimmed_excluded} rows). The full ${stat.count.toLocaleString()} hospitals are still counted above — only the statistical summaries and histogram range are trimmed.</span>` : ''}
   `;
 
   currentPage = 1;
@@ -392,7 +393,12 @@ function renderHistogram(rows, zipFilter) {
     : `— ${rows.length.toLocaleString()} hospitals`;
 
   const prices = rows.map(r => r.amount_usd).sort((a, b) => a - b);
-  const min = prices[0], max = prices[prices.length - 1];
+
+  // Trim bottom 5% and top 5% of the distribution so extreme-low and
+  // extreme-high values don't stretch the x-axis. Matches build_browser_data.py.
+  const trimN = Math.max(0, Math.floor(prices.length * 0.05));
+  const trimmedPrices = trimN > 0 ? prices.slice(trimN, prices.length - trimN) : prices;
+  const min = trimmedPrices[0], max = trimmedPrices[trimmedPrices.length - 1];
 
   // Bucket into ~16 bins on a clean step
   const BIN_COUNT = 16;
