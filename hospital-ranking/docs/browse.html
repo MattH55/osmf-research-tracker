@@ -134,6 +134,9 @@
   }
   #proc-stats.visible { display: block; }
   #proc-stats b { color: #1f2937; }
+  .comparability-warn { color: #991b1b; font-weight: 500; }
+  .comparability-note { color: #92400e; }
+  .comparability-ok { color: #065f46; }
 
   table {
     width: 100%;
@@ -331,9 +334,10 @@ function renderTopStats(summary) {
 
 function populateProcedureSelect(procedures) {
   const sel = document.getElementById('procedure-select');
-  sel.innerHTML = procedures.map(p =>
-    `<option value="${p.slug}">${labelize(p.slug)} (${p.count.toLocaleString()} hospitals)</option>`
-  ).join('');
+  sel.innerHTML = procedures.map(p => {
+    const flag = p.mixed_scope ? '⛔ ' : '';
+    return `<option value="${p.slug}">${flag}${labelize(p.slug)} (${p.count.toLocaleString()} hospitals)</option>`;
+  }).join('');
 }
 
 function labelize(slug) {
@@ -360,6 +364,12 @@ async function loadProcedure(slug, summary) {
   const totalUsHospitals = summary.total_cms_hospitals || 5432;
   const coveragePct = ((stat.count / totalUsHospitals) * 100).toFixed(1);
 
+  const comparabilityHtml = stat.mixed_scope
+    ? `<br><span class="comparability-warn">⛔ <b>Not apples-to-apples:</b> this procedure is matched by CPT code <b>${(stat.cpt_codes || []).join(', ')}</b> <i>or</i> MS-DRG code <b>${(stat.drg_codes || []).join(', ')}</b> — a line-item professional/facility charge vs. a full bundled inpatient stay rate. Which one a given hospital's row reflects isn't recorded in this dataset, and the two scopes commonly differ by 10–50×. This is very likely a major driver of the spread in the histogram below.</span>`
+    : (stat.multi_cpt
+        ? `<br><span class="comparability-note">ℹ️ This procedure matches multiple related CPT codes (<b>${(stat.cpt_codes || []).join(', ')}</b>), not a single code — variants of the same procedure, so comparisons are close but not perfectly uniform.</span>`
+        : `<br><span class="comparability-ok">✓ Single CPT code (<b>${(stat.cpt_codes || []).join(', ')}</b>), no MS-DRG mixing — prices for this procedure are apples-to-apples by billing code.</span>`);
+
   const statsEl = document.getElementById('proc-stats');
   statsEl.classList.add('visible');
   statsEl.innerHTML = `
@@ -370,7 +380,8 @@ async function loadProcedure(slug, summary) {
     Mean: <b>$${stat.mean_usd.toLocaleString()}</b>
     <br><span style="color:#92400e;">⚠ All facility-charge-only (completeness ~45%). Surgeon and anesthesia fees are billed separately and are not reflected here.</span>
     ${stat.outliers_excluded > 0 ? `<br><span style="color:#92400e;">⚠ ${stat.outliers_excluded} of ${stat.total_rows} rows excluded from these stats and the histogram (implausible values — likely upstream data errors, e.g. a $999,999,999 placeholder). They remain in the table below, marked "outlier".</span>` : ''}
-    ${stat.trimmed_excluded > 0 ? `<br><span style="color:#6366f1;">Trimmed: bottom & upper 5% of the distribution excluded from stats/histogram (${stat.trimmed_excluded} rows). The full ${stat.count.toLocaleString()} hospitals are still counted above — only the statistical summaries and histogram range are trimmed.</span>` : ''}
+    ${stat.trimmed_excluded > 0 ? `<br><span style="color:#6366f1;">Trimmed: bottom &amp; top 2.5% of the distribution (5% total) excluded from stats/histogram (${stat.trimmed_excluded} rows). The full ${stat.count.toLocaleString()} hospitals are still counted above and in the table — only the statistical summaries and histogram are trimmed.</span>` : ''}
+    ${comparabilityHtml}
   `;
 
   currentPage = 1;
@@ -388,17 +399,22 @@ function renderHistogram(rows, zipFilter) {
     return;
   }
   card.classList.add('visible');
-  titleSub.textContent = zipFilter
-    ? `— ${rows.length.toLocaleString()} hospitals matching ZIP ${zipFilter}`
-    : `— ${rows.length.toLocaleString()} hospitals`;
 
   const prices = rows.map(r => r.amount_usd).sort((a, b) => a - b);
 
-  // Trim bottom 5% and top 5% of the distribution so extreme-low and
-  // extreme-high values don't stretch the x-axis. Matches build_browser_data.py.
-  const trimN = Math.max(0, Math.floor(prices.length * 0.05));
+  // Trim bottom 2.5% and top 2.5% of the distribution (5% total) so extreme
+  // values don't stretch the x-axis or get counted. Matches
+  // build_browser_data.py's stat trim exactly — bars below use ONLY
+  // trimmedPrices, not the full array, so a trimmed value is actually
+  // excluded rather than clamped into the edge bin.
+  const trimN = Math.max(0, Math.floor(prices.length * 0.025));
   const trimmedPrices = trimN > 0 ? prices.slice(trimN, prices.length - trimN) : prices;
   const min = trimmedPrices[0], max = trimmedPrices[trimmedPrices.length - 1];
+
+  const zipPart = zipFilter ? ` matching ZIP ${zipFilter}` : '';
+  titleSub.textContent = trimN > 0
+    ? `— ${trimmedPrices.length.toLocaleString()} of ${rows.length.toLocaleString()} hospitals${zipPart} (top & bottom 2.5% trimmed)`
+    : `— ${rows.length.toLocaleString()} hospitals${zipPart}`;
 
   // Bucket into ~16 bins on a clean step
   const BIN_COUNT = 16;
@@ -408,9 +424,9 @@ function renderHistogram(rows, zipFilter) {
   const binStart = Math.floor(min / step) * step;
   const bins = [];
   for (let b = binStart; b <= max; b += step) bins.push({ lo: b, hi: b + step, count: 0 });
-  if (bins.length === 0) bins.push({ lo: min, hi: max + 1, count: prices.length });
+  if (bins.length === 0) bins.push({ lo: min, hi: max + 1, count: trimmedPrices.length });
 
-  for (const p of prices) {
+  for (const p of trimmedPrices) {
     let idx = Math.floor((p - binStart) / step);
     if (idx >= bins.length) idx = bins.length - 1;
     if (idx < 0) idx = 0;

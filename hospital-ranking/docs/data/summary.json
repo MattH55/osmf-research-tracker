@@ -5,320 +5,527 @@
   "total_cms_hospitals": 5432,
   "total_outliers_excluded_from_stats": 35,
   "outlier_note": "35 observations were excluded from median/min/max/mean and histogram calculations because their price is <= $0 or >= $500,000 (a known upstream Trilliant extraction defect \u2014 e.g. a literal 999999999 sentinel, or a decimal-shift error producing an $8M colonoscopy). These rows are NOT deleted \u2014 they remain visible in the table with an outlier badge.",
+  "trim_note": "For every procedure, the bottom 2.5% and top 2.5% of prices (5% total) are excluded from the median/mean/min/max and from the histogram \u2014 separately from, and in addition to, the outlier removal above. Trimmed rows are NOT deleted; they stay in the table.",
+  "comparability_note": "Not every procedure's prices are apples-to-apples. The ingest query matches each hospital's row by `CPT code IN (...) OR MS-DRG code IN (...)`, but does not record which code type actually matched before the price reaches this dataset. For procedures where the ontology defines BOTH a CPT and an MS-DRG code ('mixed_scope': true \u2014 12 of 24 procedures, e.g. knee/hip replacement, C-section, cardiac bypass), some hospital rows may reflect a line-item professional/facility charge (CPT) while others reflect a full bundled inpatient stay rate (MS-DRG) \u2014 scopes that can differ by 10-50x for the same nominal procedure. This is very likely a major driver of the wide price spread seen in those histograms. Procedures with 'mixed_scope': false (mostly imaging/outpatient/diagnostic) do not have this problem, though a few still match multiple CPT codes at once ('multi_cpt': true).",
   "international_data_available": false,
   "international_data_note": "International facility adapters exist as code (etl/adapters/) but have not successfully collected any real price data \u2014 all target sites disallow the scraped paths via robots.txt. No international observations exist in this system yet.",
   "procedures": [
     {
       "slug": "chest-xray",
       "count": 1506,
-      "trimmed_count": 1356,
+      "trimmed_count": 1432,
       "total_rows": 1506,
       "outliers_excluded": 0,
-      "trimmed_excluded": 150,
-      "min_usd": 96.0,
+      "trimmed_excluded": 74,
+      "min_usd": 85.0,
       "median_usd": 275.5,
-      "max_usd": 1366.0,
-      "mean_usd": 332.83,
-      "with_zip": 1506
+      "max_usd": 2081.0,
+      "mean_usd": 362.89,
+      "with_zip": 1506,
+      "cpt_codes": [
+        "71046"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "ct-abdomen",
       "count": 1502,
-      "trimmed_count": 1352,
+      "trimmed_count": 1428,
       "total_rows": 1502,
       "outliers_excluded": 0,
-      "trimmed_excluded": 150,
-      "min_usd": 438.0,
+      "trimmed_excluded": 74,
+      "min_usd": 347.0,
       "median_usd": 2616.0,
-      "max_usd": 15680.0,
-      "mean_usd": 3344.16,
-      "with_zip": 1502
+      "max_usd": 24143.0,
+      "mean_usd": 3702.88,
+      "with_zip": 1502,
+      "cpt_codes": [
+        "74177"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "mri-brain",
       "count": 1436,
-      "trimmed_count": 1294,
+      "trimmed_count": 1366,
       "total_rows": 1436,
       "outliers_excluded": 0,
-      "trimmed_excluded": 142,
-      "min_usd": 322.0,
+      "trimmed_excluded": 70,
+      "min_usd": 263.0,
       "median_usd": 1815.0,
-      "max_usd": 9308.0,
-      "mean_usd": 2253.61,
-      "with_zip": 1436
+      "max_usd": 11785.0,
+      "mean_usd": 2417.65,
+      "with_zip": 1436,
+      "cpt_codes": [
+        "70551"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "mri-lumbar",
       "count": 1431,
-      "trimmed_count": 1289,
+      "trimmed_count": 1361,
       "total_rows": 1431,
       "outliers_excluded": 0,
-      "trimmed_excluded": 142,
-      "min_usd": 305.0,
+      "trimmed_excluded": 70,
+      "min_usd": 251.0,
       "median_usd": 1980.0,
-      "max_usd": 9488.0,
-      "mean_usd": 2316.95,
-      "with_zip": 1431
+      "max_usd": 12093.0,
+      "mean_usd": 2480.71,
+      "with_zip": 1431,
+      "cpt_codes": [
+        "72148"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "mri-knee",
       "count": 1355,
-      "trimmed_count": 1221,
+      "trimmed_count": 1289,
       "total_rows": 1355,
       "outliers_excluded": 0,
-      "trimmed_excluded": 134,
-      "min_usd": 323.0,
+      "trimmed_excluded": 66,
+      "min_usd": 266.0,
       "median_usd": 2006.0,
-      "max_usd": 9144.0,
-      "mean_usd": 2353.44,
-      "with_zip": 1355
+      "max_usd": 13084.0,
+      "mean_usd": 2529.6,
+      "with_zip": 1355,
+      "cpt_codes": [
+        "73721"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "mammogram",
       "count": 1283,
-      "trimmed_count": 1155,
+      "trimmed_count": 1219,
       "total_rows": 1283,
       "outliers_excluded": 0,
-      "trimmed_excluded": 128,
-      "min_usd": 105.0,
+      "trimmed_excluded": 64,
+      "min_usd": 92.0,
       "median_usd": 286.0,
-      "max_usd": 1009.0,
-      "mean_usd": 331.06,
-      "with_zip": 1283
+      "max_usd": 1305.0,
+      "mean_usd": 346.36,
+      "with_zip": 1283,
+      "cpt_codes": [
+        "77067"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "cardiac-cath",
       "count": 1200,
-      "trimmed_count": 1080,
+      "trimmed_count": 1140,
       "total_rows": 1201,
       "outliers_excluded": 1,
-      "trimmed_excluded": 120,
-      "min_usd": 141.0,
+      "trimmed_excluded": 60,
+      "min_usd": 129.0,
       "median_usd": 7092.0,
-      "max_usd": 55925.0,
-      "mean_usd": 10299.49,
-      "with_zip": 1201
+      "max_usd": 85601.0,
+      "mean_usd": 11577.33,
+      "with_zip": 1201,
+      "cpt_codes": [
+        "93458"
+      ],
+      "drg_codes": [
+        "246",
+        "247",
+        "248",
+        "249",
+        "250",
+        "251"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "appendectomy",
       "count": 914,
-      "trimmed_count": 824,
+      "trimmed_count": 870,
       "total_rows": 916,
       "outliers_excluded": 2,
-      "trimmed_excluded": 90,
-      "min_usd": 232.0,
+      "trimmed_excluded": 44,
+      "min_usd": 181.0,
       "median_usd": 2069.5,
-      "max_usd": 62647.0,
-      "mean_usd": 9054.64,
-      "with_zip": 916
+      "max_usd": 74698.0,
+      "mean_usd": 10343.05,
+      "with_zip": 916,
+      "cpt_codes": [
+        "44970"
+      ],
+      "drg_codes": [
+        "343",
+        "344"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "shoulder",
       "count": 860,
-      "trimmed_count": 774,
+      "trimmed_count": 818,
       "total_rows": 863,
       "outliers_excluded": 3,
-      "trimmed_excluded": 86,
-      "min_usd": 522.0,
+      "trimmed_excluded": 42,
+      "min_usd": 383.0,
       "median_usd": 3975.0,
-      "max_usd": 91695.0,
-      "mean_usd": 17687.79,
-      "with_zip": 863
+      "max_usd": 115469.0,
+      "mean_usd": 19547.93,
+      "with_zip": 863,
+      "cpt_codes": [
+        "23472"
+      ],
+      "drg_codes": [
+        "483",
+        "484"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "upper-endoscopy",
       "count": 852,
-      "trimmed_count": 768,
+      "trimmed_count": 810,
       "total_rows": 853,
       "outliers_excluded": 1,
-      "trimmed_excluded": 84,
-      "min_usd": 376.0,
+      "trimmed_excluded": 42,
+      "min_usd": 262.0,
       "median_usd": 1502.0,
-      "max_usd": 6803.0,
-      "mean_usd": 1978.59,
-      "with_zip": 853
+      "max_usd": 8368.0,
+      "mean_usd": 2080.29,
+      "with_zip": 853,
+      "cpt_codes": [
+        "43239"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "colonoscopy",
       "count": 851,
-      "trimmed_count": 767,
+      "trimmed_count": 809,
       "total_rows": 852,
       "outliers_excluded": 1,
-      "trimmed_excluded": 84,
-      "min_usd": 425.0,
+      "trimmed_excluded": 42,
+      "min_usd": 250.0,
       "median_usd": 1632.0,
-      "max_usd": 6122.0,
-      "mean_usd": 2034.58,
-      "with_zip": 852
+      "max_usd": 8366.0,
+      "mean_usd": 2124.77,
+      "with_zip": 852,
+      "cpt_codes": [
+        "45378",
+        "45380"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": true
     },
     {
       "slug": "cholecystectomy",
       "count": 841,
-      "trimmed_count": 757,
+      "trimmed_count": 799,
       "total_rows": 845,
       "outliers_excluded": 4,
-      "trimmed_excluded": 84,
-      "min_usd": 142.0,
+      "trimmed_excluded": 42,
+      "min_usd": 104.0,
       "median_usd": 7988.0,
-      "max_usd": 55593.0,
-      "mean_usd": 13258.13,
-      "with_zip": 845
+      "max_usd": 74707.0,
+      "mean_usd": 14261.39,
+      "with_zip": 845,
+      "cpt_codes": [
+        "47562"
+      ],
+      "drg_codes": [
+        "411",
+        "412",
+        "419"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "hysterectomy",
       "count": 840,
-      "trimmed_count": 756,
+      "trimmed_count": 798,
       "total_rows": 843,
       "outliers_excluded": 3,
-      "trimmed_excluded": 84,
-      "min_usd": 525.0,
+      "trimmed_excluded": 42,
+      "min_usd": 401.0,
       "median_usd": 4405.0,
-      "max_usd": 48706.0,
-      "mean_usd": 11090.77,
-      "with_zip": 843
+      "max_usd": 64666.0,
+      "mean_usd": 11949.39,
+      "with_zip": 843,
+      "cpt_codes": [
+        "58571"
+      ],
+      "drg_codes": [
+        "743",
+        "744",
+        "745",
+        "746",
+        "747",
+        "748",
+        "749",
+        "750"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "breast-biopsy",
       "count": 831,
-      "trimmed_count": 749,
+      "trimmed_count": 791,
       "total_rows": 831,
       "outliers_excluded": 0,
-      "trimmed_excluded": 82,
-      "min_usd": 500.0,
+      "trimmed_excluded": 40,
+      "min_usd": 433.0,
       "median_usd": 2593.0,
-      "max_usd": 6426.0,
-      "mean_usd": 2833.94,
-      "with_zip": 831
+      "max_usd": 8157.0,
+      "mean_usd": 2886.84,
+      "with_zip": 831,
+      "cpt_codes": [
+        "19081"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "spinal-fusion",
       "count": 818,
-      "trimmed_count": 738,
+      "trimmed_count": 778,
       "total_rows": 819,
       "outliers_excluded": 1,
-      "trimmed_excluded": 80,
-      "min_usd": 135.0,
+      "trimmed_excluded": 40,
+      "min_usd": 124.0,
       "median_usd": 1848.5,
-      "max_usd": 102310.0,
-      "mean_usd": 17529.85,
-      "with_zip": 819
+      "max_usd": 142007.0,
+      "mean_usd": 19885.57,
+      "with_zip": 819,
+      "cpt_codes": [
+        "22612",
+        "22633"
+      ],
+      "drg_codes": [
+        "459",
+        "460",
+        "461",
+        "472",
+        "473"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": true
     },
     {
       "slug": "tha",
       "count": 725,
-      "trimmed_count": 653,
+      "trimmed_count": 689,
       "total_rows": 728,
       "outliers_excluded": 3,
-      "trimmed_excluded": 72,
-      "min_usd": 165.0,
+      "trimmed_excluded": 36,
+      "min_usd": 120.0,
       "median_usd": 17540.0,
-      "max_usd": 88085.0,
-      "mean_usd": 22848.62,
-      "with_zip": 728
+      "max_usd": 119318.0,
+      "mean_usd": 24172.85,
+      "with_zip": 728,
+      "cpt_codes": [
+        "27130"
+      ],
+      "drg_codes": [
+        "469",
+        "470"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "cabg",
       "count": 678,
-      "trimmed_count": 612,
+      "trimmed_count": 646,
       "total_rows": 687,
       "outliers_excluded": 9,
-      "trimmed_excluded": 66,
-      "min_usd": 135.0,
+      "trimmed_excluded": 32,
+      "min_usd": 116.0,
       "median_usd": 3819.5,
-      "max_usd": 187375.0,
-      "mean_usd": 34920.14,
-      "with_zip": 687
+      "max_usd": 221237.0,
+      "mean_usd": 38476.09,
+      "with_zip": 687,
+      "cpt_codes": [
+        "33533"
+      ],
+      "drg_codes": [
+        "231",
+        "232",
+        "233",
+        "234",
+        "235",
+        "236",
+        "239",
+        "270"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "cesarean",
       "count": 579,
-      "trimmed_count": 523,
+      "trimmed_count": 551,
       "total_rows": 580,
       "outliers_excluded": 1,
-      "trimmed_excluded": 56,
-      "min_usd": 559.0,
+      "trimmed_excluded": 28,
+      "min_usd": 356.0,
       "median_usd": 5795.0,
-      "max_usd": 30254.0,
-      "mean_usd": 7421.71,
-      "with_zip": 580
+      "max_usd": 40531.0,
+      "mean_usd": 7966.0,
+      "with_zip": 580,
+      "cpt_codes": [
+        "59514"
+      ],
+      "drg_codes": [
+        "766",
+        "767",
+        "768"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "hernia",
       "count": 541,
-      "trimmed_count": 487,
+      "trimmed_count": 515,
       "total_rows": 542,
       "outliers_excluded": 1,
-      "trimmed_excluded": 54,
-      "min_usd": 356.0,
+      "trimmed_excluded": 26,
+      "min_usd": 308.0,
       "median_usd": 3441.0,
-      "max_usd": 25428.0,
-      "mean_usd": 5110.29,
-      "with_zip": 542
+      "max_usd": 33885.0,
+      "mean_usd": 5668.21,
+      "with_zip": 542,
+      "cpt_codes": [
+        "49505",
+        "49650"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": true
     },
     {
       "slug": "vaginal-delivery",
       "count": 454,
-      "trimmed_count": 410,
+      "trimmed_count": 432,
       "total_rows": 456,
       "outliers_excluded": 2,
-      "trimmed_excluded": 44,
-      "min_usd": 1557.0,
+      "trimmed_excluded": 22,
+      "min_usd": 1218.0,
       "median_usd": 9945.5,
-      "max_usd": 36626.0,
-      "mean_usd": 11933.17,
-      "with_zip": 456
+      "max_usd": 48918.0,
+      "mean_usd": 12421.47,
+      "with_zip": 456,
+      "cpt_codes": [
+        "59400"
+      ],
+      "drg_codes": [
+        "765",
+        "774",
+        "775",
+        "796",
+        "797",
+        "798"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "knee-arthroscopy",
       "count": 416,
-      "trimmed_count": 376,
+      "trimmed_count": 396,
       "total_rows": 417,
       "outliers_excluded": 1,
-      "trimmed_excluded": 40,
-      "min_usd": 664.0,
+      "trimmed_excluded": 20,
+      "min_usd": 338.0,
       "median_usd": 3567.0,
-      "max_usd": 20695.0,
-      "mean_usd": 5085.8,
-      "with_zip": 417
+      "max_usd": 27976.0,
+      "mean_usd": 5476.9,
+      "with_zip": 417,
+      "cpt_codes": [
+        "29881"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "rotator-cuff",
       "count": 371,
-      "trimmed_count": 335,
+      "trimmed_count": 353,
       "total_rows": 372,
       "outliers_excluded": 1,
-      "trimmed_excluded": 36,
-      "min_usd": 593.0,
+      "trimmed_excluded": 18,
+      "min_usd": 180.0,
       "median_usd": 5339.0,
-      "max_usd": 44944.0,
-      "mean_usd": 9309.08,
-      "with_zip": 372
+      "max_usd": 52863.0,
+      "mean_usd": 10124.22,
+      "with_zip": 372,
+      "cpt_codes": [
+        "29827"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     },
     {
       "slug": "tka",
       "count": 368,
-      "trimmed_count": 332,
+      "trimmed_count": 350,
       "total_rows": 369,
       "outliers_excluded": 1,
-      "trimmed_excluded": 36,
-      "min_usd": 1367.0,
+      "trimmed_excluded": 18,
+      "min_usd": 831.0,
       "median_usd": 5955.5,
-      "max_usd": 60439.0,
-      "mean_usd": 13716.77,
-      "with_zip": 369
+      "max_usd": 75894.0,
+      "mean_usd": 14857.44,
+      "with_zip": 369,
+      "cpt_codes": [
+        "27447"
+      ],
+      "drg_codes": [
+        "469",
+        "470"
+      ],
+      "mixed_scope": true,
+      "multi_cpt": false
     },
     {
       "slug": "cataract",
       "count": 318,
-      "trimmed_count": 288,
+      "trimmed_count": 304,
       "total_rows": 318,
       "outliers_excluded": 0,
-      "trimmed_excluded": 30,
-      "min_usd": 388.0,
+      "trimmed_excluded": 14,
+      "min_usd": 320.0,
       "median_usd": 3043.0,
-      "max_usd": 14975.0,
-      "mean_usd": 3918.62,
-      "with_zip": 318
+      "max_usd": 21812.0,
+      "mean_usd": 4223.46,
+      "with_zip": 318,
+      "cpt_codes": [
+        "66984"
+      ],
+      "drg_codes": [],
+      "mixed_scope": false,
+      "multi_cpt": false
     }
   ]
 }

@@ -228,6 +228,30 @@ def main() -> int:
             f"producing an $8M colonoscopy). These rows are NOT deleted — they "
             f"remain visible in the table with an outlier badge."
         ),
+        "trim_note": (
+            "For every procedure, the bottom 2.5% and top 2.5% of prices "
+            "(5% total) are excluded from the median/mean/min/max and from "
+            "the histogram — separately from, and in addition to, the "
+            "outlier removal above. Trimmed rows are NOT deleted; they stay "
+            "in the table."
+        ),
+        "comparability_note": (
+            "Not every procedure's prices are apples-to-apples. The ingest "
+            "query matches each hospital's row by `CPT code IN (...) OR "
+            "MS-DRG code IN (...)`, but does not record which code type "
+            "actually matched before the price reaches this dataset. For "
+            "procedures where the ontology defines BOTH a CPT and an "
+            "MS-DRG code ('mixed_scope': true — 12 of 24 procedures, e.g. "
+            "knee/hip replacement, C-section, cardiac bypass), some hospital "
+            "rows may reflect a line-item professional/facility charge (CPT) "
+            "while others reflect a full bundled inpatient stay rate "
+            "(MS-DRG) — scopes that can differ by 10-50x for the same "
+            "nominal procedure. This is very likely a major driver of the "
+            "wide price spread seen in those histograms. Procedures with "
+            "'mixed_scope': false (mostly imaging/outpatient/diagnostic) do "
+            "not have this problem, though a few still match multiple CPT "
+            "codes at once ('multi_cpt': true)."
+        ),
         "international_data_available": False,
         "international_data_note": (
             "International facility adapters exist as code (etl/adapters/) but have "
@@ -240,4 +264,11 @@ def main() -> int:
 
     (OUT_DIR / "summary.json").write_text(json.dumps(summary_out, indent=2), encoding="utf-8")
 
-    pr
+    print(f"\nWrote {len(summary)} procedure files to {PROC_OUT_DIR}")
+    print(f"Wrote summary to {OUT_DIR / 'summary.json'}")
+    print(f"\nTotal real observations published: {len(observations)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
