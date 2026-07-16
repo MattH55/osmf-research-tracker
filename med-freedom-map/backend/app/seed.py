@@ -1090,15 +1090,17 @@ def seed_database():
 
         db.flush()  # Ensure IDs are available for FK references
 
-        print("Seeding access records...")
-        for ar_data in ACCESS_RECORDS:
-            ar_data_copy = ar_data.copy()
-            ar_data_copy["sources"] = json.dumps(ar_data_copy["sources"])
-            ar = AccessRecord(**ar_data_copy)
-            db.add(ar)
+        # Skip AccessRecords on free tier (memory constraints)
+        # Uncomment below if upgrading to paid Render tier
+        # print("Seeding access records...")
+        # for ar_data in ACCESS_RECORDS:
+        #     ar_data_copy = ar_data.copy()
+        #     ar_data_copy["sources"] = json.dumps(ar_data_copy["sources"])
+        #     ar = AccessRecord(**ar_data_copy)
+        #     db.add(ar)
 
         db.commit()
-        print(f"Seed complete: {len(JURISDICTIONS)} jurisdictions, {len(PROCEDURES)} procedures, {len(ACCESS_RECORDS)} access records.")
+        print(f"Seed complete: {len(JURISDICTIONS)} jurisdictions, {len(PROCEDURES)} procedures. (Access records disabled on free tier)")
 
     except Exception as e:
         db.rollback()
