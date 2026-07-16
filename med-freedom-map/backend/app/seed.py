@@ -720,7 +720,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "Health Canada SAP for Psychedelics", "url": "https://www.canada.ca/en/health-canada/services/drugs-health-products/special-access-programme-drugs.html"}, {"title": "TheraPsil", "url": "https://therapsil.ca"}]},
 
     # ── Mexico (Stem Cells / Ibogaine) ──
-    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.VARIABLE,
+    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.MINIMAL,
      "access_pathway_details": "Mexico has a large medical tourism industry for stem cell therapies. COFEPRIS (Mexican FDA) regulates but enforcement is inconsistent. Many clinics operate with minimal oversight, marketing unproven stem cell treatments. Quality varies dramatically—from legitimate medical centers to outright scams. Tijuana, Cancún, and Mexico City are major hubs.",
      "eligibility_requirements": "Ability to pay. Passport/tourist visa (US citizens: 6-month tourist card on arrival). Clinic-specific screening (quality varies). Most clinics accept nearly all patients regardless of indication. Beware: 'no medical condition too complex' marketing is a red flag.",
      "provider_requirements": "COFEPRIS registration theoretically required but enforcement inconsistent. No equivalent of FDA BLA/IND process. Some clinics have international accreditation (JCI, etc.), many do not. Physician credentials variable; verify independently.",
@@ -741,7 +741,7 @@ ACCESS_RECORDS = [
 "last_verified": date(2025, 6, 1),
      "sources": [{"title": "COFEPRIS", "url": "https://www.gob.mx/cofepris"}, {"title": "FDA Warning: Stem Cell Tourism Risks", "url": "https://www.fda.gov/consumers/consumer-updates/fda-warns-about-stem-cell-therapies"}, {"title": "CDC Stem Cell Tourism Infections Report", "url": "https://wwwnc.cdc.gov/eid/article/29/2/22-0980_article"}]},
 
-    {"procedure_id": "proc-ibogaine-addiction", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.VARIABLE,
+    {"procedure_id": "proc-ibogaine-addiction", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.MINIMAL,
      "access_pathway_details": "Baja California and other regions host numerous ibogaine clinics for addiction treatment. Ibogaine unregulated at federal level—legal gray zone. Some clinics operate with medical supervision (MD on staff, cardiac monitoring), others do not. Significant variation in safety protocols. Rosarito/Tijuana and Cancún areas are primary hubs.",
      "eligibility_requirements": "Opioid or other substance use disorder. MUST have cardiac screening (QTc interval, electrolytes, LFTs) before treatment. Reputable clinics require pre-screening EKG and labs. Many clinics do NOT have adequate screening. 18+. Ability to travel to Mexico.",
      "provider_requirements": "Mexican medical license for MD-supervised clinics. Some clinics staffed by non-physicians (high risk). No formal ibogaine certification required. International ibogaine provider network (GITA) has training standards but voluntary. Cardiac monitoring equipment (continuous EKG, defibrillator, crash cart) essential—not all clinics have this.",
@@ -873,7 +873,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "Assisted Human Reproduction Act (Canada)", "url": "https://laws-lois.justice.gc.ca/eng/acts/a-13.4/"}, {"title": "CFAS Surrogacy Guidelines", "url": "https://cfas.ca"}, {"title": "Canadian Surrogacy Community", "url": "https://surrogacy.ca"}]},
 
     # ── Jamaica (Psilocybin) ──
-    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-jm", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.VARIABLE,
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-jm", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.MINIMAL,
      "access_pathway_details": "Psilocybin mushrooms are legal in Jamaica (never scheduled). Growing psilocybin retreat industry (Mycomeditations, Atman, Silo Wellness, etc.). Retreat model: 1-2 psilocybin sessions in group or individual format. Some retreats have medical professionals, others do not. No government licensing or oversight specific to psilocybin therapy. Market is self-regulated.",
      "eligibility_requirements": "18+. No prescription or diagnosis required. Retreat-specific screening (quality varies from thorough mental health screening to minimal). Medical screening: varies. Common contraindications: psychosis history, certain cardiovascular conditions, concurrent psychiatric medications.",
      "provider_requirements": "No government licensing required for psilocybin facilitators. Retreat operators self-designate as practitioners. Some employ licensed therapists/psychologists, many do not. Medical oversight optional (some retreats have MD/RN on staff). No standardized training requirements. GITA and other voluntary standards exist but few retreats comply.",
@@ -960,7 +960,7 @@ ACCESS_RECORDS = [
 "last_verified": date(2025, 7, 1),
      "sources": [{"title": "SART National Summary Report", "url": "https://www.sartcorsonline.com"}, {"title": "ASRM Guidelines", "url": "https://www.asrm.org"}, {"title": "CDC ART Success Rates", "url": "https://www.cdc.gov/art/artdata/index.html"}]},
 
-    {"procedure_id": "proc-repro-ivf", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.VARIABLE,
+    {"procedure_id": "proc-repro-ivf", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.MINIMAL,
      "access_pathway_details": "IVF widely available through private fertility clinics in major cities (Mexico City, Monterrey, Guadalajara, Cancún). Growing medical tourism industry for fertility treatment. PGT available. Mexican regulatory framework (COFEPRIS) less comprehensive than FDA/CDC but major clinics follow international standards. Gender selection generally permitted. Surrogacy: some states permit, Tabasco was a major hub but now restricted.",
      "eligibility_requirements": "Fewer restrictions than US (more permissive age limits, BMI limits less common). Donor gametes available (egg donors typically younger, larger pools than some countries). Medical screening by clinic. No COFEPRIS-mandated psychological screening for all patients (some clinics require, others don't).",
      "provider_requirements": "COFEPRIS-registered clinic. Board-certified REI physicians (though certification standards less rigorous than US ABOG). Lab accreditation: some clinics have international accreditation (ISO, CAP), many do not. Verify individual clinic standards. SART-equivalent outcome reporting not mandatory.",
@@ -982,7 +982,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "COFEPRIS", "url": "https://www.gob.mx/cofepris"}, {"title": "Mexican Association of Reproductive Medicine (AMMR)", "url": "https://www.ammr.org.mx"}]},
 
     # ── NAD+ IV (US Federal) ──
-    {"procedure_id": "proc-nad-iv", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.OFF_LABEL, "oversight_quality": OversightQuality.MEDIUM,
+    {"procedure_id": "proc-nad-iv", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.APPROVED_OFF_LABEL, "oversight_quality": OversightQuality.MEDIUM,
      "access_pathway_details": "NAD+ available through functional medicine and longevity clinics across US (estimated 200+ providers). Not FDA-approved for therapeutic use but available under FDA's physician discretion pathway. Prescribed as off-label IV micronutrient. Varying clinic oversight quality.",
      "eligibility_requirements": "Must be 18+. Medical evaluation by provider. Pre-screening labs recommended (liver/kidney function). No specific diagnosis required for off-label use.",
      "provider_requirements": "MD/DO/NP licensed to prescribe IV therapies. Functional medicine or IV therapy certification common but not required. IV certification/experience essential. Clinic must have emergency equipment/protocols.",
@@ -1048,7 +1048,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "FDA Microbiota Guidance", "url": "https://www.fda.gov/vaccines-blood-biologics/guidance-documents-faqs/faqs-about-fecal-microbiota-transplantation"}]},
 
     # ── Peru Mescaline Retreat ──
-    {"procedure_id": "proc-mescaline-therapy", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.LEGAL, "oversight_quality": OversightQuality.LOW,
+    {"procedure_id": "proc-mescaline-therapy", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.UNREGULATED_PERMITTED, "oversight_quality": OversightQuality.LOW,
      "access_pathway_details": "Mescaline (San Pedro cactus) completely legal in Peru, Ecuador, Colombia. Retreat centers operate openly in Sacred Valley (Peru), Amazon, and coastal regions. Shamanic facilitation model (non-medical). Multi-day retreats (3-7 days) with preparation, ceremony, integration. Growing Western psychedelic retreat tourism.",
      "eligibility_requirements": "18+, ability to travel. Psychological health screening by retreat (quality varies). No formal medical restrictions but high contraindications should apply (same as other psychedelics).",
      "provider_requirements": "Shaman/facilitator (NO medical licensing required). Retreat center operators. Variable training and experience. Some facilitators have years of experience, others minimal.",
