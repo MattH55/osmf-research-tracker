@@ -19,7 +19,6 @@ from .schemas import (
     AccessRecordCreate, AccessRecordUpdate, AccessRecordResponse,
     AccessRecordFilter, BulkImportRequest, ExportResponse,
 )
-from .seed import seed_database
 
 app = FastAPI(
     title="MedFreedom Arbitrage Map API",
@@ -39,14 +38,8 @@ app.add_middleware(
 @app.on_event("startup")
 def startup():
     init_db()
-    # Auto-seed if empty
-    db = SessionLocal()
-    try:
-        if db.query(Jurisdiction).count() == 0:
-            db.close()
-            seed_database()
-    finally:
-        db.close()
+    # Initialize database schema (don't auto-seed due to field length constraints)
+    # Run seeding manually via Shell: python -m app.seed
 
 
 # ── Health Check ──────────────────────────────────────────────────────────
