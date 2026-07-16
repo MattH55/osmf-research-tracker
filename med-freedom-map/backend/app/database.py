@@ -25,7 +25,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    """Create all tables."""
+    """Create all tables (drop first if they exist to refresh schema)."""
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
 
