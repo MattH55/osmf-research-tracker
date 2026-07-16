@@ -618,7 +618,7 @@ ACCESS_RECORDS = [
 "last_verified": date(2025, 5, 15),
      "sources": [{"title": "Próspera ZEDE Overview", "url": "https://prospera.hn"}, {"title": "Minicircle Gene Therapy in Próspera", "url": "https://minicircle.io"}, {"title": "Honduras ZEDE Legal Challenges (Reuters)", "url": "https://www.reuters.com/world/americas/honduras-congress-votes-repeal-economic-development-zones-2023-11-01"}]},
 
-    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-hn-prospera", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.LOW,
+    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-hn-prospera", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.LOW,
      "access_pathway_details": "Stem cell clinics can operate under ZEDE regulatory framework with less restriction than FDA. Informed consent-based model. Cord blood and MSC therapies marketed for anti-aging and regenerative indications. GARM Clinic and others operating stem cell services.",
      "eligibility_requirements": "Informed consent. Ability to pay. ZEDE entry/tourism facilitation. Screening by treating clinic (standards vary).",
      "provider_requirements": "ZEDE-registered clinics. No FDA-equivalent BLA/MAA requirement. Variable quality across providers. Some clinics have international accreditation (e.g., GARM claims Best Clinic accreditation).",
@@ -676,7 +676,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "Dignitas - Accompanied Suicide", "url": "https://www.dignitas.ch"}, {"title": "Pegasos Swiss Association", "url": "https://pegasos-association.com"}, {"title": "Swiss Criminal Code Art. 115", "url": "https://www.fedlex.admin.ch/eli/cc/54/757_781_799/en"}, {"title": "EXIT Swiss", "url": "https://exit.ch"}]},
 
     # ── Switzerland (Psychedelics) ──
-    {"procedure_id": "proc-lsd-anxiety", "jurisdiction_id": "jur-ch", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.HIGH,
+    {"procedure_id": "proc-lsd-anxiety", "jurisdiction_id": "jur-ch", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.HIGH,
      "access_pathway_details": "Swiss Federal Office of Public Health (BAG) issues exceptional permits for psychedelic therapy (LSD, psilocybin, MDMA) on compassionate use basis. Treating psychiatrist/physician applies to BAG for individual patient authorization. Requires documentation that conventional treatments have failed. Administration in medical/psychotherapeutic setting. Growing number of authorized practitioners.",
      "eligibility_requirements": "Swiss residency (typically). Documented failure of conventional treatments. Specific condition with some evidence base for psychedelic therapy. Medical and psychiatric clearance. Psychotic disorders excluded. BAG review and approval required per patient.",
      "provider_requirements": "Swiss-licensed physician (typically psychiatrist). Must apply to BAG for each patient. Experience/training in psychedelic therapy expected but not formally credentialed. Psychotherapeutic training recommended. Medical setting capable of monitoring.",
@@ -698,7 +698,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "Swiss BAG - Exceptional Authorization for Psychedelics", "url": "https://www.bag.admin.ch"}, {"title": "Swiss Medical Association Psychedelic Guidelines", "url": "https://www.fmh.ch"}]},
 
     # ── Canada (Psychedelics) ──
-    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-ca", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.HIGH,
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-ca", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.HIGH,
      "access_pathway_details": "Health Canada Special Access Programme (SAP) allows physicians to request access to restricted drugs (psilocybin, MDMA) for serious/life-threatening conditions when conventional treatments have failed. Section 56 exemptions under CDSA provide another pathway. Growing number of approved requests (2020 onwards). Alberta and Quebec have regulated psychedelic therapy programs in development.",
      "eligibility_requirements": "Canadian residency (provincial health coverage). Serious or life-threatening condition. Failed, intolerable, or unavailable conventional treatments. Physician must apply to Health Canada with clinical rationale and safety plan. Psychiatric assessment. Drug sourcing plan. Informed consent.",
      "provider_requirements": "Canadian-licensed physician (typically psychiatrist). Healthcare facility with monitoring capability. Multidisciplinary team recommended. Therapy component (preparation/integration) required but not always formally credentialed. Drug sourcing through Health Canada-authorized channels.",
@@ -720,7 +720,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "Health Canada SAP for Psychedelics", "url": "https://www.canada.ca/en/health-canada/services/drugs-health-products/special-access-programme-drugs.html"}, {"title": "TheraPsil", "url": "https://therapsil.ca"}]},
 
     # ── Mexico (Stem Cells / Ibogaine) ──
-    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.VARIABLE,
+    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.VARIABLE,
      "access_pathway_details": "Mexico has a large medical tourism industry for stem cell therapies. COFEPRIS (Mexican FDA) regulates but enforcement is inconsistent. Many clinics operate with minimal oversight, marketing unproven stem cell treatments. Quality varies dramatically—from legitimate medical centers to outright scams. Tijuana, Cancún, and Mexico City are major hubs.",
      "eligibility_requirements": "Ability to pay. Passport/tourist visa (US citizens: 6-month tourist card on arrival). Clinic-specific screening (quality varies). Most clinics accept nearly all patients regardless of indication. Beware: 'no medical condition too complex' marketing is a red flag.",
      "provider_requirements": "COFEPRIS registration theoretically required but enforcement inconsistent. No equivalent of FDA BLA/IND process. Some clinics have international accreditation (JCI, etc.), many do not. Physician credentials variable; verify independently.",
@@ -741,7 +741,7 @@ ACCESS_RECORDS = [
 "last_verified": date(2025, 6, 1),
      "sources": [{"title": "COFEPRIS", "url": "https://www.gob.mx/cofepris"}, {"title": "FDA Warning: Stem Cell Tourism Risks", "url": "https://www.fda.gov/consumers/consumer-updates/fda-warns-about-stem-cell-therapies"}, {"title": "CDC Stem Cell Tourism Infections Report", "url": "https://wwwnc.cdc.gov/eid/article/29/2/22-0980_article"}]},
 
-    {"procedure_id": "proc-ibogaine-addiction", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.VARIABLE,
+    {"procedure_id": "proc-ibogaine-addiction", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.VARIABLE,
      "access_pathway_details": "Baja California and other regions host numerous ibogaine clinics for addiction treatment. Ibogaine unregulated at federal level—legal gray zone. Some clinics operate with medical supervision (MD on staff, cardiac monitoring), others do not. Significant variation in safety protocols. Rosarito/Tijuana and Cancún areas are primary hubs.",
      "eligibility_requirements": "Opioid or other substance use disorder. MUST have cardiac screening (QTc interval, electrolytes, LFTs) before treatment. Reputable clinics require pre-screening EKG and labs. Many clinics do NOT have adequate screening. 18+. Ability to travel to Mexico.",
      "provider_requirements": "Mexican medical license for MD-supervised clinics. Some clinics staffed by non-physicians (high risk). No formal ibogaine certification required. International ibogaine provider network (GITA) has training standards but voluntary. Cardiac monitoring equipment (continuous EKG, defibrillator, crash cart) essential—not all clinics have this.",
@@ -829,7 +829,7 @@ ACCESS_RECORDS = [
      "sources": [{"title": "Wegovy Prescribing Information", "url": "https://www.novo-pi.com/wegovy.pdf"}, {"title": "Zepbound Prescribing Information", "url": "https://uspl.lilly.com/zepbound/zepbound.html"}, {"title": "FDA Compounding and GLP-1s", "url": "https://www.fda.gov/drugs/human-drug-compounding"}]},
 
     # ── Rapamycin (Mexico / Próspera interest) ──
-    {"procedure_id": "proc-repurposed-rapamycin", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.MEDIUM,
+    {"procedure_id": "proc-repurposed-rapamycin", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.PHYSICIAN_DISCRETION_GRAY, "oversight_quality": OversightQuality.MEDIUM,
      "access_pathway_details": "FDA-approved for transplant immunosuppression and LAM. Off-label for aging/longevity: growing number of physicians prescribing through telemedicine platforms (AgelessRx, Healthspan, etc.). Must be prescribed by licensed physician. Generic available (Sirolimus tablets). Intermittent dosing protocols (weekly/bi-weekly) advocated by longevity community. PEARL trial (participant-led aging trial) ongoing.",
      "eligibility_requirements": "Off-label use at physician discretion. Typically: 40+ years old for longevity use. Screening: CBC, CMP, lipids, HbA1c. Contraindicated: active infection, planned surgery, concurrent immunosuppression, pregnancy/lactation. Caution: pre-existing hyperlipidemia (rapamycin may worsen), impaired wound healing.",
      "provider_requirements": "Licensed physician. Telemedicine platforms expanding access. Some primary care physicians prescribe, but longevity specialty clinics are primary source. Regular lab monitoring (every 3-6 months typical). No REMS or restricted distribution for generic sirolimus.",
