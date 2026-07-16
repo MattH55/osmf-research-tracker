@@ -49,6 +49,21 @@ def health():
     return {"status": "ok", "version": "0.1.0"}
 
 
+@app.post("/api/seed")
+def seed_endpoint(db: Session = Depends(get_db)):
+    """Manually trigger database seeding (only runs if tables are empty)."""
+    try:
+        jur_count = db.query(Jurisdiction).count()
+        if jur_count > 0:
+            return {"status": "already_seeded", "jurisdictions": jur_count}
+
+        from .seed import seed_database
+        seed_database()
+        return {"status": "seeding_complete", "message": "Database seeded successfully"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
 # ══════════════════════════════════════════════════════════════════════════
 # JURISDICTIONS
 # ══════════════════════════════════════════════════════════════════════════
