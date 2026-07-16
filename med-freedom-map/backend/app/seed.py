@@ -1,0 +1,652 @@
+"""Seed the database with initial MedFreedom Arbitrage Map data."""
+import json
+import uuid
+from datetime import date
+
+from .database import SessionLocal, init_db
+from .models import (
+    Jurisdiction, Procedure, AccessRecord,
+    JurisdictionType, Modality, LegalStatus, OversightQuality
+)
+
+
+# ── Jurisdictions ──────────────────────────────────────────────────────────
+
+JURISDICTIONS = [
+    {"id": "jur-us-or", "name": "United States - Oregon", "type": JurisdictionType.US_STATE, "country_code": "US", "latitude": 44.0, "longitude": -120.5, "general_notes": "Psilocybin Services Act (Measure 109, 2020). Regulated psilocybin therapy program operational since 2023. Also decriminalized personal possession of all drugs (Measure 110, 2020) though Measure 110 was partially rolled back in 2024."},
+    {"id": "jur-us-co", "name": "United States - Colorado", "type": JurisdictionType.US_STATE, "country_code": "US", "latitude": 39.0, "longitude": -105.5, "general_notes": "Proposition 122 (Natural Medicine Health Act, 2022). Regulated psilocybin therapy program, also decriminalized personal possession/growing of psilocybin, DMT, ibogaine, and mescaline (excluding peyote)."},
+    {"id": "jur-us-federal", "name": "United States - Federal", "type": JurisdictionType.FEDERAL, "country_code": "US", "latitude": 38.9, "longitude": -77.0, "general_notes": "Federal law: Most psychedelics are Schedule I (no accepted medical use). Right-to-Try laws exist federally for terminally ill patients. FDA Expanded Access (compassionate use) program. ClinicalTrials.gov registration required for trials."},
+    {"id": "jur-us-ca", "name": "United States - California", "type": JurisdictionType.US_STATE, "country_code": "US", "latitude": 36.8, "longitude": -119.4, "general_notes": "SB 519 (decriminalization of psychedelics) passed Senate, stalled. Multiple city-level decrim ordinances (Oakland, Santa Cruz, San Francisco). Right to Try state law."},
+    {"id": "jur-us-tx", "name": "United States - Texas", "type": JurisdictionType.US_STATE, "country_code": "US", "latitude": 31.0, "longitude": -100.0, "general_notes": "Right to Try state law. Large medical center presence (Texas Medical Center). Active clinical trial scene. Generally conservative regulatory environment."},
+    {"id": "jur-us-fl", "name": "United States - Florida", "type": JurisdictionType.US_STATE, "country_code": "US", "latitude": 27.7, "longitude": -81.5, "general_notes": "Right to Try state law. Large elderly population drives regenerative medicine interest. Multiple stem cell clinics operating in regulatory gray zones."},
+    {"id": "jur-au", "name": "Australia", "type": JurisdictionType.COUNTRY, "country_code": "AU", "latitude": -25.3, "longitude": 133.8, "general_notes": "TGA rescheduled psilocybin and MDMA for therapeutic use (July 2023) for PTSD and treatment-resistant depression. Authorized prescribers only. Strict regulatory framework via TGA Special Access Scheme and Authorized Prescriber Scheme."},
+    {"id": "jur-ch", "name": "Switzerland", "type": JurisdictionType.COUNTRY, "country_code": "CH", "latitude": 46.8, "longitude": 8.2, "general_notes": "Compassionate use/exceptional authorization for psychedelic therapy (LSD, psilocybin, MDMA) via BAG permits. Swissmedic oversight. Assisted dying permitted (Dignitas, etc.). Advanced biotech regulatory environment."},
+    {"id": "jur-ca", "name": "Canada", "type": JurisdictionType.COUNTRY, "country_code": "CA", "latitude": 56.1, "longitude": -106.3, "general_notes": "Special Access Programme (SAP) for psilocybin and MDMA therapy. Section 56 exemptions for psychedelics. MAID (Medical Assistance in Dying) legal federally since 2016, expanded 2021. Generally progressive regulatory stance on emerging therapies."},
+    {"id": "jur-mx", "name": "Mexico", "type": JurisdictionType.COUNTRY, "country_code": "MX", "latitude": 23.6, "longitude": -102.5, "general_notes": "Growing medical tourism for stem cell therapies (less restrictive regulations). Some clinics operating with minimal oversight. Ibogaine clinics for addiction in Baja region. Regulatory quality variable."},
+    {"id": "jur-hn-prospera", "name": "Honduras - Próspera ZEDE", "type": JurisdictionType.ZEDE, "country_code": "HN", "latitude": 16.2, "longitude": -86.5, "general_notes": "Special Economic Development Zone (ZEDE) on Roatán Island. Semi-autonomous jurisdiction with its own regulatory framework. Gene therapy, stem cell, and innovative therapeutic hubs developing. Light-touch regulation, attracting biotech investment. Legal status of ZEDEs contested under Honduran law."},
+    {"id": "jur-nl", "name": "Netherlands", "type": JurisdictionType.COUNTRY, "country_code": "NL", "latitude": 52.1, "longitude": 5.3, "general_notes": "Longstanding truffle (psilocybin sclerotia) legality. Euthanasia legal for unbearable suffering with strict criteria. Advanced medical research environment."},
+    {"id": "jur-de", "name": "Germany", "type": JurisdictionType.COUNTRY, "country_code": "DE", "latitude": 51.2, "longitude": 10.5, "general_notes": "Growing psychedelic research hub (MIND Foundation, Charité Berlin). Cannabis legalized 2024. Assisted dying partially legal after 2020 Constitutional Court ruling. Strong regulatory frameworks."},
+    {"id": "jur-uk", "name": "United Kingdom", "type": JurisdictionType.COUNTRY, "country_code": "GB", "latitude": 55.4, "longitude": -3.4, "general_notes": "Psychedelic clinical trials active (COMPASS Pathways, Imperial College). Strict scheduling of psychedelics. Assisted dying debates ongoing (no legal framework yet outside Scotland proposals)."},
+    {"id": "jur-il", "name": "Israel", "type": JurisdictionType.COUNTRY, "country_code": "IL", "latitude": 31.0, "longitude": 34.9, "general_notes": "Leading stem cell research country. MDMA/PTSD clinical trials. Growing medical innovation ecosystem. Compassionate use pathways available."},
+    {"id": "jur-jm", "name": "Jamaica", "type": JurisdictionType.COUNTRY, "country_code": "JM", "latitude": 18.1, "longitude": -77.3, "general_notes": "Psilocybin mushrooms are legal (never scheduled). Growing psilocybin retreat industry. Limited formal regulatory oversight for therapy programs. Variable quality of providers."},
+]
+
+
+# ── Procedures ─────────────────────────────────────────────────────────────
+
+PROCEDURES = [
+    {
+        "id": "proc-psilocybin-trd",
+        "name": "Psilocybin-Assisted Psychotherapy for Treatment-Resistant Depression",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Classical Psychedelic",
+        "therapeutic_areas": ["Mental_Health", "Depression"],
+        "description": "Psilocybin administered in a controlled therapeutic setting with preparation and integration sessions. Typically 1-2 dosing sessions with multiple non-drug therapy sessions. FDA Breakthrough Therapy designation. COMPASS Pathways phase III trials ongoing.",
+        "typical_us_cost_range": "$8,000-15,000",
+        "indications": "Moderate to severe treatment-resistant depression (failed 2+ antidepressant trials). Contraindicated in personal/family history of psychosis.",
+        "sources": [{"title": "COMPASS Pathways Phase III", "url": "https://compasspathways.com"}, {"title": "Oregon Psilocybin Services", "url": "https://www.oregon.gov/oha/PH/PREVENTIONWELLNESS/Pages/Psilocybin-Services.aspx"}],
+    },
+    {
+        "id": "proc-psilocybin-eol",
+        "name": "Psilocybin-Assisted Therapy for End-of-Life Anxiety",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Classical Psychedelic",
+        "therapeutic_areas": ["Mental_Health", "Palliative_Care"],
+        "description": "Psilocybin therapy aimed at reducing existential distress, anxiety, and depression in patients with life-threatening illness. Landmark trials at Johns Hopkins, NYU, UCLA. Single high-dose session with preparation/integration.",
+        "typical_us_cost_range": "$5,000-12,000",
+        "indications": "Anxiety/depression related to life-threatening cancer diagnosis or terminal illness. Must be medically stable. Contraindicated in psychosis history.",
+        "sources": [{"title": "Johns Hopkins Psilocybin Research", "url": "https://hopkinspsychedelic.org"}, {"title": "Griffiths et al., 2016", "url": "https://pubmed.ncbi.nlm.nih.gov/27909165"}],
+    },
+    {
+        "id": "proc-mdma-ptsd",
+        "name": "MDMA-Assisted Psychotherapy for PTSD",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Entactogen",
+        "therapeutic_areas": ["Mental_Health", "PTSD"],
+        "description": "MDMA administered in 2-3 sessions as an adjunct to psychotherapy for PTSD. FDA Breakthrough Therapy designation. MAPS (now Lykos Therapeutics) phase III trials showed 67% no longer met PTSD criteria after treatment. FDA decision pending/denied 2024.",
+        "typical_us_cost_range": "$12,000-20,000",
+        "indications": "Severe PTSD (CAPS-5 score criteria). Typically moderate-severe. Contraindicated in uncontrolled hypertension, certain cardiac conditions.",
+        "sources": [{"title": "MAPS/Lykos MDMA Trials", "url": "https://maps.org/mdma"}, {"title": "Mitchell et al., 2021 Nature Medicine", "url": "https://www.nature.com/articles/s41591-021-01336-3"}],
+    },
+    {
+        "id": "proc-ketamine-depression",
+        "name": "Ketamine Infusion Therapy for Depression",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Dissociative",
+        "therapeutic_areas": ["Mental_Health", "Depression"],
+        "description": "Off-label IV/intranasal ketamine for treatment-resistant depression and acute suicidality. Spravato (esketamine) is FDA-approved. Widely available in US clinics (500+). Rapid onset (hours) but requires maintenance sessions.",
+        "typical_us_cost_range": "$400-800 per infusion (6-8 initial, then maintenance)",
+        "indications": "Treatment-resistant depression, acute suicidality. Cardiovascular screening required. Contraindicated in uncontrolled hypertension, psychosis history.",
+        "sources": [{"title": "Spravato FDA Approval", "url": "https://www.fda.gov/drugs/postmarket-drug-safety-information-patients-and-providers/spravato-esketamine"}, {"title": "ASKP Ketamine Guidelines", "url": "https://askp.org"}],
+    },
+    {
+        "id": "proc-ibogaine-addiction",
+        "name": "Ibogaine Treatment for Opioid/Substance Use Disorder",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Atypical Psychedelic",
+        "therapeutic_areas": ["Mental_Health", "Addiction"],
+        "description": "Ibogaine, a psychoactive alkaloid from Tabernanthe iboga, used primarily for opioid detoxification/withdrawal and addiction interruption. Single prolonged session (24-36h). Significant cardiac risk (QT prolongation). Available in Mexico, Caribbean, and some non-US settings.",
+        "typical_us_cost_range": "$4,000-10,000 (international clinics)",
+        "indications": "Opioid use disorder with detoxification needs, polysubstance addiction. REQUIRES cardiac screening (QTc interval). Contraindicated in liver disease, cardiac arrhythmias. Medically supervised setting essential.",
+        "sources": [{"title": "Ibogaine Safety Review", "url": "https://pubmed.ncbi.nlm.nih.gov/28556842"}, {"title": "MAPS Ibogaine Research", "url": "https://maps.org/ibogaine"}],
+    },
+    {
+        "id": "proc-gene-crispr",
+        "name": "CRISPR-Based Gene Therapy (Somatic) for Genetic Disorders",
+        "modality": Modality.GENE_THERAPY,
+        "subcategory": "CRISPR/Cas9",
+        "therapeutic_areas": ["Genetics", "Hematology"],
+        "description": "Ex vivo or in vivo CRISPR gene editing for genetic disorders including sickle cell disease (Casgevy/Exa-cel approved), beta-thalassemia. Rapidly expanding pipeline. Casgevy FDA approved Dec 2023. First approved CRISPR therapy. Extremely high cost.",
+        "typical_us_cost_range": "$2,200,000+ (Casgevy list price)",
+        "indications": "Sickle cell disease with recurrent VOC, transfusion-dependent beta-thalassemia. Requires myeloablative conditioning. Expanding to other genetic conditions in trials.",
+        "sources": [{"title": "Casgevy FDA Approval", "url": "https://www.fda.gov/news-events/press-announcements/fda-approves-first-gene-therapies-treat-patients-sickle-cell-disease"}, {"title": "CRISPR Therapeutics Pipeline", "url": "https://crisprtx.com"}],
+    },
+    {
+        "id": "proc-gene-aa9",
+        "name": "AAV9-Mediated Gene Replacement Therapy",
+        "modality": Modality.GENE_THERAPY,
+        "subcategory": "Gene Replacement (AAV)",
+        "therapeutic_areas": ["Genetics", "Neurology"],
+        "description": "Adeno-associated virus (AAV) vector-based gene replacement for monogenic disorders. Zolgensma (SMA, onasemnogene abeparvovec) is the landmark AAV9 therapy. One-time administration with potential lifelong effect. Several approved: Luxturna (retinal dystrophy), Hemgenix (hemophilia B), Elevidys (DMD), etc.",
+        "typical_us_cost_range": "$2,100,000-3,500,000 (Zolgensma, Hemgenix)",
+        "indications": "Confirmed genetic diagnosis of SMA (SMN1 mutation) for Zolgensma, RPE65 retinal dystrophy, hemophilia B, Duchenne MD. Age/weight limits apply. Requires neutralizing antibody screening for AAV.",
+        "sources": [{"title": "Zolgensma FDA", "url": "https://www.fda.gov/vaccines-blood-biologics/zolgensma"}, {"title": "ASGCT Gene Therapy Database", "url": "https://patienteducation.asgct.org"}],
+    },
+    {
+        "id": "proc-stem-msc",
+        "name": "Mesenchymal Stem Cell (MSC) Therapy for Autoimmune/Inflammatory Conditions",
+        "modality": Modality.STEM_CELL,
+        "subcategory": "Mesenchymal Stem Cells",
+        "therapeutic_areas": ["Autoimmune", "Orthopedic"],
+        "description": "MSCs derived from bone marrow, adipose, or umbilical cord tissue. Anti-inflammatory and immunomodulatory properties. Used for osteoarthritis, Crohn's, MS, and numerous off-label indications. Regulatory status varies widely by jurisdiction. US: limited to approved trials and some orthopedic uses per FDA guidance.",
+        "typical_us_cost_range": "$5,000-25,000 (varies widely by clinic/jurisdiction)",
+        "indications": "Varies by country/clinic. Common: osteoarthritis, autoimmune conditions, inflammatory disorders. Screening required. Beware unproven claims and unregulated clinics.",
+        "sources": [{"title": "FDA Stem Cell Guidance", "url": "https://www.fda.gov/vaccines-blood-biologics/consumers-biologics/important-patient-and-consumer-information-about-regenerative-medicine-therapies"}, {"title": "ISSCR Guidelines", "url": "https://www.isscr.org"}],
+    },
+    {
+        "id": "proc-stem-car-t",
+        "name": "CAR-T Cell Therapy for Hematologic Malignancies",
+        "modality": Modality.STEM_CELL,
+        "subcategory": "CAR-T",
+        "therapeutic_areas": ["Oncology", "Hematology"],
+        "description": "Chimeric Antigen Receptor T-cell therapy: patient's own T-cells engineered to target cancer cells. Approved for B-ALL, DLBCL, multiple myeloma, and other blood cancers. One-time treatment with potential for durable remission. High cost, complex administration.",
+        "typical_us_cost_range": "$373,000-475,000 (drug cost only, not including hospitalization)",
+        "indications": "Relapsed/refractory B-cell ALL, DLBCL after 2+ lines, multiple myeloma after 4+ lines. Requires specialized CAR-T center with ICU capability. CRS and neurotoxicity risks managed in-hospital.",
+        "sources": [{"title": "FDA Approved CAR-T Products", "url": "https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products"}, {"title": "ASCO CAR-T Guidelines", "url": "https://www.asco.org"}],
+    },
+    {
+        "id": "proc-maid",
+        "name": "Medical Assistance in Dying (MAID) / Assisted Death",
+        "modality": Modality.ASSISTED_DYING,
+        "subcategory": "Voluntary Euthanasia / Physician-Assisted Suicide",
+        "therapeutic_areas": ["Palliative_Care", "End_of_Life"],
+        "description": "Medical assistance in dying encompasses physician-assisted suicide (patient self-administers) and voluntary euthanasia (clinician administers). Legal in Canada (MAID), Switzerland, Netherlands, Belgium, Spain, New Zealand, several US states, and others. Eligibility and safeguards vary significantly by jurisdiction. Canada's MAID expansion (2021-2027) has removed the requirement that death be reasonably foreseeable for some tracks.",
+        "typical_us_cost_range": "Varies (covered by public health in some jurisdictions, $0-1,500 privately)",
+        "indications": "Grievous and irremediable medical condition causing enduring and intolerable suffering. Specific criteria vary: residency requirements, terminal illness requirement, mental health eligibility (Canada 2027). Multiple assessments required.",
+        "sources": [{"title": "Canadian MAID Framework", "url": "https://www.canada.ca/en/health-canada/services/medical-assistance-dying.html"}, {"title": "Dignitas (Switzerland)", "url": "https://www.dignitas.ch"}, {"title": "Death with Dignity (US States)", "url": "https://deathwithdignity.org"}],
+    },
+    {
+        "id": "proc-peptide-bpc",
+        "name": "BPC-157 Pentadecapeptide Therapy",
+        "modality": Modality.PEPTIDE,
+        "subcategory": "Gastric Pentadecapeptide",
+        "therapeutic_areas": ["Gastrointestinal", "Orthopedic", "Wound_Healing"],
+        "description": "Body Protection Compound-157, a synthetic peptide derived from gastric juice protein. Promotes angiogenesis, accelerates wound/tendon/ligament healing, and shows protective effects in GI tract. Not FDA-approved. Widely used in functional/regenerative medicine but sold as 'research chemical' in US. Oral and injectable forms available. Evidence primarily preclinical with limited human trials.",
+        "typical_us_cost_range": "$50-200/month (compounding/research), $500-2,000+ for clinic protocols",
+        "indications": "Tendon/ligament injuries, inflammatory bowel conditions, gastric ulcers, leaky gut. Off-label use. Limited formal clinical evidence. Safety profile appears favorable in available studies but long-term data limited.",
+        "sources": [{"title": "BPC-157 Systematic Review", "url": "https://pubmed.ncbi.nlm.nih.gov/29168369"}, {"title": "Sikiric et al. Preclinical Data", "url": "https://pubmed.ncbi.nlm.nih.gov/32003467"}],
+    },
+    {
+        "id": "proc-peptide-thymosin",
+        "name": "Thymosin Alpha-1 (Thymalfasin) Immunomodulation",
+        "modality": Modality.PEPTIDE,
+        "subcategory": "Thymic Peptide",
+        "therapeutic_areas": ["Immunology", "Chronic_Infection"],
+        "description": "Synthetic 28-amino acid peptide identical to natural thymosin alpha-1. Modulates immune response, enhances T-cell function, and restores immune competence. Approved in 30+ countries (Zadaxin) for hepatitis B/C and as vaccine adjuvant. Used off-label for chronic infections, immune dysregulation, and cancer adjunct. Not FDA-approved in US.",
+        "typical_us_cost_range": "$200-800 per course (international), $500-3,000 (US compounding/research)",
+        "indications": "Chronic viral infections (HBV, HCV), immune deficiency, vaccine adjuvant in immunocompromised. Cancer immunomodulation adjunct. Screening for autoimmune conditions recommended.",
+        "sources": [{"title": "Zadaxin (Thymosin Alpha-1) Review", "url": "https://pubmed.ncbi.nlm.nih.gov/28166250"}, {"title": "Thymosin Alpha-1 Clinical Data", "url": "https://pubmed.ncbi.nlm.nih.gov/33577264"}],
+    },
+    {
+        "id": "proc-repro-ivf",
+        "name": "In Vitro Fertilization (IVF) with Genetic Testing (PGT)",
+        "modality": Modality.REPRODUCTIVE,
+        "subcategory": "Assisted Reproduction",
+        "therapeutic_areas": ["Reproductive_Health", "Genetics"],
+        "description": "IVF with preimplantation genetic testing for aneuploidy (PGT-A) or monogenic disorders (PGT-M). Enables embryo selection to avoid genetic disease transmission. Regulatory landscape varies: some countries restrict embryo genetic testing (Germany, Austria), others permissive (US, Mexico, Spain, Greece). Sex selection legally restricted in many jurisdictions.",
+        "typical_us_cost_range": "$12,000-25,000 per cycle (+$3,000-5,000 for PGT)",
+        "indications": "Infertility, recurrent pregnancy loss, advanced maternal age, known carrier status for genetic conditions. PGT-M for specific monogenic disorders. Varies by clinic and jurisdiction.",
+        "sources": [{"title": "ASRM Guidelines", "url": "https://www.asrm.org"}, {"title": "ESHRE PGT Consortium", "url": "https://www.eshre.eu"}],
+    },
+    {
+        "id": "proc-repro-surrogacy",
+        "name": "Gestational Surrogacy",
+        "modality": Modality.REPRODUCTIVE,
+        "subcategory": "Third-Party Reproduction",
+        "therapeutic_areas": ["Reproductive_Health"],
+        "description": "Gestational surrogacy where embryo is transferred to a surrogate who carries the pregnancy. Commercial surrogacy legal in parts of US (CA, NV, CT, etc.), Ukraine, Georgia, Colombia, Mexico (some states). Altruistic-only in Canada, UK, Australia. Completely banned in several EU countries. Complex legal landscape regarding parentage orders.",
+        "typical_us_cost_range": "$100,000-200,000 (US, total), $50,000-80,000 (international destinations)",
+        "indications": "Absent/compromised uterus, medical contraindication to pregnancy, recurrent IVF failure, same-sex male couples. Psychological screening, legal counsel, and agency coordination required.",
+        "sources": [{"title": "ASRM Surrogacy Guidance", "url": "https://www.asrm.org"}, {"title": "International Surrogacy Law Map", "url": "https://www.familylaw.co.uk"}],
+    },
+    {
+        "id": "proc-repurposed-ldn",
+        "name": "Low-Dose Naltrexone (LDN) for Chronic Inflammatory/Autoimmune Conditions",
+        "modality": Modality.REPURPOSED,
+        "subcategory": "Immunomodulator",
+        "therapeutic_areas": ["Autoimmune", "Chronic_Pain", "Neurology"],
+        "description": "Naltrexone at low doses (0.5-4.5mg) acts as a glial cell modulator and transient opioid receptor blockade, leading to upregulation of endogenous endorphins and anti-inflammatory effects. Off-label use for fibromyalgia, Crohn's, MS, chronic pain, ME/CFS, long COVID. Requires compounding pharmacy. Decades of clinical use with strong safety profile at low doses.",
+        "typical_us_cost_range": "$30-100/month (compounded)",
+        "indications": "Wide range of chronic inflammatory/autoimmune conditions. Contraindicated in current opioid use (requires washout). Evening dosing typical.",
+        "sources": [{"title": "LDN Research Trust", "url": "https://ldnresearchtrust.org"}, {"title": "Younger et al., LDN in Fibromyalgia", "url": "https://pubmed.ncbi.nlm.nih.gov/24526250"}],
+    },
+    {
+        "id": "proc-repurposed-methylene",
+        "name": "Methylene Blue (Pharmaceutical Grade) for Neuroprotection/Mitochondrial Dysfunction",
+        "modality": Modality.REPURPOSED,
+        "subcategory": "Metabolic Modulator",
+        "therapeutic_areas": ["Neurology", "Mitochondrial_Health"],
+        "description": "Methylene blue at low doses (0.5-4 mg/kg) acts as an alternative electron carrier in mitochondria, enhancing ATP production, reducing oxidative stress, and inhibiting tau aggregation. Being investigated for Alzheimer's (TauRx), bipolar disorder, and sepsis. Historical uses: malaria, methemoglobinemia. Pharmaceutical-grade required (NOT aquarium product).",
+        "typical_us_cost_range": "$50-150/month (compounded), varies by country",
+        "indications": "Off-label: mild cognitive impairment, bipolar depression, mitochondrial disorders. Contraindicated in G6PD deficiency, concomitant serotonergic drugs (MAOI risk at high doses). Requires pharmaceutical-grade sourcing and medical supervision.",
+        "sources": [{"title": "TauRx LMTM/Hydromethylthionine (Alzheimer's)", "url": "https://taurx.com"}, {"title": "Methylene Blue in Bipolar Depression", "url": "https://pubmed.ncbi.nlm.nih.gov/32134042"}, {"title": "Tucker et al., Methylene Blue Review", "url": "https://pubmed.ncbi.nlm.nih.gov/29507164"}],
+    },
+    {
+        "id": "proc-repurposed-semaglutide",
+        "name": "GLP-1 Receptor Agonists (Semaglutide / Tirzepatide) Beyond Diabetes",
+        "modality": Modality.REPURPOSED,
+        "subcategory": "Metabolic Hormone",
+        "therapeutic_areas": ["Metabolic_Health", "Addiction", "Cardiovascular"],
+        "description": "Originally for type 2 diabetes (Ozempic, Mounjaro), now FDA-approved for weight loss (Wegovy, Zepbound). Emerging evidence for addiction reduction (alcohol, opioids), cardiovascular risk reduction, neuroprotection (Alzheimer's), NAFLD/NASH, PCOS. Huge demand causing shortages. Compounded versions available but quality varies.",
+        "typical_us_cost_range": "$900-1,400/month (brand-name out-of-pocket), $200-500/month (compounded)",
+        "indications": "FDA: T2D, obesity (BMI≥30 or ≥27 with comorbidities). Off-label emerging: addiction, NAFLD, PCOS, prediabetes. Contraindicated in personal/family history of medullary thyroid carcinoma, MEN2.",
+        "sources": [{"title": "SELECT Trial (Cardiovascular)", "url": "https://pubmed.ncbi.nlm.nih.gov/37721765"}, {"title": "GLP-1 Addiction Evidence Review", "url": "https://pubmed.ncbi.nlm.nih.gov/37147437"}],
+    },
+    {
+        "id": "proc-repurposed-rapamycin",
+        "name": "Rapamycin (Sirolimus) for Longevity/Healthspan",
+        "modality": Modality.REPURPOSED,
+        "subcategory": "mTOR Inhibitor",
+        "therapeutic_areas": ["Aging", "Immunology"],
+        "description": "mTOR inhibitor with robust lifespan extension in every species tested. Approved as immunosuppressant (transplant) and for LAM (lymphangioleiomyomatosis). Off-label use for aging/longevity growing in popularity. PEARL trial (participatory evaluation of aging with rapamycin for longevity) ongoing. Intermittent dosing protocols emerging.",
+        "typical_us_cost_range": "$50-200/month (generic, varies by dose protocol), $300-1,000/month (longevity clinic protocols)",
+        "indications": "FDA: transplant immunosuppression, LAM. Off-label longevity: typically intermittent dosing (e.g., 5mg weekly or 6mg every 2 weeks). Requires monitoring (lipids, glucose, CBC). Contraindicated in active infection, planned surgery, immunocompromised state.",
+        "sources": [{"title": "PEARL Trial (Rapamycin Longevity)", "url": "https://www.rapamycintrial.org"}, {"title": "Blagosklonny, Rapamycin for Longevity Review", "url": "https://pubmed.ncbi.nlm.nih.gov/37061361"}, {"title": "Interventional Trial of Rapamycin in Aging (participant-led)", "url": "https://clinicaltrials.gov/ct2/show/NCT04488601"}],
+    },
+    {
+        "id": "proc-stem-exosome",
+        "name": "Exosome Therapy (Stem Cell-Derived) for Regeneration",
+        "modality": Modality.STEM_CELL,
+        "subcategory": "Extracellular Vesicles",
+        "therapeutic_areas": ["Regeneration", "Anti_Aging", "Orthopedic"],
+        "description": "Exosomes (extracellular vesicles) derived from MSCs, containing growth factors, mRNA, and miRNAs that mediate paracrine signaling. Used for skin rejuvenation, hair restoration, joint repair, and systemic anti-aging. Less regulated than whole stem cells in many jurisdictions. Not FDA-approved. Rapidly growing aesthetics/regenerative market.",
+        "typical_us_cost_range": "$2,000-10,000 per treatment (cosmetic), $5,000-20,000+ (orthopedic/systemic)",
+        "indications": "Off-label: aesthetic skin rejuvenation, hair loss, osteoarthritis, post-procedural healing. Source/cGMP quality of exosome products critical. Risks: contamination, immunogenicity. Regulatory status unclear in most jurisdictions.",
+        "sources": [{"title": "ISEV Position Statement", "url": "https://www.isev.org"}, {"title": "Exosome Therapy Review (Regenerative Medicine)", "url": "https://pubmed.ncbi.nlm.nih.gov/36104021"}],
+    },
+    {
+        "id": "proc-dmt-depression",
+        "name": "DMT (N,N-Dimethyltryptamine) Assisted Therapy for Depression",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Classical Psychedelic",
+        "therapeutic_areas": ["Mental_Health", "Depression"],
+        "description": "Short-acting (15-30 min) classical psychedelic. Proprietary extended-infusion formulation (SPL026/Small Pharma/incannex) in phase II trials for major depressive disorder. Naturally occurring in ayahuasca but synthetic DMT used clinically. Rapid onset/offset attractive for clinical delivery models. Colorado decriminalized personal use/growing 2022.",
+        "typical_us_cost_range": "Unknown (clinical trials only, $3,000-8,000 estimated for infusion protocols)",
+        "indications": "Major depressive disorder (phase II trials). Standard psychedelic contraindications: psychosis risk, uncontrolled hypertension. Typical psychedelic dosing model with preparation/integration.",
+        "sources": [{"title": "Small Pharma/Incannex DMT Program", "url": "https://www.incannex.com"}, {"title": "DMT for Depression Phase IIa Results", "url": "https://pubmed.ncbi.nlm.nih.gov/37096565"}],
+    },
+    {
+        "id": "proc-lsd-anxiety",
+        "name": "LSD-Assisted Psychotherapy for Anxiety Disorders",
+        "modality": Modality.PSYCHEDELICS,
+        "subcategory": "Classical Psychedelic",
+        "therapeutic_areas": ["Mental_Health", "Anxiety"],
+        "description": "LSD (lysergic acid diethylamide) administered in therapeutic setting. Historically used in psychiatry (1950s-60s) for anxiety, addiction, and existential distress. Modern renaissance: MindMed phase IIb for generalized anxiety disorder (MM-120). Switzerland permits compassionate use LSD therapy via BAG permits.",
+        "typical_us_cost_range": "$5,000-12,000 (Switzerland compassionate use), unknown for US if approved",
+        "indications": "Generalized anxiety disorder (phase IIb). Life-threatening illness-related anxiety. Standard contraindications. Requires experienced therapy team.",
+        "sources": [{"title": "MindMed MM-120 LSD for GAD", "url": "https://mindmed.co"}, {"title": "Swiss BAG Psychedelic Therapy Program", "url": "https://www.bag.admin.ch"}],
+    },
+]
+
+
+# ── Access Records ─────────────────────────────────────────────────────────
+
+ACCESS_RECORDS = [
+    # ── Oregon Psilocybin ──
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-us-or", "legal_status": LegalStatus.REGULATED_THERAPY, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Licensed psilocybin service centers operating under Oregon Psilocybin Services Act. Must be 21+. No prescription required; can self-refer. Administration session with licensed facilitator after preparation. Integration support included.",
+     "eligibility_requirements": "Must be 21+, Oregon residency NOT required (open to non-residents). No medical diagnosis required to access services (broad access model). Screening for contraindications by facilitator. Cannot be on certain interacting medications.",
+     "provider_requirements": "Licensed facilitator (OPS-trained and certified). Licensed psilocybin service center. Product must be OPS-tested psilocybin from licensed manufacturer. No medical license required for facilitators.",
+     "oversight_notes": "Oregon Health Authority (OHA) Psilocybin Services Section provides comprehensive regulation. Licensed manufacturers, testing labs, service centers, and facilitators. Strict product testing and labeling. DOSA (Drug Omnibus Safety and Accountability Act) enforcement framework.",
+     "estimated_cost_range_usd": "$1,500-3,500 per session (varies by center; group vs. individual; preparation/integration session fees may be additional)",
+     "cost_notes": "Costs are out-of-pocket (not covered by insurance). Lower than underground options and clinical trials due to less medical overhead (facilitators not required to be licensed clinicians). Prices expected to decrease with competition.",
+     "residency_travel_notes": "No residency requirement for clients. Can travel to Oregon specifically for services. Service centers in Portland, Eugene, Bend, and other cities. Clients must remain on-site for duration of session (typically 4-6 hours).",
+     "risk_notes": "Regulated product (tested for potency and contaminants). Licensed and trained facilitators. Emergency protocols required at service centers. Contraindicated in personal/family history of psychosis, certain cardiovascular conditions, concurrent lithium use. Challenging experiences can occur and require skilled facilitation.",
+     "arbitrage_summary": "Oregon offers the only state-regulated, legal psilocybin therapy program in the US. No diagnosis or prescription required. Open to non-residents. High regulatory quality. ~$2,000-3,500 per session vs. typical US underground $5,000+ or clinical trial requirements.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Oregon Psilocybin Services", "url": "https://www.oregon.gov/oha/PH/PREVENTIONWELLNESS/Pages/Psilocybin-Services.aspx"}, {"title": "OPS Administrative Rules", "url": "https://secure.sos.state.or.us/oard/displayDivisionRules.action?selectedDivision=4140"}]},
+
+    {"procedure_id": "proc-psilocybin-eol", "jurisdiction_id": "jur-us-or", "legal_status": LegalStatus.REGULATED_THERAPY, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Same regulatory pathway as general psilocybin services. No specific end-of-life pathway required; any qualified client 21+ can seek services for existential distress. Some service centers specialize in palliative contexts. Preparation and integration sessions tailored to goals.",
+     "eligibility_requirements": "21+. No terminal diagnosis required. Medical clearance for session recommended given potential comorbidities in this population.",
+     "provider_requirements": "Licensed OPS facilitator. Palliative care knowledge recommended but not required by regulation. Licensed service center.",
+     "oversight_notes": "Same OHA oversight as all psilocybin services. Additional consideration for medical stability in palliative populations. Service centers may have specific EOL experience.",
+     "estimated_cost_range_usd": "$1,500-3,500 per session",
+     "cost_notes": "Same pricing as general psilocybin services. No insurance coverage.",
+     "residency_travel_notes": "No residency requirement. Travel for EOL patients may require additional medical planning and support.",
+     "risk_notes": "Same risks as general psilocybin services plus: potential for drug interactions with common end-of-life medications, need for medical clearance given comorbidities. Emotional intensity may be high given confrontation with mortality.",
+     "arbitrage_summary": "One of few legal pathways globally for psilocybin therapy for EOL anxiety without requiring clinical trial enrollment or terminal diagnosis. Open access model.", "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Oregon Psilocybin Services", "url": "https://www.oregon.gov/oha/PH/PREVENTIONWELLNESS/Pages/Psilocybin-Services.aspx"}]},
+
+    # ── Colorado Psilocybin ──
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-us-co", "legal_status": LegalStatus.REGULATED_THERAPY, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Natural Medicine Health Act (Proposition 122). Regulated healing centers anticipated to open 2025+. Personal use/growing of psilocybin mushrooms decriminalized effective immediately (Dec 2022). Adults 21+ may possess, use, cultivate, and share psilocybin mushrooms (not sold).",
+     "eligibility_requirements": "21+. Healing center requirements TBD by DOR regulatory process. Personal use/growing: no license required. No commercial sale permitted under personal use decrim.",
+     "provider_requirements": "Licensed healing center facilitators (regulatory framework in development by DOR Natural Medicine Division). Personal cultivation/gifting permitted among adults without licensing.",
+     "oversight_notes": "Colorado Department of Regulatory Agencies (DORA) Natural Medicine Division developing rules. Dual system: regulated healing centers + decriminalized personal use. Regulatory framework modeled on cannabis but distinct.",
+     "estimated_cost_range_usd": "TBD (healing centers not yet operational). Personal cultivation: minimal cost (spores/substrate). Underground therapy: $1,000-3,000.",
+     "cost_notes": "Healing center pricing not yet established (est. 2025+). Personal cultivation substantially reduces cost barrier for those comfortable with self-directed use. Gifting circles emerging.",
+     "residency_travel_notes": "Colorado residency NOT required for healing center access. Personal use protections apply to any adult 21+ in Colorado borders regardless of residency.",
+     "risk_notes": "Personal use/growing: no oversight, quality control, or facilitation. Healing centers will provide regulated product and trained facilitation. Risks of unguided use higher. Challenging experiences without support may be destabilizing.",
+     "arbitrage_summary": "Unique dual model: regulated therapy + personal cultivation. Lowest-cost access to psilocybin therapy in US (near-zero for self-grown). Best for self-directed consumers comfortable without clinical oversight.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Colorado Natural Medicine Health Act", "url": "https://dnr.colorado.gov/natural-medicine"}, {"title": "Prop 122 Full Text", "url": "https://www.sos.state.co.us/pubs/elections/Initiatives/titleBoard/filings/2021-2022/58Final.pdf"}]},
+
+    {"procedure_id": "proc-dmt-depression", "jurisdiction_id": "jur-us-co", "legal_status": LegalStatus.DECRIMINALIZED, "oversight_quality": OversightQuality.LOW,
+     "access_pathway_details": "DMT-containing plants (and DMT itself) decriminalized under Prop 122 for personal possession, use, cultivation, and gifting. NOT a commercial or therapeutic framework — no licensed DMT healing centers. Clinical trials for synthetic DMT (Small Pharma/Incannex) occurring in other jurisdictions.",
+     "eligibility_requirements": "21+. Personal possession/use/growing only. No commercial sales. No regulated therapy program for DMT.",
+     "provider_requirements": "No regulated providers for DMT. Licensed healing center framework under development but initially focused on psilocybin only (other natural medicines may be added later).",
+     "oversight_notes": "Decriminalization model with no regulatory oversight for product quality, dosing, or session safety. All risks borne by consumer. Licensed centers may eventually include DMT in scope (Natural Medicine Advisory Board can recommend).",
+     "estimated_cost_range_usd": "Minimal for personal cultivation/extraction (spores/plant material). Underground/guided DMT experiences: varies widely ($500-3,000+).",
+     "cost_notes": "Personal extraction from plants dramatically reduces cost. No regulated market pricing available. Risk of impure/synthesized product in unregulated channels.",
+     "residency_travel_notes": "Same as psilocybin: protections apply to any adult in Colorado. Travel for personal use/growing is feasible.",
+     "risk_notes": "HIGH risk: No quality control, no medical screening, no trained facilitation, no emergency protocols. DMT's intense, rapid onset increases psychological risk without preparation and support. Contraindications (psychosis, cardiac) unchecked.",
+     "arbitrage_summary": "Decriminalized but unregulated. Only for highly self-directed individuals comfortable with underground or self-guided use. Clinical DMT therapy available in trials elsewhere. Wait for regulated healing center pathway for safer access.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Colorado Natural Medicine Advisory Board", "url": "https://dnr.colorado.gov/natural-medicine-advisory-board"}]},
+
+    # ── Australia ──
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-au", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "TGA rescheduled psilocybin and MDMA (July 2023) as Schedule 8 controlled drugs with authorized prescriber access for TRD and PTSD respectively. Must be prescribed by an authorized psychiatrist. Administered in medically controlled settings. NOT available at pharmacies. Strict TGA Special Access Scheme/Authorized Prescriber pathway.",
+     "eligibility_requirements": "Confirmed treatment-resistant depression (failed 2+ adequate trials of antidepressants). Australian residency/TGA SAS criteria. Authorized prescriber must determine suitability. Psychiatric evaluation, medical clearance. Contraindications same as other jurisdictions.",
+     "provider_requirements": "Authorized prescriber (psychiatrist registered with TGA). Must have specific training and ethics committee approval. Administration in medically supervised facility. Multi-disciplinary team required (psychiatrist, therapist, nursing).",
+     "oversight_notes": "TGA (Therapeutic Goods Administration) oversight. One of the most rigorous regulatory frameworks globally. Authorized Prescriber scheme requires institutional ethics committee approval, reporting obligations, adverse event tracking. Product must be GMP-manufactured.",
+     "estimated_cost_range_usd": "AU$10,000-20,000+ (USD $6,500-13,000+) per treatment course. Limited to no Medicare rebate currently. Most costs out-of-pocket.",
+     "cost_notes": "Very high due to medical infrastructure requirements (psychiatrist, facility, GMP product, multiple therapy sessions). Less than US clinical trials but more than Oregon model. No PBS subsidy yet — advocacy ongoing. Some private health insurance coverage possible.",
+     "residency_travel_notes": "Australian residency effectively required. SAS/Authorized Prescriber pathway not designed for medical tourism. Non-residents cannot easily access. Some clinical trials may accept international participants.",
+     "risk_notes": "Highest standard of medical oversight globally. Fully medicalized model minimizes physical risks. GMP product quality. Comprehensive screening and monitoring. Psychological risks managed in clinical setting.",
+     "arbitrage_summary": "Gold standard for regulated medical psychedelic access. Highest oversight quality. TGA rescheduling is globally significant precedent. But high cost, strict eligibility, residency requirement. Best for Australians with TRD who can afford it.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "TGA Psilocybin/MDMA Rescheduling", "url": "https://www.tga.gov.au/news/media-releases/change-classification-psilocybin-and-mdma-enable-prescribing-authorised-psychiatrists"}, {"title": "RANZCP Psychedelic Therapy Guidance", "url": "https://www.ranzcp.org"}]},
+
+    {"procedure_id": "proc-mdma-ptsd", "jurisdiction_id": "jur-au", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Same TGA rescheduling pathway as psilocybin. Authorized psychiatrist access only, specifically for PTSD. Published clinical protocols govern administration. 2-3 dosing sessions with extensive therapy. Requires same infrastructure: authorized prescriber, ethics approval, GMP product, medical facility.",
+     "eligibility_requirements": "Confirmed PTSD diagnosis (CAPS-5). Australian residency. Authorized prescriber assessment. Contraindications: uncontrolled hypertension, cardiovascular disease, certain liver conditions, psychosis history. Medication washout requirements.",
+     "provider_requirements": "Authorized psychiatrist with specific MDMA-AT training. Ethics committee approval. Medical facility with emergency capability. Co-therapist team (typically 2 therapists per session).",
+     "oversight_notes": "Equivalent TGA oversight to psilocybin. RANZCP clinical guidance. Robust adverse event monitoring. GMP MDMA required (manufactured under TGA license).",
+     "estimated_cost_range_usd": "AU$15,000-25,000+ (USD $10,000-16,500+) per treatment course",
+     "cost_notes": "High due to multi-session format (typically 3 MDMA sessions plus 12+ therapy sessions). Team-based delivery increases costs. No Medicare/PBS subsidy. Some private insurance coverage emerging.",
+     "residency_travel_notes": "Australian residency essentially required. Not designed for medical tourism. SAS pathway for non-residents extremely unlikely.",
+     "risk_notes": "Medicalized setting with significant safeguards. Cardiovascular monitoring during sessions. CRS-like symptoms possible but managed. Evidence shows strong safety profile in controlled trials when screening and monitoring conducted.",
+     "arbitrage_summary": "TGA rescheduling alongside psilocybin makes Australia the first country to formally regulate both MDMA and psilocybin as medicines for specific mental health conditions. High oversight, high cost, residency-limited.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "TGA MDMA Rescheduling", "url": "https://www.tga.gov.au/news/media-releases/change-classification-psilocybin-and-mdma-enable-prescribing-authorised-psychiatrists"}]},
+
+    # ── Próspera ZEDE ──
+    {"procedure_id": "proc-gene-crispr", "jurisdiction_id": "jur-hn-prospera", "legal_status": LegalStatus.RIGHT_TO_TRY, "oversight_quality": OversightQuality.LOW,
+     "access_pathway_details": "Próspera ZEDE has its own regulatory framework outside Honduran federal regulation. Biotech/gene therapy companies establishing operations. Minicircle (gene therapy startup) operating in Próspera for plasmid-based gene therapies. Light-touch regulation intended to attract innovation. Informed consent-based model.",
+     "eligibility_requirements": "Informed consent. Ability to pay out-of-pocket. Medical screening by treating provider in ZEDE. No insurance coverage. Must travel to Roatán.",
+     "provider_requirements": "Providers operating under Próspera ZEDE regulatory framework. Less prescriptive requirements than US/EU. Companies self-regulate with ZEDE oversight. Minicircle operating under their own protocols.",
+     "oversight_notes": "ZEDE internal regulatory system—light touch by design. Less rigorous than FDA, EMA, TGA. No independent ethics review required by foreign standards. Quality dependent on individual company standards. Patients bear significant responsibility for due diligence. ZEDE legality contested under Honduran constitutional law (2023-2024 challenges).",
+     "estimated_cost_range_usd": "Unknown/variable. Minicircle gene therapy: $25,000-50,000+ (experimental). Other providers/costs not publicly established.",
+     "cost_notes": "Significantly less than US-approved gene therapies ($2M+). Experimental nature means costs not standardized. Cash-pay model. Travel to Roatán adds $1,000-3,000.",
+     "residency_travel_notes": "Open to international patients. Medical tourism hub model. Travel to Roatán Island, Honduras. ZEDE status provides unique legal framework but also uncertainty given ongoing legal challenges in Honduras.",
+     "risk_notes": "HIGH RISK: Light-touch regulation. No independent safety monitoring by recognized international bodies. Product quality/manufacturing standards not verified by major regulators. Legal uncertainty around ZEDE's constitutional status. Limited recourse if complications arise. Informed consent model shifts risk to patient. Medical infrastructure on island limited for managing severe complications.",
+     "arbitrage_summary": "Próspera offers the most permissive regulatory environment globally for gene therapies, at potentially 50-100x less than US approved therapies. This comes with extreme risk: regulatory quality is LOW, legal status of ZEDE itself is contested, and patient protections minimal. Only appropriate as absolute last resort with full understanding of risks.",
+     "last_verified": date(2025, 5, 15),
+     "sources": [{"title": "Próspera ZEDE Overview", "url": "https://prospera.hn"}, {"title": "Minicircle Gene Therapy in Próspera", "url": "https://minicircle.io"}, {"title": "Honduras ZEDE Legal Challenges (Reuters)", "url": "https://www.reuters.com/world/americas/honduras-congress-votes-repeal-economic-development-zones-2023-11-01"}]},
+
+    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-hn-prospera", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.LOW,
+     "access_pathway_details": "Stem cell clinics can operate under ZEDE regulatory framework with less restriction than FDA. Informed consent-based model. Cord blood and MSC therapies marketed for anti-aging and regenerative indications. GARM Clinic and others operating stem cell services.",
+     "eligibility_requirements": "Informed consent. Ability to pay. ZEDE entry/tourism facilitation. Screening by treating clinic (standards vary).",
+     "provider_requirements": "ZEDE-registered clinics. No FDA-equivalent BLA/MAA requirement. Variable quality across providers. Some clinics have international accreditation (e.g., GARM claims Best Clinic accreditation).",
+     "oversight_notes": "ZEDE regulatory framework allows operations that would require IND/BLA in US. No centralized cell therapy regulation to international standards. Individual clinic quality varies significantly. Due diligence on clinic and provider essential.",
+     "estimated_cost_range_usd": "$5,000-30,000+ (varies by treatment, clinic, number of infusions)",
+     "cost_notes": "Lower than US-based MSC clinics operating in regulatory gray zones. Still cash-pay. No insurance. Travel/housing on Roatán additional.",
+     "residency_travel_notes": "Open to international patients. Roatán has international airport with direct flights from US cities. Tourism infrastructure exists (resorts, hotels). ZEDE entry managed separately from Honduran immigration.",
+     "risk_notes": "Variable cell product quality (source, processing, characterization). No FDA-level oversight. Not covered by US patient protections. Legal recourse limited in ZEDE/Honduras legal system. Infection, immunogenicity, and tumorigenicity risks with uncharacterized cell products. Medical evacuation for severe complications requires additional planning/cost.",
+     "arbitrage_summary": "Accessible stem cell therapies at lower cost than US. Vastly less oversight — HIGH risk. Only acceptable with extensive due diligence on specific clinic, product source, and protocol. Best for patients who have exhausted regulated options and fully understand risk tradeoff.",
+     "last_verified": date(2025, 5, 15),
+     "sources": [{"title": "Próspera Medical Services Guide", "url": "https://prospera.hn/medical-services"}]},
+
+    # ── Canada (MAID) ──
+    {"procedure_id": "proc-maid", "jurisdiction_id": "jur-ca", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Medical Assistance in Dying (MAID) legal nationwide since 2016 (Bill C-14), expanded 2021 (Bill C-7). Two tracks: Track 1 (death reasonably foreseeable) and Track 2 (death NOT reasonably foreseeable, but grievous and irremediable condition). Mental illness as sole condition delayed to 2027. Two methods: clinician-administered (IV) or self-administered (oral). Publicly funded under provincial health plans.",
+     "eligibility_requirements": "Canadian resident with provincial health coverage (minimum residency period varies by province, typically 3-12 months). 18+. Capable of making healthcare decisions. Grievous and irremediable medical condition causing enduring and intolerable suffering. Two independent assessments by medical/nurse practitioners. 90-day assessment period for non-foreseeable death track. Written request with independent witness.",
+     "provider_requirements": "Medical doctor or nurse practitioner. Two independent assessors, one of whom may be the provider. No specialty requirement but relevant expertise expected. Pharmacist for oral medications or clinician for IV administration. Conscientious objection permitted; must refer.",
+     "oversight_notes": "Federal MAID legislation with provincial health authority oversight. Reporting requirements for every MAID provision to federal monitoring system. Annual reports to Parliament. Robust safeguards: 2 independent assessments, 90-day reflection period (Track 2), informed consent verification at time of provision, independent witness. Some disability rights groups raise concerns about safeguards adequacy.",
+     "estimated_cost_range_usd": "$0 (publicly covered under provincial health plans for eligible residents)",
+     "cost_notes": "One of very few access records with $0 direct cost. Covered by Canadian Medicare. Medications, assessments, and provision all publicly funded. Travel/accommodation for non-residents during residency period: $2,000-10,000+ depending on length of stay.",
+     "residency_travel_notes": "Must establish Canadian residency (provincial health coverage). Not available for short-term medical tourists. Residency establishment typically requires 3-12 months and intent to reside. Once residency established, no citizenship requirement. Some international patients relocating to Canada specifically for MAID access (long-term planning required).",
+     "risk_notes": "Extremely safe procedural delivery in medical setting. Primary risks relate to decision-making certainty (ensuring it's truly autonomous and enduring). Safeguards robust. Contraindications: inability to consent at time of provision (must be able to confirm consent immediately before provision, except in cases of prior arrangement for loss of capacity—rules vary).",
+     "arbitrage_summary": "Canada offers the most progressive MAID framework globally: no terminal illness requirement (Track 2), non-residents can access after establishing residency, 100% publicly funded, high oversight quality. Best option for non-terminal patients with grievous conditions causing intolerable suffering who are willing/able to establish residency.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Health Canada MAID", "url": "https://www.canada.ca/en/health-canada/services/medical-assistance-dying.html"}, {"title": "Bill C-7 (2021) MAID Expansion", "url": "https://www.parl.ca/DocumentViewer/en/43-2/bill/C-7/royal-assent"}, {"title": "MAID Annual Reports", "url": "https://www.canada.ca/en/health-canada/services/medical-assistance-dying/annual-reports.html"}]},
+
+    # ── Switzerland (Assisted Dying) ──
+    {"procedure_id": "proc-maid", "jurisdiction_id": "jur-ch", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Assisted suicide legal under Swiss Criminal Code (Art. 115) when performed without selfish motives. Non-profit right-to-die organizations (Dignitas, EXIT, Lifecircle, Pegasos) assess eligibility and facilitate. Self-administration of prescribed lethal medication required (IV line with bite-valve or oral solution). Must be mentally competent at time of act. No requirement for terminal illness—'weariness of life' accepted by some organizations.",
+     "eligibility_requirements": "Mental capacity for rational decision-making at time of act. Medical condition causing intolerable suffering (interpretation varies by organization: Dignitas accepts wide range including severe chronic illness, mental illness in some cases; others more restrictive). Swiss residency NOT required for Dignitas and Pegasos (accept international clients). EXIT and Lifecircle require Swiss residency. Two medical assessments typically required (one by Swiss doctor for Dignitas).",
+     "provider_requirements": "Right-to-die organization staff (non-medical facilitation role). Swiss physician for prescription. Patient must self-administer. Organizations provide preparation, support, and space. Legal witness present. Police notification after death; investigation standard procedure.",
+     "oversight_notes": "Swiss regulatory model unusual: assisted suicide permitted by criminal code provision rather than healthcare legislation. Oversight occurs through police/prosecutor investigation after each death rather than healthcare regulatory bodies. Cantonal variations in practice. Medical ethics guidelines from Swiss Academy of Medical Sciences. Some medical organizations opposed; others supportive. Less systematic oversight than Canadian MAID model—more decentralized.",
+     "estimated_cost_range_usd": "Dignitas: CHF 7,500-10,500 (USD $8,500-12,000) for preparation, assessment, and accompaniment. Pegasos: CHF 10,000-12,000 (USD $11,300-13,600). Additional: travel, accommodation, Swiss medical assessment fees.",
+     "cost_notes": "Significant cost barrier (all out-of-pocket). Cost covers: membership, assessments, Swiss medical consultation, prescription, accompaniment, cremation/administrative costs. International clients pay premium. Swiss residents pay less through EXIT (CHF 40 annual membership + small supplementary cost).",
+     "residency_travel_notes": "Dignitas and Pegasos explicitly accept international clients—No Swiss residency required. Clients travel to Zurich (Dignitas) or Basel (Pegasos). Must stay 1-3 days for assessments. Accommodation and travel additional. Some clients combine with tourism (controversial practice, organizations may refuse if suspected).",
+     "risk_notes": "Psychological: decision-making under stress of travel. Legal: death investigation by Swiss authorities standard; no prosecution if all criteria met. Process highly reliable when performed by established organizations. Medication effects well-understood (pentobarbital). Some reports of prolonged process if swallowing difficulty. No physician present at moment of death in Dignitas model (contrast with some other organizations).",
+     "arbitrage_summary": "Switzerland is the primary global destination for international assisted suicide. No terminal illness requirement. No residency requirement (Dignitas/Pegasos). High oversight by Swiss legal standards. $8,500-13,600 cost. Best for those with conditions causing unbearable suffering who cannot access MAID in home country and can afford international option.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Dignitas - Accompanied Suicide", "url": "https://www.dignitas.ch"}, {"title": "Pegasos Swiss Association", "url": "https://pegasos-association.com"}, {"title": "Swiss Criminal Code Art. 115", "url": "https://www.fedlex.admin.ch/eli/cc/54/757_781_799/en"}, {"title": "EXIT Swiss", "url": "https://exit.ch"}]},
+
+    # ── Switzerland (Psychedelics) ──
+    {"procedure_id": "proc-lsd-anxiety", "jurisdiction_id": "jur-ch", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Swiss Federal Office of Public Health (BAG) issues exceptional permits for psychedelic therapy (LSD, psilocybin, MDMA) on compassionate use basis. Treating psychiatrist/physician applies to BAG for individual patient authorization. Requires documentation that conventional treatments have failed. Administration in medical/psychotherapeutic setting. Growing number of authorized practitioners.",
+     "eligibility_requirements": "Swiss residency (typically). Documented failure of conventional treatments. Specific condition with some evidence base for psychedelic therapy. Medical and psychiatric clearance. Psychotic disorders excluded. BAG review and approval required per patient.",
+     "provider_requirements": "Swiss-licensed physician (typically psychiatrist). Must apply to BAG for each patient. Experience/training in psychedelic therapy expected but not formally credentialed. Psychotherapeutic training recommended. Medical setting capable of monitoring.",
+     "oversight_notes": "BAG (Federal Office of Public Health) permit system. Case-by-case review. Growing experience base since mechanism established ~2014. Not a formal approval pathway but a compassionate use exception. High-quality Swiss medical infrastructure. Published outcome data being accumulated (retrospective analyses show favorable safety/efficacy).",
+     "estimated_cost_range_usd": "CHF 5,000-15,000 (USD $5,600-17,000) per treatment course. Some covered by Swiss health insurance (varies by canton and insurer).",
+     "cost_notes": "Significant variation. Some Swiss basic insurance covers parts when authorized by BAG. Supplementary insurance may cover psychotherapy components. Cash-pay if insurance denied. Less expensive than Australian model.",
+     "residency_travel_notes": "Swiss residency typically required for BAG permits. Non-residents cannot easily access. Some specialized clinics may accept international patients outside BAG system (less oversight). Switzerland as medical tourism destination limited for this pathway.",
+     "risk_notes": "Excellent medical infrastructure. Swiss healthcare quality among highest globally. BAG oversight ensures baseline standards. Psychological risks standard for psychedelic therapy. Cardiovascular monitoring standard.",
+     "arbitrage_summary": "Switzerland offers the most established compassionate use psychedelic therapy pathway globally (~10 years of operation). High quality but residency-restricted. Best model for how regulated psychedelic therapy can work in a Western healthcare system.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Swiss BAG - Exceptional Authorization for Psychedelics", "url": "https://www.bag.admin.ch"}, {"title": "Swiss Medical Association Psychedelic Guidelines", "url": "https://www.fmh.ch"}]},
+
+    # ── Canada (Psychedelics) ──
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-ca", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Health Canada Special Access Programme (SAP) allows physicians to request access to restricted drugs (psilocybin, MDMA) for serious/life-threatening conditions when conventional treatments have failed. Section 56 exemptions under CDSA provide another pathway. Growing number of approved requests (2020 onwards). Alberta and Quebec have regulated psychedelic therapy programs in development.",
+     "eligibility_requirements": "Canadian residency (provincial health coverage). Serious or life-threatening condition. Failed, intolerable, or unavailable conventional treatments. Physician must apply to Health Canada with clinical rationale and safety plan. Psychiatric assessment. Drug sourcing plan. Informed consent.",
+     "provider_requirements": "Canadian-licensed physician (typically psychiatrist). Healthcare facility with monitoring capability. Multidisciplinary team recommended. Therapy component (preparation/integration) required but not always formally credentialed. Drug sourcing through Health Canada-authorized channels.",
+     "oversight_notes": "Health Canada SAP oversight. Less documented than Australian TGA pathway but operational since 2020. Increasing number of approved applications. Robust Canadian healthcare infrastructure provides baseline safety. Provincial variations in implementation. Alberta's program is most developed. Section 56 pathway has been used for end-of-life patients (TheraPsil advocacy).",
+     "estimated_cost_range_usd": "CAD $5,000-12,000 (USD $3,700-8,800). Some costs covered by provincial health (physician visits). Drug and therapy costs typically out-of-pocket. TheraPsil advocacy model reduces costs (volunteer therapist model for some patients).",
+     "cost_notes": "More affordable than Australian model. Provincial health coverage for medical components. SAP pathway reduces administrative burden costs. Some non-profit facilitation (TheraPsil) helps connect patients with providers at reduced cost.",
+     "residency_travel_notes": "Canadian residency required for SAP/Section 56 pathways. Not available for medical tourists. Canadian healthcare residency establishment requires 3+ months typically.",
+     "risk_notes": "Canadian healthcare quality is high. SAP approval ensures baseline safety planning. Drug sourcing through Health Canada channels ensures product quality. Psychological risks standard for psychedelic therapy. Monitoring in healthcare facility reduces medical risks.",
+     "arbitrage_summary": "More accessible and affordable than Australian pathway, but less structured and with fewer approved patients. SAP model is physician-driven rather than drug-company-driven. Good balance of oversight quality and access for Canadians who qualify.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Health Canada SAP for Psychedelics", "url": "https://www.canada.ca/en/health-canada/services/drugs-health-products/special-access-programme-drugs.html"}, {"title": "TheraPsil", "url": "https://therapsil.ca"}]},
+
+    # ── Mexico (Stem Cells / Ibogaine) ──
+    {"procedure_id": "proc-stem-msc", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.VARIABLE,
+     "access_pathway_details": "Mexico has a large medical tourism industry for stem cell therapies. COFEPRIS (Mexican FDA) regulates but enforcement is inconsistent. Many clinics operate with minimal oversight, marketing unproven stem cell treatments. Quality varies dramatically—from legitimate medical centers to outright scams. Tijuana, Cancún, and Mexico City are major hubs.",
+     "eligibility_requirements": "Ability to pay. Passport/tourist visa (US citizens: 6-month tourist card on arrival). Clinic-specific screening (quality varies). Most clinics accept nearly all patients regardless of indication. Beware: 'no medical condition too complex' marketing is a red flag.",
+     "provider_requirements": "COFEPRIS registration theoretically required but enforcement inconsistent. No equivalent of FDA BLA/IND process. Some clinics have international accreditation (JCI, etc.), many do not. Physician credentials variable; verify independently.",
+     "oversight_notes": "COFEPRIS (Comisión Federal para la Protección contra Riesgos Sanitarios) has regulatory authority but limited enforcement capacity. Private clinics largely self-regulate. Significant variation in quality—some excellent, some dangerous. Medical tourism industry self-promotes without independent quality auditing. No centralized patient outcome tracking.",
+     "estimated_cost_range_usd": "$3,000-25,000+ (Tijuana/Cancún clinics). Wide range reflects quality and indication variation.",
+     "cost_notes": "Generally 50-70% less than US-based stem cell clinics (which are also minimally regulated). Cash-pay. No insurance coverage. Medical tourism packages include travel/lodging at some clinics. Hidden costs possible (complication management, extended stays).",
+     "residency_travel_notes": "Easy travel from US (Tijuana: San Diego border crossing; Cancún: direct flights from most US cities). No residency requirement. Tourist visa on arrival for US/Canadian/EU citizens. Many clinics cater specifically to English-speaking international patients. Some provide airport transfer and accommodation coordination.",
+     "risk_notes": "HIGH RISK due to variable regulation. Documented cases of serious adverse events including infections, tumor formation, and death from unregulated stem cell products. Counterfeit or contaminated products documented. Post-treatment complication management may be inadequate. Legal recourse limited for foreign patients. Verify: product source (autologous vs. allogeneic, cord blood vs. adipose), processing standards, clinic track record, physician credentials.",
+     "arbitrage_summary": "Lowest-cost accessible stem cell therapies near US. Regulatory quality VARIABLE (from good to dangerous). Only for patients willing to invest significant due diligence. Verify specific clinic, physician, cell product, and outcomes data. Avoid clinics making universal claims. Consider Prolotherapy/PRP as safer first-line regenerative option available in US.",
+     "last_verified": date(2025, 6, 1),
+     "sources": [{"title": "COFEPRIS", "url": "https://www.gob.mx/cofepris"}, {"title": "FDA Warning: Stem Cell Tourism Risks", "url": "https://www.fda.gov/consumers/consumer-updates/fda-warns-about-stem-cell-therapies"}, {"title": "CDC Stem Cell Tourism Infections Report", "url": "https://wwwnc.cdc.gov/eid/article/29/2/22-0980_article"}]},
+
+    {"procedure_id": "proc-ibogaine-addiction", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.VARIABLE,
+     "access_pathway_details": "Baja California and other regions host numerous ibogaine clinics for addiction treatment. Ibogaine unregulated at federal level—legal gray zone. Some clinics operate with medical supervision (MD on staff, cardiac monitoring), others do not. Significant variation in safety protocols. Rosarito/Tijuana and Cancún areas are primary hubs.",
+     "eligibility_requirements": "Opioid or other substance use disorder. MUST have cardiac screening (QTc interval, electrolytes, LFTs) before treatment. Reputable clinics require pre-screening EKG and labs. Many clinics do NOT have adequate screening. 18+. Ability to travel to Mexico.",
+     "provider_requirements": "Mexican medical license for MD-supervised clinics. Some clinics staffed by non-physicians (high risk). No formal ibogaine certification required. International ibogaine provider network (GITA) has training standards but voluntary. Cardiac monitoring equipment (continuous EKG, defibrillator, crash cart) essential—not all clinics have this.",
+     "oversight_notes": "No formal regulatory framework for ibogaine in Mexico. COFEPRIS does not regulate ibogaine as a medicine. Clinics operate in regulatory vacuum. Safety dependent entirely on individual clinic protocols. GITA (Global Ibogaine Therapy Alliance) provides voluntary guidelines. No government inspection or accreditation for ibogaine specifically.",
+     "estimated_cost_range_usd": "$3,000-8,000 for 5-7 day treatment program. Medical-supervised clinics: $6,000-12,000. Luxury/resort-style: $12,000-20,000.",
+     "cost_notes": "Significantly less than US residential addiction treatment ($30,000-100,000). Cash-pay. No insurance coverage. Travel costs additional. Some clinics offer scholarships/reduced rates.",
+     "residency_travel_notes": "Easy travel from US (San Diego/Tijuana crossing common). No visa issues for short stays. Many clinics provide transportation from border/airport. Recovery time after ibogaine session (24-48h of reduced mobility) before travel home recommended.",
+     "risk_notes": "SIGNIFICANT CARDIAC RISK: Ibogaine causes QT prolongation, bradycardia, and atropine-resistant bradycardia. 10+ documented fatalities at ibogaine clinics, primarily cardiac. MUST verify: continuous cardiac monitoring, MD present, emergency medications/defibrillator on-site, pre-treatment cardiac clearance, electrolyte monitoring during treatment. Liver toxicity reported. Seizures in some cases. Drug interactions (especially with opioids/alcohol during treatment). Post-treatment relapse risk without adequate aftercare planning.",
+     "arbitrage_summary": "Ibogaine offers rapid opioid detoxification unmatched by conventional treatments. Potentially transformative for addiction but with documented mortality risk. Mexico clinics: variable quality, must verify cardiac safety protocols and physician presence. Cost accessible compared to US alternatives. Best for those who have exhausted conventional treatment and can verify clinic safety protocols independently.",
+     "last_verified": date(2025, 6, 1),
+     "sources": [{"title": "Ibogaine Mortality Review", "url": "https://pubmed.ncbi.nlm.nih.gov/28556842"}, {"title": "GITA Clinical Guidelines", "url": "https://www.ibogainealliance.org"}, {"title": "Ibogaine Cardiac Safety Review", "url": "https://pubmed.ncbi.nlm.nih.gov/31424396"}]},
+
+    # ── Ketamine (US Federal Right to Try / Clinical Trials) ──
+    {"procedure_id": "proc-ketamine-depression", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Esketamine (Spravato) FDA-approved for TRD and suicidality. IV ketamine used widely off-label. Available in all 50 states through ketamine clinics. REMS program for Spravato (must be administered in certified healthcare setting with 2-hour monitoring). Off-label IV ketamine: no REMS requirement but standards vary by clinic. Ketamine is a Schedule III controlled substance.",
+     "eligibility_requirements": "Spravato: TRD (failed 2+ antidepressants) or MDD with acute suicidal ideation. Contraindicated in aneurysm/vascular conditions, AV malformation, pregnancy. IV ketamine: broader off-label use (chronic pain, PTSD, etc.) per clinic discretion. Psychiatric assessment. Medical screening (BP, cardiac history).",
+     "provider_requirements": "Spravato: REMS-certified healthcare setting, prescriber enrolled in REMS program, pharmacy certification. On-site monitoring for 2 hours. IV ketamine: typically MD/DO/NP supervision (varies by state). Anesthesiology, psychiatry, or pain management background common. American Society of Ketamine Physicians (ASKP) provides guidelines.",
+     "oversight_notes": "FDA-approved for Spravato (intranasal). DEA Schedule III oversight. REMS program for Spravato ensures standardized monitoring. Off-label IV ketamine: less regulated; clinic quality varies. State medical boards oversee IV ketamine practices. ASKP provides voluntary guidelines. Generally higher oversight quality for Spravato vs. off-label IV.",
+     "estimated_cost_range_usd": "Spravato: $590-885 per session (drug cost) + administration/monitoring ($200-500). Insurance coverage common for FDA indication. IV ketamine: $400-800 per infusion (usually 6 initial, then boosters). Rarely covered by insurance for depression.",
+     "cost_notes": "Spravato has insurance pathway (most commercial, Medicare, some Medicaid). Manufacturer copay assistance available. IV ketamine: cash-pay model. Some clinics offer packages. Total initial course (6-8 sessions): IV $2,400-6,400, Spravato $4,700-11,000 (pre-insurance).",
+     "residency_travel_notes": "Available throughout US. Non-residents can access through cash-pay clinics. No US residency requirement for cash-pay services. Medical tourism possible but requires extended stay (2-3 weeks for induction series).",
+     "risk_notes": "Dissociative effects during treatment (generally well-tolerated). BP elevation (transient). Nausea prevented with antiemetics. Bladder toxicity with chronic frequent use (ketamine cystitis)—rare with depression protocols. Abuse potential (Schedule III). Sedation; must have driver/escort after treatment. REMS monitoring for Spravato standardizes acute risk management.",
+     "arbitrage_summary": "Most widely available psychedelic-adjacent treatment in US. Insurance coverage for Spravato is a key differentiator. Rapid onset for suicidality is unmatched. Cost varies insurance vs. cash-pay. Quality generally good. Best first-line psychedelic treatment option due to availability and insurance coverage.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Spravato Prescribing Information", "url": "https://www.janssenlabels.com/package-insert/product-monograph/prescribing-information/SPRAVATO-pi.pdf"}, {"title": "ASKP Ketamine Guidelines", "url": "https://askp.org/guidelines"}]},
+
+    # ── IV Ketamine (Oregon / Colorado for comparison) ──
+    {"procedure_id": "proc-ketamine-depression", "jurisdiction_id": "jur-us-or", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Same US federal framework. Ketamine clinics operating in Portland, Eugene, Bend, and other Oregon cities. Additional relevance: Oregon has overlapping expertise from psilocybin facilitator community. Some practitioners offer both ketamine and psilocybin-adjacent therapy models.",
+     "eligibility_requirements": "Same as US federal for Spravato (REMS). Oregon-specific: some clinics integrate with broader psychedelic therapy community for preparation/integration. Psychiatric and medical screening standard.",
+     "provider_requirements": "Same as federal: MD/DO/NP oversight. Some ketamine clinics employ or collaborate with psilocybin-trained facilitators for therapy integration. ASKP and Oregon Medical Board oversight.",
+     "oversight_notes": "Same REMS for Spravato. Oregon Medical Board for IV practices. Integration with broader Oregon psychedelic community provides additional therapy resources not typically available at ketamine clinics in other states.",
+     "estimated_cost_range_usd": "$350-650 per IV infusion (competitive market in Portland). Same Spravato insurance pathways.",
+     "cost_notes": "Slightly lower IV ketamine pricing compared to national average due to competitive Portland market. Some clinics offer sliding scale.",
+     "residency_travel_notes": "Same as federal: accessible to all. Oregon's outdoor/nature setting may appeal to those wanting therapeutic environment. No residency requirement for cash-pay.",
+     "risk_notes": "Same as federal. Oregon's integration with psychedelic community may enhance therapeutic context and integration support.",
+     "arbitrage_summary": "Oregon's ketamine clinics offer competitive pricing and unique integration with the broader psychedelic therapy ecosystem. Good option for those also considering psilocybin services who want integrated care.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Spravato Prescribing Information", "url": "https://www.janssenlabels.com/package-insert/product-monograph/prescribing-information/SPRAVATO-pi.pdf"}]},
+
+    # ── GLP-1 Agonists ──
+    {"procedure_id": "proc-repurposed-semaglutide", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "FDA-approved for T2D (Ozempic, Rybelsus, Mounjaro) and weight loss (Wegovy, Zepbound). Available by prescription in all 50 states. Compounded versions available during shortages. Prior authorization often required by insurers. Telehealth prescribing growing (Weight Watchers Clinic, Ro, etc.).",
+     "eligibility_requirements": "Wegovy/Zepbound: BMI ≥30, or ≥27 with weight-related comorbidity. Ozempic/Mounjaro: T2D diagnosis. Contraindicated: personal/family history of medullary thyroid carcinoma, MEN2. Caution: pancreatitis history, gallbladder disease.",
+     "provider_requirements": "Licensed prescriber (MD, DO, NP, PA). No REMS/restricted distribution. Standard pharmacy. Telehealth prescribing permitted in all states (asynchronous and synchronous models). Compounding pharmacies for shortage alternatives (must meet USP standards).",
+     "oversight_notes": "FDA-approved. Standard pharmacovigilance. No REMS program. Direct-to-consumer marketing heavy—FDA monitoring advertising claims. Compounded versions: less oversight, verify pharmacy accreditation (PCAB, state board). Counterfeit products a growing concern (buy only from licensed pharmacies).",
+     "estimated_cost_range_usd": "Brand: $900-1,400/month (list price). Insurance coverage variable (commercial: prior auth, employer opt-in required). Medicare: covered for T2D, NOT for weight loss (Medicare Part D cannot cover weight loss drugs by law). Manufacturer savings cards: $25-500/month. Compounded: $200-500/month.",
+     "cost_notes": "Insurance coverage is the key cost differentiator. Self-insured employers increasingly covering. Some state Medicaid programs cover. Manufacturer coupons significantly reduce cost for commercially insured. Cash-pay for weight loss is cost-prohibitive for many at list price.",
+     "residency_travel_notes": "US prescription required (prescriber must be licensed in patient's state for telehealth). International travel for GLP-1s generally not sensible given US availability and cost (US is actually more accessible than many countries where approvals more limited or healthcare systems restrict prescribing). Some cross-border pharmacy tourism for lower prices (Canada, Mexico) but legal status of importation varies.",
+     "risk_notes": "GI side effects common (nausea, vomiting, diarrhea) but typically transient. Rare: pancreatitis, gallbladder disease, ileus. Thyroid C-cell tumors in rodents (human relevance unclear, black box warning). Muscle loss with rapid weight loss (mitigated with resistance training and adequate protein). Ozempic face (facial fat loss) cosmetic concern only. Compounded: risks associated with non-FDA-reviewed products (purity, potency, sterility).",
+     "arbitrage_summary": "GLP-1s are widely available in US with insurance coverage expanding. Cost barriers primarily for uninsured/underinsured. 503(b) compounding pharmacies provide legitimate lower-cost alternatives during shortages. Beware counterfeit and unlicensed sellers. Clinical trial tourism for newer agents (triple agonists, etc.) may be relevant for some patients.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Wegovy Prescribing Information", "url": "https://www.novo-pi.com/wegovy.pdf"}, {"title": "Zepbound Prescribing Information", "url": "https://uspl.lilly.com/zepbound/zepbound.html"}, {"title": "FDA Compounding and GLP-1s", "url": "https://www.fda.gov/drugs/human-drug-compounding"}]},
+
+    # ── Rapamycin (Mexico / Próspera interest) ──
+    {"procedure_id": "proc-repurposed-rapamycin", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.PHYSICIAN_DISCRETION, "oversight_quality": OversightQuality.MEDIUM,
+     "access_pathway_details": "FDA-approved for transplant immunosuppression and LAM. Off-label for aging/longevity: growing number of physicians prescribing through telemedicine platforms (AgelessRx, Healthspan, etc.). Must be prescribed by licensed physician. Generic available (Sirolimus tablets). Intermittent dosing protocols (weekly/bi-weekly) advocated by longevity community. PEARL trial (participant-led aging trial) ongoing.",
+     "eligibility_requirements": "Off-label use at physician discretion. Typically: 40+ years old for longevity use. Screening: CBC, CMP, lipids, HbA1c. Contraindicated: active infection, planned surgery, concurrent immunosuppression, pregnancy/lactation. Caution: pre-existing hyperlipidemia (rapamycin may worsen), impaired wound healing.",
+     "provider_requirements": "Licensed physician. Telemedicine platforms expanding access. Some primary care physicians prescribe, but longevity specialty clinics are primary source. Regular lab monitoring (every 3-6 months typical). No REMS or restricted distribution for generic sirolimus.",
+     "oversight_notes": "Off-label prescribing is legal and standard medical practice. FDA does not regulate off-label use. Medical board oversight of individual physicians. Quality dependent on provider knowledge. Telemedicine platforms: variable quality, some function more as prescription mills than comprehensive longevity medicine practices. Verify physician credentials and monitoring protocols.",
+     "estimated_cost_range_usd": "Generic sirolimus: $50-150/month (varies by dose, pharmacy, insurance). Telemedicine platform fees: $100-300 initial consult, $50-150/month membership. Lab monitoring: $100-400 per panel (may be covered by insurance). Compounded low-dose formulations: $60-200/month.",
+     "cost_notes": "Relatively affordable compared to other longevity/anti-aging interventions. Generic availability keeps costs low. Telemedicine platforms add convenience fee. Lab costs significant—ensure comprehensive monitoring included.",
+     "residency_travel_notes": "US prescription required. International patients can access through telemedicine platforms that serve their jurisdiction (varies by platform and local regulations). Some medical tourism to US longevity clinics.",
+     "risk_notes": "Known adverse effects: hyperlipidemia (particularly triglycerides), oral ulcers (mouth sores), impaired wound healing, increased infection risk (mild immunosuppression at longevity doses), thrombocytopenia, proteinuria (rare at low doses). Drug interactions: strong CYP3A4 inhibitors/inducers, grapefruit juice. Long-term safety data at longevity doses is limited (most data from transplant populations at higher doses). Regular lab monitoring essential.",
+     "arbitrage_summary": "Rapamycin for longevity is increasingly accessible in US via telemedicine. Early adopter space with growing evidence base. PEARL trial will provide important safety/efficacy data. More affordable than most longevity interventions. Appropriate for those comfortable being early adopters with regular monitoring.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "PEARL Trial", "url": "https://www.rapamycintrial.org"}, {"title": "Sirolimus Prescribing Information", "url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/021083s072,021110s086lbl.pdf"}]},
+
+    # ── Canada (Surrogacy) ──
+    {"procedure_id": "proc-repro-surrogacy", "jurisdiction_id": "jur-ca", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Altruistic surrogacy legal throughout Canada (Assisted Human Reproduction Act, 2004). Commercial surrogacy (payment beyond expense reimbursement) is prohibited. Surrogates can be reimbursed for pregnancy-related expenses. Parentage orders available in most provinces (pre-birth or post-birth depending on province). No citizenship/residency requirement for intended parents to obtain Canadian parentage order in most provinces.",
+     "eligibility_requirements": "Surrogate: 21+, prior live birth, medical/psychological clearance, independent legal counsel (paid by intended parents). Intended parents: genetic link to embryo (at least one) for parentage in some provinces, or both for others. Medical indication for surrogacy OR same-sex male couple/single male. Criminal background check for intended parents (some provinces).",
+     "provider_requirements": "Fertility clinic licensed by province. Surrogate must pass medical screening (SOGC/CFAS guidelines). Independent legal counsel for surrogate AND intended parents. Surrogacy agencies coordinate (optional but recommended). Reimbursement must be documented (receipts).",
+     "oversight_notes": "Health Canada and provincial oversight. Assisted Human Reproduction Act prohibits commercial surrogacy and gamete purchase. Expense reimbursement categories defined by regulation (updated 2020 to include lost wages, travel, childcare, etc.). Parentage law varies by province: Ontario, BC, Alberta have comprehensive frameworks; Quebec more restrictive. High oversight quality overall.",
+     "estimated_cost_range_usd": "CAD $60,000-100,000 (USD $44,000-74,000) total: IVF ($15,000-20,000), surrogate expenses ($20,000-35,000), legal fees ($8,000-15,000), agency fees ($10,000-20,000), medications ($3,000-8,000).",
+     "cost_notes": "Significantly less than US commercial surrogacy ($100,000-200,000+). Altruistic model reduces 'surrogate fee' component ($0 vs $30,000-60,000 in US). Expense reimbursement still substantial. Legal framework well-established, reducing legal risk/cost uncertainty. No citizenship requirement means international intended parents can access (with careful legal planning).",
+     "residency_travel_notes": "Intended parents: NO Canadian residency requirement in most provinces. Surrogate: Canadian resident. Travel for embryo transfer, birth, and parentage process (2-4 trips). Birth in Canada gives child Canadian citizenship (jus soli). Cross-border legal counsel essential for international intended parents.",
+     "risk_notes": "Legal framework robust in Canada. Surrogate protections strong (independent legal counsel mandatory, expense reimbursement transparent). Change-of-mind risk: surrogate cannot be compelled to terminate or continue pregnancy; parentage orders address postnatal decision-making. Cross-border: ensure parentage recognized in home country. COVID added travel uncertainty (address in contract).",
+     "arbitrage_summary": "Canada offers the best balance of regulatory quality, cost, and international accessibility for surrogacy. Altruistic model reduces total cost by $30,000-60,000 vs. US commercial model. NO residency requirement for intended parents. High oversight quality. Best option for international intended parents who want high-quality legal/medical framework at moderate cost.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "Assisted Human Reproduction Act (Canada)", "url": "https://laws-lois.justice.gc.ca/eng/acts/a-13.4/"}, {"title": "CFAS Surrogacy Guidelines", "url": "https://cfas.ca"}, {"title": "Canadian Surrogacy Community", "url": "https://surrogacy.ca"}]},
+
+    # ── Jamaica (Psilocybin) ──
+    {"procedure_id": "proc-psilocybin-trd", "jurisdiction_id": "jur-jm", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.VARIABLE,
+     "access_pathway_details": "Psilocybin mushrooms are legal in Jamaica (never scheduled). Growing psilocybin retreat industry (Mycomeditations, Atman, Silo Wellness, etc.). Retreat model: 1-2 psilocybin sessions in group or individual format. Some retreats have medical professionals, others do not. No government licensing or oversight specific to psilocybin therapy. Market is self-regulated.",
+     "eligibility_requirements": "18+. No prescription or diagnosis required. Retreat-specific screening (quality varies from thorough mental health screening to minimal). Medical screening: varies. Common contraindications: psychosis history, certain cardiovascular conditions, concurrent psychiatric medications.",
+     "provider_requirements": "No government licensing required for psilocybin facilitators. Retreat operators self-designate as practitioners. Some employ licensed therapists/psychologists, many do not. Medical oversight optional (some retreats have MD/RN on staff). No standardized training requirements. GITA and other voluntary standards exist but few retreats comply.",
+     "oversight_notes": "Jamaican Ministry of Health does not regulate psilocybin therapy. NO government oversight. Quality entirely dependent on retreat operator. Retreat industry is self-regulated with no enforcement mechanism. Variable quality—some excellent, some dangerous. Consumer due diligence essential. Unlike Oregon/Colorado/Australia, NO regulatory framework exists.",
+     "estimated_cost_range_usd": "$2,000-8,000+ for 5-7 day retreat (includes accommodation, meals, sessions, integration). Luxury retreats: $10,000-25,000. Group retreats less expensive than private sessions.",
+     "cost_notes": "Comparable to Oregon pricing when considering all-inclusive nature (room, board, sessions). Airfare to Jamaica adds $500-1,500 from US. All cash-pay. No insurance. Some retreats offer payment plans.",
+     "residency_travel_notes": "No residency requirement. No visa for US/Canadian/EU citizens (tourist entry). Direct flights from many US cities to Montego Bay/Kingston. Retreats often provide airport transfer. Combine with vacation context (integration in natural setting).",
+     "risk_notes": "NO GOVERNMENT OVERSIGHT. Retreat quality is unverifiable without independent references. Medical emergency protocols: variable, some retreats far from hospital. Post-retreat support/integration: crucial but often inadequate. Fungal product: no testing for potency or contaminants (contrast with Oregon's mandatory lab testing). Facilitator competence: impossible to verify independently. Selection bias in retreat marketing (only positive testimonials). Psychological destabilization risk if unprepared or poorly facilitated. Sexual boundaries: anecdotal reports of violations in unregulated retreat settings.",
+     "arbitrage_summary": "Most accessible psilocybin therapy globally (no legal restrictions, no diagnosis needed, tourist-accessible). BUT Zero regulatory oversight. Quality is completely unverifiable. HIGH RISK despite legality. Best for those who cannot access Oregon/Colorado/Australia/Canada pathways AND have thoroughly vetted a specific retreat through independent references. Consider Oregon first if US citizen—slightly higher cost but regulated product, licensed facilitators, emergency protocols, and accountability.",
+     "last_verified": date(2025, 6, 1),
+     "sources": [{"title": "Jamaica Dangerous Drugs Act (Psilocybin Exempt)", "url": "https://www.moj.gov.jm/laws/dangerous-drugs-act"}, {"title": "GITA Ethical Guidelines", "url": "https://www.ibogainealliance.org/guidelines"}]},
+
+    # ── US Right-To-Try procedures ──
+    {"procedure_id": "proc-gene-crispr", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.RIGHT_TO_TRY, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Federal Right to Try Act (2018) allows terminally ill patients to access investigational drugs (Phase I completed) outside clinical trials. Also FDA Expanded Access (Compassionate Use) program. Most CRISPR therapies are in early-phase trials; some may qualify for Right to Try if Phase I completed. Casgevy (exa-cel) for SCD and beta-thalassemia is fully FDA-approved.",
+     "eligibility_requirements": "Right to Try: terminal illness, exhausted approved options, unable to participate in clinical trial, informed consent, drug has completed Phase I. FDA Expanded Access: serious/disease or condition, no comparable alternative, enrollment in clinical trial not possible, potential benefit justifies risk. Physician must agree to sponsor. Drug company must agree to provide (NOT required to under Right to Try—this is the major barrier).",
+     "provider_requirements": "Licensed physician willing to sponsor and monitor. Institutional IRB for Expanded Access (not required for Right to Try but often institutional policy requires). Hospital/facility capable of managing gene therapy administration and complications (often requires academic medical center).",
+     "oversight_notes": "FDA Expanded Access pathway is well-established with oversight. Right to Try has less FDA involvement (cannot use outcomes data for approval decisions except for safety) but still requires physician oversight, informed consent, and institutional safeguards. Major limitation: drug companies rarely agree to provide under Right to Try (concerns about adverse events affecting approval, supply limitations, liability).",
+     "estimated_cost_range_usd": "Right to Try/Expanded Access: drug companies often provide drug for free or at cost. Hospitalization and administration: $100,000-500,000+ (may be partially covered by insurance). Travel to academic medical center: variable.",
+     "cost_notes": "Drug cost often waived by manufacturer. Major costs are medical infrastructure (hospitalization, myeloablative conditioning, ICU, long-term follow-up). Insurance may cover hospitalization components. Some patients face significant out-of-pocket costs despite waived drug cost.",
+     "residency_travel_notes": "Must be under care of US-licensed physician at US facility. International patients can theoretically access if physician sponsors and they can travel/stay for extended treatment period (weeks-months). Practical barriers significant for non-US residents.",
+     "risk_notes": "Gene therapy risks: myeloablative conditioning (infertility, infection, bleeding, organ toxicity), off-target editing (CRISPR), insertional mutagenesis, immunogenicity, long-term unknown risks. HIGH RISK but in context of otherwise fatal disease. These are early-phase experimental therapies—uncertainty about efficacy and safety is fundamental.",
+     "arbitrage_summary": "Right to Try provides legal pathway for terminally ill US patients to access experimental gene therapies. Major practical barrier: manufacturers rarely agree to provide. Expanded Access more established but similar access challenges. For sickle cell/beta-thalassemia, Casgevy is fully approved (no longer experimental). Proactive physician advocacy and academic medical center connection essential.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "FDA Right to Try", "url": "https://www.fda.gov/patients/learn-about-expanded-access-and-other-treatment-options/right-try"}, {"title": "FDA Expanded Access", "url": "https://www.fda.gov/news-events/expanded-access"}]},
+
+    # ── CAR-T (Various jurisdictions comparison) ──
+    {"procedure_id": "proc-stem-car-t", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "Six FDA-approved CAR-T products (Kymriah, Yescarta, Tecartus, Breyanzi, Carvykti, Abecma). Available at ~150+ certified CAR-T centers across US. Requires inpatient or intensive outpatient administration at certified center. REMS program for CRS/neurotoxicity management. Medicare and most commercial insurers cover for FDA-approved indications.",
+     "eligibility_requirements": "Specific relapsed/refractory hematologic malignancy diagnosis matching FDA label. Adequate organ function (cardiac, pulmonary, renal, hepatic). ECOG performance status typically 0-1. No active uncontrolled infection. Prior lines of therapy per label. Certified CAR-T center must accept patient. Often requires bridging therapy before CAR-T infusion.",
+     "provider_requirements": "Certified CAR-T treatment center (REMS-certified). Multidisciplinary team: oncologist, ICU, neurology, pharmacy. Tocilizumab on-site for CRS management. Staff trained in CRS and ICANS recognition/management. Apheresis capability. Cell processing coordination with manufacturer.",
+     "oversight_notes": "FDA REMS program for CRS and neurotoxicity. FACT/JACIE accreditation for transplant/CAR-T centers. NCCN guidelines. Robust pharmacovigilance including 15-year follow-up for secondary malignancies. High oversight quality throughout treatment pathway.",
+     "estimated_cost_range_usd": "$373,000-475,000 (drug cost only). Total episode of care: $500,000-1,000,000+ including hospitalization, ICU if needed, apheresis, conditioning. Insurance coverage: Medicare covers (DRG + NTAP). Commercial insurance typically covers for FDA indications. Patient out-of-pocket: varies by plan (annual OOP max typically $5,000-10,000).",
+     "cost_notes": "Among the most expensive therapies globally. Insurance coverage is essential—essentially inaccessible as cash-pay. Medicare's NTAP (New Technology Add-on Payment) helps hospitals cover costs. Value-based pricing agreements emerging (outcomes-based rebates).",
+     "residency_travel_notes": "Must be treated at certified CAR-T center in US. International patients can access if accepted by center and able to fund (some international insurance covers, some self-pay at international rates). Lengthy treatment process (2-4 weeks minimum for infusion + 30-day post-infusion monitoring near center).",
+     "risk_notes": "CRS: cytokine release syndrome (fever, hypotension, hypoxia) common, managed with tocilizumab. ICANS: neurotoxicity (confusion, aphasia, seizures, cerebral edema). HLH/MAS. Prolonged cytopenia. B-cell aplasia (for CD19-directed therapies; requires IVIG). Secondary malignancies including T-cell malignancies (boxed warning 2024). Infection risk. ICU-level care may be required.",
+     "arbitrage_summary": "Potentially curative one-time therapy for previously fatal hematologic malignancies. US is global leader in CAR-T availability. Insurance coverage makes this accessible to insured patients (despite extreme total cost). Certified centers in all major US cities. No meaningful international arbitrage—CAR-T is sophisticated therapy requiring certified centers with intensive infrastructure. India and China developing lower-cost CAR-T alternatives.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "FDA Approved CAR-T Products", "url": "https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products"}, {"title": "ASCO CAR-T Guidelines", "url": "https://old-prod.asco.org/practice-patients/guidelines/car-t-cell-therapy"}]},
+
+    # ── IVF + PGT (US vs MX comparison) ──
+    {"procedure_id": "proc-repro-ivf", "jurisdiction_id": "jur-us-federal", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.HIGH,
+     "access_pathway_details": "IVF widely available across all 50 states. CDC/SART reporting required. PGT-A and PGT-M available. No federal regulation of embryo research beyond NIH funding restrictions. State laws vary: some restrict embryo disposition, some have personhood amendments affecting IVF (Alabama 2024 created temporary crisis). Gender selection for family balancing permitted in US (controversial).",
+     "eligibility_requirements": "Medical indication OR elective (fertility preservation, genetic screening). Age limits vary by clinic (typically up to 50-55 for autologous IVF; older for donor egg). FDA screening for gamete donors. Psychological evaluation often required for donor gametes. BMI limits at many clinics.",
+     "provider_requirements": "SART-member clinics follow ASRM guidelines. CDC reporting. CLIA-certified lab for PGT. Board-certified REI (Reproductive Endocrinology and Infertility) physician. Embryologist certification. FDA registration for donor gametes.",
+     "oversight_notes": "CDC/SART outcome reporting mandatory. FDA regulates gamete donation. CLIA for PGT labs. ASRM ethics guidelines. Less federal regulation than many countries (no statutory limit on embryo culture duration, no national embryo research authority). State laws creating increasing complexity post-Dobbs. High overall quality at SART clinics.",
+     "estimated_cost_range_usd": "$12,000-25,000 per IVF cycle. PGT-A: $3,000-5,000 additional. PGT-M: $5,000-10,000 + probe development ($1,000-5,000). Medications: $3,000-8,000 per cycle. Donor egg: $35,000-60,000 total. Insurance coverage for IVF mandated in 15 states (varies significantly).",
+     "cost_notes": "US IVF costs among highest globally. State mandates improve access where available. Employer benefits increasingly cover IVF (tech companies leading). Fertility preservation for medical reasons (oncofertility) often has specific coverage. Cash-pay predominant outside mandate states.",
+     "residency_travel_notes": "US residents: travel to mandate states for coverage possible but requires establishing care and often residency. Non-US residents: medical tourism for IVF to US exists but less common than US patients traveling abroad for lower costs (Mexico, Spain, Greece, Czech Republic, Barbados).",
+     "risk_notes": "OHSS (ovarian hyperstimulation syndrome): mild-mod common, severe rare. Multiple pregnancy risk (minimized with elective single embryo transfer). Procedural risks: bleeding, infection, ovarian torsion. Long-term: no confirmed increased cancer risk. Emotional/financial risk of cycle failure. Embryo disposition decisions can be complex, especially with changing relationships.",
+     "arbitrage_summary": "US IVF offers some of the most permissive PGT laws globally (gender selection permitted, PGT-M broadly available). Most expensive market. Consider international IVF (Mexico, Spain, Greece) for lower cost (typically 50-70% less) with still-good quality, though legal frameworks for PGT vary. US is best for: complex PGT-M cases, intended parents wanting most permissive legal framework, employer IVF coverage, or those prioritizing convenience over cost.",
+     "last_verified": date(2025, 7, 1),
+     "sources": [{"title": "SART National Summary Report", "url": "https://www.sartcorsonline.com"}, {"title": "ASRM Guidelines", "url": "https://www.asrm.org"}, {"title": "CDC ART Success Rates", "url": "https://www.cdc.gov/art/artdata/index.html"}]},
+
+    {"procedure_id": "proc-repro-ivf", "jurisdiction_id": "jur-mx", "legal_status": LegalStatus.FULLY_APPROVED, "oversight_quality": OversightQuality.VARIABLE,
+     "access_pathway_details": "IVF widely available through private fertility clinics in major cities (Mexico City, Monterrey, Guadalajara, Cancún). Growing medical tourism industry for fertility treatment. PGT available. Mexican regulatory framework (COFEPRIS) less comprehensive than FDA/CDC but major clinics follow international standards. Gender selection generally permitted. Surrogacy: some states permit, Tabasco was a major hub but now restricted.",
+     "eligibility_requirements": "Fewer restrictions than US (more permissive age limits, BMI limits less common). Donor gametes available (egg donors typically younger, larger pools than some countries). Medical screening by clinic. No COFEPRIS-mandated psychological screening for all patients (some clinics require, others don't).",
+     "provider_requirements": "COFEPRIS-registered clinic. Board-certified REI physicians (though certification standards less rigorous than US ABOG). Lab accreditation: some clinics have international accreditation (ISO, CAP), many do not. Verify individual clinic standards. SART-equivalent outcome reporting not mandatory.",
+     "oversight_notes": "COFEPRIS regulates but with less comprehensive framework than FDA. No mandatory public outcome reporting (no SART/CDC equivalent). Clinic quality varies significantly—from internationally accredited centers to minimal-standard clinics. Professional society (AMMR) provides guidelines but enforcement limited. Verify accreditation and success rates independently.",
+     "estimated_cost_range_usd": "IVF cycle: $4,000-8,000 (50-70% less than US). PGT-A: $1,500-3,000. PGT-M: $3,000-6,000. Donor egg: $8,000-15,000 total. Medications: $1,500-4,000 (significantly less than US). Cash-pay, no insurance coverage for medical tourists.",
+     "cost_notes": "Tijuana and Cancún clinics cater specifically to US medical tourists (English-speaking staff, US-style marketing, travel coordination). Package deals common. Cost savings 50-70% vs. US. Travel costs ($500-2,000) should be factored. Multiple trips often required.",
+     "residency_travel_notes": "No residency requirement. Easy travel from US (Tijuana: drive across border; Cancún: direct flights). Fertility treatment requires multiple trips (3-8 days per trip, 2-4 trips typical). Some clinics coordinate remote monitoring with US providers to reduce trips. Medication can be purchased in Mexico (huge cost savings but verify pharmacy legitimacy).",
+     "risk_notes": "Variable clinic quality is primary risk. No public outcome reporting—clinics self-report success rates. Less legal recourse if complications occur. Medication quality: verify pharmacy is COFEPRIS-registered, counterfeit medications documented. Communication barriers if Spanish not spoken (mitigated at tourism-oriented clinics). Post-treatment complication management if back in home country may be complicated. Embryo storage and disposition: ensure legal clarity on ownership and disposition rights.",
+     "arbitrage_summary": "Mexico offers 50-70% cost savings on IVF with permissive regulatory environment (PGT, donor gametes, fewer restrictions). QUALITY IS VARIABLE—must verify specific clinic accreditation, physician credentials, and success rates. Best for: cost-sensitive patients who have thoroughly vetted a specific clinic, straightforward IVF cases (complex cases may benefit from US academic centers), and those wanting permissive PGT/gender selection framework.",
+     "last_verified": date(2025, 6, 1),
+     "sources": [{"title": "COFEPRIS", "url": "https://www.gob.mx/cofepris"}, {"title": "Mexican Association of Reproductive Medicine (AMMR)", "url": "https://www.ammr.org.mx"}]},
+]
+
+
+def seed_database():
+    """Seed the database with all initial data."""
+    init_db()
+    db = SessionLocal()
+
+    try:
+        # Check if already seeded
+        if db.query(Jurisdiction).count() > 0:
+            print("Database already seeded. Skipping.")
+            return
+
+        print("Seeding jurisdictions...")
+        for j_data in JURISDICTIONS:
+            jur = Jurisdiction(**j_data)
+            db.add(jur)
+
+        print("Seeding procedures...")
+        for p_data in PROCEDURES:
+            # Serialize JSON fields
+            p_data_copy = p_data.copy()
+            p_data_copy["therapeutic_areas"] = json.dumps(p_data_copy["therapeutic_areas"])
+            p_data_copy["sources"] = json.dumps(p_data_copy["sources"])
+            proc = Procedure(**p_data_copy)
+            db.add(proc)
+
+        db.flush()  # Ensure IDs are available for FK references
+
+        print("Seeding access records...")
+        for ar_data in ACCESS_RECORDS:
+            ar_data_copy = ar_data.copy()
+            ar_data_copy["sources"] = json.dumps(ar_data_copy["sources"])
+            ar = AccessRecord(**ar_data_copy)
+            db.add(ar)
+
+        db.commit()
+        print(f"Seed complete: {len(JURISDICTIONS)} jurisdictions, {len(PROCEDURES)} procedures, {len(ACCESS_RECORDS)} access records.")
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error during seeding: {e}")
+        raise
+    finally:
+        db.close()
+
+
+if __name__ == "__main__":
+    seed_database()
