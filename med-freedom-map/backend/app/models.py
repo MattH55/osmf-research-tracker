@@ -246,7 +246,7 @@ class AccessRecord(Base):
     price_usd: Mapped[Optional[Float]] = mapped_column(Float, nullable=True)
     price_basis: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # cash_pay, insured, trial_free
     price_confidence: Mapped[Optional[PriceConfidence]] = mapped_column(SAEnum(PriceConfidence), nullable=True)
-    estimated_cost_range_usd: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    estimated_cost_range_usd: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     cost_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Travel friction (JSON) per schema §3
