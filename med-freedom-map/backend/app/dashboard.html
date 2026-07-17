@@ -58,13 +58,20 @@
             <div class="stat"><h3>Jurisdictions</h3><div class="num" id="s-jur">–</div><p>Countries &amp; regions</p></div>
             <div class="stat"><h3>Procedures</h3><div class="num" id="s-proc">–</div><p>Medical treatments</p></div>
             <div class="stat"><h3>Access Records</h3><div class="num" id="s-acc">–</div><p>Procedure × jurisdiction</p></div>
+            <div class="stat"><h3>Evidence Links</h3><div class="num" id="s-ind">–</div><p id="s-ind-sub">Conditions × grades</p></div>
         </div>
 
         <div class="panel" id="setupPanel" style="display:none;">
             <h2>⚙️ First-time setup</h2>
-            <p class="muted" style="margin-bottom:1rem;">The database looks empty. Load the starter dataset (32 jurisdictions, 38 procedures, access records).</p>
+            <p class="muted" style="margin-bottom:1rem;">The database looks empty. Load the starter dataset (jurisdictions, procedures, access records, evidence grades).</p>
             <button class="green" id="seedBtn" onclick="seed()">🌱 Load starter data</button>
             <span id="seedStatus" class="muted" style="margin-left:.75rem;"></span>
+        </div>
+        <div class="panel" id="enrichPanel" style="display:none;">
+            <h2>🔄 Refresh enrichment</h2>
+            <p class="muted" style="margin-bottom:1rem;">Re-apply access pathways, pricing midpoints, and evidence grades without wiping the database.</p>
+            <button class="ghost" id="enrichBtn" onclick="seed()">Apply enrichment</button>
+            <span id="enrichStatus" class="muted" style="margin-left:.75rem;"></span>
         </div>
 
         <div class="panel">
@@ -89,6 +96,12 @@
         <div class="panel">
             <h2>🗺️ Jurisdictions</h2>
             <div id="jurisdictionsList" class="loading">Loading…</div>
+        </div>
+
+        <div class="panel">
+            <h2>📋 Conditions &amp; evidence grades</h2>
+            <p class="muted" style="margin-bottom:.75rem;">Schema §5 — evidence lives on procedure×condition, not on access cells.</p>
+            <div id="conditionsList" class="loading">Loading…</div>
         </div>
 
         <div class="panel">
@@ -120,8 +133,18 @@
                 document.getElementById('s-jur').textContent = s.jurisdictions;
                 document.getElementById('s-proc').textContent = s.procedures;
                 document.getElementById('s-acc').textContent = s.access_records;
+                document.getElementById('s-ind').textContent = s.procedure_indications ?? 0;
+                const sub = document.getElementById('s-ind-sub');
+                if (sub) {
+                    const path = s.access_records_with_pathway ?? 0;
+                    const price = s.access_records_with_price ?? 0;
+                    sub.textContent = `${s.conditions || 0} conditions · ${path}/${s.access_records || 0} pathways · ${price} priced`;
+                }
                 document.getElementById('statusBadge').textContent = '✓ Live';
                 document.getElementById('setupPanel').style.display = s.jurisdictions === 0 ? 'block' : 'none';
+                document.getElementById('enrichPanel').style.display =
+                    s.jurisdictions > 0 && ((s.procedure_indications || 0) === 0 || (s.access_records_with_pathway || 0) < s.access_records)
+                        ? 'block' : 'none';
                 return s;
             } catch (e) {
                 document.getElementById('statusBadge').textContent = '⚠ Waking up… (free tier, ~30s)';
@@ -131,15 +154,33 @@
 
         async function seed() {
             const btn = document.getElementById('seedBtn');
+            const ebtn = document.getElementById('enrichBtn');
             const st = document.getElementById('seedStatus');
-            btn.disabled = true; st.textContent = 'Loading… this can take up to a minute.';
+            const est = document.getElementById('enrichStatus');
+            if (btn) btn.disabled = true;
+            if (ebtn) ebtn.disabled = true;
+            if (st) st.textContent = 'Loading… this can take up to a minute.';
+            if (est) est.textContent = 'Applying…';
             try {
                 const r = await api('/api/seed', { method: 'POST' });
                 if (r.status === 'ok') {
-                    st.textContent = `✅ Loaded ${r.jurisdictions} jurisdictions, ${r.procedures} procedures, ${r.access_records} access records.`;
-                    await refreshStats(); loadProcedures(); loadJurisdictions(); loadModalities();
-                } else { st.textContent = '❌ ' + (r.message || 'error'); btn.disabled = false; }
-            } catch (e) { st.textContent = '❌ ' + e.message; btn.disabled = false; }
+                    const msg = `✅ ${r.jurisdictions} jurisdictions, ${r.procedures} procedures, ${r.access_records} access · ${r.conditions || 0} conditions, ${r.procedure_indications || 0} indications · enriched ${r.enriched_access_records || 0}`;
+                    if (st) st.textContent = msg;
+                    if (est) est.textContent = msg;
+                    await refreshStats(); loadProcedures(); loadJurisdictions(); loadModalities(); loadConditions();
+                } else {
+                    const err = '❌ ' + (r.message || 'error');
+                    if (st) st.textContent = err;
+                    if (est) est.textContent = err;
+                    if (btn) btn.disabled = false;
+                    if (ebtn) ebtn.disabled = false;
+                }
+            } catch (e) {
+                if (st) st.textContent = '❌ ' + e.message;
+                if (est) est.textContent = '❌ ' + e.message;
+                if (btn) btn.disabled = false;
+                if (ebtn) ebtn.disabled = false;
+            }
         }
 
         async function loadModalities() {
@@ -175,20 +216,40 @@
             return h + '</tbody></table>';
         }
 
+        function fmtPrice(a) {
+            if (a.price_usd != null && a.price_usd !== '') {
+                const conf = a.price_confidence ? ` <span class="muted">(${esc(a.price_confidence)})</span>` : '';
+                return '$' + Number(a.price_usd).toLocaleString() + conf;
+            }
+            return esc(a.estimated_cost_range_usd || '—');
+        }
+
         async function showProcedure(id) {
             try {
                 const d = await api('/api/procedures/' + id + '/jurisdictions');
                 const p = d.procedure;
                 let h = `<div class="detail"><h4>${esc(p.name)}</h4>`;
                 h += `<p class="muted" style="margin-bottom:.75rem;">${esc(p.description || '')}</p>`;
+                if ((d.indications || []).length) {
+                    h += '<p style="margin:.5rem 0 .35rem;font-weight:600;">Evidence by condition</p>';
+                    h += '<table><thead><tr><th>Condition</th><th>Grade</th><th>Summary</th></tr></thead><tbody>';
+                    d.indications.forEach(ind => {
+                        h += `<tr><td><strong>${esc(ind.condition.name)}</strong><div class="muted">${esc(ind.condition.icd_code || '')}</div></td>
+                            <td><span class="pill">${esc(ind.evidence_grade)}</span></td>
+                            <td class="muted">${esc(ind.evidence_summary || '')}</td></tr>`;
+                    });
+                    h += '</tbody></table>';
+                }
                 if (!d.jurisdictions.length) {
                     h += '<p class="muted">No jurisdiction access records loaded for this procedure yet.</p>';
                 } else {
-                    h += '<table><thead><tr><th>Jurisdiction</th><th>Legal status</th><th>Cost (USD)</th><th>Oversight</th></tr></thead><tbody>';
+                    h += '<p style="margin:1rem 0 .35rem;font-weight:600;">Access by jurisdiction</p>';
+                    h += '<table><thead><tr><th>Jurisdiction</th><th>Legal status</th><th>Pathway</th><th>Price (USD)</th><th>Oversight</th></tr></thead><tbody>';
                     d.jurisdictions.forEach(a => {
                         h += `<tr><td><strong>${esc(a.jurisdiction.name)}</strong></td>
                             <td>${esc(a.legal_status || '—')}</td>
-                            <td>${esc(a.estimated_cost_range_usd || (a.price_usd ? '$'+a.price_usd : '—'))}</td>
+                            <td><span class="pill">${esc(a.access_pathway || '—')}</span></td>
+                            <td>${fmtPrice(a)}</td>
                             <td>${esc(a.oversight_quality || '—')}</td></tr>`;
                     });
                     h += '</tbody></table>';
@@ -198,6 +259,30 @@
                 holder.insertAdjacentHTML('afterbegin', h);
                 holder.scrollIntoView({behavior:'smooth', block:'start'});
             } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function loadConditions() {
+            const el = document.getElementById('conditionsList');
+            if (!el) return;
+            el.className = 'loading'; el.textContent = 'Loading…';
+            try {
+                const inds = await api('/api/procedure-indications');
+                if (!inds.length) {
+                    el.className = '';
+                    el.innerHTML = '<div class="empty">No evidence grades yet — click “Apply enrichment” above (or reseed).</div>';
+                    return;
+                }
+                el.className = '';
+                let h = '<table><thead><tr><th>Condition</th><th>Procedure</th><th>Grade</th><th>Summary</th></tr></thead><tbody>';
+                inds.forEach(i => {
+                    h += `<tr class="clickable" onclick='showProcedure(${JSON.stringify(i.procedure_id)})'>
+                        <td><strong>${esc(i.condition_name)}</strong><div class="muted">${esc(i.condition_icd || '')}</div></td>
+                        <td>${esc(i.procedure_name)}</td>
+                        <td><span class="pill">${esc(i.evidence_grade)}</span></td>
+                        <td class="muted">${esc((i.evidence_summary || '').slice(0, 160))}${(i.evidence_summary||'').length > 160 ? '…' : ''}</td></tr>`;
+                });
+                el.innerHTML = h + '</tbody></table>';
+            } catch (e) { el.className=''; el.innerHTML = '<div class="empty">Error: ' + e.message + '</div>'; }
         }
 
         async function loadJurisdictions() {
@@ -242,9 +327,9 @@
 
         (async function init() {
             const s = await refreshStats();
-            loadModalities(); loadProcedures(); loadJurisdictions();
+            loadModalities(); loadProcedures(); loadJurisdictions(); loadConditions();
             // Keep retrying while the free instance wakes up.
-            if (!s) { const t = setInterval(async () => { const s2 = await refreshStats(); if (s2) { clearInterval(t); loadModalities(); loadProcedures(); loadJurisdictions(); } }, 5000); }
+            if (!s) { const t = setInterval(async () => { const s2 = await refreshStats(); if (s2) { clearInterval(t); loadModalities(); loadProcedures(); loadJurisdictions(); loadConditions(); } }, 5000); }
         })();
     </script>
 </body>

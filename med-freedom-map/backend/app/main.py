@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 
 from .database import init_db, reset_db, get_db, SessionLocal
-from .models import Jurisdiction, Procedure, AccessRecord
+from .models import Jurisdiction, Procedure, AccessRecord, Condition, ProcedureIndication
 from .schemas import (
     JurisdictionCreate, JurisdictionUpdate,
     ProcedureCreate, ProcedureUpdate,
@@ -61,10 +61,26 @@ def health():
 @app.get("/api/stats")
 def stats(db: Session = Depends(get_db)):
     """Row counts for the dashboard — one cheap round-trip."""
+    priced = (
+        db.query(func.count(AccessRecord.id))
+        .filter(AccessRecord.price_usd.isnot(None))
+        .scalar()
+        or 0
+    )
+    with_pathway = (
+        db.query(func.count(AccessRecord.id))
+        .filter(AccessRecord.access_pathway.isnot(None))
+        .scalar()
+        or 0
+    )
     return {
         "jurisdictions": db.query(func.count(Jurisdiction.id)).scalar() or 0,
         "procedures": db.query(func.count(Procedure.id)).scalar() or 0,
         "access_records": db.query(func.count(AccessRecord.id)).scalar() or 0,
+        "conditions": db.query(func.count(Condition.id)).scalar() or 0,
+        "procedure_indications": db.query(func.count(ProcedureIndication.id)).scalar() or 0,
+        "access_records_with_price": priced,
+        "access_records_with_pathway": with_pathway,
     }
 
 
@@ -405,10 +421,79 @@ def get_procedure_jurisdictions(procedure_id: str, db: Session = Depends(get_db)
         AccessRecord.status == "active",
     ).order_by(Jurisdiction.name).all()
 
+    indications = (
+        db.query(ProcedureIndication, Condition)
+        .join(Condition, ProcedureIndication.condition_id == Condition.id)
+        .filter(ProcedureIndication.procedure_id == procedure_id)
+        .order_by(ProcedureIndication.evidence_grade)
+        .all()
+    )
+
     return {
         "procedure": procedure.to_dict(),
         "jurisdictions": [{**ar.to_dict(), "jurisdiction": j.to_dict()} for ar, j in rows],
+        "indications": [
+            {**pi.to_dict(), "condition": c.to_dict()}
+            for pi, c in indications
+        ],
     }
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# CONDITIONS & EVIDENCE (§5)
+# ══════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/conditions")
+def list_conditions(db: Session = Depends(get_db)):
+    return [c.to_dict() for c in db.query(Condition).order_by(Condition.name).all()]
+
+
+@app.get("/api/conditions/{condition_id}")
+def get_condition(condition_id: str, db: Session = Depends(get_db)):
+    c = db.query(Condition).filter(Condition.id == condition_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="Condition not found")
+    indications = (
+        db.query(ProcedureIndication, Procedure)
+        .join(Procedure, ProcedureIndication.procedure_id == Procedure.id)
+        .filter(ProcedureIndication.condition_id == condition_id)
+        .order_by(ProcedureIndication.evidence_grade)
+        .all()
+    )
+    return {
+        **c.to_dict(),
+        "indications": [
+            {**pi.to_dict(), "procedure": p.to_dict()}
+            for pi, p in indications
+        ],
+    }
+
+
+@app.get("/api/procedure-indications")
+def list_procedure_indications(
+    procedure_id: Optional[str] = None,
+    condition_id: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    q = (
+        db.query(ProcedureIndication, Procedure, Condition)
+        .join(Procedure, ProcedureIndication.procedure_id == Procedure.id)
+        .join(Condition, ProcedureIndication.condition_id == Condition.id)
+    )
+    if procedure_id:
+        q = q.filter(ProcedureIndication.procedure_id == procedure_id)
+    if condition_id:
+        q = q.filter(ProcedureIndication.condition_id == condition_id)
+    rows = q.order_by(Condition.name, Procedure.name).all()
+    return [
+        {
+            **pi.to_dict(),
+            "procedure_name": p.name,
+            "condition_name": c.name,
+            "condition_icd": c.icd_code,
+        }
+        for pi, p, c in rows
+    ]
 
 
 @app.get("/api/filters/options")
@@ -448,6 +533,8 @@ def export_json(db: Session = Depends(get_db)):
         "jurisdictions": [j.to_dict() for j in db.query(Jurisdiction).all()],
         "procedures": [p.to_dict() for p in db.query(Procedure).all()],
         "access_records": [r.to_dict() for r in db.query(AccessRecord).all()],
+        "conditions": [c.to_dict() for c in db.query(Condition).all()],
+        "procedure_indications": [pi.to_dict() for pi in db.query(ProcedureIndication).all()],
     }
 
 
@@ -461,15 +548,19 @@ def export_csv(db: Session = Depends(get_db)):
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow([
-        "Procedure", "Jurisdiction", "Legal Status", "Oversight Quality",
-        "Cost Range (USD)", "Access Pathway", "Eligibility", "Provider Requirements",
+        "Procedure", "Jurisdiction", "Legal Status", "Access Pathway", "Oversight Quality",
+        "Price USD", "Price Confidence", "Cost Range (USD)", "Access Pathway Details",
+        "Eligibility", "Provider Requirements",
         "Residency/Travel Notes", "Risk Notes", "Last Verified", "Arbitrage Summary",
     ])
     for ar, pname, jname in rows:
         writer.writerow([
             pname, jname,
             ar.legal_status.value if hasattr(ar.legal_status, "value") else ar.legal_status,
+            ar.access_pathway.value if ar.access_pathway and hasattr(ar.access_pathway, "value") else ar.access_pathway,
             ar.oversight_quality.value if ar.oversight_quality and hasattr(ar.oversight_quality, "value") else ar.oversight_quality,
+            ar.price_usd,
+            ar.price_confidence.value if ar.price_confidence and hasattr(ar.price_confidence, "value") else ar.price_confidence,
             ar.estimated_cost_range_usd, ar.access_pathway_details, ar.eligibility_requirements,
             ar.provider_requirements, ar.residency_travel_notes, ar.risk_notes,
             ar.last_verified, ar.arbitrage_summary,

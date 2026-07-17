@@ -5,9 +5,15 @@ from datetime import date
 
 from .database import SessionLocal, init_db
 from .models import (
-    Jurisdiction, Procedure, AccessRecord,
+    Jurisdiction, Procedure, AccessRecord, Condition, ProcedureIndication,
     JurisdictionType, JurisdictionLevel, Modality, LegalStatus, OversightQuality,
     RegulatoryModality, RestrictionDriver,
+)
+from .seed_enrichment import (
+    ACCESS_ENRICHMENTS,
+    CONDITIONS,
+    PROCEDURE_INDICATIONS,
+    apply_access_enrichment,
 )
 
 
@@ -1088,11 +1094,22 @@ def seed_database():
     tight memory limits of Render's free tier: jurisdictions and procedures are
     committed first, then access records are inserted one-by-one with a commit
     after each so peak memory stays flat and a single bad row can't abort the set.
+
+    Idempotent enrichment: every run patches access_pathway / pricing (§4) and
+    fills Condition + ProcedureIndication rows (§5) without requiring reset=true.
     """
     init_db()
     db = SessionLocal()
 
-    result = {"jurisdictions": 0, "procedures": 0, "access_records": 0, "skipped": []}
+    result = {
+        "jurisdictions": 0,
+        "procedures": 0,
+        "access_records": 0,
+        "conditions": 0,
+        "procedure_indications": 0,
+        "enriched_access_records": 0,
+        "skipped": [],
+    }
 
     try:
         # ── Jurisdictions ──
@@ -1131,6 +1148,17 @@ def seed_database():
                     continue
                 ar_copy = ar_data.copy()
                 ar_copy["sources"] = json.dumps(ar_copy.get("sources", []))
+                # Pre-apply enrichment so fresh inserts already have §4 fields.
+                key = (ar_copy["procedure_id"], ar_copy["jurisdiction_id"])
+                enrich = ACCESS_ENRICHMENTS.get(key)
+                if enrich:
+                    for k, v in enrich.items():
+                        if k == "cost_notes_append":
+                            base = ar_copy.get("cost_notes") or ""
+                            ar_copy["cost_notes"] = (base + " " + v).strip() if base else v
+                        else:
+                            ar_copy[k] = v
+                    ar_copy["verified_by"] = "seed_enrichment_v1"
                 try:
                     db.add(AccessRecord(**ar_copy))
                     db.commit()
@@ -1141,9 +1169,60 @@ def seed_database():
                     )
         result["access_records"] = db.query(AccessRecord).count()
 
+        # ── §4 Enrich existing access records (pathway + pricing) ──
+        for ar in db.query(AccessRecord).all():
+            key = (ar.procedure_id, ar.jurisdiction_id)
+            enrich = ACCESS_ENRICHMENTS.get(key)
+            if not enrich:
+                continue
+            try:
+                if apply_access_enrichment(ar, enrich):
+                    db.commit()
+                    result["enriched_access_records"] += 1
+            except Exception as row_err:
+                db.rollback()
+                result["skipped"].append(
+                    f"enrich {key[0]} @ {key[1]} ({row_err.__class__.__name__})"
+                )
+
+        # ── §5 Conditions ──
+        for c_data in CONDITIONS:
+            if db.query(Condition).filter(Condition.id == c_data["id"]).first():
+                continue
+            try:
+                db.add(Condition(**c_data))
+                db.commit()
+            except Exception as row_err:
+                db.rollback()
+                result["skipped"].append(f"condition {c_data['id']} ({row_err.__class__.__name__})")
+        result["conditions"] = db.query(Condition).count()
+
+        # ── §5 Procedure indications (evidence grades) ──
+        valid_procs = {p.id for p in db.query(Procedure.id).all()}
+        valid_conds = {c.id for c in db.query(Condition.id).all()}
+        for pi_data in PROCEDURE_INDICATIONS:
+            if db.query(ProcedureIndication).filter(ProcedureIndication.id == pi_data["id"]).first():
+                continue
+            if pi_data["procedure_id"] not in valid_procs or pi_data["condition_id"] not in valid_conds:
+                result["skipped"].append(
+                    f"indication {pi_data['id']} (missing FK)"
+                )
+                continue
+            try:
+                db.add(ProcedureIndication(**pi_data))
+                db.commit()
+            except Exception as row_err:
+                db.rollback()
+                result["skipped"].append(
+                    f"indication {pi_data['id']} ({row_err.__class__.__name__})"
+                )
+        result["procedure_indications"] = db.query(ProcedureIndication).count()
+
         print(
             f"Seed complete: {result['jurisdictions']} jurisdictions, "
-            f"{result['procedures']} procedures, {result['access_records']} access records "
+            f"{result['procedures']} procedures, {result['access_records']} access records, "
+            f"{result['conditions']} conditions, {result['procedure_indications']} indications, "
+            f"{result['enriched_access_records']} enriched "
             f"({len(result['skipped'])} skipped)."
         )
         return result
