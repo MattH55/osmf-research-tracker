@@ -3,130 +3,483 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedFreedom Arbitrage Map</title>
+    <title>MedFreedom Map — Where can I access this treatment?</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         :root {
-            --bg: #f4f5f7; --card: #ffffff; --ink: #1f2430; --muted: #6b7280;
-            --brand: #667eea; --brand2: #764ba2; --line: #e5e7eb; --ok: #12805c; --warn: #b45309;
+            --bg: #f0f2f7;
+            --card: #ffffff;
+            --ink: #1a1f2e;
+            --muted: #64748b;
+            --brand: #4f46e5;
+            --brand2: #7c3aed;
+            --line: #e2e8f0;
+            --ok: #059669;
+            --warn: #d97706;
+            --danger: #dc2626;
+            --shadow: 0 8px 30px rgba(15, 23, 42, .08);
+            --radius: 16px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
-        header { background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%); color: #fff; padding: 2rem 1rem; text-align: center; }
-        header h1 { font-size: 1.9rem; margin-bottom: .35rem; }
-        header p { opacity: .9; font-size: .95rem; }
-        .badge { display: inline-block; margin-top: .75rem; padding: .25rem .75rem; border-radius: 999px; font-size: .8rem; font-weight: 600; background: rgba(255,255,255,.2); }
-        .container { max-width: 1150px; margin: 1.5rem auto; padding: 0 1rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem; }
-        .stat h3 { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .35rem; }
-        .stat .num { font-size: 2.1rem; font-weight: 700; color: var(--brand2); }
-        .stat p { color: var(--muted); font-size: .85rem; }
-        .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .panel h2 { font-size: 1.15rem; margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 2px solid var(--brand); }
-        .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
-        input[type=text], select { padding: .6rem .8rem; border: 1px solid var(--line); border-radius: 8px; font-size: .95rem; min-width: 200px; flex: 1; }
-        button { background: var(--brand); color: #fff; border: 0; padding: .6rem 1.1rem; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; }
-        button:hover { background: var(--brand2); }
-        button.ghost { background: #eef0fb; color: var(--brand2); }
-        button.green { background: var(--ok); }
-        table { width: 100%; border-collapse: collapse; font-size: .9rem; margin-top: 1rem; }
-        th { background: #f8f9fb; text-align: left; padding: .7rem; font-weight: 600; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .03em; }
-        td { padding: .7rem; border-top: 1px solid var(--line); vertical-align: top; }
-        tr.clickable:hover { background: #f8f9fb; cursor: pointer; }
-        .pill { display: inline-block; padding: .15rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 600; background: #eef0fb; color: var(--brand2); }
-        .muted { color: var(--muted); font-size: .85rem; }
-        .loading { color: var(--muted); padding: 1rem 0; }
-        .empty { color: var(--muted); padding: 1rem; text-align: center; background: #f8f9fb; border-radius: 8px; }
-        .detail { background: #f8f9fb; border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-        .detail h4 { margin-bottom: .5rem; }
-        .detail dl { display: grid; grid-template-columns: 160px 1fr; gap: .35rem 1rem; font-size: .88rem; }
-        .detail dt { color: var(--muted); font-weight: 600; }
-        code { background: #eef0fb; padding: .1rem .35rem; border-radius: 4px; font-size: .82rem; }
-        .foot { text-align: center; color: var(--muted); font-size: .8rem; padding: 1.5rem 0; }
+        body {
+            font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.55;
+            min-height: 100vh;
+        }
         a { color: var(--brand); }
+
+        /* ── Hero ── */
+        .hero {
+            background: linear-gradient(135deg, #312e81 0%, #4f46e5 45%, #7c3aed 100%);
+            color: #fff;
+            padding: 2rem 1.25rem 1.5rem;
+        }
+        .hero-inner { max-width: 1200px; margin: 0 auto; }
+        .hero-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+        .hero h1 { font-size: clamp(1.6rem, 3vw, 2.15rem); font-weight: 750; letter-spacing: -.02em; margin-bottom: .4rem; }
+        .hero .lede { opacity: .92; max-width: 48rem; font-size: 1.02rem; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .4rem .85rem; border-radius: 999px; font-size: .8rem; font-weight: 600;
+            background: rgba(255,255,255,.15); backdrop-filter: blur(6px); white-space: nowrap;
+        }
+        .status-pill.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 0 3px rgba(52,211,153,.35); }
+        .status-pill.wait::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fbbf24; }
+
+        .hero-stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: .75rem; margin-top: 1.35rem; max-width: 640px;
+        }
+        .hero-stat {
+            background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14);
+            border-radius: 12px; padding: .75rem .9rem;
+        }
+        .hero-stat .n { font-size: 1.45rem; font-weight: 750; }
+        .hero-stat .l { font-size: .75rem; opacity: .85; text-transform: uppercase; letter-spacing: .04em; }
+
+        /* ── Layout ── */
+        .app { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(280px, 340px) 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .card-pad { padding: 1.15rem 1.2rem; }
+        .card h2 {
+            font-size: 1rem; font-weight: 700; margin-bottom: .85rem;
+            display: flex; align-items: center; gap: .45rem;
+        }
+        .card h2 .step {
+            display: inline-flex; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+            background: var(--brand); color: #fff; font-size: .78rem; font-weight: 700;
+            align-items: center; justify-content: center;
+        }
+
+        label.field { display: block; font-size: .78rem; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .35rem; }
+        select, input[type=text], input[type=search] {
+            width: 100%; padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 10px;
+            font-size: .95rem; background: #fff; color: var(--ink);
+        }
+        select:focus, input:focus { outline: 2px solid rgba(79,70,229,.35); border-color: var(--brand); }
+        .field-block { margin-bottom: .9rem; }
+        .hint { color: var(--muted); font-size: .82rem; margin-top: .45rem; }
+
+        button {
+            background: var(--brand); color: #fff; border: 0; padding: .65rem 1.1rem;
+            border-radius: 10px; cursor: pointer; font-size: .92rem; font-weight: 650;
+        }
+        button:hover { background: var(--brand2); }
+        button.ghost { background: #eef2ff; color: var(--brand); }
+        button.ghost:hover { background: #e0e7ff; }
+        button.green { background: var(--ok); }
+        button:disabled { opacity: .55; cursor: not-allowed; }
+        .btn-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+
+        /* ── Map ── */
+        .map-shell { position: relative; overflow: hidden; min-height: 520px; }
+        #map {
+            height: min(62vh, 620px); min-height: 420px; width: 100%;
+            border-radius: var(--radius); background: #dbe3f0;
+        }
+        .map-overlay {
+            position: absolute; z-index: 500; left: 12px; top: 12px; right: 12px;
+            pointer-events: none;
+        }
+        .map-banner {
+            display: inline-block; pointer-events: auto;
+            background: rgba(255,255,255,.96); border: 1px solid var(--line);
+            border-radius: 12px; padding: .7rem .95rem; box-shadow: var(--shadow); max-width: min(100%, 420px);
+        }
+        .map-banner strong { display: block; font-size: .95rem; margin-bottom: .15rem; }
+        .map-banner span { color: var(--muted); font-size: .82rem; }
+        .legend {
+            display: flex; flex-wrap: wrap; gap: .45rem .7rem; margin-top: .75rem;
+            padding: 0 1.1rem 1rem;
+        }
+        .legend-item { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; color: var(--muted); }
+        .dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.12); flex-shrink: 0; }
+
+        /* ── Detail panels ── */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
+
+        .empty {
+            color: var(--muted); padding: 1.25rem; text-align: center;
+            background: #f8fafc; border-radius: 12px; border: 1px dashed var(--line);
+        }
+        .muted { color: var(--muted); font-size: .88rem; }
+        .pill {
+            display: inline-block; padding: .18rem .55rem; border-radius: 999px;
+            font-size: .72rem; font-weight: 700; background: #eef2ff; color: var(--brand);
+            white-space: nowrap;
+        }
+        .pill.status { color: #fff; }
+        .pill.sm { font-size: .68rem; }
+
+        .place-list { list-style: none; max-height: 380px; overflow: auto; margin-top: .25rem; }
+        .place-list li {
+            border-top: 1px solid var(--line); padding: .75rem .15rem;
+            cursor: pointer; transition: background .12s;
+        }
+        .place-list li:first-child { border-top: 0; }
+        .place-list li:hover, .place-list li.active { background: #f8fafc; }
+        .place-list .title { font-weight: 700; font-size: .95rem; }
+        .place-list .meta { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .35rem; align-items: center; }
+        .place-list .price { font-weight: 650; color: var(--ink); font-size: .88rem; }
+
+        .section-title {
+            font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+            color: var(--muted); margin: 1rem 0 .45rem;
+        }
+        .prose { font-size: .92rem; }
+        .prose p + p { margin-top: .55rem; }
+        .kv {
+            display: grid; grid-template-columns: 130px 1fr; gap: .4rem .75rem;
+            font-size: .88rem; margin-top: .5rem;
+        }
+        .kv dt { color: var(--muted); font-weight: 650; }
+        .kv dd { color: var(--ink); }
+
+        .treatment-card {
+            border: 1px solid var(--line); border-radius: 12px; padding: .9rem;
+            background: #f8fafc; margin-bottom: .65rem;
+        }
+        .treatment-card h3 { font-size: .98rem; margin-bottom: .25rem; }
+        .chip-row { display: flex; flex-wrap: wrap; gap: .35rem; margin: .4rem 0; }
+
+        .setup-banner {
+            background: #fffbeb; border: 1px solid #fde68a; color: #92400e;
+            border-radius: 12px; padding: 1rem 1.15rem; margin-bottom: 1rem;
+        }
+
+        .foot {
+            max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem 2.5rem;
+            color: var(--muted); font-size: .8rem; text-align: center;
+        }
+        .foot details { margin-top: .75rem; text-align: left; max-width: 520px; margin-left: auto; margin-right: auto; }
+        .foot summary { cursor: pointer; color: var(--brand); font-weight: 600; }
+
+        /* Leaflet popup tweaks */
+        .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: var(--shadow); }
+        .leaflet-popup-content { margin: .85rem 1rem; font-size: .88rem; line-height: 1.45; min-width: 180px; }
+        .leaflet-popup-content strong { font-size: .95rem; }
+        .popup-actions { margin-top: .55rem; }
+        .popup-actions button { font-size: .8rem; padding: .4rem .7rem; }
+
+        .loading-inline { color: var(--muted); font-size: .9rem; padding: .5rem 0; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🌍 MedFreedom Arbitrage Map</h1>
-        <p>Where medical procedures are legally accessible, at what cost, and under what oversight</p>
-        <span class="badge" id="statusBadge">Connecting…</span>
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-top">
+                <div>
+                    <h1>MedFreedom Map</h1>
+                    <p class="lede">Pick a treatment, then explore where it is legally accessible — by country or region, how you actually get it, estimated cost, and how carefully it is overseen.</p>
+                </div>
+                <span class="status-pill wait" id="statusBadge">Connecting…</span>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="n" id="s-proc">–</div><div class="l">Treatments</div></div>
+                <div class="hero-stat"><div class="n" id="s-jur">–</div><div class="l">Places mapped</div></div>
+                <div class="hero-stat"><div class="n" id="s-acc">–</div><div class="l">Access records</div></div>
+                <div class="hero-stat"><div class="n" id="s-ind">–</div><div class="l">Evidence links</div></div>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <div class="grid">
-            <div class="stat"><h3>Jurisdictions</h3><div class="num" id="s-jur">–</div><p>Countries &amp; regions</p></div>
-            <div class="stat"><h3>Procedures</h3><div class="num" id="s-proc">–</div><p>Medical treatments</p></div>
-            <div class="stat"><h3>Access Records</h3><div class="num" id="s-acc">–</div><p>Procedure × jurisdiction</p></div>
-            <div class="stat"><h3>Evidence Links</h3><div class="num" id="s-ind">–</div><p id="s-ind-sub">Conditions × grades</p></div>
+    <main class="app">
+        <div id="setupPanel" class="setup-banner" style="display:none;">
+            <strong>First-time setup needed.</strong>
+            <p class="muted" style="margin:.35rem 0 .7rem; color:#92400e;">The map database is empty. Load the starter data to explore treatments and places.</p>
+            <button class="green" id="seedBtn" onclick="seed()">Load starter data</button>
+            <span id="seedStatus" class="muted" style="margin-left:.6rem; color:#92400e;"></span>
+        </div>
+        <div id="enrichPanel" class="setup-banner" style="display:none; background:#eef2ff; border-color:#c7d2fe; color:#3730a3;">
+            <strong>Update available.</strong>
+            <p class="muted" style="margin:.35rem 0 .7rem; color:#3730a3;">Pathways, prices, or evidence grades can be refreshed without wiping data.</p>
+            <button class="ghost" id="enrichBtn" onclick="seed()">Refresh map data</button>
+            <span id="enrichStatus" class="muted" style="margin-left:.6rem;"></span>
         </div>
 
-        <div class="panel" id="setupPanel" style="display:none;">
-            <h2>⚙️ First-time setup</h2>
-            <p class="muted" style="margin-bottom:1rem;">The database looks empty. Load the starter dataset (jurisdictions, procedures, access records, evidence grades).</p>
-            <button class="green" id="seedBtn" onclick="seed()">🌱 Load starter data</button>
-            <span id="seedStatus" class="muted" style="margin-left:.75rem;"></span>
-        </div>
-        <div class="panel" id="enrichPanel" style="display:none;">
-            <h2>🔄 Refresh enrichment</h2>
-            <p class="muted" style="margin-bottom:1rem;">Re-apply access pathways, pricing midpoints, and evidence grades without wiping the database.</p>
-            <button class="ghost" id="enrichBtn" onclick="seed()">Apply enrichment</button>
-            <span id="enrichStatus" class="muted" style="margin-left:.75rem;"></span>
+        <div class="workspace">
+            <!-- Left: treatment picker -->
+            <aside class="card card-pad" id="pickerCard">
+                <h2><span class="step">1</span> Choose a treatment</h2>
+                <div class="field-block">
+                    <label class="field" for="searchBox">Search</label>
+                    <input type="search" id="searchBox" placeholder="e.g. psilocybin, ketamine, IVF…" autocomplete="off">
+                </div>
+                <div class="field-block">
+                    <label class="field" for="modalityFilter">Category</label>
+                    <select id="modalityFilter">
+                        <option value="">All categories</option>
+                    </select>
+                </div>
+                <div class="field-block">
+                    <label class="field" for="procedureSelect">Treatment</label>
+                    <select id="procedureSelect" size="12" style="min-height:280px;">
+                        <option value="">Loading treatments…</option>
+                    </select>
+                    <p class="hint">Select one treatment to color the map by regulatory status in each place.</p>
+                </div>
+                <div id="selectedSummary" class="treatment-card" style="display:none;"></div>
+            </aside>
+
+            <!-- Right: map -->
+            <section class="card map-shell">
+                <div class="map-overlay">
+                    <div class="map-banner" id="mapBanner">
+                        <strong>Interactive access map</strong>
+                        <span>Select a treatment on the left to see legal status by place.</span>
+                    </div>
+                </div>
+                <div id="map" role="application" aria-label="World map of treatment access by jurisdiction"></div>
+                <div class="legend" id="legend"></div>
+            </section>
         </div>
 
-        <div class="panel">
-            <h2>🔎 Search</h2>
-            <div class="row">
-                <input type="text" id="searchBox" placeholder="Try: psilocybin, depression, Mexico, surrogacy…" onkeydown="if(event.key==='Enter')runSearch()">
-                <button onclick="runSearch()">Search</button>
-                <button class="ghost" onclick="clearSearch()">Clear</button>
-            </div>
-            <div id="searchResults"></div>
+        <div class="detail-grid">
+            <section class="card card-pad">
+                <h2><span class="step">2</span> Places for this treatment</h2>
+                <p class="muted" id="placesIntro">Choose a treatment to list countries and regions where we have access data.</p>
+                <ul class="place-list" id="placeList"></ul>
+            </section>
+
+            <section class="card card-pad" id="detailPanel">
+                <h2><span class="step">3</span> Place details</h2>
+                <div id="detailBody">
+                    <div class="empty">Click a marker on the map or a place in the list to see eligibility, how you access it, cost, oversight, and local notes.</div>
+                </div>
+            </section>
         </div>
 
-        <div class="panel">
-            <h2>💊 Procedures</h2>
-            <div class="row" style="margin-bottom:.5rem;">
-                <select id="modalityFilter" onchange="loadProcedures()"><option value="">All modalities</option></select>
-                <button class="ghost" onclick="loadProcedures()">Refresh</button>
-            </div>
-            <div id="proceduresList" class="loading">Loading…</div>
-        </div>
+        <section class="card card-pad" style="margin-top:1rem;" id="evidenceSection">
+            <h2>Evidence snapshot</h2>
+            <p class="muted" style="margin-bottom:.75rem;">How strong is the clinical evidence for this treatment’s linked conditions? (Independent of where it is offered.)</p>
+            <div id="evidenceBody"><div class="empty">Select a treatment to see evidence grades.</div></div>
+        </section>
+    </main>
 
-        <div class="panel">
-            <h2>🗺️ Jurisdictions</h2>
-            <div id="jurisdictionsList" class="loading">Loading…</div>
-        </div>
-
-        <div class="panel">
-            <h2>📋 Conditions &amp; evidence grades</h2>
-            <p class="muted" style="margin-bottom:.75rem;">Schema §5 — evidence lives on procedure×condition, not on access cells.</p>
-            <div id="conditionsList" class="loading">Loading…</div>
-        </div>
-
-        <div class="panel">
-            <h2>🔌 API</h2>
-            <p class="muted">Base URL: <code id="apiUrl"></code></p>
+    <footer class="foot">
+        <p><strong>Informational only</strong> — not medical, legal, or travel advice. Laws and clinic quality change; verify with licensed professionals and primary sources before acting.</p>
+        <p style="margin-top:.4rem;">MedFreedom Map · Open Source Medicine Foundation</p>
+        <details>
+            <summary>Advanced / data tools</summary>
             <p class="muted" style="margin-top:.5rem;">
-                <a href="#" onclick="window.open(API+'/docs')">Interactive API docs (/docs)</a> ·
-                <a href="#" onclick="window.open(API+'/api/export/json')">Export JSON</a> ·
-                <a href="#" onclick="window.open(API+'/api/export/csv')">Export CSV</a>
+                <a href="/docs" target="_blank" rel="noopener">API docs</a> ·
+                <a href="/api/export/json" target="_blank" rel="noopener">Export JSON</a> ·
+                <a href="/api/export/csv" target="_blank" rel="noopener">Export CSV</a>
             </p>
-        </div>
-    </div>
-
-    <div class="foot">MedFreedom Arbitrage Map · Data is informational only, not medical or legal advice.</div>
+        </details>
+    </footer>
 
     <script>
         const API = window.location.origin;
-        document.getElementById('apiUrl').textContent = API;
+
+        // ── Status taxonomy → color & friendly label ──────────────────────
+        const STATUS_META = {
+            Fully_Approved:            { color: '#059669', label: 'Approved / standard access', rank: 1 },
+            Approved_On_Label:         { color: '#059669', label: 'Approved on-label', rank: 1 },
+            Approved_Off_Label:        { color: '#10b981', label: 'Approved drug, off-label use', rank: 2 },
+            Regulated_Therapy_Program: { color: '#0d9488', label: 'Regulated therapy program', rank: 2 },
+            Right_To_Try:              { color: '#2563eb', label: 'Right to try', rank: 3 },
+            Permitted_RTT:             { color: '#2563eb', label: 'Right to try', rank: 3 },
+            Permitted_Expanded_Access: { color: '#3b82f6', label: 'Expanded / compassionate access', rank: 3 },
+            Clinical_Trial_Only:       { color: '#7c3aed', label: 'Clinical trial only', rank: 4 },
+            Physician_Discretion_Gray: { color: '#d97706', label: 'Physician discretion (gray zone)', rank: 5 },
+            Unregulated_Permitted:     { color: '#f59e0b', label: 'Unregulated but permitted', rank: 5 },
+            Decriminalized_Possession: { color: '#eab308', label: 'Decriminalized (limited supply)', rank: 6 },
+            Decriminalized_No_Supply:  { color: '#eab308', label: 'Decriminalized, no legal supply', rank: 6 },
+            Prohibited:                { color: '#dc2626', label: 'Prohibited', rank: 9 },
+            Unknown:                   { color: '#94a3b8', label: 'Unknown / not researched', rank: 8 },
+        };
+        const DEFAULT_STATUS = { color: '#94a3b8', label: 'Unknown', rank: 8 };
+
+        function statusMeta(code) {
+            return STATUS_META[code] || { ...DEFAULT_STATUS, label: humanize(code) || 'Unknown' };
+        }
+        function humanize(s) {
+            if (!s) return '';
+            return String(s).replace(/_/g, ' ');
+        }
+        function friendlyPathway(code) {
+            const map = {
+                Standard_Prescription: 'Standard prescription',
+                Off_Label_Prescription: 'Off-label prescription',
+                Compounding: 'Compounding pharmacy',
+                Expanded_Access: 'Expanded / special access',
+                Right_To_Try: 'Right to try',
+                Clinical_Trial_Enrollment: 'Clinical trial enrollment',
+                Personal_Import: 'Personal import',
+                Licensed_Provider_Regime: 'Licensed provider / program',
+                Medical_Tourism_Cash: 'Medical tourism (cash-pay)',
+                None: 'No practical legal pathway',
+            };
+            return map[code] || humanize(code) || '—';
+        }
+        function friendlyOversight(code) {
+            const map = {
+                High: 'High oversight', Medium: 'Moderate oversight', Low: 'Low oversight',
+                Variable: 'Variable oversight', Minimal: 'Minimal oversight',
+                Regulated_High: 'Highly regulated', Regulated_Moderate: 'Moderately regulated',
+                Self_Regulated: 'Self-regulated', None: 'No meaningful oversight',
+            };
+            return map[code] || humanize(code) || '—';
+        }
+        function esc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+                ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function fmtMoney(n) {
+            if (n == null || n === '') return null;
+            return '$' + Number(n).toLocaleString(undefined, { maximumFractionDigits: 0 });
+        }
+        function fmtPrice(a) {
+            const m = fmtMoney(a.price_usd);
+            if (m) {
+                const conf = a.price_confidence ? ` <span class="muted">(${esc(humanize(a.price_confidence).toLowerCase())})</span>` : '';
+                return m + conf;
+            }
+            return esc(a.estimated_cost_range_usd || 'Cost not listed');
+        }
+
+        // ── State ─────────────────────────────────────────────────────────
+        let map, markersLayer;
+        let allProcedures = [];
+        let currentAccess = []; // access rows for selected procedure
+        let selectedProcedureId = null;
+        let selectedJurisdictionId = null;
+        let markerByJur = {};
 
         async function api(path, opts) {
             const res = await fetch(API + path, opts);
-            if (!res.ok) throw new Error('HTTP ' + res.status);
+            if (!res.ok) throw new Error('Request failed (' + res.status + ')');
             return res.json();
         }
 
+        // ── Map ───────────────────────────────────────────────────────────
+        function initMap() {
+            map = L.map('map', { worldCopyJump: true, scrollWheelZoom: true }).setView([20, 10], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 12,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            }).addTo(map);
+            markersLayer = L.layerGroup().addTo(map);
+            buildLegend();
+        }
+
+        function buildLegend() {
+            const order = [
+                'Fully_Approved', 'Regulated_Therapy_Program', 'Right_To_Try',
+                'Clinical_Trial_Only', 'Physician_Discretion_Gray', 'Decriminalized_Possession', 'Prohibited',
+            ];
+            const el = document.getElementById('legend');
+            el.innerHTML = order.map(k => {
+                const m = STATUS_META[k];
+                return `<span class="legend-item"><span class="dot" style="background:${m.color}"></span>${esc(m.label)}</span>`;
+            }).join('');
+        }
+
+        function circleIcon(color) {
+            return L.divIcon({
+                className: '',
+                html: `<div style="
+                    width:18px;height:18px;border-radius:50%;
+                    background:${color};border:2.5px solid #fff;
+                    box-shadow:0 1px 6px rgba(0,0,0,.35);
+                "></div>`,
+                iconSize: [18, 18],
+                iconAnchor: [9, 9],
+                popupAnchor: [0, -10],
+            });
+        }
+
+        function clearMap() {
+            markersLayer.clearLayers();
+            markerByJur = {};
+        }
+
+        function paintMap(accessRows) {
+            clearMap();
+            const bounds = [];
+            accessRows.forEach(row => {
+                const j = row.jurisdiction || {};
+                const lat = j.latitude, lng = j.longitude;
+                if (lat == null || lng == null) return;
+                const meta = statusMeta(row.legal_status);
+                const m = L.marker([lat, lng], { icon: circleIcon(meta.color), title: j.name });
+                const price = fmtPrice(row);
+                m.bindPopup(`
+                    <strong>${esc(j.name)}</strong><br>
+                    <span class="pill status sm" style="background:${meta.color};margin-top:.35rem;display:inline-block;">${esc(meta.label)}</span>
+                    <div style="margin-top:.45rem;color:#64748b;font-size:.82rem;">
+                        ${esc(friendlyPathway(row.access_pathway))}<br>
+                        ${price}
+                    </div>
+                    <div class="popup-actions">
+                        <button type="button" onclick="window.__openJur(${JSON.stringify(j.id)})">View place details</button>
+                    </div>
+                `);
+                m.on('click', () => selectJurisdiction(j.id, row));
+                m.addTo(markersLayer);
+                markerByJur[j.id] = m;
+                bounds.push([lat, lng]);
+            });
+            if (bounds.length === 1) {
+                map.setView(bounds[0], 5);
+            } else if (bounds.length > 1) {
+                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 5 });
+            } else {
+                map.setView([20, 10], 2);
+            }
+        }
+
+        window.__openJur = function (id) {
+            const row = currentAccess.find(a => (a.jurisdiction && a.jurisdiction.id) === id || a.jurisdiction_id === id);
+            selectJurisdiction(id, row);
+        };
+
+        // ── Data load ─────────────────────────────────────────────────────
         async function refreshStats() {
             try {
                 const s = await api('/api/stats');
@@ -134,20 +487,18 @@
                 document.getElementById('s-proc').textContent = s.procedures;
                 document.getElementById('s-acc').textContent = s.access_records;
                 document.getElementById('s-ind').textContent = s.procedure_indications ?? 0;
-                const sub = document.getElementById('s-ind-sub');
-                if (sub) {
-                    const path = s.access_records_with_pathway ?? 0;
-                    const price = s.access_records_with_price ?? 0;
-                    sub.textContent = `${s.conditions || 0} conditions · ${path}/${s.access_records || 0} pathways · ${price} priced`;
-                }
-                document.getElementById('statusBadge').textContent = '✓ Live';
+                const badge = document.getElementById('statusBadge');
+                badge.textContent = 'Live data';
+                badge.className = 'status-pill live';
                 document.getElementById('setupPanel').style.display = s.jurisdictions === 0 ? 'block' : 'none';
                 document.getElementById('enrichPanel').style.display =
-                    s.jurisdictions > 0 && ((s.procedure_indications || 0) === 0 || (s.access_records_with_pathway || 0) < s.access_records)
+                    s.jurisdictions > 0 && ((s.procedure_indications || 0) === 0 || (s.access_records_with_pathway || 0) < (s.access_records || 0))
                         ? 'block' : 'none';
                 return s;
             } catch (e) {
-                document.getElementById('statusBadge').textContent = '⚠ Waking up… (free tier, ~30s)';
+                const badge = document.getElementById('statusBadge');
+                badge.textContent = 'Waking up… (~30s on free tier)';
+                badge.className = 'status-pill wait';
                 return null;
             }
         }
@@ -159,177 +510,309 @@
             const est = document.getElementById('enrichStatus');
             if (btn) btn.disabled = true;
             if (ebtn) ebtn.disabled = true;
-            if (st) st.textContent = 'Loading… this can take up to a minute.';
-            if (est) est.textContent = 'Applying…';
+            if (st) st.textContent = 'Loading… up to a minute.';
+            if (est) est.textContent = 'Refreshing…';
             try {
                 const r = await api('/api/seed', { method: 'POST' });
                 if (r.status === 'ok') {
-                    const msg = `✅ ${r.jurisdictions} jurisdictions, ${r.procedures} procedures, ${r.access_records} access · ${r.conditions || 0} conditions, ${r.procedure_indications || 0} indications · enriched ${r.enriched_access_records || 0}`;
+                    const msg = `Loaded ${r.procedures} treatments across ${r.jurisdictions} places.`;
                     if (st) st.textContent = msg;
                     if (est) est.textContent = msg;
-                    await refreshStats(); loadProcedures(); loadJurisdictions(); loadModalities(); loadConditions();
+                    await bootstrap();
                 } else {
-                    const err = '❌ ' + (r.message || 'error');
+                    const err = r.message || 'Could not load data';
                     if (st) st.textContent = err;
                     if (est) est.textContent = err;
                     if (btn) btn.disabled = false;
                     if (ebtn) ebtn.disabled = false;
                 }
             } catch (e) {
-                if (st) st.textContent = '❌ ' + e.message;
-                if (est) est.textContent = '❌ ' + e.message;
+                if (st) st.textContent = e.message;
+                if (est) est.textContent = e.message;
                 if (btn) btn.disabled = false;
                 if (ebtn) ebtn.disabled = false;
             }
         }
 
-        async function loadModalities() {
+        async function loadProcedures() {
+            allProcedures = await api('/api/procedures');
             try {
                 const opts = await api('/api/filters/options');
                 const sel = document.getElementById('modalityFilter');
-                sel.innerHTML = '<option value="">All modalities</option>' +
-                    (opts.modalities || []).map(m => `<option value="${m}">${m}</option>`).join('');
-            } catch (e) {}
+                const cur = sel.value;
+                sel.innerHTML = '<option value="">All categories</option>' +
+                    (opts.modalities || []).map(m => `<option value="${esc(m)}">${esc(humanize(m))}</option>`).join('');
+                sel.value = cur;
+            } catch (e) { /* optional */ }
+            renderProcedureSelect();
         }
 
-        async function loadProcedures() {
-            const el = document.getElementById('proceduresList');
+        function renderProcedureSelect() {
             const mod = document.getElementById('modalityFilter').value;
-            el.className = 'loading'; el.textContent = 'Loading…';
-            try {
-                const data = await api('/api/procedures' + (mod ? '?modality=' + encodeURIComponent(mod) : ''));
-                if (!data.length) { el.className=''; el.innerHTML = '<div class="empty">No procedures yet — load the starter data above.</div>'; return; }
-                el.className = '';
-                el.innerHTML = renderProcedureTable(data);
-            } catch (e) { el.className=''; el.innerHTML = '<div class="empty">Error: ' + e.message + '</div>'; }
-        }
-
-        function renderProcedureTable(data) {
-            let h = '<table><thead><tr><th>Procedure</th><th>Regulatory class</th><th>Why restricted</th><th>US cost</th></tr></thead><tbody>';
-            data.forEach(p => {
-                h += `<tr class="clickable" onclick='showProcedure(${JSON.stringify(p.id)})'>
-                    <td><strong>${esc(p.name)}</strong><div class="muted">${esc((p.therapeutic_areas||[]).join(', '))}</div></td>
-                    <td><span class="pill">${esc(p.regulatory_modality || p.modality || '')}</span></td>
-                    <td class="muted">${esc(p.restriction_driver || '—')}</td>
-                    <td>${esc(p.typical_us_cost_range || '—')}</td></tr>`;
-            });
-            return h + '</tbody></table>';
-        }
-
-        function fmtPrice(a) {
-            if (a.price_usd != null && a.price_usd !== '') {
-                const conf = a.price_confidence ? ` <span class="muted">(${esc(a.price_confidence)})</span>` : '';
-                return '$' + Number(a.price_usd).toLocaleString() + conf;
+            const q = document.getElementById('searchBox').value.trim().toLowerCase();
+            let list = allProcedures.slice();
+            if (mod) list = list.filter(p => p.modality === mod || p.regulatory_modality === mod);
+            if (q) {
+                list = list.filter(p => {
+                    const hay = [p.name, p.description, p.indications, (p.therapeutic_areas || []).join(' ')].join(' ').toLowerCase();
+                    return hay.includes(q);
+                });
             }
-            return esc(a.estimated_cost_range_usd || '—');
+            list.sort((a, b) => a.name.localeCompare(b.name));
+            const sel = document.getElementById('procedureSelect');
+            const keep = selectedProcedureId;
+            if (!list.length) {
+                sel.innerHTML = '<option value="">No treatments match</option>';
+                return;
+            }
+            sel.innerHTML = list.map(p =>
+                `<option value="${esc(p.id)}" ${p.id === keep ? 'selected' : ''}>${esc(p.name)}</option>`
+            ).join('');
+            if (keep && list.some(p => p.id === keep)) sel.value = keep;
         }
 
-        async function showProcedure(id) {
-            try {
-                const d = await api('/api/procedures/' + id + '/jurisdictions');
-                const p = d.procedure;
-                let h = `<div class="detail"><h4>${esc(p.name)}</h4>`;
-                h += `<p class="muted" style="margin-bottom:.75rem;">${esc(p.description || '')}</p>`;
-                if ((d.indications || []).length) {
-                    h += '<p style="margin:.5rem 0 .35rem;font-weight:600;">Evidence by condition</p>';
-                    h += '<table><thead><tr><th>Condition</th><th>Grade</th><th>Summary</th></tr></thead><tbody>';
-                    d.indications.forEach(ind => {
-                        h += `<tr><td><strong>${esc(ind.condition.name)}</strong><div class="muted">${esc(ind.condition.icd_code || '')}</div></td>
-                            <td><span class="pill">${esc(ind.evidence_grade)}</span></td>
-                            <td class="muted">${esc(ind.evidence_summary || '')}</td></tr>`;
-                    });
-                    h += '</tbody></table>';
-                }
-                if (!d.jurisdictions.length) {
-                    h += '<p class="muted">No jurisdiction access records loaded for this procedure yet.</p>';
-                } else {
-                    h += '<p style="margin:1rem 0 .35rem;font-weight:600;">Access by jurisdiction</p>';
-                    h += '<table><thead><tr><th>Jurisdiction</th><th>Legal status</th><th>Pathway</th><th>Price (USD)</th><th>Oversight</th></tr></thead><tbody>';
-                    d.jurisdictions.forEach(a => {
-                        h += `<tr><td><strong>${esc(a.jurisdiction.name)}</strong></td>
-                            <td>${esc(a.legal_status || '—')}</td>
-                            <td><span class="pill">${esc(a.access_pathway || '—')}</span></td>
-                            <td>${fmtPrice(a)}</td>
-                            <td>${esc(a.oversight_quality || '—')}</td></tr>`;
-                    });
-                    h += '</tbody></table>';
-                }
-                h += '</div>';
-                const holder = document.getElementById('proceduresList');
-                holder.insertAdjacentHTML('afterbegin', h);
-                holder.scrollIntoView({behavior:'smooth', block:'start'});
-            } catch (e) { alert('Error: ' + e.message); }
-        }
+        async function selectProcedure(id) {
+            if (!id) return;
+            selectedProcedureId = id;
+            selectedJurisdictionId = null;
+            document.getElementById('detailBody').innerHTML =
+                '<div class="empty">Click a place on the map or in the list for full details.</div>';
 
-        async function loadConditions() {
-            const el = document.getElementById('conditionsList');
-            if (!el) return;
-            el.className = 'loading'; el.textContent = 'Loading…';
+            const summary = document.getElementById('selectedSummary');
+            const p = allProcedures.find(x => x.id === id);
+            if (p) {
+                summary.style.display = 'block';
+                summary.innerHTML = `
+                    <h3>${esc(p.name)}</h3>
+                    <div class="chip-row">
+                        <span class="pill">${esc(humanize(p.regulatory_modality || p.modality))}</span>
+                        ${p.restriction_driver ? `<span class="pill" style="background:#fef3c7;color:#92400e;">${esc(humanize(p.restriction_driver))}</span>` : ''}
+                    </div>
+                    <p class="muted" style="font-size:.84rem;">${esc((p.description || '').slice(0, 220))}${(p.description || '').length > 220 ? '…' : ''}</p>
+                    ${p.typical_us_cost_range ? `<p class="muted" style="margin-top:.35rem;"><strong>Typical US cost:</strong> ${esc(p.typical_us_cost_range)}</p>` : ''}
+                `;
+            }
+
+            document.getElementById('mapBanner').innerHTML =
+                `<strong>${esc(p ? p.name : 'Treatment')}</strong><span>Markers show legal / regulatory status where we have data. Colors match the legend below.</span>`;
+
+            document.getElementById('placesIntro').textContent = 'Loading places…';
+            document.getElementById('placeList').innerHTML = '';
+            document.getElementById('evidenceBody').innerHTML = '<div class="loading-inline">Loading evidence…</div>';
+
             try {
-                const inds = await api('/api/procedure-indications');
-                if (!inds.length) {
-                    el.className = '';
-                    el.innerHTML = '<div class="empty">No evidence grades yet — click “Apply enrichment” above (or reseed).</div>';
-                    return;
-                }
-                el.className = '';
-                let h = '<table><thead><tr><th>Condition</th><th>Procedure</th><th>Grade</th><th>Summary</th></tr></thead><tbody>';
-                inds.forEach(i => {
-                    h += `<tr class="clickable" onclick='showProcedure(${JSON.stringify(i.procedure_id)})'>
-                        <td><strong>${esc(i.condition_name)}</strong><div class="muted">${esc(i.condition_icd || '')}</div></td>
-                        <td>${esc(i.procedure_name)}</td>
-                        <td><span class="pill">${esc(i.evidence_grade)}</span></td>
-                        <td class="muted">${esc((i.evidence_summary || '').slice(0, 160))}${(i.evidence_summary||'').length > 160 ? '…' : ''}</td></tr>`;
+                const d = await api('/api/procedures/' + encodeURIComponent(id) + '/jurisdictions');
+                currentAccess = (d.jurisdictions || []).slice().sort((a, b) => {
+                    const ra = statusMeta(a.legal_status).rank;
+                    const rb = statusMeta(b.legal_status).rank;
+                    if (ra !== rb) return ra - rb;
+                    return (a.jurisdiction?.name || '').localeCompare(b.jurisdiction?.name || '');
                 });
-                el.innerHTML = h + '</tbody></table>';
-            } catch (e) { el.className=''; el.innerHTML = '<div class="empty">Error: ' + e.message + '</div>'; }
+                paintMap(currentAccess);
+                renderPlaceList(currentAccess);
+                renderEvidence(d.indications || []);
+                const n = currentAccess.length;
+                document.getElementById('placesIntro').textContent = n
+                    ? `${n} place${n === 1 ? '' : 's'} with access data for this treatment. Sorted by most open regulatory status first.`
+                    : 'No place-level access records for this treatment yet. Many treatments are catalogued but not fully mapped.';
+            } catch (e) {
+                document.getElementById('placesIntro').textContent = 'Could not load places: ' + e.message;
+                document.getElementById('evidenceBody').innerHTML = `<div class="empty">${esc(e.message)}</div>`;
+            }
         }
 
-        async function loadJurisdictions() {
-            const el = document.getElementById('jurisdictionsList');
-            el.className = 'loading'; el.textContent = 'Loading…';
-            try {
-                const data = await api('/api/jurisdictions');
-                if (!data.length) { el.className=''; el.innerHTML = '<div class="empty">No jurisdictions yet.</div>'; return; }
-                el.className = '';
-                let h = '<table><thead><tr><th>Name</th><th>Level</th><th>Type</th><th>Country</th></tr></thead><tbody>';
-                data.forEach(j => {
-                    h += `<tr><td><strong>${esc(j.name)}</strong></td>
-                        <td><span class="pill">${esc(j.level || '')}</span></td>
-                        <td class="muted">${esc(j.type || '')}</td>
-                        <td>${esc(j.country_code || '')}</td></tr>`;
+        function renderPlaceList(rows) {
+            const ul = document.getElementById('placeList');
+            if (!rows.length) {
+                ul.innerHTML = '';
+                return;
+            }
+            ul.innerHTML = rows.map(row => {
+                const j = row.jurisdiction || {};
+                const meta = statusMeta(row.legal_status);
+                const active = j.id === selectedJurisdictionId ? 'active' : '';
+                return `<li class="${active}" data-jid="${esc(j.id)}">
+                    <div class="title">${esc(j.name)}</div>
+                    <div class="meta">
+                        <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
+                        <span class="pill">${esc(friendlyPathway(row.access_pathway))}</span>
+                        <span class="price">${fmtPrice(row)}</span>
+                    </div>
+                    <p class="muted" style="margin-top:.35rem;font-size:.8rem;">${esc(friendlyOversight(row.oversight_quality))}${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 100)) + (row.arbitrage_summary.length > 100 ? '…' : '') : ''}</p>
+                </li>`;
+            }).join('');
+            ul.querySelectorAll('li').forEach(li => {
+                li.addEventListener('click', () => {
+                    const jid = li.getAttribute('data-jid');
+                    const row = currentAccess.find(a => a.jurisdiction?.id === jid);
+                    selectJurisdiction(jid, row);
+                    const m = markerByJur[jid];
+                    if (m) { map.panTo(m.getLatLng()); m.openPopup(); }
                 });
-                el.innerHTML = h + '</tbody></table>';
-            } catch (e) { el.className=''; el.innerHTML = '<div class="empty">Error: ' + e.message + '</div>'; }
+            });
         }
 
-        async function runSearch() {
-            const q = document.getElementById('searchBox').value.trim();
-            const el = document.getElementById('searchResults');
-            if (!q) { el.innerHTML=''; return; }
-            el.innerHTML = '<div class="loading">Searching…</div>';
+        function renderEvidence(indications) {
+            const el = document.getElementById('evidenceBody');
+            if (!indications.length) {
+                el.innerHTML = '<div class="empty">No condition-level evidence grades seeded for this treatment yet.</div>';
+                return;
+            }
+            el.innerHTML = indications.map(ind => {
+                const c = ind.condition || {};
+                return `<div class="treatment-card">
+                    <div class="chip-row">
+                        <span class="pill" style="background:#0f172a;color:#fff;">${esc(ind.evidence_grade)}</span>
+                        <strong>${esc(c.name || 'Condition')}</strong>
+                        ${c.icd_code ? `<span class="muted">${esc(c.icd_code)}</span>` : ''}
+                    </div>
+                    <p class="prose muted" style="margin-top:.35rem;">${esc(ind.evidence_summary || '')}</p>
+                </div>`;
+            }).join('');
+        }
+
+        async function selectJurisdiction(jid, accessRow) {
+            selectedJurisdictionId = jid;
+            renderPlaceList(currentAccess); // refresh active state
+            const body = document.getElementById('detailBody');
+            body.innerHTML = '<div class="loading-inline">Loading place details…</div>';
+            document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
             try {
-                const r = await api('/api/search?q=' + encodeURIComponent(q));
-                let h = '';
-                if (r.procedures.length) h += '<h4 style="margin-top:1rem;">Procedures</h4>' + renderProcedureTable(r.procedures);
-                if (r.jurisdictions.length) {
-                    h += '<h4 style="margin-top:1rem;">Jurisdictions</h4><table><tbody>';
-                    r.jurisdictions.forEach(j => h += `<tr><td><strong>${esc(j.name)}</strong></td><td class="muted">${esc(j.general_notes||'')}</td></tr>`);
-                    h += '</tbody></table>';
+                const j = await api('/api/jurisdictions/' + encodeURIComponent(jid));
+                // Prefer the access row for the currently selected treatment
+                let ar = accessRow;
+                if (!ar || ar.jurisdiction_id !== jid) {
+                    ar = currentAccess.find(a => a.jurisdiction?.id === jid) || null;
                 }
-                if (!h) h = '<div class="empty">No matches for “' + esc(q) + '”.</div>';
-                el.innerHTML = h;
-            } catch (e) { el.innerHTML = '<div class="empty">Error: ' + e.message + '</div>'; }
+                // If user opened a place without treatment context, use first treatment there
+                if (!ar && (j.treatments || []).length) {
+                    ar = j.treatments[0];
+                }
+                body.innerHTML = renderJurisdictionDetail(j, ar);
+            } catch (e) {
+                body.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
+            }
         }
-        function clearSearch() { document.getElementById('searchBox').value=''; document.getElementById('searchResults').innerHTML=''; }
 
-        function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        function renderJurisdictionDetail(j, ar) {
+            const meta = statusMeta(ar?.legal_status);
+            const parentLine = j.parent
+                ? `<p class="muted" style="margin-bottom:.5rem;">Part of <strong>${esc(j.parent.name)}</strong> (${esc(humanize(j.parent.level))})</p>`
+                : '';
+            const children = (j.children || []).length
+                ? `<p class="muted" style="margin-top:.5rem;"><strong>Sub-regions:</strong> ${(j.children || []).map(c => esc(c.name)).join(', ')}</p>`
+                : '';
+
+            let accessBlock = '';
+            if (ar && selectedProcedureId) {
+                accessBlock = `
+                    <div class="section-title">Access for selected treatment</div>
+                    <div class="chip-row">
+                        <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
+                        <span class="pill">${esc(friendlyPathway(ar.access_pathway))}</span>
+                        <span class="pill">${esc(friendlyOversight(ar.oversight_quality))}</span>
+                    </div>
+                    <dl class="kv">
+                        <dt>Est. cost</dt><dd>${fmtPrice(ar)}</dd>
+                        <dt>How you get it</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
+                        <dt>Who qualifies</dt><dd>${esc(ar.eligibility_requirements || 'See local program rules')}</dd>
+                        <dt>Providers</dt><dd>${esc(ar.provider_requirements || '—')}</dd>
+                        <dt>Travel / residency</dt><dd>${esc(ar.residency_travel_notes || '—')}</dd>
+                        <dt>Risks</dt><dd>${esc(ar.risk_notes || '—')}</dd>
+                        <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
+                        <dt>Bottom line</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
+                    </dl>
+                `;
+            }
+
+            const otherTreatments = (j.treatments || []).filter(t => t.procedure_id !== selectedProcedureId);
+            let otherBlock = '';
+            if (otherTreatments.length) {
+                otherBlock = `
+                    <div class="section-title">Other treatments tracked here</div>
+                    ${otherTreatments.map(t => {
+                        const sm = statusMeta(t.legal_status);
+                        return `<div class="treatment-card" style="cursor:pointer" onclick="window.__pickProc(${JSON.stringify(t.procedure_id)})">
+                            <h3>${esc(t.procedure_name)}</h3>
+                            <div class="chip-row">
+                                <span class="pill status sm" style="background:${sm.color}">${esc(sm.label)}</span>
+                                <span class="muted">${fmtPrice(t)}</span>
+                            </div>
+                        </div>`;
+                    }).join('')}
+                `;
+            }
+
+            return `
+                <div>
+                    <h3 style="font-size:1.15rem;margin-bottom:.25rem;">${esc(j.name)}</h3>
+                    <div class="chip-row">
+                        <span class="pill">${esc(humanize(j.level))}</span>
+                        <span class="pill">${esc(humanize(j.type))}</span>
+                        <span class="pill">${esc(j.country_code || '')}</span>
+                    </div>
+                    ${parentLine}
+                    <div class="section-title">About this place</div>
+                    <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
+                    ${children}
+                    ${accessBlock}
+                    ${otherBlock}
+                    ${ar && ar.last_verified ? `<p class="muted" style="margin-top:1rem;font-size:.78rem;">Access data last verified: ${esc(ar.last_verified)}${ar.verified_by ? ' · ' + esc(ar.verified_by) : ''}</p>` : ''}
+                </div>
+            `;
+        }
+
+        window.__pickProc = function (pid) {
+            document.getElementById('procedureSelect').value = pid;
+            selectProcedure(pid);
+        };
+
+        // ── Events ────────────────────────────────────────────────────────
+        document.getElementById('procedureSelect').addEventListener('change', e => {
+            if (e.target.value) selectProcedure(e.target.value);
+        });
+        document.getElementById('modalityFilter').addEventListener('change', () => renderProcedureSelect());
+        document.getElementById('searchBox').addEventListener('input', () => renderProcedureSelect());
+        document.getElementById('searchBox').addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const sel = document.getElementById('procedureSelect');
+                if (sel.value) selectProcedure(sel.value);
+            }
+        });
+
+        async function bootstrap() {
+            await refreshStats();
+            await loadProcedures();
+            // Auto-select first treatment with a friendly default if none chosen
+            if (!selectedProcedureId && allProcedures.length) {
+                const preferred = allProcedures.find(p => p.id === 'proc-psilocybin-trd')
+                    || allProcedures.find(p => p.id === 'proc-ketamine-depression')
+                    || allProcedures[0];
+                document.getElementById('procedureSelect').value = preferred.id;
+                await selectProcedure(preferred.id);
+            } else if (selectedProcedureId) {
+                await selectProcedure(selectedProcedureId);
+            }
+        }
 
         (async function init() {
+            initMap();
             const s = await refreshStats();
-            loadModalities(); loadProcedures(); loadJurisdictions(); loadConditions();
-            // Keep retrying while the free instance wakes up.
-            if (!s) { const t = setInterval(async () => { const s2 = await refreshStats(); if (s2) { clearInterval(t); loadModalities(); loadProcedures(); loadJurisdictions(); loadConditions(); } }, 5000); }
+            if (s && s.jurisdictions > 0) {
+                await bootstrap();
+            } else if (!s) {
+                const t = setInterval(async () => {
+                    const s2 = await refreshStats();
+                    if (s2) {
+                        clearInterval(t);
+                        if (s2.jurisdictions > 0) await bootstrap();
+                    }
+                }, 5000);
+            }
+            setTimeout(() => map.invalidateSize(), 200);
+            window.addEventListener('resize', () => map.invalidateSize());
         })();
     </script>
 </body>

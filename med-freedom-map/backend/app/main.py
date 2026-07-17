@@ -130,10 +130,54 @@ def list_jurisdictions_map(db: Session = Depends(get_db)):
 
 @app.get("/api/jurisdictions/{jurisdiction_id}")
 def get_jurisdiction(jurisdiction_id: str, db: Session = Depends(get_db)):
+    """Full jurisdiction profile for the user-facing explorer (notes + treatments available there)."""
     j = db.query(Jurisdiction).filter(Jurisdiction.id == jurisdiction_id).first()
     if not j:
         raise HTTPException(status_code=404, detail="Jurisdiction not found")
-    return j.to_dict()
+
+    parent = None
+    if j.parent_id:
+        p = db.query(Jurisdiction).filter(Jurisdiction.id == j.parent_id).first()
+        if p:
+            parent = {"id": p.id, "name": p.name, "level": p.level.value if hasattr(p.level, "value") else p.level}
+
+    children = [
+        {
+            "id": c.id,
+            "name": c.name,
+            "level": c.level.value if hasattr(c.level, "value") else c.level,
+            "type": c.type.value if hasattr(c.type, "value") else c.type,
+        }
+        for c in db.query(Jurisdiction).filter(Jurisdiction.parent_id == jurisdiction_id).order_by(Jurisdiction.name).all()
+    ]
+
+    rows = (
+        db.query(AccessRecord, Procedure)
+        .join(Procedure, AccessRecord.procedure_id == Procedure.id)
+        .filter(AccessRecord.jurisdiction_id == jurisdiction_id, AccessRecord.status == "active")
+        .order_by(Procedure.name)
+        .all()
+    )
+
+    return {
+        **j.to_dict(),
+        "parent": parent,
+        "children": children,
+        "treatments": [
+            {
+                **ar.to_dict(),
+                "procedure_name": proc.name,
+                "modality": proc.modality.value if hasattr(proc.modality, "value") else proc.modality,
+                "regulatory_modality": (
+                    proc.regulatory_modality.value
+                    if proc.regulatory_modality and hasattr(proc.regulatory_modality, "value")
+                    else proc.regulatory_modality
+                ),
+                "typical_us_cost_range": proc.typical_us_cost_range,
+            }
+            for ar, proc in rows
+        ],
+    }
 
 
 @app.post("/api/jurisdictions")
