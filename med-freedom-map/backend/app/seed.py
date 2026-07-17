@@ -24,11 +24,18 @@ from .seed_therapies_expansion import (
     CONDITIONS_EXPANSION,
     PROCEDURE_INDICATIONS_EXPANSION,
 )
+from .seed_evidence_clinics import (
+    all_conditions_evidence,
+    all_indications_fill,
+    all_example_clinics,
+)
 
 # Merge base + expansion disease maps (expansion wins on key clash).
 ALL_PROCEDURE_DISEASES = {**PROCEDURE_DISEASES, **PROCEDURE_DISEASES_EXPANSION}
-ALL_CONDITIONS = CONDITIONS + CONDITIONS_EXPANSION
-ALL_PROCEDURE_INDICATIONS = PROCEDURE_INDICATIONS + PROCEDURE_INDICATIONS_EXPANSION
+ALL_CONDITIONS = CONDITIONS + CONDITIONS_EXPANSION + all_conditions_evidence()
+ALL_PROCEDURE_INDICATIONS = (
+    PROCEDURE_INDICATIONS + PROCEDURE_INDICATIONS_EXPANSION + all_indications_fill()
+)
 
 
 # Schema §1 taxonomy: map each legacy modality to (regulatory_modality, restriction_driver).
@@ -1124,6 +1131,7 @@ def seed_database():
         "enriched_access_records": 0,
         "new_access_records": 0,
         "procedures_diseases_updated": 0,
+        "clinics_updated": 0,
         "skipped": [],
     }
 
@@ -1263,13 +1271,37 @@ def seed_database():
                 )
         result["procedure_indications"] = db.query(ProcedureIndication).count()
 
+        # ── Example clinics on access records ──
+        for (proc_id, jur_id), clinics in all_example_clinics().items():
+            ar = (
+                db.query(AccessRecord)
+                .filter(
+                    AccessRecord.procedure_id == proc_id,
+                    AccessRecord.jurisdiction_id == jur_id,
+                )
+                .first()
+            )
+            if not ar:
+                continue
+            new_json = json.dumps(clinics)
+            if ar.example_clinics != new_json:
+                ar.example_clinics = new_json
+                result["clinics_updated"] += 1
+        if result["clinics_updated"]:
+            try:
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                result["skipped"].append(f"clinics_update ({e.__class__.__name__})")
+
         print(
             f"Seed complete: {result['jurisdictions']} jurisdictions, "
             f"{result['procedures']} procedures, {result['access_records']} access records "
             f"(+{result['new_access_records']} new), "
             f"{result['conditions']} conditions, {result['procedure_indications']} indications, "
             f"{result['enriched_access_records']} enriched, "
-            f"{result['procedures_diseases_updated']} diseases fields updated "
+            f"{result['procedures_diseases_updated']} diseases fields updated, "
+            f"{result['clinics_updated']} clinic lists updated "
             f"({len(result['skipped'])} skipped)."
         )
         return result

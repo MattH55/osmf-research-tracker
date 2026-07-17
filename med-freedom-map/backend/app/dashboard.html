@@ -356,7 +356,10 @@
 
         <section class="card card-pad" style="margin-top:1rem;" id="evidenceSection">
             <h2>Evidence snapshot</h2>
-            <p class="muted" style="margin-bottom:.75rem;">How strong is the clinical evidence for this treatment’s linked conditions? (Independent of where it is offered.)</p>
+            <p class="muted" style="margin-bottom:.75rem;">
+                Evidence grades (E1–E8) for diseases this treatment is used for — same evidence wherever it is offered.
+                <span class="muted">E1 = multi-RCT · E2 = one strong RCT · E3 = small/mixed RCTs · E4 = uncontrolled · E5 = case series · E6–E8 = preclinical/none.</span>
+            </p>
             <div id="evidenceBody"><div class="empty">Select a treatment to see evidence grades.</div></div>
         </section>
     </main>
@@ -886,7 +889,8 @@
                     </div>
                     <p class="muted" style="margin-top:.35rem;font-size:.8rem;">
                         ${esc(f.legislation_label)} · ${esc(friendlyOversight(row.oversight_quality))}
-                        ${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 90)) + (row.arbitrage_summary.length > 90 ? '…' : '') : ''}
+                        ${(row.example_clinics || []).length ? ` · <strong>${row.example_clinics.length} clinic/directory link${row.example_clinics.length === 1 ? '' : 's'}</strong>` : ''}
+                        ${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 80)) + (row.arbitrage_summary.length > 80 ? '…' : '') : ''}
                     </p>
                 </li>`;
             }).join('');
@@ -904,20 +908,44 @@
         function renderEvidence(indications) {
             const el = document.getElementById('evidenceBody');
             if (!indications.length) {
-                el.innerHTML = '<div class="empty">No condition-level evidence grades seeded for this treatment yet.</div>';
+                el.innerHTML = '<div class="empty">No condition-level evidence grades seeded for this treatment yet. Click “Refresh map data” after deploy if the database is behind.</div>';
                 return;
             }
-            el.innerHTML = indications.map(ind => {
+            const gradeOrder = { E1: 1, E2: 2, E3: 3, E4: 4, E5: 5, E6: 6, E7: 7, E8: 8 };
+            const sorted = indications.slice().sort((a, b) =>
+                (gradeOrder[a.evidence_grade] || 9) - (gradeOrder[b.evidence_grade] || 9)
+            );
+            el.innerHTML = sorted.map(ind => {
                 const c = ind.condition || {};
+                const g = ind.evidence_grade || '';
+                const gColor = g === 'E1' || g === 'E2' ? '#065f46' : (g === 'E3' || g === 'E4' ? '#92400e' : '#64748b');
                 return `<div class="treatment-card">
                     <div class="chip-row">
-                        <span class="pill" style="background:#0f172a;color:#fff;">${esc(ind.evidence_grade)}</span>
-                        <strong>${esc(c.name || 'Condition')}</strong>
+                        <span class="pill" style="background:${gColor};color:#fff;">${esc(g)}</span>
+                        <strong>${esc(c.name || 'Disease / condition')}</strong>
                         ${c.icd_code ? `<span class="muted">${esc(c.icd_code)}</span>` : ''}
                     </div>
                     <p class="prose muted" style="margin-top:.35rem;">${esc(ind.evidence_summary || '')}</p>
                 </div>`;
             }).join('');
+        }
+
+        function renderClinics(clinics) {
+            if (!clinics || !clinics.length) {
+                return '<p class="muted" style="margin-top:.35rem;">No specific clinics listed for this place yet — use the pathway notes and official directories.</p>';
+            }
+            return `<ul style="margin-top:.4rem;padding-left:1.1rem;font-size:.88rem;">
+                ${clinics.map(cl => {
+                    const name = cl.url
+                        ? `<a href="${esc(cl.url)}" target="_blank" rel="noopener">${esc(cl.name)}</a>`
+                        : esc(cl.name);
+                    const loc = cl.city ? ` · ${esc(cl.city)}` : '';
+                    const typ = cl.type ? ` <span class="pill sm">${esc(humanize(cl.type))}</span>` : '';
+                    const notes = cl.notes ? `<div class="muted" style="font-size:.8rem;margin:.15rem 0 .35rem;">${esc(cl.notes)}</div>` : '';
+                    return `<li style="margin-bottom:.45rem;"><strong>${name}</strong>${loc}${typ}${notes}</li>`;
+                }).join('')}
+            </ul>
+            <p class="muted" style="font-size:.75rem;margin-top:.35rem;">Examples for orientation only — not endorsements. Licenses and operations change; verify directly.</p>`;
         }
 
         async function selectJurisdiction(jid, accessRow) {
@@ -980,6 +1008,8 @@
                         <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
                         <dt>Bottom line</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
                     </dl>
+                    <div class="section-title">Example clinics &amp; directories</div>
+                    ${renderClinics(ar.example_clinics || [])}
                 `;
             }
 

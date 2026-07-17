@@ -63,6 +63,7 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     # Lightweight migrations for columns added after first deploy.
     _ensure_column("procedures", "diseases", "TEXT")
+    _ensure_column("access_records", "example_clinics", "TEXT")
 
 
 def reset_db():

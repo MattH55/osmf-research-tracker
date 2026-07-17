@@ -278,6 +278,10 @@ class AccessRecord(Base):
     # Backref details per schema §3
     access_pathway_details: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    # Example clinics / directories (JSON array of provider objects)
+    # [{name, city?, url?, type?, notes?}] — illustrative, verify before use
+    example_clinics: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
     procedure: Mapped["Procedure"] = relationship(back_populates="access_records")
     jurisdiction: Mapped["Jurisdiction"] = relationship(back_populates="access_records")
 
@@ -315,6 +319,7 @@ class AccessRecord(Base):
             "volatility": self.volatility.value if isinstance(self.volatility, Volatility) else self.volatility,
             "status": self.status,
             "access_pathway_details": self.access_pathway_details,
+            "example_clinics": json.loads(self.example_clinics) if self.example_clinics else [],
         }
 
 
