@@ -64,6 +64,9 @@ def init_db():
     # Lightweight migrations for columns added after first deploy.
     _ensure_column("procedures", "diseases", "TEXT")
     _ensure_column("procedures", "practitioner_setup", "TEXT")
+    _ensure_column("procedures", "controlled_substance_class", "VARCHAR(80)")
+    _ensure_column("procedures", "default_global_posture", "VARCHAR(80)")
+    _ensure_column("jurisdictions", "regulation_json", "TEXT")
     _ensure_column("access_records", "example_clinics", "TEXT")
     _ensure_column("access_records", "setup_requirements", "TEXT")
 

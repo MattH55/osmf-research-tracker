@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensourcemed.info/schemas/medfreedom/jurisdiction_regulation.schema.json",
+  "title": "MedFreedom Jurisdiction & Regulatory Profile",
+  "description": "A place (country, state, special zone) plus structured regulation metadata used for access mapping. Aligns with medical-freedom-arbitrage-schema.md §2–§4.",
+  "type": "object",
+  "required": ["id", "name", "level", "type", "country_code"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^jur-[a-z0-9-]+$",
+      "description": "Stable primary key, e.g. jur-us-federal, jur-de"
+    },
+    "parent_id": {
+      "type": ["string", "null"],
+      "description": "Nesting parent (e.g. US state → US federal)"
+    },
+    "level": {
+      "type": "string",
+      "enum": ["Supranational", "Sovereign", "Subnational", "Special_Zone", "Municipal"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["Country", "US_State", "ZEDE", "Province", "Territory", "Federal"]
+    },
+    "name": { "type": "string", "maxLength": 200 },
+    "country_code": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 3,
+      "description": "ISO 3166-1 alpha-2/3 country code"
+    },
+    "latitude": { "type": ["number", "null"] },
+    "longitude": { "type": ["number", "null"] },
+    "general_notes": {
+      "type": ["string", "null"],
+      "description": "Free-text overview of the jurisdiction's medical-freedom landscape"
+    },
+    "regulation": {
+      "type": ["object", "null"],
+      "description": "Structured national/subnational regulatory profile",
+      "additionalProperties": false,
+      "properties": {
+        "drug_regulator": {
+          "type": ["string", "null"],
+          "description": "Primary medicines regulator (FDA, EMA member agency, TGA, PMDA, …)"
+        },
+        "health_authority": {
+          "type": ["string", "null"],
+          "description": "Broader health ministry / authority if distinct"
+        },
+        "controlled_substance_framework": {
+          "type": ["string", "null"],
+          "description": "Short label for scheduling system (e.g. CSA Schedule I–V, Misuse of Drugs Act, BtMG)"
+        },
+        "un_conventions_party": {
+          "type": ["boolean", "null"],
+          "description": "Party to major UN drug control conventions (typical for most states)"
+        },
+        "psychedelic_default": {
+          "type": ["string", "null"],
+          "description": "Default posture for classical psychedelics unless a specific AccessCell overrides",
+          "enum": [
+            null,
+            "Prohibited",
+            "Clinical_Trial_Only",
+            "Expanded_Access",
+            "Regulated_Therapy_Program",
+            "Decriminalized_No_Supply",
+            "Unregulated_Permitted",
+            "Highly_Variable"
+          ]
+        },
+        "cannabis_default": {
+          "type": ["string", "null"],
+          "enum": [
+            null,
+            "Prohibited",
+            "Medical_Only",
+            "Medical_And_Adult_Use",
+            "Decriminalized",
+            "Highly_Variable"
+          ]
+        },
+        "assisted_dying_default": {
+          "type": ["string", "null"],
+          "enum": [
+            null,
+            "Prohibited",
+            "Assisted_Suicide_Only",
+            "Euthanasia_And_Assisted_Suicide",
+            "Limited_Subnational",
+            "Pending_Legislation"
+          ]
+        },
+        "right_to_try_or_expanded_access": {
+          "type": ["boolean", "null"],
+          "description": "Whether a formal expanded-access / RTT-style pathway exists"
+        },
+        "compounding_environment": {
+          "type": ["string", "null"],
+          "enum": [null, "Permissive", "Moderate", "Restrictive", "Unknown"]
+        },
+        "key_statutes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "citation": { "type": ["string", "null"] },
+              "url": { "type": ["string", "null"], "format": "uri" },
+              "notes": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "pending_legislation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "status": { "type": ["string", "null"] },
+              "affects": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Therapy ids or modality tags affected"
+              },
+              "notes": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "last_reviewed": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "confidence": {
+          "type": ["string", "null"],
+          "enum": [null, "High", "Moderate", "Low"]
+        }
+      }
+    }
+  }
+}

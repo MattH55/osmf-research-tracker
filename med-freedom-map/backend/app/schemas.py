@@ -6,6 +6,23 @@ from pydantic import BaseModel
 
 # ── Jurisdiction Schemas ─────────────────────────────────────────────────
 
+class RegulationProfile(BaseModel):
+    """Structured national/subnational regulation (jurisdiction_regulation.schema.json)."""
+    drug_regulator: Optional[str] = None
+    health_authority: Optional[str] = None
+    controlled_substance_framework: Optional[str] = None
+    un_conventions_party: Optional[bool] = None
+    psychedelic_default: Optional[str] = None
+    cannabis_default: Optional[str] = None
+    assisted_dying_default: Optional[str] = None
+    right_to_try_or_expanded_access: Optional[bool] = None
+    compounding_environment: Optional[str] = None
+    key_statutes: List[dict] = []
+    pending_legislation: List[dict] = []
+    last_reviewed: Optional[str] = None
+    confidence: Optional[str] = None
+
+
 class JurisdictionBase(BaseModel):
     name: str
     type: str
@@ -13,10 +30,13 @@ class JurisdictionBase(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     general_notes: Optional[str] = None
+    regulation: Optional[RegulationProfile] = None
 
 
 class JurisdictionCreate(JurisdictionBase):
     id: Optional[str] = None
+    parent_id: Optional[str] = None
+    level: Optional[str] = None
 
 
 class JurisdictionUpdate(BaseModel):
@@ -26,16 +46,33 @@ class JurisdictionUpdate(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     general_notes: Optional[str] = None
+    regulation: Optional[RegulationProfile] = None
 
 
 class JurisdictionResponse(JurisdictionBase):
     id: str
+    parent_id: Optional[str] = None
+    level: Optional[str] = None
     last_updated: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
 
-# ── Procedure Schemas ────────────────────────────────────────────────────
+# ── Procedure / Therapy Schemas (therapy.schema.json) ─────────────────────
+
+class PractitionerSetup(BaseModel):
+    summary: Optional[str] = None
+    difficulty: Optional[str] = None
+    licenses: List[str] = []
+    facility: List[str] = []
+    training: List[str] = []
+    staffing: List[str] = []
+    product_source: List[str] = []
+    regulatory_steps: List[str] = []
+    capital_notes: Optional[str] = None
+    ongoing_compliance: List[str] = []
+    notes: Optional[str] = None
+
 
 class ProcedureBase(BaseModel):
     name: str
@@ -47,6 +84,11 @@ class ProcedureBase(BaseModel):
     typical_us_cost_range: Optional[str] = None
     indications: Optional[str] = None
     sources: List[dict] = []
+    regulatory_modality: Optional[str] = None
+    restriction_driver: Optional[str] = None
+    controlled_substance_class: Optional[str] = None
+    default_global_posture: Optional[str] = None
+    practitioner_setup: Optional[PractitionerSetup] = None
 
 
 class ProcedureCreate(ProcedureBase):
@@ -63,6 +105,11 @@ class ProcedureUpdate(BaseModel):
     typical_us_cost_range: Optional[str] = None
     indications: Optional[str] = None
     sources: Optional[List[dict]] = None
+    regulatory_modality: Optional[str] = None
+    restriction_driver: Optional[str] = None
+    controlled_substance_class: Optional[str] = None
+    default_global_posture: Optional[str] = None
+    practitioner_setup: Optional[PractitionerSetup] = None
 
 
 class ProcedureResponse(ProcedureBase):

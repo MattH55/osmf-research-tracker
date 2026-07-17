@@ -34,6 +34,11 @@ from .seed_practitioner_setup import (
     all_access_setup_overrides,
     merged_setup,
 )
+from .seed_prohibitions import (
+    build_prohibited_access_records,
+    all_jurisdiction_regulation,
+    all_therapy_control_meta,
+)
 
 # Merge base + expansion disease maps (expansion wins on key clash).
 ALL_PROCEDURE_DISEASES = {**PROCEDURE_DISEASES, **PROCEDURE_DISEASES_EXPANSION}
@@ -1138,6 +1143,8 @@ def seed_database():
         "procedures_diseases_updated": 0,
         "clinics_updated": 0,
         "setup_updated": 0,
+        "regulation_updated": 0,
+        "prohibited_added": 0,
         "skipped": [],
     }
 
@@ -1194,7 +1201,14 @@ def seed_database():
             (a.procedure_id, a.jurisdiction_id)
             for a in db.query(AccessRecord.procedure_id, AccessRecord.jurisdiction_id).all()
         }
-        all_access = list(ACCESS_RECORDS) + all_expansion_records() + all_access_therapies_expansion()
+        prohibited_batch = build_prohibited_access_records(set(existing_pairs))
+        result["prohibited_added"] = len(prohibited_batch)
+        all_access = (
+            list(ACCESS_RECORDS)
+            + all_expansion_records()
+            + all_access_therapies_expansion()
+            + prohibited_batch
+        )
         for ar_data in all_access:
             key = (ar_data["procedure_id"], ar_data["jurisdiction_id"])
             if key in existing_pairs:
@@ -1205,7 +1219,13 @@ def seed_database():
                 )
                 continue
             ar_copy = ar_data.copy()
-            ar_copy["sources"] = json.dumps(ar_copy.get("sources", []))
+            # JSON fields that may arrive as Python lists/dicts
+            if isinstance(ar_copy.get("sources"), (list, dict)):
+                ar_copy["sources"] = json.dumps(ar_copy.get("sources") or [])
+            if isinstance(ar_copy.get("setup_requirements"), dict):
+                ar_copy["setup_requirements"] = json.dumps(ar_copy["setup_requirements"])
+            if ar_copy.get("setup_requirements") is None:
+                ar_copy.pop("setup_requirements", None)
             # Pre-apply enrichment so legacy seed rows get §4 fields.
             enrich = ACCESS_ENRICHMENTS.get(key)
             if enrich:
@@ -1224,7 +1244,7 @@ def seed_database():
             except Exception as row_err:
                 db.rollback()
                 result["skipped"].append(
-                    f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__})"
+                    f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__}: {row_err})"
                 )
         result["access_records"] = db.query(AccessRecord).count()
 
@@ -1327,15 +1347,46 @@ def seed_database():
                 db.rollback()
                 result["skipped"].append(f"setup_update ({e.__class__.__name__})")
 
+        # ── Jurisdiction regulation profiles ──
+        for jur_id, reg in all_jurisdiction_regulation().items():
+            j = db.query(Jurisdiction).filter(Jurisdiction.id == jur_id).first()
+            if not j:
+                continue
+            new_json = json.dumps(reg)
+            if j.regulation_json != new_json:
+                j.regulation_json = new_json
+                result["regulation_updated"] += 1
+        # ── Therapy control meta (schedule class / global posture) ──
+        for proc_id, (cclass, posture) in all_therapy_control_meta().items():
+            p = db.query(Procedure).filter(Procedure.id == proc_id).first()
+            if not p:
+                continue
+            changed = False
+            if p.controlled_substance_class != cclass:
+                p.controlled_substance_class = cclass
+                changed = True
+            if p.default_global_posture != posture:
+                p.default_global_posture = posture
+                changed = True
+            if changed:
+                result["regulation_updated"] += 1
+        if result["regulation_updated"]:
+            try:
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                result["skipped"].append(f"regulation_update ({e.__class__.__name__})")
+
         print(
             f"Seed complete: {result['jurisdictions']} jurisdictions, "
             f"{result['procedures']} procedures, {result['access_records']} access records "
-            f"(+{result['new_access_records']} new), "
+            f"(+{result['new_access_records']} new, prohibited batch {result['prohibited_added']}), "
             f"{result['conditions']} conditions, {result['procedure_indications']} indications, "
             f"{result['enriched_access_records']} enriched, "
             f"{result['procedures_diseases_updated']} diseases fields updated, "
             f"{result['clinics_updated']} clinic lists updated, "
-            f"{result['setup_updated']} setup fields updated "
+            f"{result['setup_updated']} setup fields updated, "
+            f"{result['regulation_updated']} regulation fields updated "
             f"({len(result['skipped'])} skipped)."
         )
         return result

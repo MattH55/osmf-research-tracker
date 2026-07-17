@@ -151,7 +151,7 @@ class Volatility(str, enum.Enum):
 # ── Models ─────────────────────────────────────────────────────────────────
 
 class Jurisdiction(Base):
-    """Jurisdiction model with nesting support per schema §2."""
+    """Jurisdiction model with nesting support per schema §2 + regulation profile."""
     __tablename__ = "jurisdictions"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -163,12 +163,15 @@ class Jurisdiction(Base):
     latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     general_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    # Structured regulation profile (see schemas/jurisdiction_regulation.schema.json)
+    regulation_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     last_updated: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     parent: Mapped[Optional["Jurisdiction"]] = relationship("Jurisdiction", remote_side=[id], foreign_keys=[parent_id])
     access_records: Mapped[List["AccessRecord"]] = relationship(back_populates="jurisdiction", cascade="all, delete-orphan")
 
     def to_dict(self):
+        import json
         return {
             "id": self.id,
             "parent_id": self.parent_id,
@@ -179,6 +182,7 @@ class Jurisdiction(Base):
             "latitude": self.latitude,
             "longitude": self.longitude,
             "general_notes": self.general_notes,
+            "regulation": json.loads(self.regulation_json) if self.regulation_json else None,
             "last_updated": self.last_updated.isoformat() if self.last_updated else None,
         }
 
@@ -201,6 +205,9 @@ class Procedure(Base):
     sources: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array stored as text
     # Default practitioner setup (jurisdiction-agnostic baseline); access rows may override
     practitioner_setup: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    # Therapy schema extensions (see schemas/therapy.schema.json)
+    controlled_substance_class: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    default_global_posture: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
 
     access_records: Mapped[List["AccessRecord"]] = relationship(back_populates="procedure", cascade="all, delete-orphan")
 
@@ -220,6 +227,8 @@ class Procedure(Base):
             "indications": self.indications,
             "sources": json.loads(self.sources) if self.sources else [],
             "practitioner_setup": json.loads(self.practitioner_setup) if self.practitioner_setup else None,
+            "controlled_substance_class": self.controlled_substance_class,
+            "default_global_posture": self.default_global_posture,
         }
 
 

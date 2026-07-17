@@ -341,7 +341,7 @@
                     <label><input type="checkbox" id="fOffered" checked> Practically offered</label>
                     <label><input type="checkbox" id="fPending"> Pending legislation / flux only</label>
                     <label><input type="checkbox" id="fTrial"> Include trial-only</label>
-                    <label><input type="checkbox" id="fProhibited"> Show prohibited</label>
+                    <label><input type="checkbox" id="fProhibited" checked> Show prohibited</label>
                 </div>
                 <ul class="place-list" id="placeList"></ul>
             </section>
@@ -822,12 +822,16 @@
                 const setupDiff = p.practitioner_setup && p.practitioner_setup.difficulty
                     ? `<span class="pill" style="background:#312e81;color:#fff;">Practitioner setup: ${esc(p.practitioner_setup.difficulty)}</span>`
                     : '';
+                const schedule = p.controlled_substance_class
+                    ? `<span class="pill not-allowed">${esc(humanize(p.controlled_substance_class))}</span>` : '';
+                const posture = p.default_global_posture
+                    ? `<span class="pill">${esc(humanize(p.default_global_posture))}</span>` : '';
                 summary.innerHTML = `
                     <h3>${esc(p.name)}</h3>
                     <div class="chip-row">
                         <span class="pill">${esc(humanize(p.regulatory_modality || p.modality))}</span>
                         ${p.restriction_driver ? `<span class="pill" style="background:#fef3c7;color:#92400e;">${esc(humanize(p.restriction_driver))}</span>` : ''}
-                        ${setupDiff}
+                        ${schedule}${posture}${setupDiff}
                     </div>
                     ${diseaseChips ? `<div class="section-title" style="margin-top:.65rem;">Diseases</div><div class="chip-row">${diseaseChips}</div>` : ''}
                     <p class="muted" style="font-size:.84rem;margin-top:.5rem;">${esc((p.description || '').slice(0, 220))}${(p.description || '').length > 220 ? '…' : ''}</p>
@@ -963,6 +967,32 @@
             </div>`;
         }
 
+        function renderRegulation(reg) {
+            if (!reg) return '';
+            const statutes = (reg.key_statutes || []).map(s =>
+                s.url
+                    ? `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.citation ? ` <span class="muted">(${esc(s.citation)})</span>` : ''}</li>`
+                    : `<li>${esc(s.name)}${s.citation ? ` <span class="muted">(${esc(s.citation)})</span>` : ''}</li>`
+            ).join('');
+            const pending = (reg.pending_legislation || []).map(p =>
+                `<li><strong>${esc(p.title || '')}</strong>${p.status ? ` — ${esc(p.status)}` : ''}${p.notes ? `: ${esc(p.notes)}` : ''}</li>`
+            ).join('');
+            return `
+                <div class="section-title">Regulatory profile</div>
+                <dl class="kv">
+                    <dt>Drug regulator</dt><dd>${esc(reg.drug_regulator || '—')}</dd>
+                    <dt>Health authority</dt><dd>${esc(reg.health_authority || '—')}</dd>
+                    <dt>Scheduling framework</dt><dd>${esc(reg.controlled_substance_framework || '—')}</dd>
+                    <dt>Psychedelics default</dt><dd>${esc(humanize(reg.psychedelic_default) || '—')}</dd>
+                    <dt>Cannabis default</dt><dd>${esc(humanize(reg.cannabis_default) || '—')}</dd>
+                    <dt>Assisted dying default</dt><dd>${esc(humanize(reg.assisted_dying_default) || '—')}</dd>
+                    <dt>Expanded access / RTT</dt><dd>${reg.right_to_try_or_expanded_access == null ? '—' : (reg.right_to_try_or_expanded_access ? 'Yes' : 'No')}</dd>
+                </dl>
+                ${statutes ? `<div class="muted" style="font-size:.72rem;font-weight:700;text-transform:uppercase;margin-top:.5rem;">Key statutes</div><ul style="margin:.25rem 0 0 1.1rem;font-size:.86rem;">${statutes}</ul>` : ''}
+                ${pending ? `<div class="muted" style="font-size:.72rem;font-weight:700;text-transform:uppercase;margin-top:.5rem;">Pending legislation</div><ul style="margin:.25rem 0 0 1.1rem;font-size:.86rem;">${pending}</ul>` : ''}
+            `;
+        }
+
         function renderSetup(setup, providerText) {
             if (!setup && !providerText) {
                 return '<p class="muted">No practitioner setup checklist for this place yet.</p>';
@@ -1042,6 +1072,8 @@
                         <span class="pill">${esc(friendlyOversight(ar.oversight_quality))}</span>
                     </div>
                     <dl class="kv">
+                        <dt>Legal basis</dt><dd>${esc(ar.legal_basis || '—')}</dd>
+                        <dt>Regulator</dt><dd>${esc(ar.regulatory_authority || '—')}</dd>
                         <dt>Est. cost</dt><dd>${fmtPrice(ar)}</dd>
                         <dt>How you get it</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
                         <dt>Who qualifies</dt><dd>${esc(ar.eligibility_requirements || 'See local program rules')}</dd>
@@ -1087,6 +1119,7 @@
                     <div class="section-title">About this place</div>
                     <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
                     ${children}
+                    ${renderRegulation(j.regulation)}
                     ${accessBlock}
                     ${otherBlock}
                     ${ar && ar.last_verified ? `<p class="muted" style="margin-top:1rem;font-size:.78rem;">Access data last verified: ${esc(ar.last_verified)}${ar.verified_by ? ' · ' + esc(ar.verified_by) : ''}</p>` : ''}

@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensourcemed.info/schemas/medfreedom/therapy.schema.json",
+  "title": "MedFreedom Therapy (Procedure)",
+  "description": "A medical procedure or intervention that can be mapped for cross-jurisdiction access, evidence, and practitioner setup. Aligns with medical-freedom-arbitrage-schema.md §1 and §5.",
+  "type": "object",
+  "required": ["id", "name", "modality"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^proc-[a-z0-9-]+$",
+      "description": "Stable primary key, e.g. proc-psilocybin-trd"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 300,
+      "description": "Human-readable therapy name"
+    },
+    "modality": {
+      "type": "string",
+      "description": "Therapeutic category for filtering/UI",
+      "enum": [
+        "Psychedelics",
+        "Gene_Therapy",
+        "Stem_Cell",
+        "Peptide",
+        "Repurposed_Drug",
+        "Reproductive_Tech",
+        "Assisted_Dying",
+        "Cellular",
+        "Phytocannabinoid",
+        "Oncology",
+        "Other"
+      ]
+    },
+    "regulatory_modality": {
+      "type": ["string", "null"],
+      "description": "What the thing is legally (primary regulatory axis)",
+      "enum": [
+        null,
+        "Small_Molecule_Approved",
+        "Small_Molecule_OffLabel",
+        "Small_Molecule_Compounded",
+        "Small_Molecule_Unapproved",
+        "Controlled_Substance",
+        "Cell_Therapy_Autologous",
+        "Cell_Therapy_Allogeneic",
+        "Gene_Therapy",
+        "Peptide",
+        "Blood_Product_Apheresis",
+        "Device_Procedure",
+        "Reproductive",
+        "End_of_Life",
+        "Nutraceutical_Natural"
+      ]
+    },
+    "restriction_driver": {
+      "type": ["string", "null"],
+      "description": "Why access tends to be restricted",
+      "enum": [
+        null,
+        "Safety_Unproven",
+        "Controlled_Substance",
+        "Ethics_Contested",
+        "Cost_or_Licensing",
+        "Import_Barrier",
+        "None"
+      ]
+    },
+    "subcategory": { "type": ["string", "null"], "maxLength": 200 },
+    "therapeutic_areas": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Coarse clinical domains (Mental_Health, Oncology, …)"
+    },
+    "diseases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Primary disease/condition labels for filter/display"
+    },
+    "description": { "type": ["string", "null"] },
+    "typical_us_cost_range": { "type": ["string", "null"] },
+    "indications": {
+      "type": ["string", "null"],
+      "description": "Free-text clinical indications and key contraindications"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": ["string", "null"], "format": "uri" }
+        }
+      }
+    },
+    "practitioner_setup": {
+      "type": ["object", "null"],
+      "description": "Baseline (jurisdiction-agnostic) requirements to offer the therapy",
+      "properties": {
+        "summary": { "type": "string" },
+        "difficulty": {
+          "type": "string",
+          "enum": ["Low", "Moderate", "High", "Extreme"]
+        },
+        "licenses": { "type": "array", "items": { "type": "string" } },
+        "facility": { "type": "array", "items": { "type": "string" } },
+        "training": { "type": "array", "items": { "type": "string" } },
+        "staffing": { "type": "array", "items": { "type": "string" } },
+        "product_source": { "type": "array", "items": { "type": "string" } },
+        "regulatory_steps": { "type": "array", "items": { "type": "string" } },
+        "capital_notes": { "type": ["string", "null"] },
+        "ongoing_compliance": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "controlled_substance_class": {
+      "type": ["string", "null"],
+      "description": "Optional UN/US-style class hint, e.g. Schedule_I_analogue, Schedule_III",
+      "examples": ["Schedule_I", "Schedule_III", "Unscheduled", "Varies"]
+    },
+    "default_global_posture": {
+      "type": ["string", "null"],
+      "description": "Typical worldwide starting assumption before jurisdiction exceptions",
+      "enum": [
+        null,
+        "Widely_Prohibited",
+        "Widely_Approved",
+        "Widely_OffLabel",
+        "Highly_Variable",
+        "Trial_Only_Default"
+      ]
+    }
+  }
+}

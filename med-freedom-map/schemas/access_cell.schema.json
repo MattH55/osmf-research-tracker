@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensourcemed.info/schemas/medfreedom/access_cell.schema.json",
+  "title": "MedFreedom Access Cell (Therapy × Jurisdiction)",
+  "description": "Join row: legal status, pathway, price, oversight, practitioner setup, clinics. Schema §3–§4.",
+  "type": "object",
+  "required": ["procedure_id", "jurisdiction_id", "legal_status"],
+  "properties": {
+    "procedure_id": { "type": "string" },
+    "jurisdiction_id": { "type": "string" },
+    "legal_status": {
+      "type": "string",
+      "enum": [
+        "Approved_On_Label",
+        "Approved_Off_Label",
+        "Permitted_Expanded_Access",
+        "Permitted_RTT",
+        "Clinical_Trial_Only",
+        "Physician_Discretion_Gray",
+        "Unregulated_Permitted",
+        "Decriminalized_No_Supply",
+        "Prohibited",
+        "Unknown",
+        "Fully_Approved",
+        "Regulated_Therapy_Program",
+        "Decriminalized_Possession",
+        "Right_To_Try",
+        "Off_Label"
+      ]
+    },
+    "access_pathway": {
+      "type": ["string", "null"],
+      "enum": [
+        null,
+        "Standard_Prescription",
+        "Off_Label_Prescription",
+        "Compounding",
+        "Expanded_Access",
+        "Right_To_Try",
+        "Clinical_Trial_Enrollment",
+        "Personal_Import",
+        "Licensed_Provider_Regime",
+        "Medical_Tourism_Cash",
+        "None"
+      ]
+    },
+    "legal_basis": {
+      "type": ["string", "null"],
+      "description": "Statute/regulation citation for this cell (especially important for Prohibited)"
+    },
+    "regulatory_authority": { "type": ["string", "null"] },
+    "volatility": {
+      "type": ["string", "null"],
+      "enum": [null, "Stable", "Pending_Legislation", "Active_Flux"]
+    },
+    "confidence": {
+      "type": ["string", "null"],
+      "enum": [null, "High", "Moderate", "Low"]
+    },
+    "access_pathway_details": { "type": ["string", "null"] },
+    "eligibility_requirements": { "type": ["string", "null"] },
+    "provider_requirements": { "type": ["string", "null"] },
+    "setup_requirements": { "type": ["object", "null"] },
+    "example_clinics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "city": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"] },
+          "type": { "type": ["string", "null"] },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "access_flags": {
+      "type": ["object", "null"],
+      "description": "Derived: allowed / offered / legislation_watch"
+    }
+  }
+}
