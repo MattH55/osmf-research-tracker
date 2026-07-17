@@ -17,6 +17,18 @@ from .seed_enrichment import (
     apply_access_enrichment,
 )
 from .seed_access_expansion import all_expansion_records
+from .seed_therapies_expansion import (
+    all_procedures_expansion,
+    all_access_therapies_expansion,
+    PROCEDURE_DISEASES_EXPANSION,
+    CONDITIONS_EXPANSION,
+    PROCEDURE_INDICATIONS_EXPANSION,
+)
+
+# Merge base + expansion disease maps (expansion wins on key clash).
+ALL_PROCEDURE_DISEASES = {**PROCEDURE_DISEASES, **PROCEDURE_DISEASES_EXPANSION}
+ALL_CONDITIONS = CONDITIONS + CONDITIONS_EXPANSION
+ALL_PROCEDURE_INDICATIONS = PROCEDURE_INDICATIONS + PROCEDURE_INDICATIONS_EXPANSION
 
 
 # Schema §1 taxonomy: map each legacy modality to (regulatory_modality, restriction_driver).
@@ -1123,34 +1135,42 @@ def seed_database():
             db.commit()
         result["jurisdictions"] = db.query(Jurisdiction).count()
 
-        # ── Procedures ──
-        if db.query(Procedure).count() == 0:
-            for p_data in PROCEDURES:
-                p_data_copy = p_data.copy()
-                p_data_copy["therapeutic_areas"] = json.dumps(p_data_copy["therapeutic_areas"])
-                p_data_copy["sources"] = json.dumps(p_data_copy["sources"])
-                # Fill schema §1 taxonomy from the modality unless explicitly provided.
-                reg_mod, restriction = MODALITY_CLASSIFICATION.get(
-                    p_data_copy.get("modality"), (RegulatoryModality.NUTRACEUTICAL_NATURAL, RestrictionDriver.NONE)
-                )
-                p_data_copy.setdefault("regulatory_modality", reg_mod)
-                p_data_copy.setdefault("restriction_driver", restriction)
-                diseases = PROCEDURE_DISEASES.get(p_data_copy["id"], [])
-                p_data_copy["diseases"] = json.dumps(diseases)
+        # ── Procedures (base + expansion; insert any missing IDs) ──
+        existing_proc_ids = {p.id for p in db.query(Procedure.id).all()}
+        all_procs = list(PROCEDURES) + all_procedures_expansion()
+        for p_data in all_procs:
+            if p_data["id"] in existing_proc_ids:
+                continue
+            p_data_copy = p_data.copy()
+            p_data_copy["therapeutic_areas"] = json.dumps(p_data_copy["therapeutic_areas"])
+            p_data_copy["sources"] = json.dumps(p_data_copy["sources"])
+            reg_mod, restriction = MODALITY_CLASSIFICATION.get(
+                p_data_copy.get("modality"), (RegulatoryModality.NUTRACEUTICAL_NATURAL, RestrictionDriver.NONE)
+            )
+            # Explicit overrides on expansion rows win over modality defaults.
+            p_data_copy["regulatory_modality"] = p_data_copy.get("regulatory_modality") or reg_mod
+            p_data_copy["restriction_driver"] = p_data_copy.get("restriction_driver") or restriction
+            diseases = ALL_PROCEDURE_DISEASES.get(p_data_copy["id"], [])
+            p_data_copy["diseases"] = json.dumps(diseases)
+            try:
                 db.add(Procedure(**p_data_copy))
-            db.commit()
-        else:
-            # Backfill / refresh diseases on existing procedures (idempotent).
-            for proc in db.query(Procedure).all():
-                diseases = PROCEDURE_DISEASES.get(proc.id)
-                if not diseases:
-                    continue
-                new_json = json.dumps(diseases)
-                if proc.diseases != new_json:
-                    proc.diseases = new_json
-                    result["procedures_diseases_updated"] += 1
-            if result["procedures_diseases_updated"]:
                 db.commit()
+                existing_proc_ids.add(p_data_copy["id"])
+            except Exception as row_err:
+                db.rollback()
+                result["skipped"].append(f"procedure {p_data['id']} ({row_err.__class__.__name__})")
+
+        # Backfill / refresh diseases on all procedures (idempotent).
+        for proc in db.query(Procedure).all():
+            diseases = ALL_PROCEDURE_DISEASES.get(proc.id)
+            if not diseases:
+                continue
+            new_json = json.dumps(diseases)
+            if proc.diseases != new_json:
+                proc.diseases = new_json
+                result["procedures_diseases_updated"] += 1
+        if result["procedures_diseases_updated"]:
+            db.commit()
         result["procedures"] = db.query(Procedure).count()
 
         # ── Access records (insert any missing pairs; memory-safe one-by-one) ──
@@ -1160,7 +1180,7 @@ def seed_database():
             (a.procedure_id, a.jurisdiction_id)
             for a in db.query(AccessRecord.procedure_id, AccessRecord.jurisdiction_id).all()
         }
-        all_access = list(ACCESS_RECORDS) + all_expansion_records()
+        all_access = list(ACCESS_RECORDS) + all_expansion_records() + all_access_therapies_expansion()
         for ar_data in all_access:
             key = (ar_data["procedure_id"], ar_data["jurisdiction_id"])
             if key in existing_pairs:
@@ -1211,7 +1231,7 @@ def seed_database():
                 )
 
         # ── §5 Conditions ──
-        for c_data in CONDITIONS:
+        for c_data in ALL_CONDITIONS:
             if db.query(Condition).filter(Condition.id == c_data["id"]).first():
                 continue
             try:
@@ -1225,7 +1245,7 @@ def seed_database():
         # ── §5 Procedure indications (evidence grades) ──
         valid_procs = {p.id for p in db.query(Procedure.id).all()}
         valid_conds = {c.id for c in db.query(Condition.id).all()}
-        for pi_data in PROCEDURE_INDICATIONS:
+        for pi_data in ALL_PROCEDURE_INDICATIONS:
             if db.query(ProcedureIndication).filter(ProcedureIndication.id == pi_data["id"]).first():
                 continue
             if pi_data["procedure_id"] not in valid_procs or pi_data["condition_id"] not in valid_conds:
