@@ -371,85 +371,6 @@ MAID_PROHIBITED_JURS = {
 }
 
 
-def build_prohibited_access_records(existing_pairs: set):
-    """Return list of access record dicts for pairs not already present."""
-    out = []
-
-    def add(rec):
-        key = (rec["procedure_id"], rec["jurisdiction_id"])
-        if key in existing_pairs:
-            return
-        # Also skip known exception pairs even if not in existing yet
-        if key in SKIP_PROCS_FOR_JUR:
-            return
-        existing_pairs.add(key)
-        out.append(rec)
-
-    # Classical psychedelics × jurisdictions with law notes
-    for jur_id, law in JUR_PSYCHEDELIC_LAW.items():
-        for proc_id in CONTROLLED_PSYCHEDELICS:
-            if (proc_id, jur_id) in SKIP_PROCS_FOR_JUR:
-                continue
-            # Portugal: mark as decrim no supply rather than full prohibited for possession framing
-            if law.get("status_override") == LS.DECRIMINALIZED:
-                rec = _prohibited(
-                    proc_id, jur_id,
-                    authority=law["authority"],
-                    legal_basis=law["basis"],
-                    details=law["details"] + " Personal use may be administrative offence only; supply remains illegal.",
-                    confidence=law.get("confidence", CF.MODERATE),
-                    volatility=law.get("vol", VL.STABLE),
-                    sources=law.get("sources"),
-                )
-                rec["legal_status"] = LS.DECRIMINALIZED
-                rec["access_pathway"] = AP.NONE
-                rec["arbitrage_summary"] = "Decriminalised personal use context but no legal therapy supply. Not a destination for regulated care."
-                add(rec)
-                continue
-            # NL: allow microdose truffles already skipped; for psilocybin-trd use prohibited mushrooms + note truffles
-            details = law["details"]
-            if jur_id == "jur-nl" and proc_id.startswith("proc-psilocybin"):
-                details += " Soft exception: psilocybin sclerotia (truffles) sold in smart shops are legal retail — not the same as licensed therapy or mushroom fruiting bodies."
-            add(_prohibited(
-                proc_id, jur_id,
-                authority=law["authority"],
-                legal_basis=law["basis"],
-                details=details,
-                confidence=law.get("confidence", CF.MODERATE),
-                volatility=law.get("vol", VL.STABLE),
-                sources=law.get("sources"),
-            ))
-
-    # Cannabis prohibitions
-    for jur_id, basis in CANNABIS_PROHIBITED_JURS.items():
-        add(_prohibited(
-            "proc-medical-cannabis", jur_id,
-            authority="National narcotics authority",
-            legal_basis=basis,
-            details="No lawful medical cannabis programme for general patients under current national rules.",
-            confidence=CF.HIGH,
-            sources=[],
-        ))
-
-    # MAID prohibitions
-    for jur_id, basis in MAID_PROHIBITED_JURS.items():
-        # Skip where we already have MAID allowed (CA, CH, NL, BE, ES)
-        if jur_id in ("jur-ca", "jur-ch", "jur-nl", "jur-be", "jur-es"):
-            continue
-        vol = VL.PENDING_LEGISLATION if jur_id in ("jur-uk", "jur-fr", "jur-de", "jur-au") else VL.STABLE
-        add(_prohibited(
-            "proc-maid", jur_id,
-            authority="National criminal / health law",
-            legal_basis=basis,
-            details="No open national MAID access pathway for patients under this jurisdiction id. Subnational exceptions may exist elsewhere (e.g. some US states, Australian states).",
-            confidence=CF.MODERATE,
-            volatility=vol,
-            sources=[],
-        ))
-
-    return out
-
-
 # ── Jurisdiction regulation profiles (structured) ───────────────────────────
 
 JURISDICTION_REGULATION = {
@@ -861,7 +782,647 @@ THERAPY_CONTROL_META = {
     "proc-ketamine-assisted-psychotherapy": ("Schedule_III", "Widely_OffLabel"),
     "proc-medical-cannabis": ("Varies", "Highly_Variable"),
     "proc-maid": ("Unscheduled", "Highly_Variable"),
+    "proc-repro-surrogacy": ("Unscheduled", "Highly_Variable"),
+    "proc-mito-replacement": ("Unscheduled", "Widely_Prohibited"),
+    "proc-ozone-therapy": ("Unscheduled", "Highly_Variable"),
+    "proc-peptide-bpc": ("Unscheduled", "Widely_Prohibited"),
+    "proc-peptide-cjc-ipa": ("Unscheduled", "Widely_Prohibited"),
 }
+
+
+# ── Additional therapies often banned (not only classical psychedelics) ─────
+
+# All forms of surrogacy banned (commercial + altruistic)
+SURROGACY_ALL_BANNED = {
+    "jur-fr": {
+        "basis": "French Civil Code Art. 16-7 — any surrogacy agreement is void; arrangement is unlawful.",
+        "details": "Both commercial and altruistic surrogacy prohibited. Contracts unenforceable; criminal exposure for intermediaries.",
+        "authority": "French Civil Code / bioethics framework",
+        "sources": [{"title": "Surrogacy laws by country (overview)", "url": "https://en.wikipedia.org/wiki/Surrogacy_laws_by_country"}],
+    },
+    "jur-de": {
+        "basis": "Embryo Protection Act (Embryonenschutzgesetz) §1 — surrogacy arrangements banned for medical professionals; birth mother is legal mother.",
+        "details": "All surrogacy (commercial and altruistic) illegal to arrange/perform in Germany.",
+        "authority": "ESchG / German family law",
+        "sources": [{"title": "EPRS Surrogacy in the EU", "url": "https://www.europarl.europa.eu/RegData/etudes/BRIE/2025/769508/EPRS_BRI(2025)769508_EN.pdf"}],
+    },
+    "jur-es": {
+        "basis": "Law 14/2006 (and prior Law 35/1988 Art. 10) — surrogacy contracts void; birth mother is mother.",
+        "details": "All surrogacy prohibited domestically; cross-border arrangements create parentage recognition issues.",
+        "authority": "Spanish ART law",
+        "sources": [{"title": "EPRS Surrogacy in the EU", "url": "https://www.europarl.europa.eu/thinktank/en/document/EPRS_BRI(2025)769508"}],
+    },
+    "jur-se": {
+        "basis": "Surrogacy not permitted within Swedish healthcare; arrangements not legally facilitated.",
+        "details": "Healthcare system may not provide surrogacy; legal parentage frameworks do not support domestic surrogacy programmes.",
+        "authority": "Swedish healthcare / family law practice",
+        "sources": [{"title": "Surrogacy laws by country", "url": "https://en.wikipedia.org/wiki/Surrogacy_laws_by_country"}],
+    },
+    "jur-ch": {
+        "basis": "Swiss reproductive medicine law — surrogacy prohibited.",
+        "details": "All surrogacy banned; Swiss residents sometimes pursue arrangements abroad with legal complexity.",
+        "authority": "Swiss Reproductive Medicine Act",
+        "sources": [{"title": "Surrogacy laws by country", "url": "https://en.wikipedia.org/wiki/Surrogacy_laws_by_country"}],
+    },
+    "jur-po": {
+        "basis": "Polish law does not permit surrogacy arrangements; contracts treated as void.",
+        "details": "No lawful domestic surrogacy pathway.",
+        "authority": "Polish family / medical law",
+        "sources": [{"title": "Surrogacy laws by country", "url": "https://en.wikipedia.org/wiki/Surrogacy_laws_by_country"}],
+    },
+    "jur-pt": {
+        "basis": "Portuguese law has restricted/banned surrogacy pathways (reforms historically unstable).",
+        "details": "Treat domestic surrogacy programmes as unavailable/prohibited pending clear statutory programme.",
+        "authority": "Portuguese ART law",
+        "sources": [{"title": "Reuters surrogacy legality overview", "url": "https://www.reuters.com/world/which-countries-allow-commercial-surrogacy-2023-04-05/"}],
+        "vol": VL.ACTIVE_FLUX,
+        "confidence": CF.MODERATE,
+    },
+    "jur-jp": {
+        "basis": "Japanese professional guidelines and legal practice effectively bar surrogacy arrangements.",
+        "details": "No recognised domestic surrogacy programme; parentage and medical ethics barriers.",
+        "authority": "Japan Society of Obstetrics and Gynecology / family law practice",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-sg": {
+        "basis": "Singapore prohibits surrogacy arrangements.",
+        "details": "No lawful surrogacy pathway for commissioning parents domestically.",
+        "authority": "Singapore MOH / family law",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+}
+
+# Mitochondrial replacement / three-person IVF — banned or not authorised outside UK-class programmes
+MRT_PROHIBITED = {
+    "jur-us-federal": {
+        "basis": "US appropriations riders bar FDA from accepting applications involving heritable genetic modification of embryos — MRT effectively prohibited clinically.",
+        "details": "No FDA pathway for clinical MRT; UK is the primary regulated destination.",
+        "authority": "FDA / Congressional appropriations language",
+        "sources": [{"title": "MRT US ban discussion", "url": "https://www.scientificamerican.com/article/congress-revives-ban-on-altering-the-dna-of-human-embryos-used-for-pregnancies/"}],
+        "confidence": CF.HIGH,
+    },
+    "jur-de": {
+        "basis": "Embryo Protection Act restricts embryo manipulation incompatible with MRT clinical practice.",
+        "details": "MRT not an available clinical service.",
+        "authority": "ESchG",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-fr": {
+        "basis": "French bioethics law — germline/heritable embryo modification pathways not authorised for MRT clinical use.",
+        "details": "No clinical MRT programme.",
+        "authority": "Bioethics statutes / ANSM",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-ca": {
+        "basis": "Assisted Human Reproduction Act prohibits altering the genome of a cell of a human being or in vitro embryo such that the alteration is capable of being transmitted to descendants — interpreted to block MRT clinical use.",
+        "details": "MRT not available as clinical care in Canada.",
+        "authority": "AHRA",
+        "sources": [{"title": "Assisted Human Reproduction Act", "url": "https://laws-lois.justice.gc.ca/eng/acts/a-13.4/"}],
+        "confidence": CF.HIGH,
+    },
+    "jur-jp": {
+        "basis": "Japanese guidelines/law restrict heritable genome interventions; MRT not authorised as standard care.",
+        "details": "No open clinical MRT pathway.",
+        "authority": "MHLW / professional guidelines",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-sg": {
+        "basis": "Strict reproductive genetics rules — MRT not authorised.",
+        "details": "No clinical MRT programme.",
+        "authority": "MOH Singapore",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-kr": {
+        "basis": "Bioethics and Safety Act framework restricts heritable genetic modification of embryos.",
+        "details": "MRT not available clinically.",
+        "authority": "MFDS / bioethics law",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-es": {
+        "basis": "Spanish ART law does not authorise mitochondrial donation programmes comparable to UK HFEA.",
+        "details": "No regulated MRT clinical service.",
+        "authority": "Spanish ART law / AEMPS",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-nl": {
+        "basis": "Dutch embryo legislation does not provide a UK-style licensed MRT clinical pathway for patients.",
+        "details": "Research ≠ clinical service for patients seeking MRT.",
+        "authority": "Embryo Act / IGJ",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-be": {
+        "basis": "Belgian embryo research rules; no routine MRT clinical authorisation for reproduction.",
+        "details": "No patient MRT service pathway seeded as available.",
+        "authority": "Belgian embryo law",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-se": {
+        "basis": "Swedish genetic integrity / embryo rules — MRT not offered as care.",
+        "details": "No clinical MRT programme.",
+        "authority": "Swedish National Council on Medical Ethics framework",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-ch": {
+        "basis": "Swiss reproductive medicine law — restrictive on embryo manipulation for heritable change.",
+        "details": "MRT not a lawful clinical offering.",
+        "authority": "Swiss Reproductive Medicine Act",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-mx": {
+        "basis": "No national regulated MRT pathway; practice would fall outside authorised ART standards.",
+        "details": "Not a recognised regulated service — treat as unavailable/prohibited for patient planning.",
+        "authority": "COFEPRIS / ART practice",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-br": {
+        "basis": "ANVISA/CFM frameworks do not authorise MRT as standard ART.",
+        "details": "No regulated MRT programme.",
+        "authority": "ANVISA / CFM",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-in": {
+        "basis": "ART/surrogacy regulation environment does not establish licensed MRT services.",
+        "details": "No recognised national MRT clinical pathway.",
+        "authority": "ART regulatory framework",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-il": {
+        "basis": "Israeli ART regulation — MRT not an established licensed service.",
+        "details": "No routine MRT programme.",
+        "authority": "Ministry of Health",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-uae": {
+        "basis": "UAE reproductive medicine rules — MRT not authorised.",
+        "details": "No clinical MRT pathway.",
+        "authority": "MOHAP / DHA frameworks",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-tu": {
+        "basis": "Turkish ART regulation — MRT not authorised clinical service.",
+        "details": "No MRT programme.",
+        "authority": "TİTCK / MOH",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-po": {
+        "basis": "Polish embryo protection culture/law — MRT not available.",
+        "details": "No clinical MRT pathway.",
+        "authority": "Polish medical law",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-pt": {
+        "basis": "Portuguese ART law — no licensed MRT service.",
+        "details": "No clinical MRT pathway.",
+        "authority": "Portuguese ART regulation",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-za": {
+        "basis": "No licensed MRT clinical pathway under SAHPRA/ART practice.",
+        "details": "Unavailable as regulated care.",
+        "authority": "SAHPRA",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-th": {
+        "basis": "Thai ART regulation does not establish MRT clinical service.",
+        "details": "Unavailable as regulated care.",
+        "authority": "Thai FDA / MOPH",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-ph": {
+        "basis": "No MRT clinical authorisation.",
+        "details": "Unavailable.",
+        "authority": "FDA Philippines",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-ar": {
+        "basis": "No national MRT programme.",
+        "details": "Unavailable as regulated care.",
+        "authority": "ANMAT",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-cl": {
+        "basis": "No national MRT programme.",
+        "details": "Unavailable as regulated care.",
+        "authority": "ISP Chile",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-cr": {
+        "basis": "No MRT programme.",
+        "details": "Unavailable.",
+        "authority": "Ministry of Health",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-jm": {
+        "basis": "No MRT programme.",
+        "details": "Unavailable.",
+        "authority": "Ministry of Health",
+        "sources": [],
+        "confidence": CF.LOW,
+    },
+    "jur-us-or": {
+        "basis": "Federal appropriations bar controls US clinical MRT regardless of state.",
+        "details": "State cannot authorise clinical MRT while federal rider blocks FDA.",
+        "authority": "FDA / federal law",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-co": {
+        "basis": "Federal appropriations bar controls US clinical MRT regardless of state.",
+        "details": "No state pathway around federal ban.",
+        "authority": "FDA / federal law",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-ca": {
+        "basis": "Federal appropriations bar controls US clinical MRT.",
+        "details": "No California clinical MRT pathway.",
+        "authority": "FDA / federal law",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-tx": {
+        "basis": "Federal appropriations bar controls US clinical MRT.",
+        "details": "No Texas clinical MRT pathway.",
+        "authority": "FDA / federal law",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-fl": {
+        "basis": "Federal appropriations bar controls US clinical MRT.",
+        "details": "No Florida clinical MRT pathway.",
+        "authority": "FDA / federal law",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+}
+
+# Medical ozone — FDA explicitly hostile; several systems do not authorise as medicine
+OZONE_PROHIBITED = {
+    "jur-us-federal": {
+        "basis": "FDA position: ozone is a toxic gas with no known useful medical application in specific therapeutic claims historically enforced; medical ozone generators marketed for disease treatment face enforcement.",
+        "details": "Not a lawful FDA-approved medical therapy business for disease treatment claims.",
+        "authority": "FDA",
+        "sources": [{"title": "FDA ozone generators consumer update", "url": "https://www.fda.gov/consumers/consumer-updates"}],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-or": {
+        "basis": "Federal FDA posture applies; Oregon does not create a lawful medical ozone disease-treatment pathway.",
+        "details": "Same federal constraints.",
+        "authority": "FDA",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-co": {
+        "basis": "Federal FDA posture applies.",
+        "details": "No state medical ozone authorisation for disease claims.",
+        "authority": "FDA",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-ca": {
+        "basis": "Federal FDA posture applies.",
+        "details": "No lawful disease-treatment ozone pathway.",
+        "authority": "FDA",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-tx": {
+        "basis": "Federal FDA posture applies.",
+        "details": "No lawful disease-treatment ozone pathway.",
+        "authority": "FDA",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-us-fl": {
+        "basis": "Federal FDA posture applies.",
+        "details": "No lawful disease-treatment ozone pathway.",
+        "authority": "FDA",
+        "sources": [],
+        "confidence": CF.HIGH,
+    },
+    "jur-uk": {
+        "basis": "Ozone not an MHRA-authorised medicine for general therapeutic marketing; disease claims require authorisation.",
+        "details": "Cannot lawfully market as an approved medical treatment without authorisation.",
+        "authority": "MHRA",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-sg": {
+        "basis": "HSA does not authorise ozone therapy as standard medicine; disease claims restricted.",
+        "details": "Not a lawful approved therapy programme.",
+        "authority": "HSA",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-jp": {
+        "basis": "Not an authorised standard medical therapy under PMDA for broad indications.",
+        "details": "No general medical ozone therapy pathway.",
+        "authority": "PMDA/MHLW",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-au": {
+        "basis": "Not TGA-approved as a registered medicine for general ozone therapy claims.",
+        "details": "Marketing as approved treatment without registration is unlawful.",
+        "authority": "TGA",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+    "jur-ca": {
+        "basis": "Not authorised as a general Health Canada approved therapy for broad disease claims.",
+        "details": "Unapproved therapeutic marketing restricted.",
+        "authority": "Health Canada",
+        "sources": [],
+        "confidence": CF.MODERATE,
+    },
+}
+
+# Unapproved peptide injectables — jurisdictions with clear "do not compound / not authorised medicine"
+PEPTIDE_PROHIBITED = {
+    "proc-peptide-bpc": {
+        "jur-de": {
+            "basis": "Not an authorised medicinal product; compounding/import for human therapeutic use not a standard lawful pathway.",
+            "details": "BPC-157 is not an approved German medicine; cannot be marketed as such.",
+            "authority": "BfArM / AMG",
+            "confidence": CF.MODERATE,
+        },
+        "jur-fr": {
+            "basis": "Not ANSM-authorised medicinal product for general therapeutic use.",
+            "details": "No lawful approved BPC-157 medicine pathway.",
+            "authority": "ANSM",
+            "confidence": CF.MODERATE,
+        },
+        "jur-jp": {
+            "basis": "Not PMDA-approved medicine; research chemical injection not lawful medical practice.",
+            "details": "No approved BPC-157 product.",
+            "authority": "PMDA",
+            "confidence": CF.HIGH,
+        },
+        "jur-sg": {
+            "basis": "Not HSA-approved therapeutic product.",
+            "details": "Cannot lawfully market as medicine.",
+            "authority": "HSA",
+            "confidence": CF.HIGH,
+        },
+        "jur-ca": {
+            "basis": "Not a Health Canada approved drug; compounding/import constraints apply.",
+            "details": "No approved BPC-157 DIN product pathway for routine care.",
+            "authority": "Health Canada",
+            "confidence": CF.MODERATE,
+        },
+        "jur-ch": {
+            "basis": "Not Swissmedic-authorised medicine for general use.",
+            "details": "No standard authorised product.",
+            "authority": "Swissmedic",
+            "confidence": CF.MODERATE,
+        },
+        "jur-nl": {
+            "basis": "Not an authorised medicinal product for routine prescribing.",
+            "details": "No standard BPC-157 medicine authorisation.",
+            "authority": "MEB/IGJ",
+            "confidence": CF.MODERATE,
+        },
+        "jur-se": {
+            "basis": "Not an authorised medicine.",
+            "details": "No approved product pathway.",
+            "authority": "Läkemedelsverket",
+            "confidence": CF.MODERATE,
+        },
+        "jur-be": {
+            "basis": "Not an authorised medicine.",
+            "details": "No approved product pathway.",
+            "authority": "FAMHP",
+            "confidence": CF.MODERATE,
+        },
+        "jur-es": {
+            "basis": "Not AEMPS-authorised medicine.",
+            "details": "No approved product pathway.",
+            "authority": "AEMPS",
+            "confidence": CF.MODERATE,
+        },
+        "jur-il": {
+            "basis": "Not an authorised Israeli medicine for routine use.",
+            "details": "No approved product pathway.",
+            "authority": "Ministry of Health",
+            "confidence": CF.LOW,
+        },
+        "jur-kr": {
+            "basis": "Not MFDS-approved medicine.",
+            "details": "No approved product pathway.",
+            "authority": "MFDS",
+            "confidence": CF.MODERATE,
+        },
+        "jur-uae": {
+            "basis": "Not authorised therapeutic product for marketing.",
+            "details": "No approved pathway.",
+            "authority": "MOHAP",
+            "confidence": CF.MODERATE,
+        },
+    },
+    "proc-peptide-cjc-ipa": {
+        "jur-us-federal": {
+            "basis": "Not FDA-approved; many GH secretagogue peptides face compounding restrictions / enforcement risk for human therapeutic marketing.",
+            "details": "Cannot lawfully market as FDA-approved therapy; research-chemical injection model is not compliant medical practice.",
+            "authority": "FDA",
+            "confidence": CF.HIGH,
+            "vol": VL.ACTIVE_FLUX,
+        },
+        "jur-uk": {
+            "basis": "Not MHRA-authorised medicines for anti-aging use.",
+            "details": "No lawful approved product pathway for wellness secretagogue clinics.",
+            "authority": "MHRA",
+            "confidence": CF.HIGH,
+        },
+        "jur-au": {
+            "basis": "Not TGA-registered medicines for this use; compounding/import constraints.",
+            "details": "No standard approved pathway.",
+            "authority": "TGA",
+            "confidence": CF.HIGH,
+        },
+        "jur-de": {
+            "basis": "Not authorised medicinal products for anti-aging marketing.",
+            "details": "No approved pathway.",
+            "authority": "BfArM",
+            "confidence": CF.MODERATE,
+        },
+        "jur-ca": {
+            "basis": "Not Health Canada approved drugs for this indication.",
+            "details": "No approved pathway for routine care.",
+            "authority": "Health Canada",
+            "confidence": CF.MODERATE,
+        },
+        "jur-jp": {
+            "basis": "Not PMDA-approved for wellness use.",
+            "details": "No approved pathway.",
+            "authority": "PMDA",
+            "confidence": CF.HIGH,
+        },
+        "jur-sg": {
+            "basis": "Not HSA-approved therapeutic products.",
+            "details": "No approved pathway.",
+            "authority": "HSA",
+            "confidence": CF.HIGH,
+        },
+        "jur-fr": {
+            "basis": "Not ANSM-authorised medicines for this use.",
+            "details": "No approved pathway.",
+            "authority": "ANSM",
+            "confidence": CF.MODERATE,
+        },
+    },
+}
+
+
+def build_prohibited_access_records(existing_pairs: set):
+    """Return list of access record dicts for pairs not already present."""
+    out = []
+
+    def add(rec):
+        key = (rec["procedure_id"], rec["jurisdiction_id"])
+        if key in existing_pairs:
+            return
+        if key in SKIP_PROCS_FOR_JUR:
+            return
+        existing_pairs.add(key)
+        out.append(rec)
+
+    # Classical psychedelics × jurisdictions with law notes
+    for jur_id, law in JUR_PSYCHEDELIC_LAW.items():
+        for proc_id in CONTROLLED_PSYCHEDELICS:
+            if (proc_id, jur_id) in SKIP_PROCS_FOR_JUR:
+                continue
+            if law.get("status_override") == LS.DECRIMINALIZED:
+                rec = _prohibited(
+                    proc_id, jur_id,
+                    authority=law["authority"],
+                    legal_basis=law["basis"],
+                    details=law["details"] + " Personal use may be administrative offence only; supply remains illegal.",
+                    confidence=law.get("confidence", CF.MODERATE),
+                    volatility=law.get("vol", VL.STABLE),
+                    sources=law.get("sources"),
+                )
+                rec["legal_status"] = LS.DECRIMINALIZED
+                rec["access_pathway"] = AP.NONE
+                rec["arbitrage_summary"] = "Decriminalised personal use context but no legal therapy supply. Not a destination for regulated care."
+                add(rec)
+                continue
+            details = law["details"]
+            if jur_id == "jur-nl" and proc_id.startswith("proc-psilocybin"):
+                details += " Soft exception: psilocybin sclerotia (truffles) sold in smart shops are legal retail — not the same as licensed therapy or mushroom fruiting bodies."
+            add(_prohibited(
+                proc_id, jur_id,
+                authority=law["authority"],
+                legal_basis=law["basis"],
+                details=details,
+                confidence=law.get("confidence", CF.MODERATE),
+                volatility=law.get("vol", VL.STABLE),
+                sources=law.get("sources"),
+            ))
+
+    # Cannabis prohibitions
+    for jur_id, basis in CANNABIS_PROHIBITED_JURS.items():
+        add(_prohibited(
+            "proc-medical-cannabis", jur_id,
+            authority="National narcotics authority",
+            legal_basis=basis,
+            details="No lawful medical cannabis programme for general patients under current national rules.",
+            confidence=CF.HIGH,
+            sources=[],
+        ))
+
+    # MAID prohibitions
+    for jur_id, basis in MAID_PROHIBITED_JURS.items():
+        if jur_id in ("jur-ca", "jur-ch", "jur-nl", "jur-be", "jur-es"):
+            continue
+        vol = VL.PENDING_LEGISLATION if jur_id in ("jur-uk", "jur-fr", "jur-de", "jur-au") else VL.STABLE
+        add(_prohibited(
+            "proc-maid", jur_id,
+            authority="National criminal / health law",
+            legal_basis=basis,
+            details="No open national MAID access pathway for patients under this jurisdiction id. Subnational exceptions may exist elsewhere (e.g. some US states, Australian states).",
+            confidence=CF.MODERATE,
+            volatility=vol,
+            sources=[],
+        ))
+
+    # Surrogacy total bans
+    for jur_id, law in SURROGACY_ALL_BANNED.items():
+        if not law:
+            continue
+        add(_prohibited(
+            "proc-repro-surrogacy", jur_id,
+            authority=law.get("authority", "National family / ART law"),
+            legal_basis=law["basis"],
+            details=law.get("details", law["basis"]),
+            confidence=law.get("confidence", CF.HIGH),
+            volatility=law.get("vol", VL.STABLE),
+            sources=law.get("sources"),
+        ))
+
+    # MRT bans
+    for jur_id, law in MRT_PROHIBITED.items():
+        add(_prohibited(
+            "proc-mito-replacement", jur_id,
+            authority=law.get("authority", "National ART / bioethics law"),
+            legal_basis=law["basis"],
+            details=law.get("details", law["basis"]),
+            confidence=law.get("confidence", CF.MODERATE),
+            volatility=law.get("vol", VL.STABLE),
+            sources=law.get("sources"),
+        ))
+
+    # Ozone
+    for jur_id, law in OZONE_PROHIBITED.items():
+        add(_prohibited(
+            "proc-ozone-therapy", jur_id,
+            authority=law.get("authority", "Medicines regulator"),
+            legal_basis=law["basis"],
+            details=law.get("details", law["basis"]),
+            confidence=law.get("confidence", CF.MODERATE),
+            volatility=law.get("vol", VL.STABLE),
+            sources=law.get("sources"),
+        ))
+
+    # Peptides (BPC, CJC/ipa)
+    for proc_id, jur_map in PEPTIDE_PROHIBITED.items():
+        for jur_id, law in jur_map.items():
+            add(_prohibited(
+                proc_id, jur_id,
+                authority=law.get("authority", "Medicines regulator"),
+                legal_basis=law["basis"],
+                details=law.get("details", law["basis"]),
+                confidence=law.get("confidence", CF.MODERATE),
+                volatility=law.get("vol", VL.STABLE),
+                sources=law.get("sources"),
+            ))
+
+    return out
 
 
 def all_jurisdiction_regulation():
