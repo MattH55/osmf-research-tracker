@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedFreedom Arbitrage Map</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; text-align: center; }
+        header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        header p { opacity: 0.9; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h3 { color: #667eea; margin-bottom: 0.5rem; }
+        .card .number { font-size: 2rem; font-weight: bold; color: #764ba2; }
+        .card p { color: #666; font-size: 0.9rem; }
+        .section { background: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section h2 { color: #333; margin-bottom: 1rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        table th { background: #f0f0f0; padding: 1rem; text-align: left; font-weight: 600; color: #333; }
+        table td { padding: 1rem; border-bottom: 1px solid #eee; }
+        table tr:hover { background: #fafafa; }
+        .loading { text-align: center; color: #999; padding: 2rem; }
+        .error { background: #fee; color: #c33; padding: 1rem; border-radius: 4px; margin: 1rem 0; }
+        .status { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
+        .status.live { background: #d4edda; color: #155724; }
+        button { background: #667eea; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌍 MedFreedom Arbitrage Map</h1>
+        <p>Medical procedure access mapping by jurisdiction</p>
+        <span class="status live">✓ Live</span>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <div class="card">
+                <h3>Jurisdictions</h3>
+                <div class="number" id="jurisdiction-count">-</div>
+                <p>Countries & regions</p>
+            </div>
+            <div class="card">
+                <h3>Procedures</h3>
+                <div class="number" id="procedure-count">-</div>
+                <p>Medical treatments</p>
+            </div>
+            <div class="card">
+                <h3>Access Records</h3>
+                <div class="number" id="record-count">-</div>
+                <p>Jurisdiction-procedure pairs</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Jurisdictions</h2>
+            <button onclick="loadData('jurisdictions')">Load Jurisdictions</button>
+            <div id="jurisdictions-content" class="loading" style="display:none;">Loading...</div>
+        </div>
+
+        <div class="section">
+            <h2>Procedures</h2>
+            <button onclick="loadData('procedures')">Load Procedures</button>
+            <div id="procedures-content" class="loading" style="display:none;">Loading...</div>
+        </div>
+
+        <div class="section">
+            <h2>API Status</h2>
+            <p><strong>Health Check:</strong> <span id="health-status">Checking...</span></p>
+            <p><strong>API URL:</strong> <code>https://osmf-research-tracker.onrender.com</code></p>
+            <p><strong>Endpoints:</strong></p>
+            <ul style="margin-left: 2rem; margin-top: 0.5rem; line-height: 1.8;">
+                <li><code>/api/health</code> - Health check</li>
+                <li><code>/api/jurisdictions</code> - List jurisdictions</li>
+                <li><code>/api/procedures</code> - List procedures</li>
+                <li><code>/api/access-records</code> - List access records</li>
+                <li><code>/api/search?q=query</code> - Search</li>
+                <li><code>/api/export/json</code> - Export as JSON</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://osmf-research-tracker.onrender.com';
+
+        async function checkHealth() {
+            try {
+                const res = await fetch(API_URL + '/api/health');
+                const data = await res.json();
+                document.getElementById('health-status').textContent = '✅ Running (' + data.version + ')';
+                loadCounts();
+            } catch (e) {
+                document.getElementById('health-status').textContent = '❌ Offline';
+            }
+        }
+
+        async function loadCounts() {
+            try {
+                const jRes = await fetch(API_URL + '/api/jurisdictions');
+                const jData = await jRes.json();
+                document.getElementById('jurisdiction-count').textContent = jData.length || 0;
+
+                const pRes = await fetch(API_URL + '/api/procedures');
+                const pData = await pRes.json();
+                document.getElementById('procedure-count').textContent = pData.length || 0;
+
+                const aRes = await fetch(API_URL + '/api/access-records');
+                const aData = await aRes.json();
+                document.getElementById('record-count').textContent = aData.length || 0;
+            } catch (e) {
+                console.error('Error loading counts:', e);
+            }
+        }
+
+        async function loadData(type) {
+            const contentId = type + '-content';
+            const elem = document.getElementById(contentId);
+            elem.style.display = 'block';
+            elem.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const res = await fetch(API_URL + '/api/' + type);
+                const data = await res.json();
+
+                if (!Array.isArray(data)) {
+                    elem.innerHTML = '<p>No data available</p>';
+                    return;
+                }
+
+                if (data.length === 0) {
+                    elem.innerHTML = '<p>No records found</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr>';
+                const keys = Object.keys(data[0]).slice(0, 4);
+                keys.forEach(k => html += '<th>' + k + '</th>');
+                html += '</tr></thead><tbody>';
+
+                data.slice(0, 10).forEach(row => {
+                    html += '<tr>';
+                    keys.forEach(k => {
+                        let val = row[k];
+                        if (typeof val === 'object') val = JSON.stringify(val).substring(0, 50);
+                        html += '<td>' + (val || '-') + '</td>';
+                    });
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table>';
+                if (data.length > 10) html += '<p style="margin-top:1rem; color:#999;">Showing 10 of ' + data.length + ' records</p>';
+
+                elem.innerHTML = html;
+            } catch (e) {
+                elem.innerHTML = '<div class="error">Error loading data: ' + e.message + '</div>';
+            }
+        }
+
+        checkHealth();
+        setInterval(checkHealth, 30000);
+    </script>
+</body>
+</html>

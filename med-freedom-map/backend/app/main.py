@@ -7,7 +7,8 @@ from typing import Optional, List
 
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+import os
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
@@ -62,6 +63,15 @@ def seed_endpoint(db: Session = Depends(get_db)):
         return {"status": "seeding_complete", "message": "Database seeded successfully"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+@app.get("/")
+async def root():
+    """Serve dashboard"""
+    dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
+    if os.path.exists(dashboard_path):
+        return FileResponse(dashboard_path, media_type="text/html")
+    return {"message": "MedFreedom Arbitrage Map API", "version": "0.1.0"}
 
 
 # ══════════════════════════════════════════════════════════════════════════
