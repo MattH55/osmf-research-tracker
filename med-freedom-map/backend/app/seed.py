@@ -6,8 +6,26 @@ from datetime import date
 from .database import SessionLocal, init_db
 from .models import (
     Jurisdiction, Procedure, AccessRecord,
-    JurisdictionType, JurisdictionLevel, Modality, LegalStatus, OversightQuality
+    JurisdictionType, JurisdictionLevel, Modality, LegalStatus, OversightQuality,
+    RegulatoryModality, RestrictionDriver,
 )
+
+
+# Schema §1 taxonomy: map each legacy modality to (regulatory_modality, restriction_driver).
+# This fills the "what the procedure is / why it's restricted" axes the arbitrage view needs.
+MODALITY_CLASSIFICATION = {
+    Modality.PSYCHEDELICS: (RegulatoryModality.CONTROLLED_SUBSTANCE, RestrictionDriver.CONTROLLED_SUBSTANCE),
+    Modality.PHYTOCANNABINOID: (RegulatoryModality.CONTROLLED_SUBSTANCE, RestrictionDriver.CONTROLLED_SUBSTANCE),
+    Modality.GENE_THERAPY: (RegulatoryModality.GENE_THERAPY, RestrictionDriver.SAFETY_UNPROVEN),
+    Modality.STEM_CELL: (RegulatoryModality.CELL_THERAPY_AUTOLOGOUS, RestrictionDriver.SAFETY_UNPROVEN),
+    Modality.CELLULAR: (RegulatoryModality.CELL_THERAPY_ALLOGENEIC, RestrictionDriver.SAFETY_UNPROVEN),
+    Modality.PEPTIDE: (RegulatoryModality.PEPTIDE, RestrictionDriver.COST_OR_LICENSING),
+    Modality.REPURPOSED: (RegulatoryModality.SMALL_MOLECULE_OFFLABEL, RestrictionDriver.COST_OR_LICENSING),
+    Modality.REPRODUCTIVE: (RegulatoryModality.REPRODUCTIVE, RestrictionDriver.ETHICS_CONTESTED),
+    Modality.ASSISTED_DYING: (RegulatoryModality.END_OF_LIFE, RestrictionDriver.ETHICS_CONTESTED),
+    Modality.ONCOLOGY: (RegulatoryModality.SMALL_MOLECULE_UNAPPROVED, RestrictionDriver.SAFETY_UNPROVEN),
+    Modality.OTHER: (RegulatoryModality.NUTRACEUTICAL_NATURAL, RestrictionDriver.NONE),
+}
 
 
 # ── Jurisdictions ──────────────────────────────────────────────────────────
@@ -1090,6 +1108,12 @@ def seed_database():
                 p_data_copy = p_data.copy()
                 p_data_copy["therapeutic_areas"] = json.dumps(p_data_copy["therapeutic_areas"])
                 p_data_copy["sources"] = json.dumps(p_data_copy["sources"])
+                # Fill schema §1 taxonomy from the modality unless explicitly provided.
+                reg_mod, restriction = MODALITY_CLASSIFICATION.get(
+                    p_data_copy.get("modality"), (RegulatoryModality.NUTRACEUTICAL_NATURAL, RestrictionDriver.NONE)
+                )
+                p_data_copy.setdefault("regulatory_modality", reg_mod)
+                p_data_copy.setdefault("restriction_driver", restriction)
                 db.add(Procedure(**p_data_copy))
             db.commit()
         result["procedures"] = db.query(Procedure).count()

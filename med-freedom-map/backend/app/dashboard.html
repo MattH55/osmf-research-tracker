@@ -164,13 +164,12 @@
         }
 
         function renderProcedureTable(data) {
-            let h = '<table><thead><tr><th>Procedure</th><th>Modality</th><th>Areas</th><th>US cost</th></tr></thead><tbody>';
+            let h = '<table><thead><tr><th>Procedure</th><th>Regulatory class</th><th>Why restricted</th><th>US cost</th></tr></thead><tbody>';
             data.forEach(p => {
-                const areas = (p.therapeutic_areas || []).join(', ');
                 h += `<tr class="clickable" onclick='showProcedure(${JSON.stringify(p.id)})'>
-                    <td><strong>${esc(p.name)}</strong></td>
-                    <td><span class="pill">${esc(p.modality || '')}</span></td>
-                    <td class="muted">${esc(areas)}</td>
+                    <td><strong>${esc(p.name)}</strong><div class="muted">${esc((p.therapeutic_areas||[]).join(', '))}</div></td>
+                    <td><span class="pill">${esc(p.regulatory_modality || p.modality || '')}</span></td>
+                    <td class="muted">${esc(p.restriction_driver || '—')}</td>
                     <td>${esc(p.typical_us_cost_range || '—')}</td></tr>`;
             });
             return h + '</tbody></table>';
