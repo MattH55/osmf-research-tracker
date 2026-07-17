@@ -15,6 +15,7 @@ from .seed_enrichment import (
     PROCEDURE_INDICATIONS,
     apply_access_enrichment,
 )
+from .seed_access_expansion import all_expansion_records
 
 
 # Schema §1 taxonomy: map each legacy modality to (regulatory_modality, restriction_driver).
@@ -1108,6 +1109,7 @@ def seed_database():
         "conditions": 0,
         "procedure_indications": 0,
         "enriched_access_records": 0,
+        "new_access_records": 0,
         "skipped": [],
     }
 
@@ -1135,38 +1137,45 @@ def seed_database():
             db.commit()
         result["procedures"] = db.query(Procedure).count()
 
-        # ── Access records (one at a time to keep memory flat) ──
-        if db.query(AccessRecord).count() == 0:
-            valid_procs = {p.id for p in db.query(Procedure.id).all()}
-            valid_jurs = {j.id for j in db.query(Jurisdiction.id).all()}
-            for ar_data in ACCESS_RECORDS:
-                # Skip rows whose foreign keys are missing rather than aborting.
-                if ar_data["procedure_id"] not in valid_procs or ar_data["jurisdiction_id"] not in valid_jurs:
-                    result["skipped"].append(
-                        f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} (missing FK)"
-                    )
-                    continue
-                ar_copy = ar_data.copy()
-                ar_copy["sources"] = json.dumps(ar_copy.get("sources", []))
-                # Pre-apply enrichment so fresh inserts already have §4 fields.
-                key = (ar_copy["procedure_id"], ar_copy["jurisdiction_id"])
-                enrich = ACCESS_ENRICHMENTS.get(key)
-                if enrich:
-                    for k, v in enrich.items():
-                        if k == "cost_notes_append":
-                            base = ar_copy.get("cost_notes") or ""
-                            ar_copy["cost_notes"] = (base + " " + v).strip() if base else v
-                        else:
-                            ar_copy[k] = v
-                    ar_copy["verified_by"] = "seed_enrichment_v1"
-                try:
-                    db.add(AccessRecord(**ar_copy))
-                    db.commit()
-                except Exception as row_err:
-                    db.rollback()
-                    result["skipped"].append(
-                        f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__})"
-                    )
+        # ── Access records (insert any missing pairs; memory-safe one-by-one) ──
+        valid_procs = {p.id for p in db.query(Procedure.id).all()}
+        valid_jurs = {j.id for j in db.query(Jurisdiction.id).all()}
+        existing_pairs = {
+            (a.procedure_id, a.jurisdiction_id)
+            for a in db.query(AccessRecord.procedure_id, AccessRecord.jurisdiction_id).all()
+        }
+        all_access = list(ACCESS_RECORDS) + all_expansion_records()
+        for ar_data in all_access:
+            key = (ar_data["procedure_id"], ar_data["jurisdiction_id"])
+            if key in existing_pairs:
+                continue
+            if ar_data["procedure_id"] not in valid_procs or ar_data["jurisdiction_id"] not in valid_jurs:
+                result["skipped"].append(
+                    f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} (missing FK)"
+                )
+                continue
+            ar_copy = ar_data.copy()
+            ar_copy["sources"] = json.dumps(ar_copy.get("sources", []))
+            # Pre-apply enrichment so legacy seed rows get §4 fields.
+            enrich = ACCESS_ENRICHMENTS.get(key)
+            if enrich:
+                for k, v in enrich.items():
+                    if k == "cost_notes_append":
+                        base = ar_copy.get("cost_notes") or ""
+                        ar_copy["cost_notes"] = (base + " " + v).strip() if base else v
+                    else:
+                        ar_copy[k] = v
+                ar_copy.setdefault("verified_by", "seed_enrichment_v1")
+            try:
+                db.add(AccessRecord(**ar_copy))
+                db.commit()
+                existing_pairs.add(key)
+                result["new_access_records"] += 1
+            except Exception as row_err:
+                db.rollback()
+                result["skipped"].append(
+                    f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__})"
+                )
         result["access_records"] = db.query(AccessRecord).count()
 
         # ── §4 Enrich existing access records (pathway + pricing) ──
@@ -1220,7 +1229,8 @@ def seed_database():
 
         print(
             f"Seed complete: {result['jurisdictions']} jurisdictions, "
-            f"{result['procedures']} procedures, {result['access_records']} access records, "
+            f"{result['procedures']} procedures, {result['access_records']} access records "
+            f"(+{result['new_access_records']} new), "
             f"{result['conditions']} conditions, {result['procedure_indications']} indications, "
             f"{result['enriched_access_records']} enriched "
             f"({len(result['skipped'])} skipped)."
