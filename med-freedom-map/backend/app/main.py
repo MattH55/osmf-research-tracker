@@ -2,29 +2,29 @@
 import json
 import csv
 import io
+import os
 from datetime import date, datetime
 from typing import Optional, List
 
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
-import os
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
-from .database import init_db, get_db, SessionLocal
+from .database import init_db, reset_db, get_db, SessionLocal
 from .models import Jurisdiction, Procedure, AccessRecord
 from .schemas import (
-    JurisdictionCreate, JurisdictionUpdate, JurisdictionResponse,
-    ProcedureCreate, ProcedureUpdate, ProcedureResponse,
-    AccessRecordCreate, AccessRecordUpdate, AccessRecordResponse,
-    AccessRecordFilter, BulkImportRequest, ExportResponse,
+    JurisdictionCreate, JurisdictionUpdate,
+    ProcedureCreate, ProcedureUpdate,
+    AccessRecordCreate, AccessRecordUpdate,
+    AccessRecordFilter, BulkImportRequest,
 )
 
 app = FastAPI(
     title="MedFreedom Arbitrage Map API",
     description="Medical procedure access by jurisdiction for informed arbitrage decisions",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 app.add_middleware(
@@ -38,97 +38,107 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup():
+    # Non-destructive: create tables if missing, never drop existing data.
     init_db()
-    # Initialize database schema (don't auto-seed due to field length constraints)
-    # Run seeding manually via Shell: python -m app.seed
 
 
-# ── Health Check ──────────────────────────────────────────────────────────
-
-@app.get("/api/health")
-def health():
-    return {"status": "ok", "version": "0.1.0"}
-
-
-@app.post("/api/seed")
-def seed_endpoint(db: Session = Depends(get_db)):
-    """Manually trigger database seeding (only runs if tables are empty)."""
-    try:
-        jur_count = db.query(Jurisdiction).count()
-        if jur_count > 0:
-            return {"status": "already_seeded", "jurisdictions": jur_count}
-
-        from .seed import seed_database
-        seed_database()
-        return {"status": "seeding_complete", "message": "Database seeded successfully"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
+# ── Meta / health / admin ───────────────────────────────────────────────────
 
 @app.get("/")
 async def root():
-    """Serve dashboard"""
+    """Serve the dashboard UI."""
     dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
     if os.path.exists(dashboard_path):
         return FileResponse(dashboard_path, media_type="text/html")
-    return {"message": "MedFreedom Arbitrage Map API", "version": "0.1.0"}
+    return {"message": "MedFreedom Arbitrage Map API", "version": "0.2.0"}
+
+
+@app.get("/api/health")
+def health():
+    return {"status": "ok", "version": "0.2.0"}
+
+
+@app.get("/api/stats")
+def stats(db: Session = Depends(get_db)):
+    """Row counts for the dashboard — one cheap round-trip."""
+    return {
+        "jurisdictions": db.query(func.count(Jurisdiction.id)).scalar() or 0,
+        "procedures": db.query(func.count(Procedure.id)).scalar() or 0,
+        "access_records": db.query(func.count(AccessRecord.id)).scalar() or 0,
+    }
+
+
+@app.post("/api/seed")
+def seed_endpoint(reset: bool = False, db: Session = Depends(get_db)):
+    """Seed the database. Pass ?reset=true to drop and rebuild the schema first.
+
+    Idempotent: without reset it only fills what is empty, so it is safe to call
+    repeatedly (e.g. after the free-tier instance restarts).
+    """
+    try:
+        if reset:
+            db.close()
+            reset_db()
+        from .seed import seed_database
+        result = seed_database()
+        return {"status": "ok", **result}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 
 # ══════════════════════════════════════════════════════════════════════════
 # JURISDICTIONS
 # ══════════════════════════════════════════════════════════════════════════
 
-@app.get("/api/jurisdictions", response_model=List[JurisdictionResponse])
+@app.get("/api/jurisdictions")
 def list_jurisdictions(db: Session = Depends(get_db)):
-    return db.query(Jurisdiction).order_by(Jurisdiction.name).all()
+    return [j.to_dict() for j in db.query(Jurisdiction).order_by(Jurisdiction.name).all()]
 
 
 @app.get("/api/jurisdictions/map-data")
 def list_jurisdictions_map(db: Session = Depends(get_db)):
-    """Return minimal jurisdiction data for map markers."""
-    jurisdictions = db.query(Jurisdiction).all()
+    """Minimal jurisdiction data for map markers."""
     return [
         {
             "id": j.id,
             "name": j.name,
-            "type": j.type.value if hasattr(j.type, 'value') else j.type,
+            "type": j.type.value if hasattr(j.type, "value") else j.type,
             "country_code": j.country_code,
             "latitude": j.latitude,
             "longitude": j.longitude,
             "general_notes": j.general_notes,
         }
-        for j in jurisdictions
+        for j in db.query(Jurisdiction).all()
     ]
 
 
-@app.get("/api/jurisdictions/{jurisdiction_id}", response_model=JurisdictionResponse)
+@app.get("/api/jurisdictions/{jurisdiction_id}")
 def get_jurisdiction(jurisdiction_id: str, db: Session = Depends(get_db)):
     j = db.query(Jurisdiction).filter(Jurisdiction.id == jurisdiction_id).first()
     if not j:
         raise HTTPException(status_code=404, detail="Jurisdiction not found")
-    return j
+    return j.to_dict()
 
 
-@app.post("/api/jurisdictions", response_model=JurisdictionResponse)
+@app.post("/api/jurisdictions")
 def create_jurisdiction(data: JurisdictionCreate, db: Session = Depends(get_db)):
     j = Jurisdiction(**data.model_dump())
     db.add(j)
     db.commit()
     db.refresh(j)
-    return j
+    return j.to_dict()
 
 
-@app.put("/api/jurisdictions/{jurisdiction_id}", response_model=JurisdictionResponse)
+@app.put("/api/jurisdictions/{jurisdiction_id}")
 def update_jurisdiction(jurisdiction_id: str, data: JurisdictionUpdate, db: Session = Depends(get_db)):
     j = db.query(Jurisdiction).filter(Jurisdiction.id == jurisdiction_id).first()
     if not j:
         raise HTTPException(status_code=404, detail="Jurisdiction not found")
     for key, val in data.model_dump(exclude_unset=True).items():
         setattr(j, key, val)
-    j.last_updated = datetime.utcnow()
     db.commit()
     db.refresh(j)
-    return j
+    return j.to_dict()
 
 
 @app.delete("/api/jurisdictions/{jurisdiction_id}")
@@ -145,7 +155,7 @@ def delete_jurisdiction(jurisdiction_id: str, db: Session = Depends(get_db)):
 # PROCEDURES
 # ══════════════════════════════════════════════════════════════════════════
 
-@app.get("/api/procedures", response_model=List[ProcedureResponse])
+@app.get("/api/procedures")
 def list_procedures(
     modality: Optional[str] = None,
     therapeutic_area: Optional[str] = None,
@@ -166,18 +176,18 @@ def list_procedures(
                 Procedure.therapeutic_areas.ilike(f"%{search}%"),
             )
         )
-    return q.order_by(Procedure.name).all()
+    return [p.to_dict() for p in q.order_by(Procedure.name).all()]
 
 
-@app.get("/api/procedures/{procedure_id}", response_model=ProcedureResponse)
+@app.get("/api/procedures/{procedure_id}")
 def get_procedure(procedure_id: str, db: Session = Depends(get_db)):
     p = db.query(Procedure).filter(Procedure.id == procedure_id).first()
     if not p:
         raise HTTPException(status_code=404, detail="Procedure not found")
-    return p
+    return p.to_dict()
 
 
-@app.post("/api/procedures", response_model=ProcedureResponse)
+@app.post("/api/procedures")
 def create_procedure(data: ProcedureCreate, db: Session = Depends(get_db)):
     d = data.model_dump()
     d["therapeutic_areas"] = json.dumps(d["therapeutic_areas"])
@@ -186,10 +196,10 @@ def create_procedure(data: ProcedureCreate, db: Session = Depends(get_db)):
     db.add(p)
     db.commit()
     db.refresh(p)
-    return p
+    return p.to_dict()
 
 
-@app.put("/api/procedures/{procedure_id}", response_model=ProcedureResponse)
+@app.put("/api/procedures/{procedure_id}")
 def update_procedure(procedure_id: str, data: ProcedureUpdate, db: Session = Depends(get_db)):
     p = db.query(Procedure).filter(Procedure.id == procedure_id).first()
     if not p:
@@ -203,7 +213,7 @@ def update_procedure(procedure_id: str, data: ProcedureUpdate, db: Session = Dep
         setattr(p, key, val)
     db.commit()
     db.refresh(p)
-    return p
+    return p.to_dict()
 
 
 @app.delete("/api/procedures/{procedure_id}")
@@ -220,10 +230,23 @@ def delete_procedure(procedure_id: str, db: Session = Depends(get_db)):
 # ACCESS RECORDS
 # ══════════════════════════════════════════════════════════════════════════
 
-@app.post("/api/access-records/query", response_model=List[AccessRecordResponse])
-def query_access_records(filters: AccessRecordFilter, db: Session = Depends(get_db)):
-    """Flexible query endpoint for access records with rich filtering."""
-    q = db.query(
+def _access_row_to_dict(row) -> dict:
+    """Merge an AccessRecord ORM row with the joined procedure/jurisdiction labels."""
+    ar = row[0]
+    d = ar.to_dict()
+    d["procedure_name"] = row.procedure_name
+    d["jurisdiction_name"] = row.jurisdiction_name
+    d["modality"] = row.modality.value if hasattr(row.modality, "value") else row.modality
+    d["procedure_subcategory"] = row.procedure_subcategory
+    d["jurisdiction_type"] = row.jurisdiction_type.value if hasattr(row.jurisdiction_type, "value") else row.jurisdiction_type
+    d["jurisdiction_country_code"] = row.jurisdiction_country_code
+    d["jurisdiction_latitude"] = row.jurisdiction_latitude
+    d["jurisdiction_longitude"] = row.jurisdiction_longitude
+    return d
+
+
+def _access_query(db: Session):
+    return db.query(
         AccessRecord,
         Procedure.name.label("procedure_name"),
         Procedure.modality.label("modality"),
@@ -235,7 +258,11 @@ def query_access_records(filters: AccessRecordFilter, db: Session = Depends(get_
         Jurisdiction.longitude.label("jurisdiction_longitude"),
     ).join(Procedure).join(Jurisdiction)
 
-    q = q.filter(AccessRecord.status == filters.status)
+
+@app.post("/api/access-records/query")
+def query_access_records(filters: AccessRecordFilter, db: Session = Depends(get_db)):
+    """Flexible query endpoint for access records with rich filtering."""
+    q = _access_query(db).filter(AccessRecord.status == filters.status)
 
     if filters.procedure_id:
         q = q.filter(AccessRecord.procedure_id == filters.procedure_id)
@@ -250,85 +277,45 @@ def query_access_records(filters: AccessRecordFilter, db: Session = Depends(get_
     if filters.therapeutic_area:
         q = q.filter(Procedure.therapeutic_areas.contains(filters.therapeutic_area))
     if filters.search:
-        search_term = f"%{filters.search}%"
+        term = f"%{filters.search}%"
         q = q.filter(
             or_(
-                Procedure.name.ilike(search_term),
-                Procedure.description.ilike(search_term),
-                Procedure.indications.ilike(search_term),
-                Procedure.therapeutic_areas.ilike(search_term),
-                AccessRecord.access_pathway_details.ilike(search_term),
-                AccessRecord.arbitrage_summary.ilike(search_term),
-                Jurisdiction.name.ilike(search_term),
+                Procedure.name.ilike(term),
+                Procedure.description.ilike(term),
+                Procedure.indications.ilike(term),
+                Procedure.therapeutic_areas.ilike(term),
+                AccessRecord.access_pathway_details.ilike(term),
+                AccessRecord.arbitrage_summary.ilike(term),
+                Jurisdiction.name.ilike(term),
             )
         )
 
-    results = q.order_by(Procedure.name, Jurisdiction.name).all()
-    output = []
-    for row in results:
-        ar = row[0]
-        d = ar.to_dict()
-        d["procedure_name"] = row.procedure_name
-        d["jurisdiction_name"] = row.jurisdiction_name
-        d["modality"] = row.modality.value if hasattr(row.modality, 'value') else row.modality
-        d["procedure_subcategory"] = row.procedure_subcategory
-        d["jurisdiction_type"] = row.jurisdiction_type.value if hasattr(row.jurisdiction_type, 'value') else row.jurisdiction_type
-        d["jurisdiction_country_code"] = row.jurisdiction_country_code
-        d["jurisdiction_latitude"] = row.jurisdiction_latitude
-        d["jurisdiction_longitude"] = row.jurisdiction_longitude
-        output.append(d)
-    return output
+    return [_access_row_to_dict(r) for r in q.order_by(Procedure.name, Jurisdiction.name).all()]
 
 
-@app.get("/api/access-records", response_model=List[AccessRecordResponse])
+@app.get("/api/access-records")
 def list_access_records(
     procedure_id: Optional[str] = None,
     jurisdiction_id: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    q = db.query(
-        AccessRecord,
-        Procedure.name.label("procedure_name"),
-        Procedure.modality.label("modality"),
-        Procedure.subcategory.label("procedure_subcategory"),
-        Jurisdiction.name.label("jurisdiction_name"),
-        Jurisdiction.type.label("jurisdiction_type"),
-        Jurisdiction.country_code.label("jurisdiction_country_code"),
-        Jurisdiction.latitude.label("jurisdiction_latitude"),
-        Jurisdiction.longitude.label("jurisdiction_longitude"),
-    ).join(Procedure).join(Jurisdiction)
-
+    q = _access_query(db)
     if procedure_id:
         q = q.filter(AccessRecord.procedure_id == procedure_id)
     if jurisdiction_id:
         q = q.filter(AccessRecord.jurisdiction_id == jurisdiction_id)
-
-    results = q.order_by(Procedure.name, Jurisdiction.name).all()
-    output = []
-    for row in results:
-        ar = row[0]
-        d = ar.to_dict()
-        d["procedure_name"] = row.procedure_name
-        d["jurisdiction_name"] = row.jurisdiction_name
-        d["modality"] = row.modality.value if hasattr(row.modality, 'value') else row.modality
-        d["procedure_subcategory"] = row.procedure_subcategory
-        d["jurisdiction_type"] = row.jurisdiction_type.value if hasattr(row.jurisdiction_type, 'value') else row.jurisdiction_type
-        d["jurisdiction_country_code"] = row.jurisdiction_country_code
-        d["jurisdiction_latitude"] = row.jurisdiction_latitude
-        d["jurisdiction_longitude"] = row.jurisdiction_longitude
-        output.append(d)
-    return output
+    return [_access_row_to_dict(r) for r in q.order_by(Procedure.name, Jurisdiction.name).all()]
 
 
-@app.get("/api/access-records/{record_id}", response_model=AccessRecordResponse)
+@app.get("/api/access-records/{record_id}")
 def get_access_record(record_id: str, db: Session = Depends(get_db)):
     ar = db.query(AccessRecord).filter(AccessRecord.id == record_id).first()
     if not ar:
         raise HTTPException(status_code=404, detail="Access record not found")
-    return ar
+    return ar.to_dict()
 
 
-@app.post("/api/access-records", response_model=AccessRecordResponse)
+@app.post("/api/access-records")
 def create_access_record(data: AccessRecordCreate, db: Session = Depends(get_db)):
     d = data.model_dump()
     if d.get("last_verified"):
@@ -340,10 +327,10 @@ def create_access_record(data: AccessRecordCreate, db: Session = Depends(get_db)
     db.add(ar)
     db.commit()
     db.refresh(ar)
-    return ar
+    return ar.to_dict()
 
 
-@app.put("/api/access-records/{record_id}", response_model=AccessRecordResponse)
+@app.put("/api/access-records/{record_id}")
 def update_access_record(record_id: str, data: AccessRecordUpdate, db: Session = Depends(get_db)):
     ar = db.query(AccessRecord).filter(AccessRecord.id == record_id).first()
     if not ar:
@@ -357,7 +344,7 @@ def update_access_record(record_id: str, data: AccessRecordUpdate, db: Session =
         setattr(ar, key, val)
     db.commit()
     db.refresh(ar)
-    return ar
+    return ar.to_dict()
 
 
 @app.delete("/api/access-records/{record_id}")
@@ -377,23 +364,24 @@ def delete_access_record(record_id: str, db: Session = Depends(get_db)):
 @app.get("/api/search")
 def search_all(q: str, db: Session = Depends(get_db)):
     """Unified search across procedures, jurisdictions, and access records."""
-    search_term = f"%{q}%"
+    term = f"%{q}%"
 
     procedures = db.query(Procedure).filter(
-        or_(Procedure.name.ilike(search_term), Procedure.description.ilike(search_term))
-    ).limit(10).all()
+        or_(Procedure.name.ilike(term), Procedure.description.ilike(term),
+            Procedure.indications.ilike(term), Procedure.therapeutic_areas.ilike(term))
+    ).limit(20).all()
 
     jurisdictions = db.query(Jurisdiction).filter(
-        Jurisdiction.name.ilike(search_term)
-    ).limit(10).all()
+        or_(Jurisdiction.name.ilike(term), Jurisdiction.general_notes.ilike(term))
+    ).limit(20).all()
 
     records = db.query(AccessRecord, Procedure.name, Jurisdiction.name)\
         .join(Procedure).join(Jurisdiction).filter(
             or_(
-                AccessRecord.arbitrage_summary.ilike(search_term),
-                AccessRecord.access_pathway_details.ilike(search_term),
+                AccessRecord.arbitrage_summary.ilike(term),
+                AccessRecord.access_pathway_details.ilike(term),
             )
-        ).limit(10).all()
+        ).limit(20).all()
 
     return {
         "procedures": [p.to_dict() for p in procedures],
@@ -407,70 +395,59 @@ def search_all(q: str, db: Session = Depends(get_db)):
 
 @app.get("/api/procedures/{procedure_id}/jurisdictions")
 def get_procedure_jurisdictions(procedure_id: str, db: Session = Depends(get_db)):
-    """Get all jurisdictions where a procedure is available, with access details."""
-    rows = db.query(
-        AccessRecord, Jurisdiction
-    ).join(Jurisdiction).filter(
-        AccessRecord.procedure_id == procedure_id,
-        AccessRecord.status == "active",
-    ).order_by(Jurisdiction.name).all()
-
+    """All jurisdictions where a procedure is available, with access details."""
     procedure = db.query(Procedure).filter(Procedure.id == procedure_id).first()
     if not procedure:
         raise HTTPException(status_code=404, detail="Procedure not found")
 
+    rows = db.query(AccessRecord, Jurisdiction).join(Jurisdiction).filter(
+        AccessRecord.procedure_id == procedure_id,
+        AccessRecord.status == "active",
+    ).order_by(Jurisdiction.name).all()
+
     return {
         "procedure": procedure.to_dict(),
-        "jurisdictions": [
-            {**ar.to_dict(), "jurisdiction": j.to_dict()}
-            for ar, j in rows
-        ],
+        "jurisdictions": [{**ar.to_dict(), "jurisdiction": j.to_dict()} for ar, j in rows],
     }
 
 
 @app.get("/api/filters/options")
 def get_filter_options(db: Session = Depends(get_db)):
-    """Return all available filter values for the UI."""
+    """All available filter values for the UI."""
     procedures = db.query(Procedure).all()
     jurisdictions = db.query(Jurisdiction).all()
 
-    modalities = sorted(list(set(p.modality.value if hasattr(p.modality, 'value') else p.modality for p in procedures)))
+    modalities = sorted({p.modality.value if hasattr(p.modality, "value") else p.modality for p in procedures})
     therapeutic_areas = set()
     for p in procedures:
-        tas = json.loads(p.therapeutic_areas) if p.therapeutic_areas else []
-        therapeutic_areas.update(tas)
-    therapeutic_areas = sorted(list(therapeutic_areas))
-
-    legal_statuses = [
-        "Fully_Approved", "Regulated_Therapy_Program", "Decriminalized_Possession",
-        "Right_To_Try", "Clinical_Trial_Only", "Physician_Discretion_Gray", "Prohibited"
-    ]
-    oversight_qualities = ["High", "Medium", "Low", "Variable"]
+        therapeutic_areas.update(json.loads(p.therapeutic_areas) if p.therapeutic_areas else [])
 
     return {
         "modalities": modalities,
-        "therapeutic_areas": therapeutic_areas,
-        "legal_statuses": legal_statuses,
-        "oversight_qualities": oversight_qualities,
-        "jurisdictions": [{"id": j.id, "name": j.name, "type": j.type.value if hasattr(j.type, 'value') else j.type} for j in jurisdictions],
+        "therapeutic_areas": sorted(therapeutic_areas),
+        "legal_statuses": [
+            "Fully_Approved", "Regulated_Therapy_Program", "Decriminalized_Possession",
+            "Right_To_Try", "Clinical_Trial_Only", "Physician_Discretion_Gray", "Prohibited",
+        ],
+        "oversight_qualities": ["High", "Medium", "Low", "Variable"],
+        "jurisdictions": [
+            {"id": j.id, "name": j.name, "type": j.type.value if hasattr(j.type, "value") else j.type}
+            for j in jurisdictions
+        ],
     }
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# EXPORT ENDPOINTS
+# EXPORT
 # ══════════════════════════════════════════════════════════════════════════
 
 @app.get("/api/export/json")
 def export_json(db: Session = Depends(get_db)):
     """Export all data as JSON."""
-    jurisdictions = db.query(Jurisdiction).all()
-    procedures = db.query(Procedure).all()
-    records = db.query(AccessRecord).all()
-
     return {
-        "jurisdictions": [j.to_dict() for j in jurisdictions],
-        "procedures": [p.to_dict() for p in procedures],
-        "access_records": [r.to_dict() for r in records],
+        "jurisdictions": [j.to_dict() for j in db.query(Jurisdiction).all()],
+        "procedures": [p.to_dict() for p in db.query(Procedure).all()],
+        "access_records": [r.to_dict() for r in db.query(AccessRecord).all()],
     }
 
 
@@ -486,13 +463,13 @@ def export_csv(db: Session = Depends(get_db)):
     writer.writerow([
         "Procedure", "Jurisdiction", "Legal Status", "Oversight Quality",
         "Cost Range (USD)", "Access Pathway", "Eligibility", "Provider Requirements",
-        "Residency/Travel Notes", "Risk Notes", "Last Verified", "Arbitrage Summary"
+        "Residency/Travel Notes", "Risk Notes", "Last Verified", "Arbitrage Summary",
     ])
     for ar, pname, jname in rows:
         writer.writerow([
             pname, jname,
-            ar.legal_status.value if hasattr(ar.legal_status, 'value') else ar.legal_status,
-            ar.oversight_quality.value if ar.oversight_quality and hasattr(ar.oversight_quality, 'value') else ar.oversight_quality,
+            ar.legal_status.value if hasattr(ar.legal_status, "value") else ar.legal_status,
+            ar.oversight_quality.value if ar.oversight_quality and hasattr(ar.oversight_quality, "value") else ar.oversight_quality,
             ar.estimated_cost_range_usd, ar.access_pathway_details, ar.eligibility_requirements,
             ar.provider_requirements, ar.residency_travel_notes, ar.risk_notes,
             ar.last_verified, ar.arbitrage_summary,

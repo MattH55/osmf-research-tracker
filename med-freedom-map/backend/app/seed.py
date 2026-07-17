@@ -1064,43 +1064,65 @@ ACCESS_RECORDS = [
 
 
 def seed_database():
-    """Seed the database with all initial data."""
+    """Seed the database with all initial data.
+
+    Returns a dict with the counts actually written. Designed to run inside the
+    tight memory limits of Render's free tier: jurisdictions and procedures are
+    committed first, then access records are inserted one-by-one with a commit
+    after each so peak memory stays flat and a single bad row can't abort the set.
+    """
     init_db()
     db = SessionLocal()
 
+    result = {"jurisdictions": 0, "procedures": 0, "access_records": 0, "skipped": []}
+
     try:
-        # Check if already seeded
-        if db.query(Jurisdiction).count() > 0:
-            print("Database already seeded. Skipping.")
-            return
+        # ── Jurisdictions ──
+        if db.query(Jurisdiction).count() == 0:
+            for j_data in JURISDICTIONS:
+                db.add(Jurisdiction(**j_data))
+            db.commit()
+        result["jurisdictions"] = db.query(Jurisdiction).count()
 
-        print("Seeding jurisdictions...")
-        for j_data in JURISDICTIONS:
-            jur = Jurisdiction(**j_data)
-            db.add(jur)
+        # ── Procedures ──
+        if db.query(Procedure).count() == 0:
+            for p_data in PROCEDURES:
+                p_data_copy = p_data.copy()
+                p_data_copy["therapeutic_areas"] = json.dumps(p_data_copy["therapeutic_areas"])
+                p_data_copy["sources"] = json.dumps(p_data_copy["sources"])
+                db.add(Procedure(**p_data_copy))
+            db.commit()
+        result["procedures"] = db.query(Procedure).count()
 
-        print("Seeding procedures...")
-        for p_data in PROCEDURES:
-            # Serialize JSON fields
-            p_data_copy = p_data.copy()
-            p_data_copy["therapeutic_areas"] = json.dumps(p_data_copy["therapeutic_areas"])
-            p_data_copy["sources"] = json.dumps(p_data_copy["sources"])
-            proc = Procedure(**p_data_copy)
-            db.add(proc)
+        # ── Access records (one at a time to keep memory flat) ──
+        if db.query(AccessRecord).count() == 0:
+            valid_procs = {p.id for p in db.query(Procedure.id).all()}
+            valid_jurs = {j.id for j in db.query(Jurisdiction.id).all()}
+            for ar_data in ACCESS_RECORDS:
+                # Skip rows whose foreign keys are missing rather than aborting.
+                if ar_data["procedure_id"] not in valid_procs or ar_data["jurisdiction_id"] not in valid_jurs:
+                    result["skipped"].append(
+                        f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} (missing FK)"
+                    )
+                    continue
+                ar_copy = ar_data.copy()
+                ar_copy["sources"] = json.dumps(ar_copy.get("sources", []))
+                try:
+                    db.add(AccessRecord(**ar_copy))
+                    db.commit()
+                except Exception as row_err:
+                    db.rollback()
+                    result["skipped"].append(
+                        f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__})"
+                    )
+        result["access_records"] = db.query(AccessRecord).count()
 
-        db.flush()  # Ensure IDs are available for FK references
-
-        # Skip AccessRecords on free tier (memory constraints)
-        # Uncomment below if upgrading to paid Render tier
-        # print("Seeding access records...")
-        # for ar_data in ACCESS_RECORDS:
-        #     ar_data_copy = ar_data.copy()
-        #     ar_data_copy["sources"] = json.dumps(ar_data_copy["sources"])
-        #     ar = AccessRecord(**ar_data_copy)
-        #     db.add(ar)
-
-        db.commit()
-        print(f"Seed complete: {len(JURISDICTIONS)} jurisdictions, {len(PROCEDURES)} procedures. (Access records disabled on free tier)")
+        print(
+            f"Seed complete: {result['jurisdictions']} jurisdictions, "
+            f"{result['procedures']} procedures, {result['access_records']} access records "
+            f"({len(result['skipped'])} skipped)."
+        )
+        return result
 
     except Exception as e:
         db.rollback()
