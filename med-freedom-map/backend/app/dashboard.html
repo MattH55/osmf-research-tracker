@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedFreedom Map — Where can I access this treatment?</title>
+    <title>MedFreedom Provider Map — Where can you offer this therapy?</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
@@ -255,60 +255,61 @@
         <div class="hero-inner">
             <div class="hero-top">
                 <div>
-                    <h1>MedFreedom Map</h1>
-                    <p class="lede">Pick a treatment, then explore where it is legally accessible — by country or region, how you actually get it, estimated cost, and how carefully it is overseen.</p>
+                    <p class="muted" style="color:rgba(255,255,255,.85);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem;">For clinicians · clinics · hospital programs · operators</p>
+                    <h1>MedFreedom Provider Map</h1>
+                    <p class="lede">Pick a therapy, then see where you may lawfully <strong>offer</strong> it — licensing and facility requirements, governing regulations, whether the market is open or prohibited, and what peers already operate there.</p>
                 </div>
                 <span class="status-pill wait" id="statusBadge">Connecting…</span>
             </div>
             <div class="hero-stats">
-                <div class="hero-stat"><div class="n" id="s-proc">–</div><div class="l">Treatments</div></div>
-                <div class="hero-stat"><div class="n" id="s-jur">–</div><div class="l">Places mapped</div></div>
-                <div class="hero-stat"><div class="n" id="s-acc">–</div><div class="l">Access records</div></div>
-                <div class="hero-stat"><div class="n" id="s-ind">–</div><div class="l">Evidence links</div></div>
+                <div class="hero-stat"><div class="n" id="s-proc">–</div><div class="l">Service lines</div></div>
+                <div class="hero-stat"><div class="n" id="s-jur">–</div><div class="l">Markets</div></div>
+                <div class="hero-stat"><div class="n" id="s-acc">–</div><div class="l">Market cells</div></div>
+                <div class="hero-stat"><div class="n" id="s-ind">–</div><div class="l">Evidence grades</div></div>
             </div>
         </div>
     </header>
 
     <main class="app">
         <div id="setupPanel" class="setup-banner" style="display:none;">
-            <strong>First-time setup needed.</strong>
-            <p class="muted" style="margin:.35rem 0 .7rem; color:#92400e;">The map database is empty. Load the starter data to explore treatments and places.</p>
+            <strong>Database empty.</strong>
+            <p class="muted" style="margin:.35rem 0 .7rem; color:#92400e;">Load the starter regulatory dataset to map service lines by market.</p>
             <button class="green" id="seedBtn" onclick="seed()">Load starter data</button>
             <span id="seedStatus" class="muted" style="margin-left:.6rem; color:#92400e;"></span>
         </div>
         <div id="enrichPanel" class="setup-banner" style="display:none; background:#eef2ff; border-color:#c7d2fe; color:#3730a3;">
-            <strong>Update available.</strong>
-            <p class="muted" style="margin:.35rem 0 .7rem; color:#3730a3;">Pathways, prices, or evidence grades can be refreshed without wiping data.</p>
-            <button class="ghost" id="enrichBtn" onclick="seed()">Refresh map data</button>
+            <strong>Regulatory data update available.</strong>
+            <p class="muted" style="margin:.35rem 0 .7rem; color:#3730a3;">Refresh licenses, prohibitions, and setup checklists without wiping the database.</p>
+            <button class="ghost" id="enrichBtn" onclick="seed()">Refresh regulatory data</button>
             <span id="enrichStatus" class="muted" style="margin-left:.6rem;"></span>
         </div>
 
         <div class="workspace">
-            <!-- Left: treatment picker -->
+            <!-- Left: service line picker -->
             <aside class="card card-pad" id="pickerCard">
-                <h2><span class="step">1</span> Choose a treatment</h2>
+                <h2><span class="step">1</span> Choose a service line</h2>
                 <div class="field-block">
                     <label class="field" for="searchBox">Search</label>
-                    <input type="search" id="searchBox" placeholder="e.g. depression, psilocybin, PTSD…" autocomplete="off">
+                    <input type="search" id="searchBox" placeholder="e.g. CAR-T, psilocybin, IVF, TMS…" autocomplete="off">
                 </div>
                 <div class="field-block">
-                    <label class="field" for="diseaseFilter">Disease</label>
+                    <label class="field" for="diseaseFilter">Indication / disease</label>
                     <select id="diseaseFilter">
-                        <option value="">All diseases</option>
+                        <option value="">All indications</option>
                     </select>
                 </div>
                 <div class="field-block">
-                    <label class="field" for="modalityFilter">Category</label>
+                    <label class="field" for="modalityFilter">Modality</label>
                     <select id="modalityFilter">
-                        <option value="">All categories</option>
+                        <option value="">All modalities</option>
                     </select>
                 </div>
                 <div class="field-block">
-                    <label class="field" for="procedureSelect">Treatment</label>
+                    <label class="field" for="procedureSelect">Therapy / service</label>
                     <select id="procedureSelect" size="12" style="min-height:280px;">
-                        <option value="">Loading treatments…</option>
+                        <option value="">Loading service lines…</option>
                     </select>
-                    <p class="hint">Filter by disease, then select a treatment to color the map by regulatory status.</p>
+                    <p class="hint">Select a therapy to map markets by whether you can lawfully stand up a program, and how hard setup is.</p>
                 </div>
                 <div id="selectedSummary" class="treatment-card" style="display:none;"></div>
             </aside>
@@ -317,11 +318,11 @@
             <section class="card map-shell">
                 <div class="map-overlay">
                     <div class="map-banner" id="mapBanner">
-                        <strong>Interactive access map</strong>
-                        <span>Select a treatment to see what is <b>allowed</b>, what is actually <b>offered</b>, and where rules are <b>changing</b>.</span>
+                        <strong>Market entry map</strong>
+                        <span>Where can you <b>license/offer</b> this service, where is it <b>prohibited</b>, and where is policy in <b>flux</b>?</span>
                         <div class="map-mode" id="mapMode">
-                            <button type="button" class="active" data-mode="legal">Color: legal status</button>
-                            <button type="button" data-mode="availability">Color: allowed vs offered</button>
+                            <button type="button" data-mode="legal">Color: legal status</button>
+                            <button type="button" class="active" data-mode="availability">Color: can you operate?</button>
                             <button type="button" data-mode="legislation">Color: legislation watch</button>
                         </div>
                     </div>
@@ -333,42 +334,42 @@
 
         <div class="detail-grid">
             <section class="card card-pad">
-                <h2><span class="step">2</span> Places for this treatment</h2>
-                <p class="muted" id="placesIntro">Choose a treatment to list countries and regions where we have access data.</p>
+                <h2><span class="step">2</span> Markets for this service</h2>
+                <p class="muted" id="placesIntro">Choose a service line to list jurisdictions by operability and setup burden.</p>
                 <div id="placeSummary" class="summary-bar" style="display:none;"></div>
                 <div class="filter-toggles" id="placeFilters" style="display:none;">
-                    <label><input type="checkbox" id="fAllowed" checked> Allowed by law</label>
-                    <label><input type="checkbox" id="fOffered" checked> Practically offered</label>
-                    <label><input type="checkbox" id="fPending"> Pending legislation / flux only</label>
-                    <label><input type="checkbox" id="fTrial"> Include trial-only</label>
-                    <label><input type="checkbox" id="fProhibited" checked> Show prohibited</label>
+                    <label><input type="checkbox" id="fAllowed" checked> Law allows program</label>
+                    <label><input type="checkbox" id="fOffered" checked> Pathway to operate</label>
+                    <label><input type="checkbox" id="fPending"> Pending law / flux only</label>
+                    <label><input type="checkbox" id="fTrial"> Include trial-site only</label>
+                    <label><input type="checkbox" id="fProhibited" checked> Show prohibited markets</label>
                 </div>
                 <ul class="place-list" id="placeList"></ul>
             </section>
 
             <section class="card card-pad" id="detailPanel">
-                <h2><span class="step">3</span> Place details</h2>
+                <h2><span class="step">3</span> Market dossier</h2>
                 <div id="detailBody">
-                    <div class="empty">Click a marker on the map or a place in the list to see eligibility, how you access it, cost, oversight, and local notes.</div>
+                    <div class="empty">Select a market on the map or list to open the provider dossier: regulation links, setup checklist, patient screening rules, and competitive directories.</div>
                 </div>
             </section>
         </div>
 
         <section class="card card-pad" style="margin-top:1rem;" id="evidenceSection">
-            <h2>Evidence snapshot</h2>
+            <h2>Clinical governance — evidence by indication</h2>
             <p class="muted" style="margin-bottom:.75rem;">
-                Evidence grades (E1–E8) for diseases this treatment is used for — same evidence wherever it is offered.
-                <span class="muted">E1 = multi-RCT · E2 = one strong RCT · E3 = small/mixed RCTs · E4 = uncontrolled · E5 = case series · E6–E8 = preclinical/none.</span>
+                Use for protocol justification and risk committees. Grades are indication-level (same evidence in every market).
+                <span class="muted">E1 = multi-RCT · E2 = one strong RCT · E3 = small/mixed · E4 = uncontrolled · E5 = case series · E6–E8 = preclinical/none.</span>
             </p>
-            <div id="evidenceBody"><div class="empty">Select a treatment to see evidence grades.</div></div>
+            <div id="evidenceBody"><div class="empty">Select a service line to load evidence grades.</div></div>
         </section>
     </main>
 
     <footer class="foot">
-        <p><strong>Informational only</strong> — not medical, legal, or travel advice. Laws and clinic quality change; verify with licensed professionals and primary sources before acting.</p>
-        <p style="margin-top:.4rem;">MedFreedom Map · Open Source Medicine Foundation</p>
+        <p><strong>For professional use only.</strong> Not legal, regulatory, or investment advice. Confirm licenses, facility rules, and payer contracts with counsel and the competent authority before standing up a program.</p>
+        <p style="margin-top:.4rem;">MedFreedom Provider Map · Open Source Medicine Foundation</p>
         <details>
-            <summary>Advanced / data tools</summary>
+            <summary>API &amp; data export</summary>
             <p class="muted" style="margin-top:.5rem;">
                 <a href="/docs" target="_blank" rel="noopener">API docs</a> ·
                 <a href="/api/export/json" target="_blank" rel="noopener">Export JSON</a> ·
@@ -473,17 +474,24 @@
         function flagPills(row) {
             const f = flagsOf(row);
             let h = '';
-            if (f.prohibited) h += '<span class="pill not-allowed">Not allowed</span>';
-            else if (f.allowed) h += '<span class="pill allowed">Allowed</span>';
+            if (f.prohibited) h += '<span class="pill not-allowed">Cannot license</span>';
+            else if (f.allowed) h += '<span class="pill allowed">Law permits program</span>';
             else h += '<span class="pill">Legal status unclear</span>';
 
-            if (f.offered && f.trial_only) h += '<span class="pill trial">Offered: trials only</span>';
-            else if (f.offered) h += '<span class="pill offered">Offered</span>';
-            else h += '<span class="pill not-offered">Not offered</span>';
+            if (f.offered && f.trial_only) h += '<span class="pill trial">Trial-site pathway only</span>';
+            else if (f.offered) h += '<span class="pill offered">Operational pathway exists</span>';
+            else h += '<span class="pill not-offered">No operational pathway</span>';
 
             if (f.pending_legislation) h += '<span class="pill pending">Pending legislation</span>';
             else if (f.active_flux) h += '<span class="pill flux">Policy in flux</span>';
             return h;
+        }
+
+        function setupDifficultyPill(row) {
+            const d = row.setup_requirements && row.setup_requirements.difficulty;
+            if (!d) return '';
+            const color = d === 'Low' ? '#065f46' : (d === 'High' || d === 'Extreme' ? '#991b1b' : '#92400e');
+            return `<span class="pill" style="background:${color};color:#fff;">Setup: ${esc(d)}</span>`;
         }
 
         function markerColor(row, mode) {
@@ -514,7 +522,7 @@
         let selectedProcedureId = null;
         let selectedJurisdictionId = null;
         let markerByJur = {};
-        let mapColorMode = 'legal';
+        let mapColorMode = 'availability';
 
         async function api(path, opts) {
             const res = await fetch(API + path, opts);
@@ -545,20 +553,20 @@
             const el = document.getElementById('legend');
             if (mapColorMode === 'availability') {
                 el.innerHTML = [
-                    ['#059669', 'Allowed & offered'],
-                    ['#2563eb', 'Allowed, not offered'],
-                    ['#7c3aed', 'Trials only'],
-                    ['#d97706', 'Offered (gray)'],
-                    ['#dc2626', 'Prohibited'],
+                    ['#059669', 'Can operate (law + pathway)'],
+                    ['#2563eb', 'Lawful but no pathway'],
+                    ['#7c3aed', 'Trial-site only'],
+                    ['#d97706', 'Gray / cash pathway'],
+                    ['#dc2626', 'Prohibited market'],
                     ['#94a3b8', 'Unclear'],
                 ].map(([c, l]) => `<span class="legend-item"><span class="dot" style="background:${c}"></span>${esc(l)}</span>`).join('');
                 return;
             }
             if (mapColorMode === 'legislation') {
                 el.innerHTML = [
-                    ['#d97706', 'Pending legislation'],
+                    ['#d97706', 'Pending legislation — high diligence'],
                     ['#f59e0b', 'Active policy flux'],
-                    ['#059669', 'Stable + offered'],
+                    ['#059669', 'Stable + operable'],
                     ['#dc2626', 'Prohibited'],
                     ['#94a3b8', 'Stable / other'],
                 ].map(([c, l]) => `<span class="legend-item"><span class="dot" style="background:${c}"></span>${esc(l)}</span>`).join('');
@@ -605,17 +613,19 @@
                 const f = flagsOf(row);
                 const m = L.marker([lat, lng], { icon: circleIcon(color), title: j.name });
                 const price = fmtPrice(row);
+                const setup = row.setup_requirements || {};
                 m.bindPopup(`
                     <strong>${esc(j.name)}</strong><br>
                     <span class="pill status sm" style="background:${meta.color};margin-top:.35rem;display:inline-block;">${esc(meta.label)}</span>
-                    <div class="flag-row" style="margin-top:.4rem;">${flagPills(row)}</div>
+                    <div class="flag-row" style="margin-top:.4rem;">${flagPills(row)}${setupDifficultyPill(row)}</div>
                     <div style="margin-top:.45rem;color:#64748b;font-size:.82rem;">
-                        <b>Pathway:</b> ${esc(friendlyPathway(row.access_pathway))}<br>
-                        <b>Cost:</b> ${price}<br>
-                        <b>Rules:</b> ${esc(f.legislation_label)}
+                        <b>Operate via:</b> ${esc(friendlyPathway(row.access_pathway))}<br>
+                        <b>Setup:</b> ${esc(setup.difficulty || '—')}<br>
+                        <b>Policy:</b> ${esc(f.legislation_label)}<br>
+                        <b>Cash ref:</b> ${price}
                     </div>
                     <div class="popup-actions">
-                        <button type="button" onclick="window.__openJur(${JSON.stringify(j.id)})">View place details</button>
+                        <button type="button" onclick="window.__openJur(${JSON.stringify(j.id)})">Open market dossier</button>
                     </div>
                 `);
                 m.on('click', () => selectJurisdiction(j.id, row));
@@ -659,9 +669,9 @@
             renderPlaceList(rows);
             const intro = document.getElementById('placesIntro');
             if (!currentAccess.length) {
-                intro.textContent = 'No place-level access records for this treatment yet.';
+                intro.textContent = 'No market cells for this service line yet.';
             } else {
-                intro.textContent = `Showing ${rows.length} of ${currentAccess.length} places. Allowed = law permits it · Offered = you can actually get it there · Pending/flux = rules may change soon.`;
+                intro.textContent = `Showing ${rows.length} of ${currentAccess.length} markets. Law permits = legal to structure a program · Pathway = how patients/products flow · Flux = rules may change before you open.`;
             }
         }
 
@@ -676,16 +686,19 @@
             const s = summary || {};
             const allowed = s.allowed ?? rows.filter(r => flagsOf(r).allowed).length;
             const offered = s.offered ?? rows.filter(r => flagsOf(r).offered).length;
-            const gap = s.allowed_not_offered ?? rows.filter(r => flagsOf(r).allowed && !flagsOf(r).offered).length;
+            const operable = rows.filter(r => {
+                const f = flagsOf(r);
+                return f.allowed && f.offered && !f.trial_only && !f.prohibited;
+            }).length;
             const pending = s.pending_legislation ?? rows.filter(r => flagsOf(r).pending_legislation).length;
             const flux = s.legislation_watch ?? rows.filter(r => flagsOf(r).legislation_watch).length;
             const prohibited = s.prohibited ?? rows.filter(r => flagsOf(r).prohibited).length;
             el.style.display = 'grid';
             filters.style.display = 'flex';
             el.innerHTML = `
-                <div class="s ok"><div class="n">${allowed}</div><div class="l">Allowed</div></div>
-                <div class="s"><div class="n">${offered}</div><div class="l">Offered</div></div>
-                <div class="s"><div class="n">${gap}</div><div class="l">Allowed, not offered</div></div>
+                <div class="s ok"><div class="n">${operable}</div><div class="l">Operable markets</div></div>
+                <div class="s"><div class="n">${allowed}</div><div class="l">Law permits</div></div>
+                <div class="s"><div class="n">${offered}</div><div class="l">Has pathway</div></div>
                 <div class="s warn"><div class="n">${pending}</div><div class="l">Pending law</div></div>
                 <div class="s warn"><div class="n">${flux}</div><div class="l">Watch (flux)</div></div>
                 <div class="s bad"><div class="n">${prohibited}</div><div class="l">Prohibited</div></div>
@@ -810,7 +823,7 @@
             selectedProcedureId = id;
             selectedJurisdictionId = null;
             document.getElementById('detailBody').innerHTML =
-                '<div class="empty">Click a place on the map or in the list for full details.</div>';
+                '<div class="empty">Select a market for the provider dossier (setup, regulation, screening).</div>';
 
             const summary = document.getElementById('selectedSummary');
             const p = allProcedures.find(x => x.id === id);
@@ -833,19 +846,37 @@
                         ${p.restriction_driver ? `<span class="pill" style="background:#fef3c7;color:#92400e;">${esc(humanize(p.restriction_driver))}</span>` : ''}
                         ${schedule}${posture}${setupDiff}
                     </div>
-                    ${diseaseChips ? `<div class="section-title" style="margin-top:.65rem;">Diseases</div><div class="chip-row">${diseaseChips}</div>` : ''}
+                    ${diseaseChips ? `<div class="section-title" style="margin-top:.65rem;">Indications you will screen for</div><div class="chip-row">${diseaseChips}</div>` : ''}
                     <p class="muted" style="font-size:.84rem;margin-top:.5rem;">${esc((p.description || '').slice(0, 220))}${(p.description || '').length > 220 ? '…' : ''}</p>
-                    ${p.typical_us_cost_range ? `<p class="muted" style="margin-top:.35rem;"><strong>Typical US cost:</strong> ${esc(p.typical_us_cost_range)}</p>` : ''}
-                    ${p.practitioner_setup && p.practitioner_setup.summary ? `<p class="muted" style="margin-top:.45rem;font-size:.82rem;"><strong>To offer this (baseline):</strong> ${esc(p.practitioner_setup.summary)}</p>` : ''}
+                    ${p.typical_us_cost_range ? `<p class="muted" style="margin-top:.35rem;"><strong>US cash reference (patient-facing):</strong> ${esc(p.typical_us_cost_range)}</p>` : ''}
+                    ${p.practitioner_setup && p.practitioner_setup.summary ? `<p class="muted" style="margin-top:.45rem;font-size:.82rem;"><strong>Baseline to stand up a program:</strong> ${esc(p.practitioner_setup.summary)}</p>` : ''}
                 `;
             }
 
             document.getElementById('mapBanner').innerHTML =
-                `<strong>${esc(p ? p.name : 'Treatment')}</strong><span>Markers show legal / regulatory status where we have data. Colors match the legend below.</span>`;
+                `<strong>${esc(p ? p.name : 'Service line')}</strong>
+                 <span>Markets colored by whether you can operate. Open a market for licensing, regulation links, and setup checklist.</span>
+                 <div class="map-mode" id="mapMode">
+                    <button type="button" data-mode="legal">Color: legal status</button>
+                    <button type="button" class="active" data-mode="availability">Color: can you operate?</button>
+                    <button type="button" data-mode="legislation">Color: legislation watch</button>
+                 </div>`;
+            // re-bind map mode buttons after innerHTML replace
+            const mm = document.getElementById('mapMode');
+            if (mm) {
+                mm.addEventListener('click', e => {
+                    const btn = e.target.closest('button[data-mode]');
+                    if (!btn) return;
+                    mapColorMode = btn.getAttribute('data-mode');
+                    document.querySelectorAll('#mapMode button').forEach(b => b.classList.toggle('active', b === btn));
+                    buildLegend();
+                    paintMap(filteredAccess());
+                });
+            }
 
-            document.getElementById('placesIntro').textContent = 'Loading places…';
+            document.getElementById('placesIntro').textContent = 'Loading markets…';
             document.getElementById('placeList').innerHTML = '';
-            document.getElementById('evidenceBody').innerHTML = '<div class="loading-inline">Loading evidence…</div>';
+            document.getElementById('evidenceBody').innerHTML = '<div class="loading-inline">Loading evidence for clinical governance…</div>';
 
             try {
                 const d = await api('/api/procedures/' + encodeURIComponent(id) + '/jurisdictions');
@@ -888,19 +919,18 @@
                 const meta = statusMeta(row.legal_status);
                 const f = flagsOf(row);
                 const active = j.id === selectedJurisdictionId ? 'active' : '';
+                const setup = row.setup_requirements || {};
                 return `<li class="${active}" data-jid="${esc(j.id)}">
                     <div class="title">${esc(j.name)}</div>
-                    <div class="flag-row">${flagPills(row)}</div>
+                    <div class="flag-row">${flagPills(row)}${setupDifficultyPill(row)}</div>
                     <div class="meta" style="margin-top:.35rem;">
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
                         <span class="pill">${esc(friendlyPathway(row.access_pathway))}</span>
-                        <span class="price">${fmtPrice(row)}</span>
+                        ${(row.regulation_links || []).length ? `<span class="pill">${row.regulation_links.length} reg link${row.regulation_links.length === 1 ? '' : 's'}</span>` : ''}
                     </div>
                     <p class="muted" style="margin-top:.35rem;font-size:.8rem;">
-                        ${esc(f.legislation_label)} · ${esc(friendlyOversight(row.oversight_quality))}
-                        ${(row.regulation_links || []).length ? ` · <strong>${row.regulation_links.length} regulation link${row.regulation_links.length === 1 ? '' : 's'}</strong>` : ''}
-                        ${(row.example_clinics || []).length ? ` · ${row.example_clinics.length} clinic link${row.example_clinics.length === 1 ? '' : 's'}` : ''}
-                        ${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 70)) + (row.arbitrage_summary.length > 70 ? '…' : '') : ''}
+                        ${esc(f.legislation_label)} · Oversight: ${esc(friendlyOversight(row.oversight_quality))}
+                        ${setup.summary ? ' · ' + esc(setup.summary.slice(0, 90)) + (setup.summary.length > 90 ? '…' : '') : ''}
                     </p>
                 </li>`;
             }).join('');
@@ -942,7 +972,7 @@
 
         function renderClinics(clinics) {
             if (!clinics || !clinics.length) {
-                return '<p class="muted" style="margin-top:.35rem;">No specific clinics listed for this place yet — use the pathway notes and official directories.</p>';
+                return '<p class="muted" style="margin-top:.35rem;">No peer/directory listings on file — use regulation links and professional societies to map competitors and referral partners.</p>';
             }
             return `<ul style="margin-top:.4rem;padding-left:1.1rem;font-size:.88rem;">
                 ${clinics.map(cl => {
@@ -955,7 +985,7 @@
                     return `<li style="margin-bottom:.45rem;"><strong>${name}</strong>${loc}${typ}${notes}</li>`;
                 }).join('')}
             </ul>
-            <p class="muted" style="font-size:.75rem;margin-top:.35rem;">Examples for orientation only — not endorsements. Licenses and operations change; verify directly.</p>`;
+            <p class="muted" style="font-size:.75rem;margin-top:.35rem;">Competitive / directory landscape only — not endorsements. Re-verify licenses before citing or partnering.</p>`;
         }
 
         function renderListSection(title, items) {
@@ -996,7 +1026,7 @@
                 `<li><strong>${esc(p.title || '')}</strong>${p.status ? ` — ${esc(p.status)}` : ''}${p.notes ? `: ${esc(p.notes)}` : ''}</li>`
             ).join('');
             return `
-                <div class="section-title">Regulatory profile</div>
+                <div class="section-title">Jurisdiction regulatory profile (all service lines)</div>
                 <dl class="kv">
                     <dt>Drug regulator</dt><dd>${esc(reg.drug_regulator || '—')}</dd>
                     <dt>Health authority</dt><dd>${esc(reg.health_authority || '—')}</dd>
@@ -1004,10 +1034,11 @@
                     <dt>Psychedelics default</dt><dd>${esc(humanize(reg.psychedelic_default) || '—')}</dd>
                     <dt>Cannabis default</dt><dd>${esc(humanize(reg.cannabis_default) || '—')}</dd>
                     <dt>Assisted dying default</dt><dd>${esc(humanize(reg.assisted_dying_default) || '—')}</dd>
-                    <dt>Expanded access / RTT</dt><dd>${reg.right_to_try_or_expanded_access == null ? '—' : (reg.right_to_try_or_expanded_access ? 'Yes' : 'No')}</dd>
+                    <dt>Expanded access / RTT</dt><dd>${reg.right_to_try_or_expanded_access == null ? '—' : (reg.right_to_try_or_expanded_access ? 'Available' : 'Limited / none')}</dd>
+                    <dt>Compounding climate</dt><dd>${esc(reg.compounding_environment || '—')}</dd>
                 </dl>
                 ${statutes ? `<div class="muted" style="font-size:.72rem;font-weight:700;text-transform:uppercase;margin-top:.5rem;">Key statutes</div><ul style="margin:.25rem 0 0 1.1rem;font-size:.86rem;">${statutes}</ul>` : ''}
-                ${pending ? `<div class="muted" style="font-size:.72rem;font-weight:700;text-transform:uppercase;margin-top:.5rem;">Pending legislation</div><ul style="margin:.25rem 0 0 1.1rem;font-size:.86rem;">${pending}</ul>` : ''}
+                ${pending ? `<div class="muted" style="font-size:.72rem;font-weight:700;text-transform:uppercase;margin-top:.5rem;">Pending legislation to monitor</div><ul style="margin:.25rem 0 0 1.1rem;font-size:.86rem;">${pending}</ul>` : ''}
             `;
         }
 
@@ -1034,16 +1065,16 @@
                 ${setup.capital_notes ? `<div style="margin-top:.55rem;"><div class="muted" style="font-size:.72rem;font-weight:700;text-transform:uppercase;">Capital & cost notes</div><p class="prose" style="margin-top:.25rem;">${esc(setup.capital_notes)}</p></div>` : ''}
                 ${renderListSection('Ongoing compliance', setup.ongoing_compliance)}
                 ${setup.notes ? `<p class="muted" style="margin-top:.55rem;font-size:.82rem;"><strong>Note:</strong> ${esc(setup.notes)}</p>` : ''}
-                ${providerText ? `<p class="muted" style="margin-top:.5rem;font-size:.82rem;"><strong>Provider notes:</strong> ${esc(providerText)}</p>` : ''}
-                <p class="muted" style="font-size:.75rem;margin-top:.55rem;">Informational only — not legal, regulatory, or business advice. Confirm with counsel and the regulator before investing.</p>
+                ${providerText ? `<p class="muted" style="margin-top:.5rem;font-size:.82rem;"><strong>Additional provider notes:</strong> ${esc(providerText)}</p>` : ''}
+                <p class="muted" style="font-size:.75rem;margin-top:.55rem;">Not legal or business advice. Validate with counsel, medical board, and the competent authority before capital commitment.</p>
             `;
         }
 
         async function selectJurisdiction(jid, accessRow) {
             selectedJurisdictionId = jid;
-            renderPlaceList(currentAccess); // refresh active state
+            renderPlaceList(filteredAccess()); // refresh active state on visible list
             const body = document.getElementById('detailBody');
-            body.innerHTML = '<div class="loading-inline">Loading place details…</div>';
+            body.innerHTML = '<div class="loading-inline">Loading market dossier…</div>';
             document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
             try {
@@ -1076,34 +1107,37 @@
             if (ar && selectedProcedureId) {
                 const f = flagsOf(ar);
                 accessBlock = `
-                    <div class="section-title">Allowed vs offered</div>
-                    <div class="flag-row">${flagPills(ar)}</div>
-                    <dl class="kv" style="margin-top:.55rem;">
-                        <dt>Allowed?</dt><dd>${esc(f.allowed_label)} — based on legal / regulatory status</dd>
-                        <dt>Offered?</dt><dd>${esc(f.offered_label)} — based on practical access pathway</dd>
-                        <dt>Legislation</dt><dd><strong>${esc(f.legislation_label)}</strong>${f.pending_legislation ? ' — watch for statute / rule changes before traveling or starting care' : (f.active_flux ? ' — enforcement or program rules may shift quickly' : '')}</dd>
-                    </dl>
-                    <div class="section-title">Access for selected treatment</div>
-                    <div class="chip-row">
+                    <div class="section-title">1 · Can you operate here?</div>
+                    <div class="flag-row">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
+                    <div class="chip-row" style="margin-top:.4rem;">
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
                         <span class="pill">${esc(friendlyPathway(ar.access_pathway))}</span>
                         <span class="pill">${esc(friendlyOversight(ar.oversight_quality))}</span>
                     </div>
-                    <div class="section-title">Regulation (specific links)</div>
-                    ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
-                    <div class="section-title">Requirements — patient access</div>
-                    <dl class="kv">
-                        <dt>Who qualifies</dt><dd>${esc(ar.eligibility_requirements || 'See local programme rules')}</dd>
-                        <dt>How you get it</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
-                        <dt>Travel / residency</dt><dd>${esc(ar.residency_travel_notes || '—')}</dd>
-                        <dt>Est. cost</dt><dd>${fmtPrice(ar)}</dd>
-                        <dt>Risks</dt><dd>${esc(ar.risk_notes || '—')}</dd>
-                        <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
-                        <dt>Bottom line</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
+                    <dl class="kv" style="margin-top:.55rem;">
+                        <dt>Legal to structure?</dt><dd>${esc(f.allowed_label)}</dd>
+                        <dt>Operational pathway</dt><dd>${esc(f.offered_label)}</dd>
+                        <dt>Policy risk</dt><dd><strong>${esc(f.legislation_label)}</strong>${f.pending_legislation ? ' — freeze major spend until bill outcome is clear' : (f.active_flux ? ' — build change-control into SOPs' : '')}</dd>
+                        <dt>Market note</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
                     </dl>
-                    <div class="section-title">Requirements — practitioners (to set this up)</div>
+
+                    <div class="section-title">2 · Governing regulation (open these first)</div>
+                    ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
+
+                    <div class="section-title">3 · Requirements to set up &amp; staff the program</div>
                     ${renderSetup(ar.setup_requirements, ar.provider_requirements)}
-                    <div class="section-title">Example clinics &amp; directories</div>
+
+                    <div class="section-title">4 · Patient eligibility you must screen</div>
+                    <dl class="kv">
+                        <dt>Who may be treated</dt><dd>${esc(ar.eligibility_requirements || 'Define inclusion/exclusion per local protocol')}</dd>
+                        <dt>Care pathway</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
+                        <dt>Residency / travel</dt><dd>${esc(ar.residency_travel_notes || '—')}</dd>
+                        <dt>Cash price reference</dt><dd>${fmtPrice(ar)}</dd>
+                        <dt>Clinical / operational risks</dt><dd>${esc(ar.risk_notes || '—')}</dd>
+                        <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
+                    </dl>
+
+                    <div class="section-title">5 · Peers, directories &amp; referral landscape</div>
                     ${renderClinics(ar.example_clinics || [])}
                 `;
             }
@@ -1112,14 +1146,15 @@
             let otherBlock = '';
             if (otherTreatments.length) {
                 otherBlock = `
-                    <div class="section-title">Other treatments tracked here</div>
+                    <div class="section-title">Other service lines tracked in this market</div>
                     ${otherTreatments.map(t => {
                         const sm = statusMeta(t.legal_status);
+                        const tf = flagsOf(t);
                         return `<div class="treatment-card" style="cursor:pointer" onclick="window.__pickProc(${JSON.stringify(t.procedure_id)})">
                             <h3>${esc(t.procedure_name)}</h3>
                             <div class="chip-row">
                                 <span class="pill status sm" style="background:${sm.color}">${esc(sm.label)}</span>
-                                <span class="muted">${fmtPrice(t)}</span>
+                                ${tf.prohibited ? '<span class="pill not-allowed sm">Cannot license</span>' : '<span class="pill allowed sm">Review dossier</span>'}
                             </div>
                         </div>`;
                     }).join('')}
@@ -1135,13 +1170,13 @@
                         <span class="pill">${esc(j.country_code || '')}</span>
                     </div>
                     ${parentLine}
-                    <div class="section-title">About this place</div>
+                    <div class="section-title">Market context</div>
                     <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
                     ${children}
                     ${renderRegulation(j.regulation)}
                     ${accessBlock}
                     ${otherBlock}
-                    ${ar && ar.last_verified ? `<p class="muted" style="margin-top:1rem;font-size:.78rem;">Access data last verified: ${esc(ar.last_verified)}${ar.verified_by ? ' · ' + esc(ar.verified_by) : ''}</p>` : ''}
+                    ${ar && ar.last_verified ? `<p class="muted" style="margin-top:1rem;font-size:.78rem;">Cell last verified: ${esc(ar.last_verified)}${ar.verified_by ? ' · ' + esc(ar.verified_by) : ''}</p>` : ''}
                 </div>
             `;
         }

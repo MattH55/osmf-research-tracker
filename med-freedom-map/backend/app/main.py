@@ -23,9 +23,9 @@ from .schemas import (
 )
 
 app = FastAPI(
-    title="MedFreedom Arbitrage Map API",
-    description="Medical procedure access by jurisdiction for informed arbitrage decisions",
-    version="0.2.0",
+    title="MedFreedom Provider Map API",
+    description="Cross-jurisdiction market entry data for providers: legal status, regulation links, setup requirements, and evidence grades",
+    version="0.3.0",
 )
 
 app.add_middleware(
@@ -56,7 +56,7 @@ async def root():
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.2.0"}
+    return {"status": "ok", "version": "0.3.0", "audience": "providers"}
 
 
 @app.get("/api/stats")
