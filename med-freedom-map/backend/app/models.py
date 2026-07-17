@@ -199,6 +199,8 @@ class Procedure(Base):
     typical_us_cost_range: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     indications: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     sources: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array stored as text
+    # Default practitioner setup (jurisdiction-agnostic baseline); access rows may override
+    practitioner_setup: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     access_records: Mapped[List["AccessRecord"]] = relationship(back_populates="procedure", cascade="all, delete-orphan")
 
@@ -217,6 +219,7 @@ class Procedure(Base):
             "typical_us_cost_range": self.typical_us_cost_range,
             "indications": self.indications,
             "sources": json.loads(self.sources) if self.sources else [],
+            "practitioner_setup": json.loads(self.practitioner_setup) if self.practitioner_setup else None,
         }
 
 
@@ -282,6 +285,11 @@ class AccessRecord(Base):
     # [{name, city?, url?, type?, notes?}] — illustrative, verify before use
     example_clinics: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    # Practitioner-side setup requirements to offer this therapy in this jurisdiction
+    # JSON: {summary, licenses[], facility[], training[], staffing[], product_source[],
+    #        regulatory_steps[], capital_notes, ongoing_compliance[], difficulty?}
+    setup_requirements: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
     procedure: Mapped["Procedure"] = relationship(back_populates="access_records")
     jurisdiction: Mapped["Jurisdiction"] = relationship(back_populates="access_records")
 
@@ -320,6 +328,7 @@ class AccessRecord(Base):
             "status": self.status,
             "access_pathway_details": self.access_pathway_details,
             "example_clinics": json.loads(self.example_clinics) if self.example_clinics else [],
+            "setup_requirements": json.loads(self.setup_requirements) if self.setup_requirements else None,
         }
 
 

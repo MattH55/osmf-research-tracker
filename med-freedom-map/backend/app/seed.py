@@ -29,6 +29,11 @@ from .seed_evidence_clinics import (
     all_indications_fill,
     all_example_clinics,
 )
+from .seed_practitioner_setup import (
+    all_procedure_setup_defaults,
+    all_access_setup_overrides,
+    merged_setup,
+)
 
 # Merge base + expansion disease maps (expansion wins on key clash).
 ALL_PROCEDURE_DISEASES = {**PROCEDURE_DISEASES, **PROCEDURE_DISEASES_EXPANSION}
@@ -1132,6 +1137,7 @@ def seed_database():
         "new_access_records": 0,
         "procedures_diseases_updated": 0,
         "clinics_updated": 0,
+        "setup_updated": 0,
         "skipped": [],
     }
 
@@ -1294,6 +1300,33 @@ def seed_database():
                 db.rollback()
                 result["skipped"].append(f"clinics_update ({e.__class__.__name__})")
 
+        # ── Practitioner setup requirements (procedure defaults + access overrides) ──
+        for proc_id, setup in all_procedure_setup_defaults().items():
+            proc = db.query(Procedure).filter(Procedure.id == proc_id).first()
+            if not proc:
+                continue
+            new_json = json.dumps(setup)
+            if proc.practitioner_setup != new_json:
+                proc.practitioner_setup = new_json
+                result["setup_updated"] += 1
+        # Jurisdiction-specific setup on access rows (override wins); else apply default
+        defaults = all_procedure_setup_defaults()
+        overrides = all_access_setup_overrides()
+        for ar in db.query(AccessRecord).all():
+            setup = overrides.get((ar.procedure_id, ar.jurisdiction_id)) or defaults.get(ar.procedure_id)
+            if not setup:
+                continue
+            new_json = json.dumps(setup)
+            if ar.setup_requirements != new_json:
+                ar.setup_requirements = new_json
+                result["setup_updated"] += 1
+        if result["setup_updated"]:
+            try:
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                result["skipped"].append(f"setup_update ({e.__class__.__name__})")
+
         print(
             f"Seed complete: {result['jurisdictions']} jurisdictions, "
             f"{result['procedures']} procedures, {result['access_records']} access records "
@@ -1301,7 +1334,8 @@ def seed_database():
             f"{result['conditions']} conditions, {result['procedure_indications']} indications, "
             f"{result['enriched_access_records']} enriched, "
             f"{result['procedures_diseases_updated']} diseases fields updated, "
-            f"{result['clinics_updated']} clinic lists updated "
+            f"{result['clinics_updated']} clinic lists updated, "
+            f"{result['setup_updated']} setup fields updated "
             f"({len(result['skipped'])} skipped)."
         )
         return result
