@@ -39,6 +39,7 @@ from .seed_prohibitions import (
     all_jurisdiction_regulation,
     all_therapy_control_meta,
 )
+from .seed_regulation_links import apply_regulation_links_to_record, links_for_pair
 
 # Merge base + expansion disease maps (expansion wins on key clash).
 ALL_PROCEDURE_DISEASES = {**PROCEDURE_DISEASES, **PROCEDURE_DISEASES_EXPANSION}
@@ -1145,6 +1146,7 @@ def seed_database():
         "setup_updated": 0,
         "regulation_updated": 0,
         "prohibited_added": 0,
+        "regulation_links_updated": 0,
         "skipped": [],
     }
 
@@ -1226,6 +1228,16 @@ def seed_database():
                 ar_copy["setup_requirements"] = json.dumps(ar_copy["setup_requirements"])
             if ar_copy.get("setup_requirements") is None:
                 ar_copy.pop("setup_requirements", None)
+            # Ensure regulation_links present at insert
+            if not ar_copy.get("regulation_links"):
+                srcs = ar_data.get("sources") if isinstance(ar_data.get("sources"), list) else []
+                ar_copy["regulation_links"] = links_for_pair(
+                    ar_copy["procedure_id"], ar_copy["jurisdiction_id"], srcs
+                )
+            if isinstance(ar_copy.get("regulation_links"), list):
+                ar_copy["regulation_links"] = json.dumps(ar_copy.get("regulation_links") or [])
+            if not ar_copy.get("regulation_links"):
+                ar_copy.pop("regulation_links", None)
             # Pre-apply enrichment so legacy seed rows get §4 fields.
             enrich = ACCESS_ENRICHMENTS.get(key)
             if enrich:
@@ -1377,6 +1389,22 @@ def seed_database():
                 db.rollback()
                 result["skipped"].append(f"regulation_update ({e.__class__.__name__})")
 
+        # ── Regulation links on every access cell ──
+        for ar in db.query(AccessRecord).all():
+            try:
+                if apply_regulation_links_to_record(ar):
+                    result["regulation_links_updated"] += 1
+            except Exception as row_err:
+                result["skipped"].append(
+                    f"reglink {ar.procedure_id}@{ar.jurisdiction_id} ({row_err.__class__.__name__})"
+                )
+        if result["regulation_links_updated"]:
+            try:
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                result["skipped"].append(f"regulation_links_commit ({e.__class__.__name__})")
+
         print(
             f"Seed complete: {result['jurisdictions']} jurisdictions, "
             f"{result['procedures']} procedures, {result['access_records']} access records "
@@ -1386,7 +1414,8 @@ def seed_database():
             f"{result['procedures_diseases_updated']} diseases fields updated, "
             f"{result['clinics_updated']} clinic lists updated, "
             f"{result['setup_updated']} setup fields updated, "
-            f"{result['regulation_updated']} regulation fields updated "
+            f"{result['regulation_updated']} regulation fields updated, "
+            f"{result['regulation_links_updated']} regulation links updated "
             f"({len(result['skipped'])} skipped)."
         )
         return result

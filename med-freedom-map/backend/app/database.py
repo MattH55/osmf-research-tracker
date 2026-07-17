@@ -69,6 +69,7 @@ def init_db():
     _ensure_column("jurisdictions", "regulation_json", "TEXT")
     _ensure_column("access_records", "example_clinics", "TEXT")
     _ensure_column("access_records", "setup_requirements", "TEXT")
+    _ensure_column("access_records", "regulation_links", "TEXT")
 
 
 def reset_db():

@@ -898,8 +898,9 @@
                     </div>
                     <p class="muted" style="margin-top:.35rem;font-size:.8rem;">
                         ${esc(f.legislation_label)} · ${esc(friendlyOversight(row.oversight_quality))}
-                        ${(row.example_clinics || []).length ? ` · <strong>${row.example_clinics.length} clinic/directory link${row.example_clinics.length === 1 ? '' : 's'}</strong>` : ''}
-                        ${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 80)) + (row.arbitrage_summary.length > 80 ? '…' : '') : ''}
+                        ${(row.regulation_links || []).length ? ` · <strong>${row.regulation_links.length} regulation link${row.regulation_links.length === 1 ? '' : 's'}</strong>` : ''}
+                        ${(row.example_clinics || []).length ? ` · ${row.example_clinics.length} clinic link${row.example_clinics.length === 1 ? '' : 's'}` : ''}
+                        ${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 70)) + (row.arbitrage_summary.length > 70 ? '…' : '') : ''}
                     </p>
                 </li>`;
             }).join('');
@@ -965,6 +966,23 @@
                     ${items.map(i => `<li style="margin:.15rem 0;">${esc(i)}</li>`).join('')}
                 </ul>
             </div>`;
+        }
+
+        function renderRegulationLinks(links, legalBasis, authority) {
+            const head = `
+                <dl class="kv">
+                    <dt>Authority</dt><dd>${esc(authority || '—')}</dd>
+                    <dt>Legal basis</dt><dd>${esc(legalBasis || '—')}</dd>
+                </dl>`;
+            if (!links || !links.length) {
+                return head + '<p class="muted" style="margin-top:.35rem;">No direct regulation URL on file for this cell — see jurisdiction regulatory profile below/above and authority name.</p>';
+            }
+            const lis = links.map(l => {
+                const cite = l.citation ? ` <span class="muted">(${esc(l.citation)})</span>` : '';
+                return `<li style="margin:.3rem 0;"><a href="${esc(l.url)}" target="_blank" rel="noopener"><strong>${esc(l.title || l.url)}</strong></a>${cite}</li>`;
+            }).join('');
+            return head + `<ul style="margin:.4rem 0 0 1.1rem;font-size:.88rem;">${lis}</ul>
+                <p class="muted" style="font-size:.75rem;margin-top:.35rem;">Open the official text for the controlling rule. Links can move; verify on the regulator site.</p>`;
         }
 
         function renderRegulation(reg) {
@@ -1071,18 +1089,19 @@
                         <span class="pill">${esc(friendlyPathway(ar.access_pathway))}</span>
                         <span class="pill">${esc(friendlyOversight(ar.oversight_quality))}</span>
                     </div>
+                    <div class="section-title">Regulation (specific links)</div>
+                    ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
+                    <div class="section-title">Requirements — patient access</div>
                     <dl class="kv">
-                        <dt>Legal basis</dt><dd>${esc(ar.legal_basis || '—')}</dd>
-                        <dt>Regulator</dt><dd>${esc(ar.regulatory_authority || '—')}</dd>
-                        <dt>Est. cost</dt><dd>${fmtPrice(ar)}</dd>
+                        <dt>Who qualifies</dt><dd>${esc(ar.eligibility_requirements || 'See local programme rules')}</dd>
                         <dt>How you get it</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
-                        <dt>Who qualifies</dt><dd>${esc(ar.eligibility_requirements || 'See local program rules')}</dd>
                         <dt>Travel / residency</dt><dd>${esc(ar.residency_travel_notes || '—')}</dd>
+                        <dt>Est. cost</dt><dd>${fmtPrice(ar)}</dd>
                         <dt>Risks</dt><dd>${esc(ar.risk_notes || '—')}</dd>
                         <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
                         <dt>Bottom line</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
                     </dl>
-                    <div class="section-title">For practitioners — requirements to set this up</div>
+                    <div class="section-title">Requirements — practitioners (to set this up)</div>
                     ${renderSetup(ar.setup_requirements, ar.provider_requirements)}
                     <div class="section-title">Example clinics &amp; directories</div>
                     ${renderClinics(ar.example_clinics || [])}

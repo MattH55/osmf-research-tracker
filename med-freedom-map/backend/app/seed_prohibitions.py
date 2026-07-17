@@ -73,6 +73,11 @@ def _prohibited(
         "verified_by": "seed_prohibitions_v1",
         "last_verified": LV,
         "sources": sources or [],
+        "regulation_links": [
+            {"title": s.get("title") or "Regulation", "url": s["url"]}
+            for s in (sources or [])
+            if isinstance(s, dict) and s.get("url")
+        ],
         "setup_requirements": None,  # filled later if needed
     }
 

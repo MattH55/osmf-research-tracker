@@ -248,6 +248,8 @@ class AccessRecord(Base):
     access_pathway: Mapped[Optional[AccessPathway]] = mapped_column(SAEnum(AccessPathway), nullable=True)
     regulatory_authority: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
     legal_basis: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)  # statute/regulation citation
+    # [{title, url, citation?}] — primary links to the governing regulation/guidance
+    regulation_links: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Eligibility (JSON) per schema §3
     eligibility_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # {residency_required, diagnosis_gate, age_min, prior_failure_required, referral_required}
@@ -312,6 +314,7 @@ class AccessRecord(Base):
             "access_pathway": self.access_pathway.value if isinstance(self.access_pathway, AccessPathway) else self.access_pathway,
             "regulatory_authority": self.regulatory_authority,
             "legal_basis": self.legal_basis,
+            "regulation_links": json.loads(self.regulation_links) if self.regulation_links else [],
             "eligibility_json": json.loads(self.eligibility_json) if self.eligibility_json else None,
             "eligibility_requirements": self.eligibility_requirements,
             "provider_requirements": self.provider_requirements,
