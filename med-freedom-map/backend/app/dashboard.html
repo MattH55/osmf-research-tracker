@@ -154,6 +154,7 @@
         }
         .pill.status { color: #fff; }
         .pill.sm { font-size: .68rem; }
+        .pill.disease { background: #ecfdf5; color: #047857; }
 
         .place-list { list-style: none; max-height: 380px; overflow: auto; margin-top: .25rem; }
         .place-list li {
@@ -247,7 +248,13 @@
                 <h2><span class="step">1</span> Choose a treatment</h2>
                 <div class="field-block">
                     <label class="field" for="searchBox">Search</label>
-                    <input type="search" id="searchBox" placeholder="e.g. psilocybin, ketamine, IVF…" autocomplete="off">
+                    <input type="search" id="searchBox" placeholder="e.g. depression, psilocybin, PTSD…" autocomplete="off">
+                </div>
+                <div class="field-block">
+                    <label class="field" for="diseaseFilter">Disease</label>
+                    <select id="diseaseFilter">
+                        <option value="">All diseases</option>
+                    </select>
                 </div>
                 <div class="field-block">
                     <label class="field" for="modalityFilter">Category</label>
@@ -260,7 +267,7 @@
                     <select id="procedureSelect" size="12" style="min-height:280px;">
                         <option value="">Loading treatments…</option>
                     </select>
-                    <p class="hint">Select one treatment to color the map by regulatory status in each place.</p>
+                    <p class="hint">Filter by disease, then select a treatment to color the map by regulatory status.</p>
                 </div>
                 <div id="selectedSummary" class="treatment-card" style="display:none;"></div>
             </aside>
@@ -543,18 +550,32 @@
                 sel.innerHTML = '<option value="">All categories</option>' +
                     (opts.modalities || []).map(m => `<option value="${esc(m)}">${esc(humanize(m))}</option>`).join('');
                 sel.value = cur;
+
+                const dsel = document.getElementById('diseaseFilter');
+                const dcur = dsel.value;
+                dsel.innerHTML = '<option value="">All diseases</option>' +
+                    (opts.diseases || []).map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('');
+                if (dcur && (opts.diseases || []).includes(dcur)) dsel.value = dcur;
             } catch (e) { /* optional */ }
             renderProcedureSelect();
         }
 
         function renderProcedureSelect() {
             const mod = document.getElementById('modalityFilter').value;
+            const disease = document.getElementById('diseaseFilter').value;
             const q = document.getElementById('searchBox').value.trim().toLowerCase();
             let list = allProcedures.slice();
             if (mod) list = list.filter(p => p.modality === mod || p.regulatory_modality === mod);
+            if (disease) {
+                list = list.filter(p => (p.diseases || []).some(d => d === disease || d.toLowerCase().includes(disease.toLowerCase())));
+            }
             if (q) {
                 list = list.filter(p => {
-                    const hay = [p.name, p.description, p.indications, (p.therapeutic_areas || []).join(' ')].join(' ').toLowerCase();
+                    const hay = [
+                        p.name, p.description, p.indications,
+                        (p.therapeutic_areas || []).join(' '),
+                        (p.diseases || []).join(' '),
+                    ].join(' ').toLowerCase();
                     return hay.includes(q);
                 });
             }
@@ -565,9 +586,11 @@
                 sel.innerHTML = '<option value="">No treatments match</option>';
                 return;
             }
-            sel.innerHTML = list.map(p =>
-                `<option value="${esc(p.id)}" ${p.id === keep ? 'selected' : ''}>${esc(p.name)}</option>`
-            ).join('');
+            sel.innerHTML = list.map(p => {
+                const diseasetip = (p.diseases || []).slice(0, 2).join(', ');
+                const label = diseasetip ? `${p.name} — ${diseasetip}` : p.name;
+                return `<option value="${esc(p.id)}" ${p.id === keep ? 'selected' : ''}>${esc(label)}</option>`;
+            }).join('');
             if (keep && list.some(p => p.id === keep)) sel.value = keep;
         }
 
@@ -582,13 +605,17 @@
             const p = allProcedures.find(x => x.id === id);
             if (p) {
                 summary.style.display = 'block';
+                const diseaseChips = (p.diseases || []).map(d =>
+                    `<span class="pill disease">${esc(d)}</span>`
+                ).join('');
                 summary.innerHTML = `
                     <h3>${esc(p.name)}</h3>
                     <div class="chip-row">
                         <span class="pill">${esc(humanize(p.regulatory_modality || p.modality))}</span>
                         ${p.restriction_driver ? `<span class="pill" style="background:#fef3c7;color:#92400e;">${esc(humanize(p.restriction_driver))}</span>` : ''}
                     </div>
-                    <p class="muted" style="font-size:.84rem;">${esc((p.description || '').slice(0, 220))}${(p.description || '').length > 220 ? '…' : ''}</p>
+                    ${diseaseChips ? `<div class="section-title" style="margin-top:.65rem;">Diseases</div><div class="chip-row">${diseaseChips}</div>` : ''}
+                    <p class="muted" style="font-size:.84rem;margin-top:.5rem;">${esc((p.description || '').slice(0, 220))}${(p.description || '').length > 220 ? '…' : ''}</p>
                     ${p.typical_us_cost_range ? `<p class="muted" style="margin-top:.35rem;"><strong>Typical US cost:</strong> ${esc(p.typical_us_cost_range)}</p>` : ''}
                 `;
             }
@@ -773,6 +800,16 @@
             if (e.target.value) selectProcedure(e.target.value);
         });
         document.getElementById('modalityFilter').addEventListener('change', () => renderProcedureSelect());
+        document.getElementById('diseaseFilter').addEventListener('change', () => {
+            renderProcedureSelect();
+            // If exactly one treatment matches the disease, auto-select it.
+            const sel = document.getElementById('procedureSelect');
+            const opts = [...sel.options].filter(o => o.value);
+            if (opts.length === 1) {
+                sel.value = opts[0].value;
+                selectProcedure(opts[0].value);
+            }
+        });
         document.getElementById('searchBox').addEventListener('input', () => renderProcedureSelect());
         document.getElementById('searchBox').addEventListener('keydown', e => {
             if (e.key === 'Enter') {

@@ -13,6 +13,7 @@ from .seed_enrichment import (
     ACCESS_ENRICHMENTS,
     CONDITIONS,
     PROCEDURE_INDICATIONS,
+    PROCEDURE_DISEASES,
     apply_access_enrichment,
 )
 from .seed_access_expansion import all_expansion_records
@@ -1110,6 +1111,7 @@ def seed_database():
         "procedure_indications": 0,
         "enriched_access_records": 0,
         "new_access_records": 0,
+        "procedures_diseases_updated": 0,
         "skipped": [],
     }
 
@@ -1133,8 +1135,22 @@ def seed_database():
                 )
                 p_data_copy.setdefault("regulatory_modality", reg_mod)
                 p_data_copy.setdefault("restriction_driver", restriction)
+                diseases = PROCEDURE_DISEASES.get(p_data_copy["id"], [])
+                p_data_copy["diseases"] = json.dumps(diseases)
                 db.add(Procedure(**p_data_copy))
             db.commit()
+        else:
+            # Backfill / refresh diseases on existing procedures (idempotent).
+            for proc in db.query(Procedure).all():
+                diseases = PROCEDURE_DISEASES.get(proc.id)
+                if not diseases:
+                    continue
+                new_json = json.dumps(diseases)
+                if proc.diseases != new_json:
+                    proc.diseases = new_json
+                    result["procedures_diseases_updated"] += 1
+            if result["procedures_diseases_updated"]:
+                db.commit()
         result["procedures"] = db.query(Procedure).count()
 
         # ── Access records (insert any missing pairs; memory-safe one-by-one) ──
@@ -1232,7 +1248,8 @@ def seed_database():
             f"{result['procedures']} procedures, {result['access_records']} access records "
             f"(+{result['new_access_records']} new), "
             f"{result['conditions']} conditions, {result['procedure_indications']} indications, "
-            f"{result['enriched_access_records']} enriched "
+            f"{result['enriched_access_records']} enriched, "
+            f"{result['procedures_diseases_updated']} diseases fields updated "
             f"({len(result['skipped'])} skipped)."
         )
         return result

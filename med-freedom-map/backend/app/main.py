@@ -73,12 +73,20 @@ def stats(db: Session = Depends(get_db)):
         .scalar()
         or 0
     )
+    disease_names = set()
+    for p in db.query(Procedure).all():
+        if p.diseases:
+            try:
+                disease_names.update(json.loads(p.diseases))
+            except Exception:
+                pass
     return {
         "jurisdictions": db.query(func.count(Jurisdiction.id)).scalar() or 0,
         "procedures": db.query(func.count(Procedure.id)).scalar() or 0,
         "access_records": db.query(func.count(AccessRecord.id)).scalar() or 0,
         "conditions": db.query(func.count(Condition.id)).scalar() or 0,
         "procedure_indications": db.query(func.count(ProcedureIndication.id)).scalar() or 0,
+        "diseases": len(disease_names),
         "access_records_with_price": priced,
         "access_records_with_pathway": with_pathway,
     }
@@ -219,6 +227,7 @@ def delete_jurisdiction(jurisdiction_id: str, db: Session = Depends(get_db)):
 def list_procedures(
     modality: Optional[str] = None,
     therapeutic_area: Optional[str] = None,
+    disease: Optional[str] = None,
     search: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
@@ -227,6 +236,9 @@ def list_procedures(
         q = q.filter(Procedure.modality == modality)
     if therapeutic_area:
         q = q.filter(Procedure.therapeutic_areas.contains(therapeutic_area))
+    if disease:
+        # diseases stored as JSON text array — substring match is enough for seed data
+        q = q.filter(Procedure.diseases.ilike(f"%{disease}%"))
     if search:
         q = q.filter(
             or_(
@@ -234,6 +246,7 @@ def list_procedures(
                 Procedure.description.ilike(f"%{search}%"),
                 Procedure.indications.ilike(f"%{search}%"),
                 Procedure.therapeutic_areas.ilike(f"%{search}%"),
+                Procedure.diseases.ilike(f"%{search}%"),
             )
         )
     return [p.to_dict() for p in q.order_by(Procedure.name).all()]
@@ -250,8 +263,9 @@ def get_procedure(procedure_id: str, db: Session = Depends(get_db)):
 @app.post("/api/procedures")
 def create_procedure(data: ProcedureCreate, db: Session = Depends(get_db)):
     d = data.model_dump()
-    d["therapeutic_areas"] = json.dumps(d["therapeutic_areas"])
-    d["sources"] = json.dumps(d["sources"])
+    d["therapeutic_areas"] = json.dumps(d.get("therapeutic_areas") or [])
+    d["diseases"] = json.dumps(d.get("diseases") or [])
+    d["sources"] = json.dumps(d.get("sources") or [])
     p = Procedure(**d)
     db.add(p)
     db.commit()
@@ -267,6 +281,8 @@ def update_procedure(procedure_id: str, data: ProcedureUpdate, db: Session = Dep
     d = data.model_dump(exclude_unset=True)
     if "therapeutic_areas" in d:
         d["therapeutic_areas"] = json.dumps(d["therapeutic_areas"])
+    if "diseases" in d:
+        d["diseases"] = json.dumps(d["diseases"])
     if "sources" in d:
         d["sources"] = json.dumps(d["sources"])
     for key, val in d.items():
@@ -540,6 +556,19 @@ def list_procedure_indications(
     ]
 
 
+@app.get("/api/diseases")
+def list_diseases(db: Session = Depends(get_db)):
+    """Unique disease names across treatments, with how many treatments target each."""
+    counts = {}
+    for p in db.query(Procedure).all():
+        for d in (json.loads(p.diseases) if p.diseases else []):
+            counts[d] = counts.get(d, 0) + 1
+    return [
+        {"name": name, "treatment_count": counts[name]}
+        for name in sorted(counts.keys(), key=str.lower)
+    ]
+
+
 @app.get("/api/filters/options")
 def get_filter_options(db: Session = Depends(get_db)):
     """All available filter values for the UI."""
@@ -548,12 +577,15 @@ def get_filter_options(db: Session = Depends(get_db)):
 
     modalities = sorted({p.modality.value if hasattr(p.modality, "value") else p.modality for p in procedures})
     therapeutic_areas = set()
+    diseases = set()
     for p in procedures:
         therapeutic_areas.update(json.loads(p.therapeutic_areas) if p.therapeutic_areas else [])
+        diseases.update(json.loads(p.diseases) if p.diseases else [])
 
     return {
         "modalities": modalities,
         "therapeutic_areas": sorted(therapeutic_areas),
+        "diseases": sorted(diseases, key=str.lower),
         "legal_statuses": [
             "Fully_Approved", "Regulated_Therapy_Program", "Decriminalized_Possession",
             "Right_To_Try", "Clinical_Trial_Only", "Physician_Discretion_Gray", "Prohibited",

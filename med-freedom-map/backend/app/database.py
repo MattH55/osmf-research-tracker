@@ -1,6 +1,6 @@
 """Database setup and session management."""
 import os
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text, inspect
 from sqlalchemy.orm import sessionmaker, Session
 from .models import Base
 
@@ -42,9 +42,27 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+def _ensure_column(table: str, column: str, coltype: str = "TEXT"):
+    """Add a column if missing (create_all does not alter existing tables)."""
+    try:
+        insp = inspect(engine)
+        if table not in insp.get_table_names():
+            return
+        cols = {c["name"] for c in insp.get_columns(table)}
+        if column in cols:
+            return
+        with engine.begin() as conn:
+            conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {coltype}"))
+    except Exception:
+        # Best-effort; seed/API will surface real errors if column still missing.
+        pass
+
+
 def init_db():
     """Create tables if they do not already exist (non-destructive, idempotent)."""
     Base.metadata.create_all(bind=engine)
+    # Lightweight migrations for columns added after first deploy.
+    _ensure_column("procedures", "diseases", "TEXT")
 
 
 def reset_db():

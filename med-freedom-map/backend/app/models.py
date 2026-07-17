@@ -194,6 +194,7 @@ class Procedure(Base):
     restriction_driver: Mapped[Optional[RestrictionDriver]] = mapped_column(SAEnum(RestrictionDriver), nullable=True)
     subcategory: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
     therapeutic_areas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array stored as text
+    diseases: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON array of disease/condition names
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     typical_us_cost_range: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     indications: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -211,6 +212,7 @@ class Procedure(Base):
             "restriction_driver": self.restriction_driver.value if isinstance(self.restriction_driver, RestrictionDriver) else self.restriction_driver,
             "subcategory": self.subcategory,
             "therapeutic_areas": json.loads(self.therapeutic_areas) if self.therapeutic_areas else [],
+            "diseases": json.loads(self.diseases) if self.diseases else [],
             "description": self.description,
             "typical_us_cost_range": self.typical_us_cost_range,
             "indications": self.indications,

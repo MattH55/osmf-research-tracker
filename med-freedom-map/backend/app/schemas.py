@@ -42,6 +42,7 @@ class ProcedureBase(BaseModel):
     modality: str
     subcategory: Optional[str] = None
     therapeutic_areas: List[str] = []
+    diseases: List[str] = []
     description: Optional[str] = None
     typical_us_cost_range: Optional[str] = None
     indications: Optional[str] = None
@@ -57,6 +58,7 @@ class ProcedureUpdate(BaseModel):
     modality: Optional[str] = None
     subcategory: Optional[str] = None
     therapeutic_areas: Optional[List[str]] = None
+    diseases: Optional[List[str]] = None
     description: Optional[str] = None
     typical_us_cost_range: Optional[str] = None
     indications: Optional[str] = None

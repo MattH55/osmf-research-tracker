@@ -317,6 +317,50 @@ ACCESS_ENRICHMENTS = {
 }
 
 
+# ── Procedure → diseases (primary clinical targets for UI filter/display) ────
+# Human-readable disease names shown on treatments and used for filtering.
+
+PROCEDURE_DISEASES = {
+    "proc-psilocybin-trd": ["Treatment-Resistant Depression", "Major Depressive Disorder"],
+    "proc-psilocybin-eol": ["Cancer-Related Anxiety", "End-of-Life Existential Distress", "Adjustment Disorder"],
+    "proc-mdma-ptsd": ["Post-Traumatic Stress Disorder (PTSD)"],
+    "proc-ketamine-depression": ["Treatment-Resistant Depression", "Major Depressive Disorder", "Suicidal Ideation"],
+    "proc-ibogaine-addiction": ["Opioid Use Disorder", "Substance Use Disorder"],
+    "proc-gene-crispr": ["Sickle Cell Disease", "Beta-Thalassemia", "Genetic Blood Disorders"],
+    "proc-gene-aa9": ["Spinal Muscular Atrophy (SMA)", "Inherited Retinal Dystrophy", "Hemophilia B", "Duchenne Muscular Dystrophy"],
+    "proc-stem-msc": ["Osteoarthritis", "Autoimmune Disease", "Inflammatory Conditions", "Crohn's Disease"],
+    "proc-stem-car-t": ["Relapsed/Refractory B-cell ALL", "Diffuse Large B-cell Lymphoma", "Multiple Myeloma"],
+    "proc-maid": ["Terminal Illness", "Grievous Irremediable Medical Condition", "Intolerable Suffering"],
+    "proc-peptide-bpc": ["Tendon/Ligament Injury", "Inflammatory Bowel Disease", "Gastric Ulcer", "Wound Healing Impairment"],
+    "proc-peptide-thymosin": ["Chronic Hepatitis B", "Chronic Hepatitis C", "Immune Deficiency", "Chronic Viral Infection"],
+    "proc-repro-ivf": ["Infertility", "Recurrent Pregnancy Loss", "Genetic Carrier Status"],
+    "proc-repro-surrogacy": ["Uterine Factor Infertility", "Medical Contraindication to Pregnancy", "Recurrent IVF Failure"],
+    "proc-repurposed-ldn": ["Fibromyalgia", "Crohn's Disease", "Multiple Sclerosis", "ME/CFS", "Long COVID", "Chronic Pain"],
+    "proc-repurposed-methylene": ["Mild Cognitive Impairment", "Bipolar Depression", "Mitochondrial Dysfunction", "Methemoglobinemia"],
+    "proc-repurposed-semaglutide": ["Obesity", "Type 2 Diabetes", "Cardiovascular Disease Risk", "NAFLD/NASH"],
+    "proc-repurposed-rapamycin": ["Age-Related Functional Decline", "Lymphangioleiomyomatosis (LAM)", "Transplant Rejection (labeled)"],
+    "proc-stem-exosome": ["Osteoarthritis", "Androgenetic Alopecia", "Skin Aging", "Soft Tissue Injury"],
+    "proc-dmt-depression": ["Major Depressive Disorder", "Treatment-Resistant Depression"],
+    "proc-lsd-anxiety": ["Generalized Anxiety Disorder", "Illness-Related Anxiety"],
+    "proc-mescaline-therapy": ["Depression", "Substance Use Disorder", "Existential Distress"],
+    "proc-nad-iv": ["Chronic Fatigue", "Long COVID", "Mitochondrial Dysfunction", "Age-Related Decline"],
+    "proc-hbot": ["Diabetic Foot Ulcer", "Chronic Osteomyelitis", "Traumatic Brain Injury (off-label)", "Chronic Lyme (off-label)"],
+    "proc-fmt": ["Recurrent C. difficile Infection", "Ulcerative Colitis (off-label)", "Crohn's Disease (off-label)"],
+    "proc-pt-141": ["Hypoactive Sexual Desire Disorder (HSDD)", "Erectile Dysfunction (off-label)"],
+    "proc-cryotherapy": ["Muscle Recovery", "Chronic Inflammation", "Sports Injury Recovery"],
+    "proc-prp-therapy": ["Knee Osteoarthritis", "Tendinopathy", "Rotator Cuff Injury", "Androgenetic Alopecia"],
+    "proc-nmn-nmad": ["Age-Related Functional Decline", "Metabolic Syndrome"],
+    "proc-ayahuasca": ["Depression", "Substance Use Disorder", "PTSD", "Existential Distress"],
+    "proc-medical-cannabis": ["Chronic Pain", "Epilepsy", "PTSD", "Chemotherapy-Induced Nausea", "Anxiety"],
+    "proc-ozone-therapy": ["Chronic Wound", "Chronic Infection", "Osteoarthritis (off-label)"],
+    "proc-stem-nsc": ["Parkinson's Disease", "ALS", "Spinal Cord Injury", "Alzheimer's Disease"],
+    "proc-proton-therapy": ["Pediatric Cancer", "CNS Tumors", "Prostate Cancer", "Base-of-Skull Tumors"],
+    "proc-senolytics": ["Frailty", "Age-Related Functional Decline", "Cellular Senescence"],
+    "proc-chelation": ["Lead Poisoning", "Heavy Metal Toxicity", "Iron Overload"],
+    "proc-metformin-longevity": ["Type 2 Diabetes (labeled)", "Age-Related Functional Decline", "Prediabetes"],
+}
+
+
 # ── §5 Conditions (focused seed set) ─────────────────────────────────────────
 
 CONDITIONS = [
