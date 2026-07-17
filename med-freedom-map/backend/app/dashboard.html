@@ -155,6 +155,47 @@
         .pill.status { color: #fff; }
         .pill.sm { font-size: .68rem; }
         .pill.disease { background: #ecfdf5; color: #047857; }
+        .pill.allowed { background: #d1fae5; color: #065f46; }
+        .pill.offered { background: #dbeafe; color: #1e40af; }
+        .pill.not-offered { background: #f1f5f9; color: #475569; }
+        .pill.not-allowed { background: #fee2e2; color: #991b1b; }
+        .pill.pending { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+        .pill.flux { background: #ffedd5; color: #9a3412; }
+        .pill.trial { background: #ede9fe; color: #5b21b6; }
+        .filter-toggles { display: flex; flex-wrap: wrap; gap: .45rem; margin: .65rem 0 .25rem; }
+        .filter-toggles label {
+            display: inline-flex; align-items: center; gap: .35rem;
+            font-size: .8rem; font-weight: 600; color: var(--muted);
+            background: #f8fafc; border: 1px solid var(--line); border-radius: 999px;
+            padding: .35rem .7rem; cursor: pointer; user-select: none;
+        }
+        .filter-toggles label:has(input:checked) { background: #eef2ff; color: var(--brand); border-color: #c7d2fe; }
+        .filter-toggles input { accent-color: var(--brand); }
+        .summary-bar {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: .5rem; margin: .75rem 0 1rem;
+        }
+        .summary-bar .s {
+            background: #f8fafc; border: 1px solid var(--line); border-radius: 10px;
+            padding: .55rem .65rem; text-align: center;
+        }
+        .summary-bar .s .n { font-size: 1.25rem; font-weight: 750; color: var(--brand2); }
+        .summary-bar .s .l { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 650; }
+        .summary-bar .s.warn .n { color: var(--warn); }
+        .summary-bar .s.ok .n { color: var(--ok); }
+        .summary-bar .s.bad .n { color: var(--danger); }
+        .map-mode {
+            display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0 0;
+            pointer-events: auto;
+        }
+        .map-mode button {
+            font-size: .75rem; padding: .35rem .65rem; border-radius: 999px;
+            background: #fff; color: var(--ink); border: 1px solid var(--line); font-weight: 650;
+        }
+        .map-mode button.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .map-mode button:hover { background: #eef2ff; color: var(--brand2); }
+        .map-mode button.active:hover { background: var(--brand2); color: #fff; }
+        .flag-row { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .4rem; }
 
         .place-list { list-style: none; max-height: 380px; overflow: auto; margin-top: .25rem; }
         .place-list li {
@@ -277,7 +318,12 @@
                 <div class="map-overlay">
                     <div class="map-banner" id="mapBanner">
                         <strong>Interactive access map</strong>
-                        <span>Select a treatment on the left to see legal status by place.</span>
+                        <span>Select a treatment to see what is <b>allowed</b>, what is actually <b>offered</b>, and where rules are <b>changing</b>.</span>
+                        <div class="map-mode" id="mapMode">
+                            <button type="button" class="active" data-mode="legal">Color: legal status</button>
+                            <button type="button" data-mode="availability">Color: allowed vs offered</button>
+                            <button type="button" data-mode="legislation">Color: legislation watch</button>
+                        </div>
                     </div>
                 </div>
                 <div id="map" role="application" aria-label="World map of treatment access by jurisdiction"></div>
@@ -289,6 +335,14 @@
             <section class="card card-pad">
                 <h2><span class="step">2</span> Places for this treatment</h2>
                 <p class="muted" id="placesIntro">Choose a treatment to list countries and regions where we have access data.</p>
+                <div id="placeSummary" class="summary-bar" style="display:none;"></div>
+                <div class="filter-toggles" id="placeFilters" style="display:none;">
+                    <label><input type="checkbox" id="fAllowed" checked> Allowed by law</label>
+                    <label><input type="checkbox" id="fOffered" checked> Practically offered</label>
+                    <label><input type="checkbox" id="fPending"> Pending legislation / flux only</label>
+                    <label><input type="checkbox" id="fTrial"> Include trial-only</label>
+                    <label><input type="checkbox" id="fProhibited"> Show prohibited</label>
+                </div>
                 <ul class="place-list" id="placeList"></ul>
             </section>
 
@@ -390,13 +444,74 @@
             return esc(a.estimated_cost_range_usd || 'Cost not listed');
         }
 
+        // ── Access flags (allowed / offered / legislation) ────────────────
+        function flagsOf(row) {
+            if (row && row.access_flags) return row.access_flags;
+            // Client-side fallback if API is older
+            const legal = row?.legal_status;
+            const pathway = row?.access_pathway;
+            const vol = row?.volatility;
+            const prohibited = legal === 'Prohibited';
+            const allowed = !prohibited && legal && legal !== 'Unknown';
+            const offered = !!pathway && pathway !== 'None' && !prohibited;
+            const trial_only = legal === 'Clinical_Trial_Only' || pathway === 'Clinical_Trial_Enrollment';
+            const pending_legislation = vol === 'Pending_Legislation';
+            const active_flux = vol === 'Active_Flux';
+            return {
+                allowed, offered, trial_only, prohibited,
+                pending_legislation, active_flux,
+                legislation_watch: pending_legislation || active_flux,
+                allowed_label: prohibited ? 'Prohibited' : (allowed ? 'Allowed' : 'Unknown'),
+                offered_label: offered ? (trial_only ? 'Offered via trials only' : 'Offered') : 'Not offered',
+                legislation_label: pending_legislation ? 'Pending legislation' : (active_flux ? 'Active policy flux' : 'Stable rules'),
+            };
+        }
+
+        function flagPills(row) {
+            const f = flagsOf(row);
+            let h = '';
+            if (f.prohibited) h += '<span class="pill not-allowed">Not allowed</span>';
+            else if (f.allowed) h += '<span class="pill allowed">Allowed</span>';
+            else h += '<span class="pill">Legal status unclear</span>';
+
+            if (f.offered && f.trial_only) h += '<span class="pill trial">Offered: trials only</span>';
+            else if (f.offered) h += '<span class="pill offered">Offered</span>';
+            else h += '<span class="pill not-offered">Not offered</span>';
+
+            if (f.pending_legislation) h += '<span class="pill pending">Pending legislation</span>';
+            else if (f.active_flux) h += '<span class="pill flux">Policy in flux</span>';
+            return h;
+        }
+
+        function markerColor(row, mode) {
+            const f = flagsOf(row);
+            if (mode === 'availability') {
+                if (f.prohibited) return '#dc2626';
+                if (f.offered && f.allowed && !f.trial_only) return '#059669'; // allowed + offered
+                if (f.offered && f.trial_only) return '#7c3aed';
+                if (f.allowed && !f.offered) return '#2563eb'; // allowed not offered
+                if (f.offered) return '#d97706';
+                return '#94a3b8';
+            }
+            if (mode === 'legislation') {
+                if (f.pending_legislation) return '#d97706';
+                if (f.active_flux) return '#f59e0b';
+                if (f.prohibited) return '#dc2626';
+                if (f.offered) return '#059669';
+                return '#94a3b8';
+            }
+            return statusMeta(row.legal_status).color;
+        }
+
         // ── State ─────────────────────────────────────────────────────────
         let map, markersLayer;
         let allProcedures = [];
         let currentAccess = []; // access rows for selected procedure
+        let currentSummary = null;
         let selectedProcedureId = null;
         let selectedJurisdictionId = null;
         let markerByJur = {};
+        let mapColorMode = 'legal';
 
         async function api(path, opts) {
             const res = await fetch(API + path, opts);
@@ -413,14 +528,43 @@
             }).addTo(map);
             markersLayer = L.layerGroup().addTo(map);
             buildLegend();
+            document.getElementById('mapMode').addEventListener('click', e => {
+                const btn = e.target.closest('button[data-mode]');
+                if (!btn) return;
+                mapColorMode = btn.getAttribute('data-mode');
+                document.querySelectorAll('#mapMode button').forEach(b => b.classList.toggle('active', b === btn));
+                buildLegend();
+                paintMap(filteredAccess());
+            });
         }
 
         function buildLegend() {
+            const el = document.getElementById('legend');
+            if (mapColorMode === 'availability') {
+                el.innerHTML = [
+                    ['#059669', 'Allowed & offered'],
+                    ['#2563eb', 'Allowed, not offered'],
+                    ['#7c3aed', 'Trials only'],
+                    ['#d97706', 'Offered (gray)'],
+                    ['#dc2626', 'Prohibited'],
+                    ['#94a3b8', 'Unclear'],
+                ].map(([c, l]) => `<span class="legend-item"><span class="dot" style="background:${c}"></span>${esc(l)}</span>`).join('');
+                return;
+            }
+            if (mapColorMode === 'legislation') {
+                el.innerHTML = [
+                    ['#d97706', 'Pending legislation'],
+                    ['#f59e0b', 'Active policy flux'],
+                    ['#059669', 'Stable + offered'],
+                    ['#dc2626', 'Prohibited'],
+                    ['#94a3b8', 'Stable / other'],
+                ].map(([c, l]) => `<span class="legend-item"><span class="dot" style="background:${c}"></span>${esc(l)}</span>`).join('');
+                return;
+            }
             const order = [
                 'Fully_Approved', 'Regulated_Therapy_Program', 'Right_To_Try',
                 'Clinical_Trial_Only', 'Physician_Discretion_Gray', 'Decriminalized_Possession', 'Prohibited',
             ];
-            const el = document.getElementById('legend');
             el.innerHTML = order.map(k => {
                 const m = STATUS_META[k];
                 return `<span class="legend-item"><span class="dot" style="background:${m.color}"></span>${esc(m.label)}</span>`;
@@ -453,15 +597,19 @@
                 const j = row.jurisdiction || {};
                 const lat = j.latitude, lng = j.longitude;
                 if (lat == null || lng == null) return;
+                const color = markerColor(row, mapColorMode);
                 const meta = statusMeta(row.legal_status);
-                const m = L.marker([lat, lng], { icon: circleIcon(meta.color), title: j.name });
+                const f = flagsOf(row);
+                const m = L.marker([lat, lng], { icon: circleIcon(color), title: j.name });
                 const price = fmtPrice(row);
                 m.bindPopup(`
                     <strong>${esc(j.name)}</strong><br>
                     <span class="pill status sm" style="background:${meta.color};margin-top:.35rem;display:inline-block;">${esc(meta.label)}</span>
+                    <div class="flag-row" style="margin-top:.4rem;">${flagPills(row)}</div>
                     <div style="margin-top:.45rem;color:#64748b;font-size:.82rem;">
-                        ${esc(friendlyPathway(row.access_pathway))}<br>
-                        ${price}
+                        <b>Pathway:</b> ${esc(friendlyPathway(row.access_pathway))}<br>
+                        <b>Cost:</b> ${price}<br>
+                        <b>Rules:</b> ${esc(f.legislation_label)}
                     </div>
                     <div class="popup-actions">
                         <button type="button" onclick="window.__openJur(${JSON.stringify(j.id)})">View place details</button>
@@ -479,6 +627,66 @@
             } else {
                 map.setView([20, 10], 2);
             }
+        }
+
+        function filteredAccess() {
+            const wantAllowed = document.getElementById('fAllowed')?.checked;
+            const wantOffered = document.getElementById('fOffered')?.checked;
+            const onlyPending = document.getElementById('fPending')?.checked;
+            const includeTrial = document.getElementById('fTrial')?.checked;
+            const showProhibited = document.getElementById('fProhibited')?.checked;
+            return currentAccess.filter(row => {
+                const f = flagsOf(row);
+                if (onlyPending && !f.legislation_watch) return false;
+                if (f.prohibited) return !!showProhibited;
+
+                const matchAllowed = wantAllowed && f.allowed;
+                const matchOffered = wantOffered && f.offered && (!f.trial_only || includeTrial);
+                // If both allowed & offered are checked → show places matching either
+                // (union), so "allowed not offered" still appears under Allowed.
+                if (wantAllowed || wantOffered) return matchAllowed || matchOffered;
+                // Neither dimension checked → show all non-prohibited (pending filter may still apply)
+                return true;
+            });
+        }
+
+        function refreshPlacesView() {
+            const rows = filteredAccess();
+            paintMap(rows);
+            renderPlaceList(rows);
+            const intro = document.getElementById('placesIntro');
+            if (!currentAccess.length) {
+                intro.textContent = 'No place-level access records for this treatment yet.';
+            } else {
+                intro.textContent = `Showing ${rows.length} of ${currentAccess.length} places. Allowed = law permits it · Offered = you can actually get it there · Pending/flux = rules may change soon.`;
+            }
+        }
+
+        function renderSummary(summary, rows) {
+            const el = document.getElementById('placeSummary');
+            const filters = document.getElementById('placeFilters');
+            if (!rows.length && !summary) {
+                el.style.display = 'none';
+                filters.style.display = 'none';
+                return;
+            }
+            const s = summary || {};
+            const allowed = s.allowed ?? rows.filter(r => flagsOf(r).allowed).length;
+            const offered = s.offered ?? rows.filter(r => flagsOf(r).offered).length;
+            const gap = s.allowed_not_offered ?? rows.filter(r => flagsOf(r).allowed && !flagsOf(r).offered).length;
+            const pending = s.pending_legislation ?? rows.filter(r => flagsOf(r).pending_legislation).length;
+            const flux = s.legislation_watch ?? rows.filter(r => flagsOf(r).legislation_watch).length;
+            const prohibited = s.prohibited ?? rows.filter(r => flagsOf(r).prohibited).length;
+            el.style.display = 'grid';
+            filters.style.display = 'flex';
+            el.innerHTML = `
+                <div class="s ok"><div class="n">${allowed}</div><div class="l">Allowed</div></div>
+                <div class="s"><div class="n">${offered}</div><div class="l">Offered</div></div>
+                <div class="s"><div class="n">${gap}</div><div class="l">Allowed, not offered</div></div>
+                <div class="s warn"><div class="n">${pending}</div><div class="l">Pending law</div></div>
+                <div class="s warn"><div class="n">${flux}</div><div class="l">Watch (flux)</div></div>
+                <div class="s bad"><div class="n">${prohibited}</div><div class="l">Prohibited</div></div>
+            `;
         }
 
         window.__openJur = function (id) {
@@ -629,19 +837,28 @@
 
             try {
                 const d = await api('/api/procedures/' + encodeURIComponent(id) + '/jurisdictions');
+                currentSummary = d.summary || null;
                 currentAccess = (d.jurisdictions || []).slice().sort((a, b) => {
-                    const ra = statusMeta(a.legal_status).rank;
-                    const rb = statusMeta(b.legal_status).rank;
-                    if (ra !== rb) return ra - rb;
+                    const fa = flagsOf(a), fb = flagsOf(b);
+                    // Prefer allowed+offered, then pending legislation, then legal rank
+                    const score = (f, row) => {
+                        let s = 0;
+                        if (f.allowed && f.offered && !f.trial_only) s += 100;
+                        else if (f.allowed && f.offered) s += 80;
+                        else if (f.allowed) s += 60;
+                        else if (f.offered) s += 40;
+                        if (f.pending_legislation) s += 15;
+                        else if (f.active_flux) s += 10;
+                        s += (10 - (statusMeta(row.legal_status).rank || 8));
+                        return s;
+                    };
+                    const dscore = score(fb, b) - score(fa, a);
+                    if (dscore) return dscore;
                     return (a.jurisdiction?.name || '').localeCompare(b.jurisdiction?.name || '');
                 });
-                paintMap(currentAccess);
-                renderPlaceList(currentAccess);
+                renderSummary(currentSummary, currentAccess);
+                refreshPlacesView();
                 renderEvidence(d.indications || []);
-                const n = currentAccess.length;
-                document.getElementById('placesIntro').textContent = n
-                    ? `${n} place${n === 1 ? '' : 's'} with access data for this treatment. Sorted by most open regulatory status first.`
-                    : 'No place-level access records for this treatment yet. Many treatments are catalogued but not fully mapped.';
             } catch (e) {
                 document.getElementById('placesIntro').textContent = 'Could not load places: ' + e.message;
                 document.getElementById('evidenceBody').innerHTML = `<div class="empty">${esc(e.message)}</div>`;
@@ -651,24 +868,29 @@
         function renderPlaceList(rows) {
             const ul = document.getElementById('placeList');
             if (!rows.length) {
-                ul.innerHTML = '';
+                ul.innerHTML = '<li class="muted" style="cursor:default;padding:1rem 0;">No places match the current filters.</li>';
                 return;
             }
             ul.innerHTML = rows.map(row => {
                 const j = row.jurisdiction || {};
                 const meta = statusMeta(row.legal_status);
+                const f = flagsOf(row);
                 const active = j.id === selectedJurisdictionId ? 'active' : '';
                 return `<li class="${active}" data-jid="${esc(j.id)}">
                     <div class="title">${esc(j.name)}</div>
-                    <div class="meta">
+                    <div class="flag-row">${flagPills(row)}</div>
+                    <div class="meta" style="margin-top:.35rem;">
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
                         <span class="pill">${esc(friendlyPathway(row.access_pathway))}</span>
                         <span class="price">${fmtPrice(row)}</span>
                     </div>
-                    <p class="muted" style="margin-top:.35rem;font-size:.8rem;">${esc(friendlyOversight(row.oversight_quality))}${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 100)) + (row.arbitrage_summary.length > 100 ? '…' : '') : ''}</p>
+                    <p class="muted" style="margin-top:.35rem;font-size:.8rem;">
+                        ${esc(f.legislation_label)} · ${esc(friendlyOversight(row.oversight_quality))}
+                        ${row.arbitrage_summary ? ' · ' + esc(row.arbitrage_summary.slice(0, 90)) + (row.arbitrage_summary.length > 90 ? '…' : '') : ''}
+                    </p>
                 </li>`;
             }).join('');
-            ul.querySelectorAll('li').forEach(li => {
+            ul.querySelectorAll('li[data-jid]').forEach(li => {
                 li.addEventListener('click', () => {
                     const jid = li.getAttribute('data-jid');
                     const row = currentAccess.find(a => a.jurisdiction?.id === jid);
@@ -733,7 +955,15 @@
 
             let accessBlock = '';
             if (ar && selectedProcedureId) {
+                const f = flagsOf(ar);
                 accessBlock = `
+                    <div class="section-title">Allowed vs offered</div>
+                    <div class="flag-row">${flagPills(ar)}</div>
+                    <dl class="kv" style="margin-top:.55rem;">
+                        <dt>Allowed?</dt><dd>${esc(f.allowed_label)} — based on legal / regulatory status</dd>
+                        <dt>Offered?</dt><dd>${esc(f.offered_label)} — based on practical access pathway</dd>
+                        <dt>Legislation</dt><dd><strong>${esc(f.legislation_label)}</strong>${f.pending_legislation ? ' — watch for statute / rule changes before traveling or starting care' : (f.active_flux ? ' — enforcement or program rules may shift quickly' : '')}</dd>
+                    </dl>
                     <div class="section-title">Access for selected treatment</div>
                     <div class="chip-row">
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
@@ -811,6 +1041,9 @@
             }
         });
         document.getElementById('searchBox').addEventListener('input', () => renderProcedureSelect());
+        ['fAllowed', 'fOffered', 'fPending', 'fTrial', 'fProhibited'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => refreshPlacesView());
+        });
         document.getElementById('searchBox').addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();

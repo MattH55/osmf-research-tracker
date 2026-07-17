@@ -14,6 +14,7 @@ from sqlalchemy import or_, func
 
 from .database import init_db, reset_db, get_db, SessionLocal
 from .models import Jurisdiction, Procedure, AccessRecord, Condition, ProcedureIndication
+from .access_flags import enrich_access_dict
 from .schemas import (
     JurisdictionCreate, JurisdictionUpdate,
     ProcedureCreate, ProcedureUpdate,
@@ -172,7 +173,7 @@ def get_jurisdiction(jurisdiction_id: str, db: Session = Depends(get_db)):
         "parent": parent,
         "children": children,
         "treatments": [
-            {
+            enrich_access_dict({
                 **ar.to_dict(),
                 "procedure_name": proc.name,
                 "modality": proc.modality.value if hasattr(proc.modality, "value") else proc.modality,
@@ -182,7 +183,7 @@ def get_jurisdiction(jurisdiction_id: str, db: Session = Depends(get_db)):
                     else proc.regulatory_modality
                 ),
                 "typical_us_cost_range": proc.typical_us_cost_range,
-            }
+            })
             for ar, proc in rows
         ],
     }
@@ -318,7 +319,7 @@ def _access_row_to_dict(row) -> dict:
     d["jurisdiction_country_code"] = row.jurisdiction_country_code
     d["jurisdiction_latitude"] = row.jurisdiction_latitude
     d["jurisdiction_longitude"] = row.jurisdiction_longitude
-    return d
+    return enrich_access_dict(d)
 
 
 def _access_query(db: Session):
@@ -388,7 +389,7 @@ def get_access_record(record_id: str, db: Session = Depends(get_db)):
     ar = db.query(AccessRecord).filter(AccessRecord.id == record_id).first()
     if not ar:
         raise HTTPException(status_code=404, detail="Access record not found")
-    return ar.to_dict()
+    return enrich_access_dict(ar.to_dict())
 
 
 @app.post("/api/access-records")
@@ -489,9 +490,27 @@ def get_procedure_jurisdictions(procedure_id: str, db: Session = Depends(get_db)
         .all()
     )
 
+    juris = [
+        enrich_access_dict({**ar.to_dict(), "jurisdiction": j.to_dict()})
+        for ar, j in rows
+    ]
+    summary = {
+        "total": len(juris),
+        "allowed": sum(1 for x in juris if x.get("access_flags", {}).get("allowed")),
+        "offered": sum(1 for x in juris if x.get("access_flags", {}).get("offered")),
+        "allowed_not_offered": sum(
+            1 for x in juris
+            if x.get("access_flags", {}).get("allowed") and not x.get("access_flags", {}).get("offered")
+        ),
+        "trial_only": sum(1 for x in juris if x.get("access_flags", {}).get("trial_only")),
+        "prohibited": sum(1 for x in juris if x.get("access_flags", {}).get("prohibited")),
+        "pending_legislation": sum(1 for x in juris if x.get("access_flags", {}).get("pending_legislation")),
+        "legislation_watch": sum(1 for x in juris if x.get("access_flags", {}).get("legislation_watch")),
+    }
     return {
         "procedure": procedure.to_dict(),
-        "jurisdictions": [{**ar.to_dict(), "jurisdiction": j.to_dict()} for ar, j in rows],
+        "jurisdictions": juris,
+        "summary": summary,
         "indications": [
             {**pi.to_dict(), "condition": c.to_dict()}
             for pi, c in indications
