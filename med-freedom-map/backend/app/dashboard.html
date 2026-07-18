@@ -3023,6 +3023,27 @@
                 therapies = `<div class="empty" style="margin-top:.4rem;">No approved gene therapy yet.${i.pipeline_note ? ' ' + esc(i.pipeline_note) : ''}</div>`;
             }
 
+            let repurpos = '';
+            if (i.repurpos) {
+                const r = i.repurpos;
+                const rows = (r.candidates || []).map(c => `<tr>
+                    <td>${c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a>` : `<strong>${esc(c.name)}</strong>`}
+                        ${c.repurposing ? '<span class="pill" style="background:#ede9fe;color:#6d28d9;margin-left:.3rem;">repurposing</span>' : ''}</td>
+                    <td class="muted">${esc(c.drug_type || '')}</td>
+                    <td>${esc(c.phase || '')}</td>
+                    <td class="muted">${esc(c.evidence || '')}</td></tr>`).join('');
+                const totalNote = r.candidate_total ? ` (top ${(r.candidates || []).length} of ${r.candidate_total} ranked)` : '';
+                repurpos = `<div style="margin-top:.7rem;padding-top:.6rem;border-top:1px dashed #e2e8f0;">
+                    <div style="display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline;justify-content:space-between;">
+                        <strong style="font-size:.85rem;">Top candidates for management — repurposing intelligence${totalNote}</strong>
+                        <a class="btn-sm" style="background:var(--brand2);color:#fff;text-decoration:none;padding:.35rem .7rem;border-radius:6px;" href="${esc(r.url)}" target="_blank" rel="noopener">Open RepurpOS page ↗</a>
+                    </div>
+                    ${rows ? `<table style="margin-top:.4rem;"><thead><tr><th>Candidate</th><th>Type</th><th>Max phase</th><th>Evidence</th></tr></thead><tbody>${rows}</tbody></table>`
+                        : '<p class="muted" style="margin:.35rem 0 0;font-size:.8rem;">See the RepurpOS page for ranked candidates.</p>'}
+                    <p class="muted" style="margin:.35rem 0 0;font-size:.75rem;">Management candidates are for symptom/disease management and are ranked, unapproved-for-this-use signals — not a substitute for the approved gene therapy or medical advice.</p>
+                </div>`;
+            }
+
             const sources = (i.sources || []).map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(' · ');
 
             return `<div class="gt-card">
@@ -3042,6 +3063,7 @@
                     <p class="muted" style="margin:.2rem 0 0;font-size:.82rem;">${esc(i.genetic_test || i.biomarker || '—')}</p></div>
                 <div style="margin-top:.6rem;"><strong style="font-size:.85rem;">Approved products</strong>${therapies}</div>
                 ${i.other_treatments ? `<p class="muted" style="margin:.5rem 0 0;font-size:.8rem;"><strong>Non-gene-therapy options:</strong> ${esc(i.other_treatments)}</p>` : ''}
+                ${repurpos}
                 <div style="margin-top:.7rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
                     <a class="btn-sm" style="background:var(--brand);color:#fff;text-decoration:none;padding:.4rem .8rem;border-radius:6px;" href="${esc(i.trials_url)}" target="_blank" rel="noopener">🔬 Recruiting trials ↗</a>
                     <a class="muted" style="font-size:.8rem;" href="${esc(i.trials_url_all)}" target="_blank" rel="noopener">All trials ↗</a>
