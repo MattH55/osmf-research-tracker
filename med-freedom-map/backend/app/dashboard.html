@@ -30,6 +30,11 @@
             min-height: 100vh;
         }
         a { color: var(--brand); }
+        .gt-card { border: 1px solid var(--line, #e2e8f0); border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: .9rem; background: #fff; }
+        .gt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; }
+        .gt-stats { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: .6rem; padding: .55rem .75rem; background: #f8fafc; border-radius: 8px; }
+        .gt-stat-n { font-size: 1rem; font-weight: 750; color: var(--brand2, #7c3aed); }
+        .gt-stat-l { font-size: .72rem; color: #64748b; text-transform: uppercase; letter-spacing: .03em; }
 
         /* ── Hero ── */
         .hero {
@@ -648,6 +653,7 @@
                 <button type="button" class="btn-outline" style="margin-left:auto;background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="window.__openOnboarding(true)">Guide me</button>
                 <button type="button" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="window.__openProfile()">My readiness</button>
                 <button type="button" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="window.__toggleWatchPanel()">Watchlist <span id="watchCountBadge" style="opacity:.85;"></span></button>
+                <button type="button" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="document.getElementById('geneTherapySection').scrollIntoView({behavior:'smooth'})">🧬 Gene therapy</button>
             </div>
             <div class="hero-stats">
                 <div class="hero-stat"><div class="n" id="s-proc">–</div><div class="l">Service lines</div></div>
@@ -905,6 +911,26 @@
                 <span class="muted">E1 = multi-RCT · E2 = one strong RCT · E3 = small/mixed · E4 = uncontrolled · E5 = case series · E6–E8 = preclinical/none.</span>
             </p>
             <div id="evidenceBody"><div class="empty">Select a service line to load evidence grades.</div></div>
+        </section>
+
+        <section class="card card-pad" style="margin-top:1rem;" id="geneTherapySection">
+            <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;justify-content:space-between;">
+                <h2 style="margin:0;">🧬 Gene Therapy Mapper — monogenic diseases</h2>
+                <span class="muted" id="gtAsOf" style="font-size:.78rem;"></span>
+            </div>
+            <p class="muted" style="margin:.4rem 0 .75rem;">
+                Single-gene diseases with an approved or clinically advanced gene therapy. Each card shows the causal gene,
+                the genetic test/biomarker to stratify patients, rough disease burden &amp; patient population, approved products,
+                and a live search for recruiting trials. <strong>Rough estimates — not medical advice.</strong>
+            </p>
+            <div class="row" style="gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;">
+                <input type="text" id="gtSearch" placeholder="Filter by disease or gene (e.g. SMN1, sickle, DMD)…"
+                    style="flex:1;min-width:220px;" oninput="window.__renderGeneTherapies()">
+                <label class="muted" style="display:flex;align-items:center;gap:.35rem;font-size:.85rem;">
+                    <input type="checkbox" id="gtApprovedOnly" onchange="window.__renderGeneTherapies()"> Approved only
+                </label>
+            </div>
+            <div id="geneTherapyBody" class="loading">Loading gene therapies…</div>
         </section>
     </main>
 
@@ -2941,6 +2967,89 @@
             return res.json();
         }
 
+        // ── Gene Therapy Mapper ─────────────────────────────────────────────
+        let gtData = null;
+
+        async function loadGeneTherapies() {
+            const body = document.getElementById('geneTherapyBody');
+            if (!body) return;
+            try {
+                gtData = await api('/api/gene-therapies');
+                const asOf = document.getElementById('gtAsOf');
+                if (asOf) asOf.textContent = `${gtData.count} diseases · ${gtData.approved_therapy_count} approved products · as of ${gtData.as_of}`;
+                window.__renderGeneTherapies();
+            } catch (e) {
+                body.className = '';
+                body.innerHTML = '<div class="empty">Could not load gene therapies: ' + esc(e.message) + '</div>';
+            }
+        }
+
+        window.__renderGeneTherapies = function () {
+            const body = document.getElementById('geneTherapyBody');
+            if (!body || !gtData) return;
+            const q = (document.getElementById('gtSearch').value || '').toLowerCase().trim();
+            const approvedOnly = document.getElementById('gtApprovedOnly').checked;
+            let items = gtData.items;
+            if (approvedOnly) items = items.filter(i => i.has_approved);
+            if (q) items = items.filter(i => i.disease.toLowerCase().includes(q) || (i.gene || '').toLowerCase().includes(q));
+
+            body.className = '';
+            if (!items.length) { body.innerHTML = '<div class="empty">No matching diseases.</div>'; return; }
+
+            body.innerHTML = items.map(gtCard).join('');
+        };
+
+        function gtCard(i) {
+            const b = i.burden || {};
+            const stat = (label, val) => val ? `<div class="gt-stat"><div class="gt-stat-n">${esc(val)}</div><div class="gt-stat-l">${esc(label)}</div></div>` : '';
+            const burden = `<div class="gt-stats">
+                ${stat('Incidence', b.incidence)}
+                ${stat('US patients', b.us_patients)}
+                ${stat('Global patients', b.global_patients)}
+                ${b.carrier_frequency ? stat('Carrier freq.', b.carrier_frequency) : ''}
+            </div>${b.notes ? `<p class="muted" style="margin:.35rem 0 0;font-size:.82rem;">${esc(b.notes)}</p>` : ''}`;
+
+            let therapies;
+            if (i.approved_therapies && i.approved_therapies.length) {
+                therapies = '<table style="margin-top:.4rem;"><thead><tr><th>Approved product</th><th>Construct</th><th>Sponsor</th><th>First approval</th><th>US list price</th></tr></thead><tbody>' +
+                    i.approved_therapies.map(t => `<tr>
+                        <td><strong>${esc(t.name)}</strong>${t.eligibility ? `<div class="muted" style="font-size:.78rem;">${esc(t.eligibility)}</div>` : ''}</td>
+                        <td class="muted">${esc(t.construct || '')}</td>
+                        <td>${esc(t.sponsor || '')}</td>
+                        <td>${esc(t.approved || '')}</td>
+                        <td>${esc(t.list_price_usd || '')}</td></tr>`).join('') +
+                    '</tbody></table>';
+            } else {
+                therapies = `<div class="empty" style="margin-top:.4rem;">No approved gene therapy yet.${i.pipeline_note ? ' ' + esc(i.pipeline_note) : ''}</div>`;
+            }
+
+            const sources = (i.sources || []).map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(' · ');
+
+            return `<div class="gt-card">
+                <div class="gt-head">
+                    <div>
+                        <h3 style="margin:0;">${esc(i.disease)}</h3>
+                        <div style="margin-top:.3rem;display:flex;gap:.4rem;flex-wrap:wrap;">
+                            <span class="pill">Gene: ${esc(i.gene)}</span>
+                            <span class="pill" style="background:#f1f5f9;color:#475569;">${esc(i.inheritance || '')}</span>
+                            ${i.has_approved ? '<span class="pill" style="background:#dcfce7;color:#166534;">Approved therapy</span>' : '<span class="pill" style="background:#fef9c3;color:#854d0e;">Investigational</span>'}
+                        </div>
+                    </div>
+                </div>
+                ${i.mechanism ? `<p class="muted" style="margin:.5rem 0 .35rem;font-size:.85rem;"><strong>Approach:</strong> ${esc(i.mechanism)}</p>` : ''}
+                ${burden}
+                <div style="margin-top:.6rem;"><strong style="font-size:.85rem;">Genetic test / biomarker for stratification</strong>
+                    <p class="muted" style="margin:.2rem 0 0;font-size:.82rem;">${esc(i.genetic_test || i.biomarker || '—')}</p></div>
+                <div style="margin-top:.6rem;"><strong style="font-size:.85rem;">Approved products</strong>${therapies}</div>
+                ${i.other_treatments ? `<p class="muted" style="margin:.5rem 0 0;font-size:.8rem;"><strong>Non-gene-therapy options:</strong> ${esc(i.other_treatments)}</p>` : ''}
+                <div style="margin-top:.7rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+                    <a class="btn-sm" style="background:var(--brand);color:#fff;text-decoration:none;padding:.4rem .8rem;border-radius:6px;" href="${esc(i.trials_url)}" target="_blank" rel="noopener">🔬 Recruiting trials ↗</a>
+                    <a class="muted" style="font-size:.8rem;" href="${esc(i.trials_url_all)}" target="_blank" rel="noopener">All trials ↗</a>
+                    ${sources ? `<span class="muted" style="font-size:.78rem;">Sources: ${sources}</span>` : ''}
+                </div>
+            </div>`;
+        }
+
         // ── Map ───────────────────────────────────────────────────────────
         function initMap() {
             map = L.map('map', { worldCopyJump: true, scrollWheelZoom: true }).setView([20, 10], 2);
@@ -3942,6 +4051,7 @@
                 if (em && document.getElementById('watchEmail')) document.getElementById('watchEmail').value = em;
             } catch (e) {}
             initMap();
+            loadGeneTherapies();
             const s = await refreshStats();
             if (s && s.jurisdictions > 0) {
                 await bootstrap();

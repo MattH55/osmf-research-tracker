@@ -1,0 +1,407 @@
+"""Gene Therapy Mapper — curated reference dataset for monogenic diseases.
+
+Scope: diseases that are monogenic (or effectively single-gene addressable) and have
+an approved gene/cell-gene therapy or a clinically advanced program. Served read-only
+via /api/gene-therapies; it is reference data, not the transactional access map, so it
+lives in code rather than the database (no migration, no free-tier seed memory cost).
+
+Data conventions / honesty rules:
+- Disease-burden numbers are ROUGH order-of-magnitude estimates from public literature
+  and patient-advocacy sources. They vary by ancestry, ascertainment, and definition.
+  Treat as planning figures, not epidemiology of record.
+- Clinical trials are linked as *live ClinicalTrials.gov searches* per condition, not
+  hand-copied NCT numbers, so the list stays current and nothing is fabricated.
+- Approved-therapy facts (name, sponsor, first approval, list price) are widely reported
+  public facts as of the AS_OF date; prices are US list (WAC) and move over time.
+
+To extend: append a dict to GENE_THERAPIES following the shape below. `trials_url` is
+generated for you if omitted.
+"""
+from urllib.parse import quote_plus
+
+AS_OF = "2026-07"
+
+# NOTE: keep entries factual and sourced. Burden = rough estimate.
+GENE_THERAPIES = [
+    {
+        "id": "sma",
+        "disease": "Spinal Muscular Atrophy (SMA)",
+        "gene": "SMN1",
+        "inheritance": "Autosomal recessive",
+        "omim": "253300",
+        "mechanism": "AAV9 delivery of a functional SMN1 gene copy (SMN2 copy number modifies severity).",
+        "biomarker": "Homozygous SMN1 exon 7 deletion/mutation; SMN2 copy number for prognosis.",
+        "genetic_test": "SMN1 deletion testing (MLPA/qPCR); included in newborn screening in most US states and a growing number of countries.",
+        "burden": {
+            "incidence": "~1 in 10,000 live births",
+            "carrier_frequency": "~1 in 40-50",
+            "us_patients": "~10,000-25,000 living",
+            "global_patients": "hundreds of thousands",
+            "notes": "Historically the leading genetic cause of infant mortality.",
+        },
+        "approved_therapies": [
+            {"name": "Zolgensma (onasemnogene abeparvovec)", "construct": "AAV9-SMN1, one-time IV",
+             "sponsor": "Novartis", "approved": "US 2019; EU 2020; Japan 2020",
+             "list_price_usd": "~2,100,000 (one-time)", "eligibility": "Typically <2 years; weight-based dosing"},
+        ],
+        "other_treatments": "Nusinersen (Spinraza, antisense, intrathecal) and risdiplam (Evrysdi, oral) are non-gene-therapy disease-modifying drugs.",
+        "sources": [
+            {"title": "FDA — Zolgensma", "url": "https://www.fda.gov/vaccines-blood-biologics/zolgensma"},
+            {"title": "Cure SMA — About SMA", "url": "https://www.curesma.org/about-sma/"},
+        ],
+    },
+    {
+        "id": "rpe65-lca",
+        "disease": "RPE65-mediated inherited retinal dystrophy (Leber congenital amaurosis type 2 / retinitis pigmentosa)",
+        "gene": "RPE65",
+        "inheritance": "Autosomal recessive",
+        "omim": "204100",
+        "mechanism": "Subretinal AAV2 delivery of RPE65 to retinal pigment epithelium.",
+        "biomarker": "Biallelic RPE65 pathogenic variants with viable retinal cells.",
+        "genetic_test": "Inherited retinal disease gene panel / confirmatory RPE65 sequencing; requires documented biallelic variants.",
+        "burden": {
+            "incidence": "RPE65 disease affects ~1 in 200,000",
+            "us_patients": "~1,000-3,000",
+            "global_patients": "tens of thousands",
+            "notes": "First FDA-approved directly administered gene therapy for an inherited disease.",
+        },
+        "approved_therapies": [
+            {"name": "Luxturna (voretigene neparvovec)", "construct": "AAV2-RPE65, subretinal, per-eye",
+             "sponsor": "Spark Therapeutics (Roche)", "approved": "US 2017; EU 2018",
+             "list_price_usd": "~425,000 per eye (~850,000 bilateral)", "eligibility": "Confirmed biallelic RPE65, viable retinal cells"},
+        ],
+        "sources": [
+            {"title": "FDA — Luxturna", "url": "https://www.fda.gov/vaccines-blood-biologics/luxturna"},
+        ],
+    },
+    {
+        "id": "scd",
+        "disease": "Sickle Cell Disease (SCD)",
+        "gene": "HBB",
+        "inheritance": "Autosomal recessive",
+        "omim": "603903",
+        "mechanism": "Autologous CD34+ HSC editing — CRISPR of BCL11A enhancer to raise fetal hemoglobin (Casgevy), or lentiviral anti-sickling β-globin (Lyfgenia).",
+        "biomarker": "Homozygous HbS (βS/βS) or compound heterozygous genotypes; hemoglobin electrophoresis.",
+        "genetic_test": "Hemoglobin electrophoresis / HBB sequencing; newborn screening universal in the US.",
+        "burden": {
+            "incidence": "~1 in 365 US Black newborns; ~300,000+ affected births/year globally",
+            "us_patients": "~100,000",
+            "global_patients": "~7-8 million",
+            "notes": "Major global burden concentrated in sub-Saharan Africa and India.",
+        },
+        "approved_therapies": [
+            {"name": "Casgevy (exagamglogene autotemcel, exa-cel)", "construct": "CRISPR-edited autologous HSCs (ex vivo)",
+             "sponsor": "Vertex / CRISPR Therapeutics", "approved": "US 2023; UK/EU 2023-2024",
+             "list_price_usd": "~2,200,000", "eligibility": "Age ≥12 with recurrent vaso-occlusive crises"},
+            {"name": "Lyfgenia (lovotibeglogene autotemcel)", "construct": "Lentiviral β-globin gene addition (ex vivo)",
+             "sponsor": "bluebird bio", "approved": "US 2023",
+             "list_price_usd": "~3,100,000", "eligibility": "Age ≥12 with vaso-occlusive events"},
+        ],
+        "sources": [
+            {"title": "FDA — Casgevy / Lyfgenia approvals", "url": "https://www.fda.gov/news-events/press-announcements/fda-approves-first-gene-therapies-treat-patients-sickle-cell-disease"},
+            {"title": "CDC — Sickle Cell Data", "url": "https://www.cdc.gov/sickle-cell/data/"},
+        ],
+    },
+    {
+        "id": "beta-thal",
+        "disease": "Transfusion-dependent β-thalassemia",
+        "gene": "HBB",
+        "inheritance": "Autosomal recessive",
+        "omim": "613985",
+        "mechanism": "Autologous HSC gene addition of functional β-globin (Zynteglo) or BCL11A editing to raise HbF (Casgevy).",
+        "biomarker": "HBB pathogenic variants with transfusion dependence.",
+        "genetic_test": "HBB sequencing; hemoglobin studies; transfusion history.",
+        "burden": {
+            "incidence": "~1 in 100,000 globally (much higher in Mediterranean, Middle East, South/SE Asia)",
+            "us_patients": "~1,000 transfusion-dependent",
+            "global_patients": "~hundreds of thousands transfusion-dependent",
+            "notes": "Carrier frequency very high in endemic regions.",
+        },
+        "approved_therapies": [
+            {"name": "Zynteglo (betibeglogene autotemcel)", "construct": "Lentiviral β-globin gene addition (ex vivo)",
+             "sponsor": "bluebird bio", "approved": "US 2022; (EU approval later withdrawn commercially)",
+             "list_price_usd": "~2,800,000", "eligibility": "Transfusion-dependent, all genotypes"},
+            {"name": "Casgevy (exa-cel)", "construct": "CRISPR-edited autologous HSCs (ex vivo)",
+             "sponsor": "Vertex / CRISPR Therapeutics", "approved": "US/UK/EU 2023-2024",
+             "list_price_usd": "~2,200,000", "eligibility": "Age ≥12, transfusion-dependent"},
+        ],
+        "sources": [
+            {"title": "FDA — Zynteglo", "url": "https://www.fda.gov/vaccines-blood-biologics/zynteglo"},
+        ],
+    },
+    {
+        "id": "hemophilia-b",
+        "disease": "Hemophilia B (Factor IX deficiency)",
+        "gene": "F9",
+        "inheritance": "X-linked recessive",
+        "omim": "306900",
+        "mechanism": "AAV-delivered F9 (often the hyperactive Padua variant) to hepatocytes for endogenous Factor IX.",
+        "biomarker": "Low Factor IX activity; F9 pathogenic variant.",
+        "genetic_test": "Factor IX activity assay + F9 sequencing; AAV neutralizing-antibody screen for eligibility.",
+        "burden": {
+            "incidence": "~1 in 30,000 male births",
+            "us_patients": "~5,000-7,000",
+            "global_patients": "~35,000-40,000 (diagnosed)",
+            "notes": "About 1/4 as common as hemophilia A.",
+        },
+        "approved_therapies": [
+            {"name": "Hemgenix (etranacogene dezaparvovec)", "construct": "AAV5-F9 Padua, one-time IV",
+             "sponsor": "CSL Behring / uniQure", "approved": "US 2022; EU 2023",
+             "list_price_usd": "~3,500,000 (one-time)", "eligibility": "Adults, low AAV5 neutralizing antibodies"},
+        ],
+        "sources": [
+            {"title": "FDA — Hemgenix", "url": "https://www.fda.gov/vaccines-blood-biologics/hemgenix"},
+        ],
+    },
+    {
+        "id": "hemophilia-a",
+        "disease": "Hemophilia A (Factor VIII deficiency)",
+        "gene": "F8",
+        "inheritance": "X-linked recessive",
+        "omim": "306700",
+        "mechanism": "AAV-delivered B-domain-deleted F8 to hepatocytes for endogenous Factor VIII.",
+        "biomarker": "Low Factor VIII activity; F8 pathogenic variant.",
+        "genetic_test": "Factor VIII activity assay + F8 sequencing; AAV5 neutralizing-antibody screen.",
+        "burden": {
+            "incidence": "~1 in 5,000 male births",
+            "us_patients": "~20,000-25,000",
+            "global_patients": "~150,000+ (diagnosed)",
+            "notes": "Most common severe inherited bleeding disorder.",
+        },
+        "approved_therapies": [
+            {"name": "Roctavian (valoctocogene roxaparvovec)", "construct": "AAV5-F8 (BDD), one-time IV",
+             "sponsor": "BioMarin", "approved": "US 2023; EU 2022",
+             "list_price_usd": "~2,900,000 (one-time)", "eligibility": "Adults with severe HemA, low AAV5 antibodies"},
+        ],
+        "sources": [
+            {"title": "FDA — Roctavian", "url": "https://www.fda.gov/vaccines-blood-biologics/roctavian"},
+        ],
+    },
+    {
+        "id": "dmd",
+        "disease": "Duchenne Muscular Dystrophy (DMD)",
+        "gene": "DMD (dystrophin)",
+        "inheritance": "X-linked recessive",
+        "omim": "310200",
+        "mechanism": "AAV delivery of a shortened engineered 'micro-dystrophin' gene to muscle.",
+        "biomarker": "DMD pathogenic variant; absent/near-absent dystrophin.",
+        "genetic_test": "DMD deletion/duplication (MLPA) + sequencing; needed to confirm mutation type/amenability.",
+        "burden": {
+            "incidence": "~1 in 3,500-5,000 male births",
+            "us_patients": "~10,000-15,000",
+            "global_patients": "~300,000 males",
+            "notes": "Micro-dystrophin restores a partial protein, not full-length dystrophin.",
+        },
+        "approved_therapies": [
+            {"name": "Elevidys (delandistrogene moxeparvovec)", "construct": "AAVrh74 micro-dystrophin, one-time IV",
+             "sponsor": "Sarepta / Roche", "approved": "US 2023 (accelerated; label later expanded)",
+             "list_price_usd": "~3,200,000 (one-time)", "eligibility": "Ambulatory/non-ambulatory per evolving label; confirmed DMD mutation"},
+        ],
+        "other_treatments": "Exon-skipping antisense drugs (eteplirsen, golodirsen, viltolarsen, casimersen) are mutation-specific, non-gene-therapy options.",
+        "sources": [
+            {"title": "FDA — Elevidys", "url": "https://www.fda.gov/vaccines-blood-biologics/elevidys"},
+        ],
+    },
+    {
+        "id": "mld",
+        "disease": "Metachromatic Leukodystrophy (MLD)",
+        "gene": "ARSA",
+        "inheritance": "Autosomal recessive",
+        "omim": "250100",
+        "mechanism": "Ex vivo lentiviral ARSA gene addition to autologous HSCs (pre-symptomatic/early).",
+        "biomarker": "Low arylsulfatase A activity; ARSA variants; elevated urinary sulfatides.",
+        "genetic_test": "ARSA enzyme activity + gene sequencing; early/pre-symptomatic detection is critical.",
+        "burden": {
+            "incidence": "~1 in 40,000-160,000",
+            "us_patients": "~low thousands",
+            "global_patients": "tens of thousands",
+            "notes": "Benefit depends on treating before major neurologic decline.",
+        },
+        "approved_therapies": [
+            {"name": "Lenmeldy (atidarsagene autotemcel) / Libmeldy (EU)", "construct": "Lentiviral ARSA autologous HSCs (ex vivo)",
+             "sponsor": "Orchard Therapeutics", "approved": "EU 2020 (Libmeldy); US 2024 (Lenmeldy)",
+             "list_price_usd": "~4,250,000 (among the highest listed)", "eligibility": "Pre-/early-symptomatic late-infantile or early-juvenile"},
+        ],
+        "sources": [
+            {"title": "FDA — Lenmeldy", "url": "https://www.fda.gov/vaccines-blood-biologics/lenmeldy"},
+        ],
+    },
+    {
+        "id": "cald",
+        "disease": "Cerebral Adrenoleukodystrophy (CALD)",
+        "gene": "ABCD1",
+        "inheritance": "X-linked recessive",
+        "omim": "300100",
+        "mechanism": "Ex vivo lentiviral ABCD1 gene addition to autologous HSCs.",
+        "biomarker": "Elevated very-long-chain fatty acids (VLCFA); ABCD1 variant; MRI lesion (Loes score).",
+        "genetic_test": "Plasma VLCFA + ABCD1 sequencing; MRI surveillance for cerebral progression.",
+        "burden": {
+            "incidence": "X-ALD ~1 in 15,000-17,000 (all forms); a subset develop cerebral form",
+            "us_patients": "~thousands (X-ALD overall)",
+            "global_patients": "tens of thousands (X-ALD overall)",
+            "notes": "Skysona carries a boxed warning for hematologic malignancy risk.",
+        },
+        "approved_therapies": [
+            {"name": "Skysona (elivaldogene autotemcel)", "construct": "Lentiviral ABCD1 autologous HSCs (ex vivo)",
+             "sponsor": "bluebird bio", "approved": "US 2022; EU 2021",
+             "list_price_usd": "~3,000,000", "eligibility": "Early active CALD, boys 4-17, when no matched donor"},
+        ],
+        "sources": [
+            {"title": "FDA — Skysona", "url": "https://www.fda.gov/vaccines-blood-biologics/skysona"},
+        ],
+    },
+    {
+        "id": "aadc",
+        "disease": "Aromatic L-amino Acid Decarboxylase (AADC) Deficiency",
+        "gene": "DDC",
+        "inheritance": "Autosomal recessive",
+        "omim": "608643",
+        "mechanism": "Stereotactic AAV2-hAADC delivered directly to the putamen.",
+        "biomarker": "Low AADC activity; DDC variants; low CSF neurotransmitter metabolites.",
+        "genetic_test": "DDC sequencing + CSF neurotransmitter metabolites + plasma AADC activity.",
+        "burden": {
+            "incidence": "Ultra-rare; hundreds reported worldwide (higher in Taiwan/Japan)",
+            "us_patients": "<100 known",
+            "global_patients": "hundreds",
+            "notes": "First approved gene therapy delivered directly into the brain.",
+        },
+        "approved_therapies": [
+            {"name": "Kebilidi (eladocagene exuparvovec) / Upstaza (EU)", "construct": "AAV2-hAADC, intraputaminal",
+             "sponsor": "PTC Therapeutics", "approved": "EU 2022 (Upstaza); US 2024 (Kebilidi)",
+             "list_price_usd": "~3,000,000 (region-dependent)", "eligibility": "Confirmed AADC deficiency, ≥18 months"},
+        ],
+        "sources": [
+            {"title": "FDA — Kebilidi", "url": "https://www.fda.gov/vaccines-blood-biologics/kebilidi"},
+        ],
+    },
+    {
+        "id": "ada-scid",
+        "disease": "ADA-SCID (severe combined immunodeficiency due to adenosine deaminase deficiency)",
+        "gene": "ADA",
+        "inheritance": "Autosomal recessive",
+        "omim": "102700",
+        "mechanism": "Ex vivo gammaretroviral/lentiviral ADA gene addition to autologous HSCs.",
+        "biomarker": "Absent ADA enzyme activity; ADA variants; very low T/B/NK cells.",
+        "genetic_test": "ADA enzyme activity + gene sequencing; SCID picked up on TREC newborn screening.",
+        "burden": {
+            "incidence": "ADA-SCID ~1 in 200,000-1,000,000",
+            "us_patients": "<100 (very rare)",
+            "global_patients": "hundreds",
+            "notes": "Strimvelis is delivered at a single center in Milan, Italy.",
+        },
+        "approved_therapies": [
+            {"name": "Strimvelis", "construct": "Gammaretroviral ADA autologous CD34+ cells (ex vivo)",
+             "sponsor": "Orchard Therapeutics", "approved": "EU 2016",
+             "list_price_usd": "~700,000 (EU, single-center)", "eligibility": "ADA-SCID with no matched related donor"},
+        ],
+        "other_treatments": "Enzyme replacement (PEG-ADA) and allogeneic HSCT are alternatives.",
+        "sources": [
+            {"title": "EMA — Strimvelis", "url": "https://www.ema.europa.eu/en/medicines/human/EPAR/strimvelis"},
+        ],
+    },
+    {
+        "id": "lpld",
+        "disease": "Lipoprotein Lipase Deficiency (LPLD)",
+        "gene": "LPL",
+        "inheritance": "Autosomal recessive",
+        "omim": "238600",
+        "mechanism": "AAV1-LPL(S447X) intramuscular injection (historical).",
+        "biomarker": "Severe hypertriglyceridemia; absent LPL activity; LPL variants.",
+        "genetic_test": "LPL sequencing + post-heparin lipase activity.",
+        "burden": {
+            "incidence": "~1 in 1,000,000",
+            "us_patients": "<500",
+            "global_patients": "~thousands",
+            "notes": "Glybera was the first gene therapy approved in the West (EU 2012) but was withdrawn commercially in 2017 — a landmark cautionary tale on ultra-rare pricing.",
+        },
+        "approved_therapies": [
+            {"name": "Glybera (alipogene tiparvovec) — WITHDRAWN", "construct": "AAV1-LPL(S447X), intramuscular",
+             "sponsor": "uniQure", "approved": "EU 2012 (withdrawn 2017)",
+             "list_price_usd": "~1,000,000 (historical; treated ~1 commercial patient)", "eligibility": "Historical"},
+        ],
+        "sources": [
+            {"title": "EMA — Glybera (withdrawn)", "url": "https://www.ema.europa.eu/en/medicines/human/EPAR/glybera"},
+        ],
+    },
+    {
+        "id": "cf",
+        "disease": "Cystic Fibrosis (CF)",
+        "gene": "CFTR",
+        "inheritance": "Autosomal recessive",
+        "omim": "219700",
+        "mechanism": "No gene therapy approved. Active inhaled gene/mRNA and editing programs aim to address mutations not covered by modulators.",
+        "biomarker": "CFTR variants (e.g., F508del); sweat chloride; included in newborn screening.",
+        "genetic_test": "CFTR variant panel / full-gene sequencing + sweat chloride test.",
+        "burden": {
+            "incidence": "~1 in 2,500-3,500 in populations of European descent",
+            "us_patients": "~40,000",
+            "global_patients": "~100,000+",
+            "notes": "CFTR modulators (e.g., Trikafta) transformed care but do not help all genotypes — the gap gene therapy targets.",
+        },
+        "approved_therapies": [],
+        "other_treatments": "CFTR modulators (ivacaftor, lumacaftor, tezacaftor, elexacaftor/Trikafta) are approved small molecules, not gene therapy.",
+        "pipeline_note": "Inhaled lentiviral, AAV, and LNP/mRNA CFTR programs are in clinical/preclinical development.",
+        "sources": [
+            {"title": "Cystic Fibrosis Foundation", "url": "https://www.cff.org/"},
+        ],
+    },
+    {
+        "id": "lhon",
+        "disease": "Leber Hereditary Optic Neuropathy (LHON)",
+        "gene": "MT-ND4 (mitochondrial)",
+        "inheritance": "Mitochondrial (maternal)",
+        "omim": "535000",
+        "mechanism": "Intravitreal AAV2 allotopic expression of ND4 (investigational; not yet approved).",
+        "biomarker": "Primary mtDNA variants (m.11778G>A most common).",
+        "genetic_test": "Mitochondrial DNA testing for the three primary LHON variants.",
+        "burden": {
+            "incidence": "~1 in 30,000-50,000",
+            "us_patients": "~thousands",
+            "global_patients": "tens of thousands",
+            "notes": "Late-stage trials (e.g., lenadogene nolparvovec) reported bilateral improvement; regulatory status still evolving.",
+        },
+        "approved_therapies": [],
+        "pipeline_note": "Lenadogene nolparvovec (GS010) and related AAV2-ND4 programs are in late-stage development; no full approval as of the AS_OF date.",
+        "sources": [
+            {"title": "ClinicalTrials.gov — LHON gene therapy", "url": "https://clinicaltrials.gov/search?cond=Leber%20Hereditary%20Optic%20Neuropathy&term=gene%20therapy"},
+        ],
+    },
+]
+
+
+def _trials_url(disease_name: str, recruiting_only: bool = True) -> str:
+    """Live ClinicalTrials.gov search for gene-therapy studies of a condition."""
+    base = (
+        "https://clinicaltrials.gov/search?"
+        f"cond={quote_plus(disease_name)}&term={quote_plus('gene therapy')}"
+    )
+    if recruiting_only:
+        base += "&aggFilters=status:rec"
+    return base
+
+
+def get_gene_therapies() -> dict:
+    """Return the full dataset with generated trial links and summary counts."""
+    items = []
+    for entry in GENE_THERAPIES:
+        e = dict(entry)
+        # Primary condition name (strip parenthetical) for a cleaner trials search.
+        cond = e["disease"].split("(")[0].strip()
+        e.setdefault("trials_url", _trials_url(cond, recruiting_only=True))
+        e["trials_url_all"] = _trials_url(cond, recruiting_only=False)
+        e["approved_count"] = len(e.get("approved_therapies", []))
+        e["has_approved"] = e["approved_count"] > 0
+        items.append(e)
+
+    approved_total = sum(i["approved_count"] for i in items)
+    return {
+        "as_of": AS_OF,
+        "count": len(items),
+        "approved_therapy_count": approved_total,
+        "disclaimer": (
+            "Reference data for research and market-mapping only — not medical advice. "
+            "Disease-burden figures are rough estimates from public sources; prices are US "
+            "list (WAC) and change over time; trial links are live ClinicalTrials.gov searches."
+        ),
+        "items": items,
+    }

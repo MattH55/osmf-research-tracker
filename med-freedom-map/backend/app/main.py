@@ -123,6 +123,37 @@ def seed_endpoint(reset: bool = False, db: Session = Depends(get_db)):
 
 
 # ══════════════════════════════════════════════════════════════════════════
+# GENE THERAPY MAPPER (monogenic diseases → approved therapies, trials, burden)
+# ══════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/gene-therapies")
+def gene_therapies(approved_only: bool = False, q: Optional[str] = None):
+    """Curated monogenic-disease → gene-therapy reference dataset.
+
+    ?approved_only=true limits to diseases with an approved therapy.
+    ?q= filters by disease name or gene symbol.
+    """
+    from .gene_therapy_data import get_gene_therapies
+    data = get_gene_therapies()
+    items = data["items"]
+    if approved_only:
+        items = [i for i in items if i["has_approved"]]
+    if q:
+        ql = q.lower()
+        items = [i for i in items if ql in i["disease"].lower() or ql in i["gene"].lower()]
+    return {**data, "items": items, "count": len(items)}
+
+
+@app.get("/api/gene-therapies/{item_id}")
+def gene_therapy_detail(item_id: str):
+    from .gene_therapy_data import get_gene_therapies
+    for i in get_gene_therapies()["items"]:
+        if i["id"] == item_id:
+            return i
+    raise HTTPException(status_code=404, detail="Gene therapy entry not found")
+
+
+# ══════════════════════════════════════════════════════════════════════════
 # JURISDICTIONS
 # ══════════════════════════════════════════════════════════════════════════
 
