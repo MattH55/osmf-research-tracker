@@ -4,7 +4,7 @@ from datetime import date, datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy import (
-    Column, String, Text, Date, DateTime, Float, Enum as SAEnum,
+    Column, String, Text, Date, DateTime, Float, Boolean, Enum as SAEnum,
     ForeignKey, UniqueConstraint, Index, JSON, create_engine, event
 )
 from sqlalchemy.dialects.sqlite import JSON as SQLiteJSON
@@ -403,4 +403,33 @@ class ProcedureIndication(Base):
             "evidence_grade": self.evidence_grade.value if isinstance(self.evidence_grade, EvidenceGrade) else self.evidence_grade,
             "evidence_summary": self.evidence_summary,
             "last_updated": self.last_updated.isoformat() if self.last_updated else None,
+        }
+
+
+class WatchSubscription(Base):
+    """Email digest subscription for therapy×market watches (provider diligence)."""
+    __tablename__ = "watch_subscriptions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    email: Mapped[str] = mapped_column(String(320), nullable=False, index=True)
+    # JSON array: [{procedure_id, jurisdiction_id, procedure_name?, jurisdiction_name?, last_verdict?}]
+    items_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    frequency: Mapped[str] = mapped_column(String(20), default="weekly")  # weekly | daily
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    last_sent_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    # Snapshot of last emailed verdicts for change detection: {proc::jur: verdict_label}
+    last_snapshot_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    unsubscribe_token: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+
+    def to_dict(self):
+        import json
+        return {
+            "id": self.id,
+            "email": self.email,
+            "items": json.loads(self.items_json) if self.items_json else [],
+            "frequency": self.frequency,
+            "active": self.active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "last_sent_at": self.last_sent_at.isoformat() if self.last_sent_at else None,
         }

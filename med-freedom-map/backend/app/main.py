@@ -13,8 +13,19 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 
 from .database import init_db, reset_db, get_db, SessionLocal
-from .models import Jurisdiction, Procedure, AccessRecord, Condition, ProcedureIndication
+from .models import Jurisdiction, Procedure, AccessRecord, Condition, ProcedureIndication, WatchSubscription
 from .access_flags import enrich_access_dict
+from .email_digest import (
+    valid_email,
+    email_configured,
+    resolve_watch_items,
+    build_digest_text,
+    build_digest_html,
+    send_email,
+    upsert_subscription,
+    snapshot_from_resolved,
+    apply_snapshot_to_items,
+)
 from .schemas import (
     JurisdictionCreate, JurisdictionUpdate,
     ProcedureCreate, ProcedureUpdate,
@@ -707,6 +718,177 @@ def bulk_import(data: BulkImportRequest, db: Session = Depends(get_db)):
 
     db.commit()
     return {"ok": True, "created": created}
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# WATCHLIST EMAIL DIGESTS
+# ══════════════════════════════════════════════════════════════════════════
+
+def _request_base_url() -> str:
+    return (os.getenv("PUBLIC_BASE_URL") or os.getenv("RENDER_EXTERNAL_URL") or "").rstrip("/")
+
+
+@app.get("/api/watch/status")
+def watch_email_status():
+    """Whether outbound email is configured (Resend or SMTP)."""
+    cfg = email_configured()
+    return {
+        "email": cfg,
+        "digest_secret_set": bool(os.getenv("DIGEST_SECRET")),
+        "note": "Without RESEND_API_KEY or SMTP_*, digests can still be previewed and copied; send will be log-only / fail soft.",
+    }
+
+
+@app.post("/api/watch/subscribe")
+def watch_subscribe(payload: dict, db: Session = Depends(get_db)):
+    """Upsert email + watch items for weekly/daily digests.
+
+    Body: { email, items: [{procedure_id|therapyId, jurisdiction_id|jurId, ...}], frequency?: weekly|daily }
+    """
+    email = (payload or {}).get("email") or ""
+    if not valid_email(email):
+        raise HTTPException(400, "Valid email required")
+    items = (payload or {}).get("items") or []
+    if not isinstance(items, list) or not items:
+        raise HTTPException(400, "items array required (at least one therapy×market)")
+    freq = (payload or {}).get("frequency") or "weekly"
+    sub = upsert_subscription(db, email, items, freq)
+    # Build live preview for confirmation email optional
+    resolved = resolve_watch_items(db, json.loads(sub.items_json))
+    return {
+        "status": "ok",
+        "subscription": {
+            "email": sub.email,
+            "item_count": len(resolved),
+            "frequency": sub.frequency,
+            "id": sub.id,
+        },
+        "email_provider": email_configured(),
+        "preview_changed": sum(1 for r in resolved if r.get("changed")),
+    }
+
+
+@app.post("/api/watch/digest/preview")
+def watch_digest_preview(payload: dict, db: Session = Depends(get_db)):
+    """Build a digest from items (no send). Body: { email?, items }."""
+    email = ((payload or {}).get("email") or "you@example.com").strip()
+    items = (payload or {}).get("items") or []
+    resolved = resolve_watch_items(db, items)
+    base = _request_base_url()
+    text = build_digest_text(email, resolved, base_url=base)
+    html = build_digest_html(email, resolved, base_url=base)
+    return {
+        "status": "ok",
+        "text": text,
+        "html": html,
+        "resolved": resolved,
+        "changed_count": sum(1 for r in resolved if r.get("changed")),
+        "email_provider": email_configured(),
+    }
+
+
+@app.post("/api/watch/digest/send")
+def watch_digest_send(payload: dict, db: Session = Depends(get_db)):
+    """Send digest for one email subscription, or all if admin secret provided.
+
+    Body options:
+      { email } — send to that subscriber
+      { all: true, secret } — send all active (secret must match DIGEST_SECRET)
+      { email, items, force: true } — one-off send without requiring subscription
+    """
+    payload = payload or {}
+    base = _request_base_url()
+    secret = os.getenv("DIGEST_SECRET") or ""
+
+    if payload.get("all"):
+        if not secret or payload.get("secret") != secret:
+            raise HTTPException(403, "Invalid or missing DIGEST_SECRET")
+        subs = db.query(WatchSubscription).filter(WatchSubscription.active.is_(True)).all()
+        results = []
+        for sub in subs:
+            results.append(_send_one_sub(db, sub, base))
+        return {"status": "ok", "sent": results}
+
+    email = (payload.get("email") or "").strip().lower()
+    if not valid_email(email):
+        raise HTTPException(400, "Valid email required")
+
+    # One-off with explicit items
+    if payload.get("items") and payload.get("force"):
+        items = payload["items"]
+        resolved = resolve_watch_items(db, items)
+        text = build_digest_text(email, resolved, base_url=base)
+        html = build_digest_html(email, resolved, base_url=base)
+        subject = "MedFreedom watchlist digest"
+        if any(r.get("changed") for r in resolved):
+            subject = f"MedFreedom: {sum(1 for r in resolved if r.get('changed'))} market status change(s)"
+        send_result = send_email(email, subject, text, html)
+        return {
+            "status": "ok" if send_result.get("ok") else "send_failed",
+            "send": send_result,
+            "text": text if not send_result.get("ok") else None,
+            "changed_count": sum(1 for r in resolved if r.get("changed")),
+        }
+
+    sub = (
+        db.query(WatchSubscription)
+        .filter(WatchSubscription.email == email, WatchSubscription.active.is_(True))
+        .first()
+    )
+    if not sub:
+        raise HTTPException(404, "No active subscription for this email — call /api/watch/subscribe first")
+    result = _send_one_sub(db, sub, base)
+    return {"status": "ok" if result.get("send", {}).get("ok") else "send_failed", **result}
+
+
+def _send_one_sub(db: Session, sub: WatchSubscription, base: str) -> dict:
+    items = json.loads(sub.items_json) if sub.items_json else []
+    snap = json.loads(sub.last_snapshot_json) if sub.last_snapshot_json else {}
+    items_with_prev = apply_snapshot_to_items(items, snap)
+    resolved = resolve_watch_items(db, items_with_prev)
+    text = build_digest_text(sub.email, resolved, base_url=base, unsub_token=sub.unsubscribe_token)
+    html = build_digest_html(sub.email, resolved, base_url=base, unsub_token=sub.unsubscribe_token)
+    changed_n = sum(1 for r in resolved if r.get("changed"))
+    subject = "MedFreedom watchlist digest"
+    if changed_n:
+        subject = f"MedFreedom: {changed_n} market status change(s)"
+    send_result = send_email(sub.email, subject, text, html)
+    # Always update snapshot after an attempted send so change detection advances
+    if send_result.get("ok") or os.getenv("DIGEST_UPDATE_ON_FAIL") == "1":
+        sub.last_snapshot_json = json.dumps(snapshot_from_resolved(resolved))
+        sub.last_sent_at = datetime.now()
+        # Keep last_verdict on items for client sync
+        by_key = {
+            f"{r['procedure_id']}::{r['jurisdiction_id']}": r.get("verdict")
+            for r in resolved
+        }
+        new_items = []
+        for it in items:
+            pid = it.get("procedure_id") or it.get("therapyId")
+            jid = it.get("jurisdiction_id") or it.get("jurId")
+            d = dict(it)
+            if pid and jid and by_key.get(f"{pid}::{jid}"):
+                d["last_verdict"] = by_key[f"{pid}::{jid}"]
+            new_items.append(d)
+        sub.items_json = json.dumps(new_items)
+        db.commit()
+    return {
+        "email": sub.email,
+        "changed_count": changed_n,
+        "item_count": len(resolved),
+        "send": send_result,
+        "text": None if send_result.get("ok") else text,
+    }
+
+
+@app.get("/api/watch/unsubscribe")
+def watch_unsubscribe(token: str = Query(...), db: Session = Depends(get_db)):
+    sub = db.query(WatchSubscription).filter(WatchSubscription.unsubscribe_token == token).first()
+    if not sub:
+        raise HTTPException(404, "Invalid token")
+    sub.active = False
+    db.commit()
+    return {"status": "ok", "message": f"Unsubscribed {sub.email}"}
 
 
 # ── Run with: uvicorn app.main:app --reload ──────────────────────────────

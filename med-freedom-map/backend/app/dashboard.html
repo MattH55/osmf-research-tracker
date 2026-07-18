@@ -581,6 +581,51 @@
             font-size: .65rem; font-weight: 750; background: #fef3c7; color: #92400e;
             padding: .12rem .4rem; border-radius: 6px;
         }
+        .trust-strip {
+            display: flex; flex-wrap: wrap; gap: .35rem .55rem; align-items: center;
+            margin: .45rem 0 .35rem; padding: .45rem .65rem; border-radius: 10px;
+            background: #f8fafc; border: 1px solid var(--line); font-size: .78rem;
+        }
+        .trust-strip .t-label { font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: .65rem; }
+        .conf-high { background: #d1fae5; color: #065f46; }
+        .conf-mod { background: #dbeafe; color: #1e40af; }
+        .conf-low { background: #ffedd5; color: #9a3412; }
+        .conf-unk { background: #f1f5f9; color: #64748b; }
+        .map-toggle-mobile { display: none; margin: .5rem 0; }
+
+        /* Mobile-first stack: therapy → markets → dossier; map collapsible */
+        @media (max-width: 768px) {
+            .hero { padding: 1.15rem 1rem 1rem; }
+            .hero .lede { font-size: .92rem; }
+            .hero-stats { max-width: 100%; grid-template-columns: repeat(2, 1fr); }
+            .role-bar { gap: .35rem; }
+            .role-bar button { font-size: .72rem; padding: .35rem .55rem; }
+            .workspace {
+                display: flex; flex-direction: column; gap: .75rem;
+            }
+            #pickerCard { order: 1; }
+            .detail-grid {
+                order: 2; display: flex; flex-direction: column; gap: .75rem;
+                grid-template-columns: 1fr;
+            }
+            .map-shell {
+                order: 3; min-height: 0;
+            }
+            .map-shell.collapsed #map { display: none; }
+            .map-shell.collapsed .legend { display: none; }
+            .map-shell.collapsed { min-height: 0; }
+            .map-toggle-mobile { display: inline-flex; }
+            #map { height: 42vh; min-height: 240px; }
+            .therapy-list { max-height: 38vh; }
+            .place-list { max-height: 50vh; }
+            .context-inner { padding: .55rem .75rem; }
+            .context-actions { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: .2rem; }
+            .context-actions button { flex-shrink: 0; }
+            .decision-strip, .decision-strip.cols-5 { grid-template-columns: 1fr 1fr; }
+            .modal { max-height: 85vh; padding: 1rem; }
+            .tool-strip { gap: .3rem; }
+            .compare-table { font-size: .78rem; display: block; overflow-x: auto; }
+        }
     </style>
 </head>
 <body>
@@ -625,6 +670,7 @@
                 <button type="button" class="btn-sm" id="ctxCopyCerts" onclick="window.__copyCertChecklist()" style="display:none;">Copy cert checklist</button>
                 <button type="button" class="ghost btn-sm" id="ctxExportDossier" onclick="window.__exportMarketBrief()" style="display:none;">Export brief</button>
                 <button type="button" class="btn-outline btn-sm" id="ctxPrint" onclick="window.__printOnePager()" style="display:none;">Print one-pager</button>
+                <button type="button" class="btn-outline btn-sm" id="ctxCounsel" onclick="window.__downloadCounselPack()" style="display:none;">Counsel pack</button>
                 <button type="button" class="btn-outline btn-sm" id="ctxWatch" onclick="window.__toggleWatchCurrent()" style="display:none;">☆ Watch</button>
             </div>
         </div>
@@ -753,8 +799,11 @@
                 <div id="selectedSummary" class="treatment-card" style="display:none;"></div>
             </aside>
 
-            <!-- Right: map -->
-            <section class="card map-shell">
+            <!-- Right: map (collapsed by default on mobile via JS) -->
+            <section class="card map-shell" id="mapShell">
+                <div class="card-pad" style="padding-bottom:0;">
+                    <button type="button" class="btn-outline btn-sm map-toggle-mobile" id="mapToggleBtn" onclick="window.__toggleMapMobile()">Show map</button>
+                </div>
                 <div class="map-overlay">
                     <div class="map-banner" id="mapBanner">
                         <strong>Market entry map</strong>
@@ -787,6 +836,22 @@
                     </div>
                     <p class="muted" style="font-size:.78rem;margin:.35rem 0 .25rem;">Therapy × market pairs saved in this browser. We’ll flag if operability status changes when you reopen this therapy.</p>
                     <div id="watchListBody"></div>
+                    <div style="margin-top:.75rem;padding-top:.65rem;border-top:1px solid #e9e5ff;">
+                        <div class="muted" style="font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#5b21b6;">Email digest</div>
+                        <p class="muted" style="font-size:.78rem;margin:.3rem 0;">Get a weekly (or on-demand) digest of watched markets. Works with Resend/SMTP when configured on the server; otherwise preview + copy / mailto.</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:.35rem;">
+                            <input type="email" id="watchEmail" placeholder="you@clinic.com" style="flex:1;min-width:160px;padding:.5rem .65rem;border:1px solid var(--line);border-radius:8px;font-size:.88rem;">
+                            <select id="watchFreq" style="padding:.5rem;border-radius:8px;border:1px solid var(--line);font-size:.82rem;">
+                                <option value="weekly">Weekly</option>
+                                <option value="daily">Daily</option>
+                            </select>
+                            <button type="button" class="btn-sm" onclick="window.__subscribeWatchEmail()">Subscribe</button>
+                            <button type="button" class="btn-outline btn-sm" onclick="window.__previewWatchDigest()">Preview</button>
+                            <button type="button" class="ghost btn-sm" onclick="window.__sendWatchDigest()">Send now</button>
+                        </div>
+                        <p class="muted" id="watchEmailStatus" style="font-size:.75rem;margin-top:.35rem;"></p>
+                        <pre id="watchDigestPreview" style="display:none;margin-top:.5rem;padding:.65rem;background:#fff;border:1px solid #e9e5ff;border-radius:8px;font-size:.72rem;max-height:200px;overflow:auto;white-space:pre-wrap;"></pre>
+                    </div>
                 </div>
                 <p class="muted" id="placesIntro">Choose a service line to list jurisdictions by operability and setup burden.</p>
                 <div id="placeSummary" class="summary-bar" style="display:none;"></div>
@@ -1346,15 +1411,19 @@
                 btnCerts.style.display = certs.length ? '' : 'none';
                 btnExport.style.display = '';
                 if (btnPrint) btnPrint.style.display = '';
+                const btnCounsel = document.getElementById('ctxCounsel');
+                if (btnCounsel) btnCounsel.style.display = '';
                 const btnWatch = document.getElementById('ctxWatch');
                 if (btnWatch) btnWatch.style.display = '';
                 updateWatchBadge();
+                const trust = cellTrustMeta(ar);
                 main.innerHTML = `
                     <span class="ctx-title">${esc(proc.name)}</span>
                     <span class="ctx-sep">·</span>
                     <span class="ctx-title">${esc(j.name)}</span>
                     <span class="pill ${v.cls === 'go' ? 'allowed' : (v.cls === 'no' ? 'not-allowed' : 'pending')}">${esc(v.label)}</span>
                     ${readinessPillHtml(ready)}
+                    <span class="pill sm ${trust.confClass}">${esc(humanize(trust.confidence))}</span>
                     <span class="pill" style="background:${diff === 'Low' ? '#065f46' : (diff === 'High' || diff === 'Extreme' ? '#991b1b' : '#92400e')};color:#fff;">Setup: ${esc(diff)}</span>
                     ${certs.length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>` : ''}
                     ${eg ? `<span class="pill" style="background:${eg.color};color:#fff;">${esc(eg.grade)}</span>` : ''}
@@ -1372,6 +1441,8 @@
                 btnCerts.style.display = (setup.certifications || []).length ? '' : 'none';
                 btnExport.style.display = 'none';
                 if (btnPrint) btnPrint.style.display = 'none';
+                const btnCounsel = document.getElementById('ctxCounsel');
+                if (btnCounsel) btnCounsel.style.display = 'none';
                 const btnWatch = document.getElementById('ctxWatch');
                 if (btnWatch) btnWatch.style.display = 'none';
                 lastDossierCtx = { procName: proc.name, jurName: null, ar: null, setup, verdict: null, proc };
@@ -2330,6 +2401,315 @@
             }
         };
 
+        // ── Trust: confidence + last verified ─────────────────────────────
+        function cellTrustMeta(ar) {
+            if (!ar) {
+                return { confidence: 'Unknown', confClass: 'conf-unk', lastVerified: null, verifiedBy: null, sources: 0, volatility: null };
+            }
+            let conf = ar.confidence || null;
+            if (!conf) {
+                // Derive soft default from flags when seed omitted confidence
+                const f = flagsOf(ar);
+                if (f.prohibited) conf = 'High';
+                else if (f.pending_legislation || f.active_flux) conf = 'Low';
+                else if (f.allowed && f.offered && !f.trial_only) conf = 'Moderate';
+                else conf = 'Low';
+            }
+            const confClass = conf === 'High' ? 'conf-high' : (conf === 'Moderate' ? 'conf-mod' : (conf === 'Low' ? 'conf-low' : 'conf-unk'));
+            const sources = Array.isArray(ar.sources) ? ar.sources.length : 0;
+            const regN = (ar.regulation_links || []).length;
+            return {
+                confidence: conf,
+                confClass,
+                lastVerified: ar.last_verified || null,
+                verifiedBy: ar.verified_by || null,
+                sources: sources || regN,
+                volatility: ar.volatility || null,
+                priceConfidence: ar.price_confidence || null,
+            };
+        }
+
+        function renderTrustStrip(ar) {
+            const t = cellTrustMeta(ar);
+            const verified = t.lastVerified
+                ? `Verified ${esc(t.lastVerified)}${t.verifiedBy ? ' · ' + esc(t.verifiedBy) : ''}`
+                : 'Last verified: not dated — treat as provisional';
+            return `<div class="trust-strip" title="Data provenance for counsel diligence">
+                <span class="t-label">Trust</span>
+                <span class="pill sm ${t.confClass}">Confidence: ${esc(humanize(t.confidence))}</span>
+                <span class="muted">${verified}</span>
+                ${t.sources ? `<span class="pill sm">${t.sources} source${t.sources === 1 ? '' : 's'}/links</span>` : ''}
+                ${t.volatility && t.volatility !== 'Stable' ? `<span class="pill pending sm">${esc(humanize(t.volatility))}</span>` : ''}
+            </div>`;
+        }
+
+        // ── Counsel-ready export pack ─────────────────────────────────────
+        function buildCounselPackMarkdown(ctx) {
+            if (!ctx || !ctx.ar) return '';
+            const ar = ctx.ar;
+            const setup = ctx.setup || ar.setup_requirements || {};
+            const proc = allProcedures.find(p => p.id === selectedProcedureId) || ctx.proc;
+            const v = ctx.verdict || operateVerdict(ar);
+            const f = flagsOf(ar);
+            const t = cellTrustMeta(ar);
+            const ready = scoreMarketReadiness(ar);
+            const pe = primaryEvidence();
+            const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
+            const lines = [];
+            const L = (s) => lines.push(s);
+            L('# MedFreedom — Counsel diligence pack');
+            L('');
+            L(`**Generated:** ${new Date().toISOString()}`);
+            L(`**Therapy:** ${proc?.name || '—'}`);
+            L(`**Market:** ${ctx.jurName || '—'}`);
+            L(`**Deep link:** ${shareUrl()}`);
+            L('');
+            L('> **Not legal advice.** Confirm every citation with primary sources and qualified counsel before capital commitment or patient care.');
+            L('');
+            L('## 1. Executive snapshot');
+            L('');
+            L(`| Field | Value |`);
+            L(`| --- | --- |`);
+            L(`| Operate verdict | ${v.label} — ${v.short} |`);
+            L(`| Legal status | ${statusMeta(ar.legal_status).label} |`);
+            L(`| Pathway | ${friendlyPathway(ar.access_pathway)} |`);
+            L(`| Policy risk | ${f.legislation_label} |`);
+            L(`| Setup difficulty | ${setup.difficulty || '—'} |`);
+            L(`| Operator readiness (self-reported profile) | ${ready.label} — ${ready.short} |`);
+            L(`| Data confidence | ${t.confidence} |`);
+            L(`| Last verified | ${t.lastVerified || 'not dated'} |`);
+            L(`| Verified by | ${t.verifiedBy || '—'} |`);
+            L(`| Primary evidence | ${eg ? eg.grade + ' ' + eg.label : 'Not graded'}${pe?.condition?.name ? ' · ' + pe.condition.name : ''} |`);
+            L(`| Cash price reference | ${String(fmtPrice(ar)).replace(/<[^>]+>/g, '')} |`);
+            L('');
+            L('## 2. Governing authority & legal basis');
+            L('');
+            L(`- **Authority:** ${ar.regulatory_authority || '—'}`);
+            L(`- **Legal basis:** ${ar.legal_basis || '—'}`);
+            L(`- **Market note:** ${ar.arbitrage_summary || '—'}`);
+            L('');
+            L('### Regulation links (open these first)');
+            L('');
+            (ar.regulation_links || []).forEach((l, i) => {
+                L(`${i + 1}. **${l.title || 'Link'}**${l.citation ? ` (${l.citation})` : ''}`);
+                L(`   - URL: ${l.url || '—'}`);
+            });
+            if (!(ar.regulation_links || []).length) L('_No regulation_links on file for this cell._');
+            L('');
+            L('## 3. Certifications & credentials checklist');
+            L('');
+            (setup.certifications || []).forEach((c, i) => {
+                const cls = classifyCert(c);
+                L(`- [ ] **[${cls.label}]** ${c}`);
+            });
+            if (!(setup.certifications || []).length) L('_None listed._');
+            L('');
+            L('## 4. Licenses, facility, training, staffing');
+            L('');
+            L('### Facility / business licenses');
+            (setup.licenses || []).forEach(x => L(`- ${x}`));
+            L('');
+            L('### Facility requirements');
+            (setup.facility || []).forEach(x => L(`- ${x}`));
+            L('');
+            L('### Training');
+            (setup.training || []).forEach(x => L(`- ${x}`));
+            L('');
+            L('### Staffing');
+            (setup.staffing || []).forEach(x => L(`- ${x}`));
+            L('');
+            L('### Regulatory steps to open');
+            (setup.regulatory_steps || []).forEach(x => L(`- ${x}`));
+            L('');
+            L('### Ongoing compliance');
+            (setup.ongoing_compliance || []).forEach(x => L(`- ${x}`));
+            L('');
+            L(`**Setup summary:** ${setup.summary || '—'}`);
+            L('');
+            if (setup.capital_notes) {
+                L(`**Capital notes:** ${setup.capital_notes}`);
+                L('');
+            }
+            L('## 5. Patient screening (operator must define protocol)');
+            L('');
+            L(`- **Eligibility:** ${ar.eligibility_requirements || '—'}`);
+            L(`- **Care pathway detail:** ${ar.access_pathway_details || friendlyPathway(ar.access_pathway)}`);
+            L(`- **Residency / travel:** ${ar.residency_travel_notes || '—'}`);
+            L(`- **Clinical / operational risks:** ${ar.risk_notes || '—'}`);
+            L(`- **Oversight notes:** ${ar.oversight_notes || '—'}`);
+            L('');
+            L('## 6. Readiness gaps (from operator profile on this browser)');
+            L('');
+            if (ready.gaps && ready.gaps.length) {
+                ready.gaps.forEach(g => L(`- GAP: ${g.text}`));
+            } else {
+                L(`_No mapped gaps (${ready.label}). Profile still requires independent verification._`);
+            }
+            L('');
+            L('## 7. Evidence grades (indication-level; same in every market)');
+            L('');
+            (currentIndications || []).forEach(ind => {
+                const c = ind.condition || {};
+                L(`- **${ind.evidence_grade || '—'}** ${c.name || 'Condition'}${c.icd_code ? ` (${c.icd_code})` : ''}: ${ind.evidence_summary || ''}`);
+            });
+            if (!(currentIndications || []).length) L('_No indication grades seeded._');
+            L('');
+            L('## 8. Sources on cell');
+            L('');
+            (ar.sources || []).forEach((s, i) => {
+                if (typeof s === 'string') L(`${i + 1}. ${s}`);
+                else L(`${i + 1}. ${s.title || s.name || 'Source'}${s.url ? ' — ' + s.url : ''}`);
+            });
+            if (!(ar.sources || []).length) L('_No sources array; use regulation links above._');
+            L('');
+            L('---');
+            L('*Pack produced by MedFreedom Provider Map · Open Source Medicine Foundation. Not a legal opinion.*');
+            return lines.join('\n');
+        }
+
+        window.__downloadCounselPack = function () {
+            const ctx = lastDossierCtx;
+            if (!ctx || !ctx.ar) {
+                showToast('Open a market dossier first');
+                return;
+            }
+            const md = buildCounselPackMarkdown(ctx);
+            const safe = (s) => String(s || 'x').replace(/[^\w\-]+/g, '_').slice(0, 40);
+            downloadText(
+                `counsel_pack_${safe(ctx.procName)}_${safe(ctx.jurName)}.md`,
+                md
+            );
+            // Also offer print one-pager in same flow
+            showToast('Counsel pack downloaded (.md)');
+        };
+
+        // ── Mobile map toggle ─────────────────────────────────────────────
+        window.__toggleMapMobile = function () {
+            const shell = document.getElementById('mapShell');
+            const btn = document.getElementById('mapToggleBtn');
+            if (!shell) return;
+            shell.classList.toggle('collapsed');
+            const collapsed = shell.classList.contains('collapsed');
+            if (btn) btn.textContent = collapsed ? 'Show map' : 'Hide map';
+            if (!collapsed && map) setTimeout(() => map.invalidateSize(), 150);
+        };
+
+        function initMobileMapDefault() {
+            if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+                const shell = document.getElementById('mapShell');
+                const btn = document.getElementById('mapToggleBtn');
+                if (shell) shell.classList.add('collapsed');
+                if (btn) btn.textContent = 'Show map';
+            }
+        }
+
+        // ── Watchlist email API ───────────────────────────────────────────
+        function watchItemsPayload() {
+            return watchlist.map(w => ({
+                procedure_id: w.therapyId,
+                jurisdiction_id: w.jurId,
+                procedure_name: w.therapyName,
+                jurisdiction_name: w.jurName,
+                last_verdict: w.lastVerdict,
+            }));
+        }
+
+        async function refreshWatchEmailStatus() {
+            const el = document.getElementById('watchEmailStatus');
+            if (!el) return;
+            try {
+                const s = await api('/api/watch/status');
+                const p = s.email || {};
+                el.textContent = p.configured
+                    ? `Server email: ${p.provider} (from ${p.from || 'default'})`
+                    : 'Server email not configured (RESEND_API_KEY or SMTP_*). Preview/copy still works; Send may fail soft.';
+            } catch (e) {
+                el.textContent = 'Could not reach watch email status API.';
+            }
+        }
+
+        window.__subscribeWatchEmail = async function () {
+            const email = document.getElementById('watchEmail')?.value?.trim();
+            const freq = document.getElementById('watchFreq')?.value || 'weekly';
+            const st = document.getElementById('watchEmailStatus');
+            if (!email) { showToast('Enter an email'); return; }
+            if (!watchlist.length) { showToast('Add markets to watchlist first'); return; }
+            try {
+                if (st) st.textContent = 'Subscribing…';
+                const r = await api('/api/watch/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, frequency: freq, items: watchItemsPayload() }),
+                });
+                try { localStorage.setItem('medfreedom_watch_email', email); } catch (e) {}
+                if (st) st.textContent = `Subscribed ${r.subscription?.email} · ${r.subscription?.item_count} markets · ${r.subscription?.frequency}. Provider: ${r.email_provider?.provider || 'none'}`;
+                showToast('Email watchlist subscribed');
+            } catch (e) {
+                if (st) st.textContent = 'Subscribe failed: ' + e.message;
+                showToast('Subscribe failed');
+            }
+        };
+
+        window.__previewWatchDigest = async function () {
+            const email = document.getElementById('watchEmail')?.value?.trim() || 'you@example.com';
+            const pre = document.getElementById('watchDigestPreview');
+            const st = document.getElementById('watchEmailStatus');
+            if (!watchlist.length) { showToast('Watchlist empty'); return; }
+            try {
+                const r = await api('/api/watch/digest/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, items: watchItemsPayload() }),
+                });
+                if (pre) {
+                    pre.style.display = 'block';
+                    pre.textContent = r.text || '';
+                }
+                if (st) st.textContent = `Preview ready · ${r.changed_count || 0} change(s) flagged vs last_verdict on items`;
+                showToast('Digest preview ready');
+            } catch (e) {
+                if (st) st.textContent = 'Preview failed: ' + e.message;
+            }
+        };
+
+        window.__sendWatchDigest = async function () {
+            const email = document.getElementById('watchEmail')?.value?.trim();
+            const st = document.getElementById('watchEmailStatus');
+            const pre = document.getElementById('watchDigestPreview');
+            if (!email) { showToast('Enter an email'); return; }
+            if (!watchlist.length) { showToast('Watchlist empty'); return; }
+            try {
+                if (st) st.textContent = 'Sending…';
+                // Ensure subscription exists
+                await api('/api/watch/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, items: watchItemsPayload(), frequency: document.getElementById('watchFreq')?.value || 'weekly' }),
+                });
+                const r = await api('/api/watch/digest/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+                if (r.send && r.send.ok) {
+                    if (st) st.textContent = `Sent via ${r.send.method}: ${r.changed_count || 0} change(s) in digest`;
+                    showToast('Digest email sent');
+                } else {
+                    const text = r.text || (r.send && r.send.detail) || 'Send failed';
+                    if (pre) { pre.style.display = 'block'; pre.textContent = typeof text === 'string' && text.length > 80 ? text : (r.text || JSON.stringify(r, null, 2)); }
+                    if (st) st.textContent = `Send failed (${r.send?.method || 'none'}): ${r.send?.detail || 'see preview'}. Use Preview + copy, or configure RESEND_API_KEY.`;
+                    // mailto fallback
+                    const body = encodeURIComponent(r.text || pre?.textContent || 'See MedFreedom watchlist');
+                    const mailto = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('MedFreedom watchlist digest')}&body=${body.slice(0, 1800)}`;
+                    showToast('Email not configured — opening mailto fallback');
+                    try { window.location.href = mailto; } catch (e2) {}
+                }
+            } catch (e) {
+                if (st) st.textContent = 'Send error: ' + e.message;
+                showToast('Send failed');
+            }
+        };
+
         function roleFocusHtml() {
             const r = getRole();
             return `<div class="role-focus no-print"><strong>${esc(r.label)} view:</strong> ${esc(r.focus)}</div>`;
@@ -2466,6 +2846,7 @@
             const certs = setup.certifications || [];
             const role = getRole();
             const ready = scoreMarketReadiness(ar);
+            const trust = cellTrustMeta(ar);
             const links = (ar.regulation_links || []).slice(0, 6);
             return `
                 <h1>MedFreedom market one-pager</h1>
@@ -2475,6 +2856,7 @@
                         <div class="kv-print">
                             <div><strong>Operate</strong></div><div>${esc(v.label)} — ${esc(v.short)}</div>
                             <div><strong>Your readiness</strong></div><div>${esc(ready.label)} — ${esc(ready.short)}</div>
+                            <div><strong>Data confidence</strong></div><div>${esc(humanize(trust.confidence))} · verified ${esc(trust.lastVerified || 'not dated')}</div>
                             <div><strong>Setup</strong></div><div>${esc(setup.difficulty || '—')} — ${esc(difficultyExplain(setup.difficulty))}</div>
                             <div><strong>Policy risk</strong></div><div>${esc(f.legislation_label)}</div>
                             <div><strong>Pathway</strong></div><div>${esc(friendlyPathway(ar.access_pathway))}</div>
@@ -2488,6 +2870,7 @@
                             <div><strong>Authority</strong></div><div>${esc(ar.regulatory_authority || '—')}</div>
                             <div><strong>Legal basis</strong></div><div>${esc(ar.legal_basis || '—')}</div>
                             <div><strong>Market note</strong></div><div>${esc(ar.arbitrage_summary || '—')}</div>
+                            <div><strong>Verified by</strong></div><div>${esc(trust.verifiedBy || '—')}</div>
                         </div>
                     </div>
                 </div>
@@ -3029,10 +3412,12 @@
                 const pathShort = friendlyPathway(row.access_pathway);
                 // Compact secondary line — one status + setup/certs/pathway
                 const ready = scoreMarketReadiness(row);
+                const trust = cellTrustMeta(row);
                 const watched = selectedProcedureId && isWatched(selectedProcedureId, j.id);
                 const subParts = [
                     `Setup: ${diff}`,
                     certN ? `${certN} cert${certN === 1 ? '' : 's'}` : null,
+                    trust.lastVerified ? `Verified ${trust.lastVerified}` : 'Unverified date',
                     pathShort && pathShort !== '—' ? pathShort : null,
                     f.legislation_watch ? f.legislation_label : null,
                 ].filter(Boolean);
@@ -3042,6 +3427,7 @@
                             <div class="title">${esc(j.name)} ${watched ? '<span title="On watchlist">★</span>' : ''}</div>
                             <span class="pl-status ${esc(v.cls)}" title="${esc(v.short)}">${esc(v.label)}</span>
                             ${readinessPillHtml(ready)}
+                            <span class="pill sm ${trust.confClass}" title="Data confidence">${esc(humanize(trust.confidence))}</span>
                             <div class="pl-sub" title="${esc(difficultyExplain(diff))}">${esc(subParts.join(' · '))}${ready.key !== 'unknown' ? ' · ' + esc(ready.short) : ''}</div>
                         </div>
                         <div style="display:flex;flex-direction:column;gap:.25rem;align-items:flex-end;">
@@ -3337,6 +3723,7 @@
                     <div class="dossier-wrap">
                     ${roleFocusHtml()}
                     ${renderDecisionStrip(ar)}
+                    ${renderTrustStrip(ar)}
                     ${renderReadinessBox(ar)}
                     ${blockedBanner}
                     <div class="flag-row no-print">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
@@ -3358,6 +3745,7 @@
                         <button type="button" class="btn-outline btn-sm" onclick="window.__copyMarketBrief()">Copy market brief</button>
                         <button type="button" class="btn-outline btn-sm" onclick="window.__copyShareLink()">Copy share link</button>
                         <button type="button" class="btn-outline btn-sm" onclick="window.__printOnePager()">Print one-pager</button>
+                        <button type="button" class="btn-sm" onclick="window.__downloadCounselPack()">Counsel pack (.md)</button>
                     </div>
 
                     <div class="dossier-tabs no-print" role="tablist" aria-label="Market dossier sections">
@@ -3532,11 +3920,17 @@
             loadRole();
             loadProfile();
             loadWatchlist();
+            initMobileMapDefault();
+            try {
+                const em = localStorage.getItem('medfreedom_watch_email');
+                if (em && document.getElementById('watchEmail')) document.getElementById('watchEmail').value = em;
+            } catch (e) {}
             initMap();
             const s = await refreshStats();
             if (s && s.jurisdictions > 0) {
                 await bootstrap();
                 setTimeout(() => maybeShowOnboarding(), 600);
+                refreshWatchEmailStatus();
             } else if (!s) {
                 const t = setInterval(async () => {
                     const s2 = await refreshStats();
@@ -3545,6 +3939,7 @@
                         if (s2.jurisdictions > 0) {
                             await bootstrap();
                             setTimeout(() => maybeShowOnboarding(), 600);
+                            refreshWatchEmailStatus();
                         }
                     }
                 }, 5000);
