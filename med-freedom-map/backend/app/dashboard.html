@@ -439,10 +439,84 @@
         }
         .cert-reg-link:hover { color: var(--brand2); border-bottom-style: solid; }
         .cert-reg-links { display: flex; flex-wrap: wrap; gap: .25rem .5rem; margin-top: .3rem; }
+
+        /* Role toggle */
+        .role-bar {
+            display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .65rem;
+            margin-top: 1rem; padding-top: .85rem; border-top: 1px solid rgba(255,255,255,.18);
+        }
+        .role-bar .role-lbl {
+            font-size: .72rem; font-weight: 750; text-transform: uppercase; letter-spacing: .05em;
+            opacity: .85; margin-right: .15rem;
+        }
+        .role-bar button {
+            font-size: .78rem; padding: .4rem .75rem; border-radius: 999px;
+            background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.22);
+            font-weight: 650;
+        }
+        .role-bar button:hover { background: rgba(255,255,255,.22); }
+        .role-bar button.active { background: #fff; color: #312e81; border-color: #fff; }
+        .role-focus {
+            margin: .55rem 0 .75rem; padding: .65rem .8rem; border-radius: 12px;
+            background: #f8fafc; border: 1px solid var(--line); font-size: .84rem;
+        }
+        .role-focus strong { color: #312e81; }
+
+        /* Blocked alternatives */
+        .alt-markets {
+            margin-top: .65rem; display: grid; gap: .45rem;
+        }
+        .alt-market {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+            gap: .45rem; padding: .55rem .7rem; background: #fff; border: 1px solid #fecaca;
+            border-radius: 10px;
+        }
+        .alt-market .am-name { font-weight: 750; font-size: .9rem; }
+        .alt-market .am-meta { font-size: .78rem; color: var(--muted); margin-top: .15rem; }
+        .blocked-box {
+            margin: .5rem 0 .75rem; padding: .85rem 1rem;
+            background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px;
+        }
+
+        /* Print one-pager */
+        #printSheet { display: none; }
+        @media print {
+            body { background: #fff; color: #000; }
+            .hero, .context-bar, .setup-banner, #pickerCard, .map-shell,
+            #placeFilters, #filterPresets, #compareBar, .place-list,
+            .filter-presets, .legend, .foot details, .toast,
+            .dossier-tabs, .cert-actions, .btn-row, .role-bar,
+            #evidenceSection, .no-print, button, .map-mode, .popup-actions {
+                display: none !important;
+            }
+            .app { max-width: 100%; padding: 0; margin: 0; }
+            .workspace, .detail-grid { display: block !important; }
+            .card { box-shadow: none; border: 0; }
+            #detailPanel, #comparePanel.visible { display: block !important; break-inside: avoid; }
+            #printSheet {
+                display: block !important; padding: 0.5rem 0 1rem;
+                font-size: 11pt; line-height: 1.4; color: #111;
+            }
+            #printSheet h1 { font-size: 16pt; margin: 0 0 .35rem; }
+            #printSheet h2 { font-size: 12pt; margin: .9rem 0 .35rem; border-bottom: 1px solid #ccc; padding-bottom: .2rem; }
+            #printSheet .ph { color: #444; font-size: 10pt; margin-bottom: .75rem; }
+            #printSheet ul { margin: .25rem 0 .5rem 1.1rem; }
+            #printSheet .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; }
+            #printSheet .kv-print { display: grid; grid-template-columns: 9rem 1fr; gap: .2rem .5rem; font-size: 10pt; }
+            #detailBody .dossier-tab-panel { display: block !important; margin-top: .75rem; page-break-inside: avoid; }
+            #detailBody .dossier-tab-panel::before {
+                content: attr(data-print-title);
+                display: block; font-weight: 750; font-size: 11pt; margin: .75rem 0 .35rem;
+                border-bottom: 1px solid #ddd; padding-bottom: .2rem;
+            }
+            .decision-strip, .decision-strip.cols-5 { grid-template-columns: 1fr 1fr !important; }
+            a[href]::after { content: ""; }
+            .compare-panel { break-before: page; }
+        }
     </style>
 </head>
 <body>
-    <header class="hero">
+    <header class="hero no-print">
         <div class="hero-inner">
             <div class="hero-top">
                 <div>
@@ -451,6 +525,13 @@
                     <p class="lede"><strong>1.</strong> Pick a therapy → <strong>2.</strong> See operable markets → <strong>3.</strong> Open certifications &amp; setup checklist. Informational only — confirm with counsel and the competent authority.</p>
                 </div>
                 <span class="status-pill wait" id="statusBadge">Connecting…</span>
+            </div>
+            <div class="role-bar" id="roleBar" role="group" aria-label="View as role">
+                <span class="role-lbl">View as</span>
+                <button type="button" data-role="physician" class="active">Physician / APP</button>
+                <button type="button" data-role="clinic">Clinic operator</button>
+                <button type="button" data-role="hospital">Hospital program</button>
+                <button type="button" data-role="investor">Investor / BD</button>
             </div>
             <div class="hero-stats">
                 <div class="hero-stat"><div class="n" id="s-proc">–</div><div class="l">Service lines</div></div>
@@ -461,7 +542,7 @@
         </div>
     </header>
 
-    <div class="context-bar" id="contextBar" aria-live="polite">
+    <div class="context-bar no-print" id="contextBar" aria-live="polite">
         <div class="context-inner">
             <div class="context-main" id="contextMain">
                 <span class="muted" style="font-size:.82rem;">Select a therapy and market</span>
@@ -472,9 +553,13 @@
                 <button type="button" class="btn-outline btn-sm" id="ctxShareLink" onclick="window.__copyShareLink()" style="display:none;">Copy link</button>
                 <button type="button" class="btn-sm" id="ctxCopyCerts" onclick="window.__copyCertChecklist()" style="display:none;">Copy cert checklist</button>
                 <button type="button" class="ghost btn-sm" id="ctxExportDossier" onclick="window.__exportMarketBrief()" style="display:none;">Export brief</button>
+                <button type="button" class="btn-outline btn-sm" id="ctxPrint" onclick="window.__printOnePager()" style="display:none;">Print one-pager</button>
             </div>
         </div>
     </div>
+
+    <!-- Built for print; hidden on screen -->
+    <div id="printSheet" aria-hidden="true"></div>
 
     <main class="app">
         <div id="setupPanel" class="setup-banner" style="display:none;">
@@ -1079,6 +1164,7 @@
             const btnCerts = document.getElementById('ctxCopyCerts');
             const btnExport = document.getElementById('ctxExportDossier');
             const btnShare = document.getElementById('ctxShareLink');
+            const btnPrint = document.getElementById('ctxPrint');
             if (!proc) {
                 bar.classList.remove('visible');
                 lastDossierCtx = null;
@@ -1093,6 +1179,7 @@
                 const diff = setup.difficulty || '—';
                 const pe = primaryEvidence();
                 const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
+                const role = getRole();
                 main.innerHTML = `
                     <span class="ctx-title">${esc(proc.name)}</span>
                     <span class="ctx-sep">·</span>
@@ -1101,10 +1188,12 @@
                     <span class="pill" style="background:${diff === 'Low' ? '#065f46' : (diff === 'High' || diff === 'Extreme' ? '#991b1b' : '#92400e')};color:#fff;">Setup: ${esc(diff)}</span>
                     ${certs.length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>` : ''}
                     ${eg ? `<span class="pill" style="background:${eg.color};color:#fff;">${esc(eg.grade)}</span>` : ''}
+                    <span class="pill sm" style="background:#f1f5f9;color:#475569;">${esc(role.label)}</span>
                 `;
                 btnMarket.style.display = '';
                 btnCerts.style.display = certs.length ? '' : 'none';
                 btnExport.style.display = '';
+                if (btnPrint) btnPrint.style.display = '';
                 lastDossierCtx = { procName: proc.name, jurName: j.name, ar, setup, verdict: v, proc };
             } else {
                 main.innerHTML = `
@@ -1116,6 +1205,7 @@
                 btnMarket.style.display = 'none';
                 btnCerts.style.display = (setup.certifications || []).length ? '' : 'none';
                 btnExport.style.display = 'none';
+                if (btnPrint) btnPrint.style.display = 'none';
                 lastDossierCtx = { procName: proc.name, jurName: null, ar: null, setup, verdict: null, proc };
             }
         }
@@ -1473,6 +1563,7 @@
         }
 
         window.__switchDossierTab = function (btn) {
+            if (!btn) return;
             const wrap = btn.closest('.dossier-wrap') || document;
             const tab = btn.getAttribute('data-tab');
             wrap.querySelectorAll('.dossier-tabs button').forEach(b => {
@@ -1482,6 +1573,290 @@
             wrap.querySelectorAll('.dossier-tab-panel').forEach(p => {
                 p.classList.toggle('active', p.getAttribute('data-panel') === tab);
             });
+        };
+
+        window.__activateDossierTab = function (tabId) {
+            const wrap = document.querySelector('#detailBody .dossier-wrap');
+            if (!wrap) return;
+            const btn = wrap.querySelector(`.dossier-tabs button[data-tab="${tabId}"]`);
+            if (btn) window.__switchDossierTab(btn);
+        };
+
+        // ── Role views ────────────────────────────────────────────────────
+        const ROLE_KEY = 'medfreedom_role';
+        const ROLES = {
+            physician: {
+                id: 'physician',
+                label: 'Physician / APP',
+                focus: 'Your credentials, patient screening rules, and evidence grades first — then facility setup.',
+                defaultTab: 'certs',
+                tabOrder: ['certs', 'patient', 'evidence', 'regulation', 'setup', 'peers', 'context'],
+                emphasize: ['certs', 'patient', 'evidence'],
+            },
+            clinic: {
+                id: 'clinic',
+                label: 'Clinic operator',
+                focus: 'Licenses, facility build, staffing, capital notes, and certifications to hire against.',
+                defaultTab: 'setup',
+                tabOrder: ['setup', 'certs', 'regulation', 'peers', 'patient', 'evidence', 'context'],
+                emphasize: ['setup', 'certs', 'peers'],
+            },
+            hospital: {
+                id: 'hospital',
+                label: 'Hospital program',
+                focus: 'REMS/FACT-class center requirements, regulation, ICU/facility readiness, then credentials.',
+                defaultTab: 'setup',
+                tabOrder: ['setup', 'regulation', 'certs', 'evidence', 'patient', 'peers', 'context'],
+                emphasize: ['setup', 'regulation', 'certs'],
+            },
+            investor: {
+                id: 'investor',
+                label: 'Investor / BD',
+                focus: 'Can you operate, policy risk, setup difficulty, and open markets — less clinical detail.',
+                defaultTab: 'regulation',
+                tabOrder: ['regulation', 'setup', 'certs', 'peers', 'evidence', 'patient', 'context'],
+                emphasize: ['regulation', 'setup', 'peers'],
+                preferAllMarkets: false,
+                preferEnterable: true,
+            },
+        };
+        let currentRole = 'physician';
+
+        function getRole() {
+            return ROLES[currentRole] || ROLES.physician;
+        }
+
+        function loadRole() {
+            try {
+                const saved = localStorage.getItem(ROLE_KEY);
+                if (saved && ROLES[saved]) currentRole = saved;
+            } catch (e) { /* ignore */ }
+            syncRoleButtons();
+        }
+
+        function syncRoleButtons() {
+            document.querySelectorAll('#roleBar button[data-role]').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-role') === currentRole);
+            });
+        }
+
+        function setRole(roleId, opts) {
+            opts = opts || {};
+            if (!ROLES[roleId]) return;
+            currentRole = roleId;
+            try { localStorage.setItem(ROLE_KEY, roleId); } catch (e) { /* ignore */ }
+            syncRoleButtons();
+            // Re-render open dossier with new tab order / focus
+            if (selectedJurisdictionId && !opts.skipRerender) {
+                const row = currentAccess.find(a => a.jurisdiction?.id === selectedJurisdictionId);
+                if (row) selectJurisdiction(selectedJurisdictionId, row, { skipUrl: true });
+            }
+            showToast('View: ' + (ROLES[roleId].label));
+        }
+
+        function roleFocusHtml() {
+            const r = getRole();
+            return `<div class="role-focus no-print"><strong>${esc(r.label)} view:</strong> ${esc(r.focus)}</div>`;
+        }
+
+        function orderedDossierTabsHtml(defaultTab) {
+            const r = getRole();
+            const labels = {
+                certs: 'Certs',
+                regulation: 'Regulation',
+                setup: 'Setup',
+                patient: 'Patient screen',
+                peers: 'Peers',
+                evidence: 'Evidence',
+                context: 'Market context',
+            };
+            const order = r.tabOrder || Object.keys(labels);
+            const active = defaultTab || r.defaultTab || 'certs';
+            return order.map(tab => {
+                const isActive = tab === active;
+                const hot = (r.emphasize || []).includes(tab);
+                return `<button type="button" role="tab" class="${isActive ? 'active' : ''}" data-tab="${tab}"
+                    aria-selected="${isActive ? 'true' : 'false'}"
+                    onclick="window.__switchDossierTab(this)"
+                    style="${hot && !isActive ? 'border-color:#a5b4fc;' : ''}">${labels[tab] || tab}</button>`;
+            }).join('');
+        }
+
+        // ── Open market alternatives (for blocked cells) ──────────────────
+        function topOpenMarkets(excludeJurId, limit) {
+            limit = limit || 3;
+            const score = (row) => {
+                const f = flagsOf(row);
+                let s = 0;
+                if (f.allowed && f.offered && !f.trial_only && !f.prohibited) s += 100;
+                else if (f.allowed && f.offered && f.trial_only) s += 40;
+                else if (f.allowed) s += 20;
+                if (f.pending_legislation) s -= 5;
+                const d = row.setup_requirements && row.setup_requirements.difficulty;
+                if (d === 'Low') s += 8;
+                else if (d === 'Moderate') s += 4;
+                else if (d === 'Extreme') s -= 3;
+                return s;
+            };
+            const open = currentAccess
+                .filter(row => {
+                    const jid = row.jurisdiction?.id;
+                    if (!jid || jid === excludeJurId) return false;
+                    const f = flagsOf(row);
+                    return f.allowed && f.offered && !f.prohibited && !f.trial_only;
+                })
+                .slice()
+                .sort((a, b) => score(b) - score(a));
+            if (open.length >= limit) return open.slice(0, limit);
+            // Fill with trial-site pathways if not enough fully open markets
+            const trials = currentAccess
+                .filter(row => {
+                    const jid = row.jurisdiction?.id;
+                    if (!jid || jid === excludeJurId) return false;
+                    if (open.some(o => o.jurisdiction?.id === jid)) return false;
+                    const f = flagsOf(row);
+                    return f.allowed && f.offered && f.trial_only && !f.prohibited;
+                })
+                .sort((a, b) => score(b) - score(a));
+            return open.concat(trials).slice(0, limit);
+        }
+
+        function blockedWhyText(ar) {
+            const bits = [];
+            if (ar.arbitrage_summary) bits.push(ar.arbitrage_summary);
+            else if (ar.legal_basis) bits.push(ar.legal_basis);
+            else bits.push('This market is marked prohibited for this service line.');
+            if (ar.provider_requirements && /prohibit|illegal|not lawful|no .*path/i.test(ar.provider_requirements)) {
+                bits.push(ar.provider_requirements.slice(0, 180));
+            }
+            return bits[0];
+        }
+
+        function renderBlockedAlternatives(ar, j) {
+            const f = flagsOf(ar);
+            if (!f.prohibited) return '';
+            const alts = topOpenMarkets(j.id, 3);
+            const why = blockedWhyText(ar);
+            let altHtml = '';
+            if (alts.length) {
+                altHtml = `<div class="muted" style="font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;margin-top:.55rem;color:#991b1b;">Where you may be able to operate instead</div>
+                <div class="alt-markets">${alts.map(row => {
+                    const jj = row.jurisdiction || {};
+                    const v = operateVerdict(row);
+                    const setup = row.setup_requirements || {};
+                    const certN = (setup.certifications || []).length;
+                    return `<div class="alt-market">
+                        <div>
+                            <div class="am-name">${esc(jj.name)}</div>
+                            <div class="am-meta">${esc(v.label)} · Setup: ${esc(setup.difficulty || '—')}${certN ? ` · ${certN} certs` : ''} · ${esc(friendlyPathway(row.access_pathway))}</div>
+                        </div>
+                        <div class="btn-row" style="margin:0;">
+                            <button type="button" class="btn-sm" onclick="window.__openJur(${JSON.stringify(jj.id)})">Open</button>
+                            <button type="button" class="btn-outline btn-sm" onclick="window.__toggleComparePin(${JSON.stringify(jj.id)}); window.__toggleComparePin(${JSON.stringify(j.id)});">Compare</button>
+                        </div>
+                    </div>`;
+                }).join('')}</div>
+                <p class="muted" style="font-size:.75rem;margin-top:.45rem;">Alternatives ranked by operable pathway + setup burden for <em>this</em> service line. Verify before capital commitment.</p>`;
+            } else {
+                altHtml = `<p class="muted" style="margin-top:.55rem;font-size:.86rem;">No fully open markets seeded for this therapy yet.
+                    <button type="button" class="btn-outline btn-sm" style="margin-left:.35rem;" onclick="window.__showAllMarkets()">Show all markets</button>
+                </p>`;
+            }
+            return `<div class="blocked-box">
+                <strong style="color:#991b1b;">Cannot lawfully operate here</strong>
+                <p style="margin-top:.35rem;font-size:.88rem;color:#7f1d1d;">${esc(why)}</p>
+                ${ar.regulatory_authority ? `<p class="muted" style="margin-top:.3rem;font-size:.8rem;">Authority: ${esc(ar.regulatory_authority)}${ar.legal_basis ? ' · ' + esc(String(ar.legal_basis).slice(0, 120)) : ''}</p>` : ''}
+                ${altHtml}
+            </div>`;
+        }
+
+        window.__showAllMarkets = function () {
+            applyFilterPreset('all');
+            document.getElementById('placeList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showToast('Showing all markets (research)');
+        };
+
+        // ── Print one-pager ───────────────────────────────────────────────
+        function buildPrintSheetHtml() {
+            const ctx = lastDossierCtx;
+            const proc = allProcedures.find(p => p.id === selectedProcedureId) || ctx?.proc;
+            if (!ctx || !ctx.ar || !proc) return '';
+            const ar = ctx.ar;
+            const setup = ctx.setup || ar.setup_requirements || {};
+            const v = ctx.verdict || operateVerdict(ar);
+            const f = flagsOf(ar);
+            const pe = primaryEvidence();
+            const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
+            const certs = setup.certifications || [];
+            const role = getRole();
+            const links = (ar.regulation_links || []).slice(0, 6);
+            return `
+                <h1>MedFreedom market one-pager</h1>
+                <p class="ph">${esc(proc.name)} · ${esc(ctx.jurName || '—')} · View: ${esc(role.label)} · ${new Date().toISOString().slice(0, 10)}</p>
+                <div class="grid2">
+                    <div>
+                        <div class="kv-print">
+                            <div><strong>Operate</strong></div><div>${esc(v.label)} — ${esc(v.short)}</div>
+                            <div><strong>Setup</strong></div><div>${esc(setup.difficulty || '—')} — ${esc(difficultyExplain(setup.difficulty))}</div>
+                            <div><strong>Policy risk</strong></div><div>${esc(f.legislation_label)}</div>
+                            <div><strong>Pathway</strong></div><div>${esc(friendlyPathway(ar.access_pathway))}</div>
+                            <div><strong>Legal status</strong></div><div>${esc(statusMeta(ar.legal_status).label)}</div>
+                            <div><strong>Evidence</strong></div><div>${eg ? esc(eg.grade + ' ' + eg.label) + (pe.condition?.name ? ' · ' + esc(pe.condition.name) : '') : 'Not graded'}</div>
+                            <div><strong>Cash ref</strong></div><div>${fmtPrice(ar)}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="kv-print">
+                            <div><strong>Authority</strong></div><div>${esc(ar.regulatory_authority || '—')}</div>
+                            <div><strong>Legal basis</strong></div><div>${esc(ar.legal_basis || '—')}</div>
+                            <div><strong>Market note</strong></div><div>${esc(ar.arbitrage_summary || '—')}</div>
+                        </div>
+                    </div>
+                </div>
+                <h2>Certifications & credentials (${certs.length})</h2>
+                <ul>${certs.length ? certs.map(c => {
+                    const cls = classifyCert(c);
+                    return `<li><strong>[${esc(cls.label)}]</strong> ${esc(c)}</li>`;
+                }).join('') : '<li>None listed</li>'}</ul>
+                <h2>Facility / business licenses</h2>
+                <ul>${(setup.licenses || []).length ? setup.licenses.map(x => `<li>${esc(x)}</li>`).join('') : '<li>None listed</li>'}</ul>
+                <h2>Training</h2>
+                <ul>${(setup.training || []).length ? setup.training.map(x => `<li>${esc(x)}</li>`).join('') : '<li>None listed</li>'}</ul>
+                <h2>Setup summary</h2>
+                <p>${esc(setup.summary || '—')}</p>
+                ${setup.capital_notes ? `<h2>Capital notes</h2><p>${esc(setup.capital_notes)}</p>` : ''}
+                <h2>Patient eligibility</h2>
+                <p>${esc(ar.eligibility_requirements || '—')}</p>
+                <h2>Regulation links</h2>
+                <ul>${links.length ? links.map(l => `<li>${esc(l.title || 'Link')}: ${esc(l.url)}</li>`).join('') : '<li>None on file</li>'}</ul>
+                <p class="ph" style="margin-top:1rem;">Not legal, regulatory, or investment advice. Confirm with counsel and the competent authority before capital commitment. Source: MedFreedom Provider Map · Open Source Medicine Foundation</p>
+            `;
+        }
+
+        window.__printOnePager = function () {
+            if (!lastDossierCtx || !lastDossierCtx.ar) {
+                showToast('Open a market dossier first');
+                return;
+            }
+            const sheet = document.getElementById('printSheet');
+            sheet.innerHTML = buildPrintSheetHtml();
+            // Expand all dossier panels for any residual on-page print content
+            document.querySelectorAll('#detailBody .dossier-tab-panel').forEach(p => {
+                p.classList.add('active');
+                const tab = p.getAttribute('data-panel');
+                const titles = {
+                    certs: 'Certifications', regulation: 'Regulation', setup: 'Setup',
+                    patient: 'Patient screening', peers: 'Peers', evidence: 'Evidence', context: 'Market context',
+                };
+                p.setAttribute('data-print-title', titles[tab] || tab || '');
+            });
+            document.title = `MedFreedom — ${(lastDossierCtx.procName || 'Therapy')} · ${(lastDossierCtx.jurName || 'Market')}`;
+            setTimeout(() => {
+                window.print();
+                // Restore single active tab after print
+                const role = getRole();
+                window.__activateDossierTab(role.defaultTab || 'certs');
+            }, 100);
         };
 
         async function api(path, opts) {
@@ -2243,29 +2618,28 @@
             let accessBlock = '';
             if (ar && selectedProcedureId) {
                 const f = flagsOf(ar);
-                const blockedBanner = f.prohibited
-                    ? `<div style="margin:.5rem 0 .75rem;padding:.75rem .9rem;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;">
-                        <strong style="color:#991b1b;">Cannot lawfully operate here</strong>
-                        <p class="muted" style="margin-top:.3rem;font-size:.86rem;">${esc(ar.arbitrage_summary || ar.legal_basis || 'This market is marked prohibited for this service line. Review regulation links and open markets instead.')}</p>
-                       </div>`
-                    : '';
+                const role = getRole();
+                const defaultTab = role.defaultTab || 'certs';
+                const blockedBanner = renderBlockedAlternatives(ar, j);
                 const pe = primaryEvidence();
                 const peLine = pe
                     ? (() => {
                         const m = evidenceGradeMeta(pe.evidence_grade);
-                        return `<p class="muted" style="margin-top:.45rem;font-size:.84rem;"><strong>Primary evidence:</strong>
+                        return `<p class="muted no-print" style="margin-top:.45rem;font-size:.84rem;"><strong>Primary evidence:</strong>
                             <span class="pill" style="background:${m.color};color:#fff;">${esc(m.grade)}</span>
                             ${esc(m.label)} · ${esc((pe.condition && pe.condition.name) || 'Indication')}
-                            <button type="button" class="btn-outline btn-sm" style="margin-left:.35rem;" onclick="window.__switchDossierTab(this.closest('.dossier-wrap').querySelector('[data-tab=evidence]'))">Open Evidence tab</button>
+                            <button type="button" class="btn-outline btn-sm" style="margin-left:.35rem;" onclick="window.__activateDossierTab('evidence')">Open Evidence tab</button>
                         </p>`;
                     })()
                     : '';
+                const panelActive = (id) => id === defaultTab ? 'active' : '';
                 accessBlock = `
                     <div class="dossier-wrap">
+                    ${roleFocusHtml()}
                     ${renderDecisionStrip(ar)}
                     ${blockedBanner}
-                    <div class="flag-row">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
-                    <div class="chip-row" style="margin-top:.4rem;">
+                    <div class="flag-row no-print">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
+                    <div class="chip-row no-print" style="margin-top:.4rem;">
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
                         <span class="pill">${esc(friendlyPathway(ar.access_pathway))}</span>
                         <span class="pill">${esc(friendlyOversight(ar.oversight_quality))}</span>
@@ -2277,33 +2651,28 @@
                         <dt>Market note</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
                     </dl>
                     ${peLine}
-                    <div class="cert-actions" style="margin:.55rem 0 0;">
+                    <div class="cert-actions no-print" style="margin:.55rem 0 0;">
                         <button type="button" class="btn-sm" onclick="window.__copyCertChecklist()">Copy cert checklist</button>
                         <button type="button" class="ghost btn-sm" onclick="window.__exportMarketBrief()">Export market brief</button>
                         <button type="button" class="btn-outline btn-sm" onclick="window.__copyMarketBrief()">Copy market brief</button>
                         <button type="button" class="btn-outline btn-sm" onclick="window.__copyShareLink()">Copy share link</button>
+                        <button type="button" class="btn-outline btn-sm" onclick="window.__printOnePager()">Print one-pager</button>
                     </div>
 
-                    <div class="dossier-tabs" role="tablist" aria-label="Market dossier sections">
-                        <button type="button" role="tab" class="active" data-tab="certs" aria-selected="true" onclick="window.__switchDossierTab(this)">Certs</button>
-                        <button type="button" role="tab" data-tab="regulation" aria-selected="false" onclick="window.__switchDossierTab(this)">Regulation</button>
-                        <button type="button" role="tab" data-tab="setup" aria-selected="false" onclick="window.__switchDossierTab(this)">Setup</button>
-                        <button type="button" role="tab" data-tab="patient" aria-selected="false" onclick="window.__switchDossierTab(this)">Patient screen</button>
-                        <button type="button" role="tab" data-tab="peers" aria-selected="false" onclick="window.__switchDossierTab(this)">Peers</button>
-                        <button type="button" role="tab" data-tab="evidence" aria-selected="false" onclick="window.__switchDossierTab(this)">Evidence</button>
-                        <button type="button" role="tab" data-tab="context" aria-selected="false" onclick="window.__switchDossierTab(this)">Market context</button>
+                    <div class="dossier-tabs no-print" role="tablist" aria-label="Market dossier sections">
+                        ${orderedDossierTabsHtml(defaultTab)}
                     </div>
 
-                    <div class="dossier-tab-panel active" data-panel="certs" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('certs')}" data-panel="certs" role="tabpanel">
                         ${renderCertifications((ar.setup_requirements || {}).certifications, ar.regulation_links || [])}
                     </div>
-                    <div class="dossier-tab-panel" data-panel="regulation" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('regulation')}" data-panel="regulation" role="tabpanel">
                         ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
                     </div>
-                    <div class="dossier-tab-panel" data-panel="setup" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('setup')}" data-panel="setup" role="tabpanel">
                         ${renderSetup(ar.setup_requirements, ar.provider_requirements, { skipCerts: true })}
                     </div>
-                    <div class="dossier-tab-panel" data-panel="patient" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('patient')}" data-panel="patient" role="tabpanel">
                         <dl class="kv">
                             <dt>Who may be treated</dt><dd>${esc(ar.eligibility_requirements || 'Define inclusion/exclusion per local protocol')}</dd>
                             <dt>Care pathway</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
@@ -2313,15 +2682,15 @@
                             <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
                         </dl>
                     </div>
-                    <div class="dossier-tab-panel" data-panel="peers" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('peers')}" data-panel="peers" role="tabpanel">
                         ${renderClinics(ar.example_clinics || [])}
                     </div>
-                    <div class="dossier-tab-panel" data-panel="evidence" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('evidence')}" data-panel="evidence" role="tabpanel">
                         <p class="muted" style="margin-bottom:.55rem;font-size:.82rem;">Indication-level grades (same in every market). E1 = multi-RCT · E2 = strong RCT · E3–E4 mixed/uncontrolled · E5–E8 weaker.</p>
                         ${evidenceCardsHtml(currentIndications)}
-                        <p class="muted" style="margin-top:.55rem;font-size:.78rem;"><a href="#evidenceSection">Also shown in the full evidence section below</a></p>
+                        <p class="muted no-print" style="margin-top:.55rem;font-size:.78rem;"><a href="#evidenceSection">Also shown in the full evidence section below</a></p>
                     </div>
-                    <div class="dossier-tab-panel" data-panel="context" role="tabpanel">
+                    <div class="dossier-tab-panel ${panelActive('context')}" data-panel="context" role="tabpanel">
                         <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
                         ${children}
                         ${renderRegulation(j.regulation)}
@@ -2394,6 +2763,11 @@
             if (!btn) return;
             applyFilterPreset(btn.getAttribute('data-preset'));
         });
+        document.getElementById('roleBar')?.addEventListener('click', e => {
+            const btn = e.target.closest('button[data-role]');
+            if (!btn) return;
+            setRole(btn.getAttribute('data-role'));
+        });
         document.getElementById('searchBox').addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -2454,6 +2828,7 @@
         }
 
         (async function init() {
+            loadRole();
             initMap();
             const s = await refreshStats();
             if (s && s.jurisdictions > 0) {
@@ -2481,6 +2856,11 @@
                 } finally {
                     suppressUrlWrite = false;
                 }
+            });
+            // After print dialog, collapse expanded panels
+            window.addEventListener('afterprint', () => {
+                const role = getRole();
+                window.__activateDossierTab(role.defaultTab || 'certs');
             });
         })();
     </script>
