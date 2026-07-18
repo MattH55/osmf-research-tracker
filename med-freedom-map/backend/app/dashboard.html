@@ -383,6 +383,62 @@
         .decision-strip.cols-5 { grid-template-columns: repeat(5, 1fr); }
         @media (max-width: 900px) { .decision-strip.cols-5 { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 700px) { .decision-strip.cols-5 { grid-template-columns: 1fr 1fr; } }
+
+        /* Cleaner place list */
+        .place-list li .pl-row {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem;
+        }
+        .place-list li .pl-main { min-width: 0; flex: 1; }
+        .place-list li .pl-status {
+            display: inline-block; font-size: .72rem; font-weight: 750; padding: .2rem .55rem;
+            border-radius: 999px; margin-top: .3rem;
+        }
+        .place-list li .pl-status.go { background: #d1fae5; color: #065f46; }
+        .place-list li .pl-status.caution { background: #fef3c7; color: #92400e; }
+        .place-list li .pl-status.no { background: #fee2e2; color: #991b1b; }
+        .place-list li .pl-status.neutral { background: #f1f5f9; color: #475569; }
+        .place-list li .pl-sub {
+            font-size: .8rem; color: var(--muted); margin-top: .3rem; line-height: 1.4;
+        }
+        .place-list li.compare-on { background: #f5f3ff; box-shadow: inset 3px 0 0 #7c3aed; }
+        .btn-compare-pin {
+            flex-shrink: 0; font-size: .7rem; padding: .3rem .5rem; border-radius: 8px;
+            background: #fff; color: var(--muted); border: 1px solid var(--line); font-weight: 700;
+            cursor: pointer; margin-top: .1rem;
+        }
+        .btn-compare-pin:hover { color: var(--brand); border-color: #c7d2fe; background: #eef2ff; }
+        .btn-compare-pin.on { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+        .compare-bar {
+            display: none; margin: .65rem 0 .25rem; padding: .65rem .75rem;
+            background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 12px;
+            align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap;
+        }
+        .compare-bar.visible { display: flex; }
+        .compare-bar .cb-slots { font-size: .84rem; font-weight: 650; color: #4c1d95; }
+        .compare-panel {
+            margin-top: 1rem; display: none;
+        }
+        .compare-panel.visible { display: block; }
+        .compare-table {
+            width: 100%; border-collapse: collapse; font-size: .86rem; margin-top: .5rem;
+        }
+        .compare-table th, .compare-table td {
+            border: 1px solid var(--line); padding: .55rem .65rem; vertical-align: top; text-align: left;
+        }
+        .compare-table th {
+            background: #f8fafc; font-size: .72rem; text-transform: uppercase;
+            letter-spacing: .04em; color: var(--muted); font-weight: 750;
+        }
+        .compare-table th.mkt { background: #eef2ff; color: #312e81; font-size: .88rem; text-transform: none; letter-spacing: 0; }
+        .compare-table td.lbl { width: 22%; font-weight: 650; color: var(--muted); background: #fafafa; white-space: nowrap; }
+        .compare-table ul { margin: .15rem 0 0 1rem; padding: 0; }
+        .compare-table li { margin: .15rem 0; }
+        .cert-reg-link {
+            display: inline-block; font-size: .72rem; font-weight: 700; margin-left: .35rem;
+            color: var(--brand); text-decoration: none; border-bottom: 1px dashed #a5b4fc;
+        }
+        .cert-reg-link:hover { color: var(--brand2); border-bottom-style: solid; }
+        .cert-reg-links { display: flex; flex-wrap: wrap; gap: .25rem .5rem; margin-top: .3rem; }
     </style>
 </head>
 <body>
@@ -499,6 +555,13 @@
                     <label><input type="checkbox" id="fTrial"> Include trial-site only</label>
                     <label><input type="checkbox" id="fProhibited"> Show prohibited markets</label>
                 </div>
+                <div class="compare-bar" id="compareBar">
+                    <div class="cb-slots" id="compareSlotsLabel">Compare: pick up to 2 markets (use + on a row)</div>
+                    <div class="btn-row" style="margin:0;">
+                        <button type="button" class="btn-sm" id="compareRunBtn" onclick="window.__runCompare()" disabled>Compare side-by-side</button>
+                        <button type="button" class="btn-outline btn-sm" onclick="window.__clearCompare()">Clear</button>
+                    </div>
+                </div>
                 <ul class="place-list" id="placeList"></ul>
             </section>
 
@@ -510,6 +573,19 @@
             </section>
             <div id="toast" class="toast" role="status" aria-live="polite"></div>
         </div>
+
+        <section class="card card-pad compare-panel" id="comparePanel" style="margin-top:1rem;">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem;">
+                <h2 style="margin:0;">Compare markets</h2>
+                <div class="btn-row" style="margin:0;">
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__copyCompare()">Copy comparison</button>
+                    <button type="button" class="ghost btn-sm" onclick="window.__exportCompare()">Download .txt</button>
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__clearCompare()">Close</button>
+                </div>
+            </div>
+            <p class="muted" id="compareIntro" style="margin:.45rem 0 .25rem;">Side-by-side operability, certs, setup, and policy risk for the same service line.</p>
+            <div id="compareBody"></div>
+        </section>
 
         <section class="card card-pad" style="margin-top:1rem;" id="evidenceSection">
             <h2>Clinical governance — evidence by indication</h2>
@@ -701,6 +777,289 @@
             }
             return { key: 'req', label: 'Required' };
         }
+
+        /** Keyword tokens that often appear in both cert text and regulation link titles */
+        const CERT_REG_KEYWORDS = [
+            { re: /\boha\b|oregon psilocybin|ops\b|psilocybin services/i, label: 'OHA / OPS' },
+            { re: /\brems\b|spravato|esketamine/i, label: 'REMS' },
+            { re: /\bfact\b|jacie|cellular therapy accreditation/i, label: 'FACT / cell therapy' },
+            { re: /\bhfea\b|mitochondrial donation|human fertilisation/i, label: 'HFEA' },
+            { re: /\btga\b|authorized prescriber|special access scheme|\bsas\b/i, label: 'TGA' },
+            { re: /\bdea\b|controlled.?substance registration|schedule iii/i, label: 'DEA / CSA' },
+            { re: /\bfda\b|ind\b|bla\b|510\(k\)/i, label: 'FDA' },
+            { re: /\bcofepris\b/i, label: 'COFEPRIS' },
+            { re: /\bdcc\b|department of cannabis|metrc/i, label: 'Cannabis DCC' },
+            { re: /\bclia\b/i, label: 'CLIA' },
+            { re: /\bsart\b|cdc art|assisted reproductive/i, label: 'SART / ART' },
+            { re: /\babog\b|\brei\b|reproductive endocrinology/i, label: 'REI / ABOG' },
+            { re: /\buhms\b|nbdhmt|hyperbaric/i, label: 'Hyperbaric / UHMS' },
+            { re: /\bmaid\b|medical assistance in dying|criminal code/i, label: 'MAID' },
+            { re: /\belso\b|ecmo\b/i, label: 'ELSO / ECMO' },
+            { re: /\bcms\b|coverage with evidence|medicare/i, label: 'CMS / Medicare' },
+            { re: /\branzcp\b|ahpra\b/i, label: 'AHPRA / RANZCP' },
+            { re: /\bapprobation\b|german medical/i, label: 'German Approbation' },
+            { re: /\bprospera\b|\bzede\b/i, label: 'Próspera / ZEDE' },
+            { re: /\bembryolog/i, label: 'Embryology' },
+            { re: /\bcar-?t\b|kymriah|yescarta|casgevy/i, label: 'CAR-T / gene therapy center' },
+        ];
+
+        function matchRegLinksForCert(certText, links) {
+            const text = String(certText || '');
+            if (!text || !links || !links.length) return [];
+            const hits = [];
+            const seen = new Set();
+            // Keyword rules
+            for (const rule of CERT_REG_KEYWORDS) {
+                if (!rule.re.test(text)) continue;
+                for (const l of links) {
+                    if (!l || !l.url) continue;
+                    const hay = `${l.title || ''} ${l.citation || ''} ${l.url || ''}`;
+                    if (rule.re.test(hay) || rule.re.test(text)) {
+                        // Prefer links whose title/url also mention the keyword
+                        const titleHit = rule.re.test(hay);
+                        if (!titleHit && !rule.re.test(text)) continue;
+                        // If cert matches keyword, accept link that matches same keyword in title/url, OR any link if only one total
+                        if (titleHit || links.length <= 2) {
+                            const key = l.url;
+                            if (seen.has(key)) continue;
+                            seen.add(key);
+                            hits.push({ ...l, matchLabel: rule.label });
+                        }
+                    }
+                }
+            }
+            // Token overlap: significant words from cert vs link title
+            if (!hits.length) {
+                const stop = new Set(['the','and','for','with','from','that','this','your','you','are','not','any','all','per','via','or','of','to','in','a','an','if','as','be','on','is','by','at']);
+                const tokens = text.toLowerCase().replace(/[^a-z0-9+\-/ ]/g, ' ').split(/\s+/).filter(w => w.length > 3 && !stop.has(w));
+                for (const l of links) {
+                    if (!l?.url) continue;
+                    const hay = `${l.title || ''} ${l.citation || ''}`.toLowerCase();
+                    const overlap = tokens.filter(t => hay.includes(t));
+                    if (overlap.length >= 2) {
+                        if (seen.has(l.url)) continue;
+                        seen.add(l.url);
+                        hits.push({ ...l, matchLabel: overlap.slice(0, 2).join(', ') });
+                    }
+                }
+            }
+            return hits.slice(0, 3);
+        }
+
+        function renderCertRegLinks(certText, links) {
+            const matched = matchRegLinksForCert(certText, links);
+            if (!matched.length) return '';
+            return `<div class="cert-reg-links">${matched.map(l =>
+                `<a class="cert-reg-link" href="${esc(l.url)}" target="_blank" rel="noopener" title="${esc(l.title || l.url)}">↗ ${esc(l.matchLabel || l.title || 'Regulation')}</a>`
+            ).join('')}</div>`;
+        }
+
+        // ── Compare markets (up to 2) ─────────────────────────────────────
+        let compareJurIds = []; // max 2 jurisdiction ids
+
+        function updateCompareBar() {
+            const bar = document.getElementById('compareBar');
+            const label = document.getElementById('compareSlotsLabel');
+            const run = document.getElementById('compareRunBtn');
+            if (!bar) return;
+            if (!compareJurIds.length) {
+                bar.classList.remove('visible');
+                const panel = document.getElementById('comparePanel');
+                if (panel && compareJurIds.length === 0) { /* keep panel if open until clear */ }
+                return;
+            }
+            bar.classList.add('visible');
+            const names = compareJurIds.map(id => {
+                const row = currentAccess.find(a => a.jurisdiction?.id === id);
+                return row?.jurisdiction?.name || id;
+            });
+            if (compareJurIds.length === 1) {
+                label.textContent = `Compare: ${names[0]} + pick one more market`;
+                if (run) run.disabled = true;
+            } else {
+                label.textContent = `Compare: ${names[0]} vs ${names[1]}`;
+                if (run) run.disabled = false;
+            }
+        }
+
+        window.__toggleComparePin = function (jid, ev) {
+            if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+            if (!jid) return;
+            const idx = compareJurIds.indexOf(jid);
+            if (idx >= 0) {
+                compareJurIds.splice(idx, 1);
+            } else {
+                if (compareJurIds.length >= 2) {
+                    compareJurIds.shift();
+                }
+                compareJurIds.push(jid);
+            }
+            updateCompareBar();
+            renderPlaceList(filteredAccess());
+            if (compareJurIds.length === 2) {
+                // auto-open comparison when second market pinned
+                window.__runCompare();
+            } else if (compareJurIds.length < 2) {
+                const panel = document.getElementById('comparePanel');
+                if (panel) panel.classList.remove('visible');
+            }
+        };
+
+        window.__clearCompare = function () {
+            compareJurIds = [];
+            updateCompareBar();
+            document.getElementById('compareBar')?.classList.remove('visible');
+            document.getElementById('comparePanel')?.classList.remove('visible');
+            renderPlaceList(filteredAccess());
+        };
+
+        function marketSnapshot(row) {
+            if (!row) return null;
+            const j = row.jurisdiction || {};
+            const setup = row.setup_requirements || {};
+            const v = operateVerdict(row);
+            const f = flagsOf(row);
+            const pe = primaryEvidence();
+            const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
+            return {
+                id: j.id,
+                name: j.name || row.jurisdiction_id || '—',
+                verdict: v,
+                difficulty: setup.difficulty || '—',
+                difficultyNote: difficultyExplain(setup.difficulty),
+                certs: setup.certifications || [],
+                licenses: setup.licenses || [],
+                training: setup.training || [],
+                pathway: friendlyPathway(row.access_pathway),
+                legal: statusMeta(row.legal_status).label,
+                policy: f.legislation_label,
+                authority: row.regulatory_authority || '—',
+                legalBasis: row.legal_basis || '—',
+                regLinks: row.regulation_links || [],
+                price: (typeof fmtPrice === 'function' ? fmtPrice(row) : '—'),
+                note: row.arbitrage_summary || '—',
+                evidence: eg ? `${eg.grade} ${eg.label}` : 'Not graded',
+                evidenceCondition: pe?.condition?.name || '—',
+                setupSummary: setup.summary || '—',
+            };
+        }
+
+        function buildCompareHtml(a, b) {
+            const certCell = (s) => {
+                if (!s.certs.length) return '<span class="muted">None listed</span>';
+                return `<ul>${s.certs.slice(0, 8).map(c => {
+                    const cls = classifyCert(c);
+                    const links = matchRegLinksForCert(c, s.regLinks);
+                    const linkHtml = links.length
+                        ? ' ' + links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">↗</a>`).join(' ')
+                        : '';
+                    return `<li><span class="cert-badge ${cls.key === 'req' ? 'req' : (cls.key === 'rec' ? 'rec' : 'na')}">${esc(cls.label)}</span> ${esc(c)}${linkHtml}</li>`;
+                }).join('')}${s.certs.length > 8 ? `<li class="muted">+${s.certs.length - 8} more</li>` : ''}</ul>`;
+            };
+            const regCell = (s) => {
+                if (!s.regLinks.length) return esc(s.authority || '—');
+                return `<div class="muted" style="margin-bottom:.25rem;">${esc(s.authority)}</div><ul>${s.regLinks.slice(0, 4).map(l =>
+                    `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title || l.url)}</a></li>`
+                ).join('')}</ul>`;
+            };
+            const pill = (s) => {
+                const cls = s.verdict.cls === 'go' ? 'allowed' : (s.verdict.cls === 'no' ? 'not-allowed' : 'pending');
+                return `<span class="pill ${cls}">${esc(s.verdict.label)}</span>`;
+            };
+            const rows = [
+                ['Can you operate?', pill(a), pill(b)],
+                ['Setup difficulty', `<strong>${esc(a.difficulty)}</strong><div class="muted" style="font-size:.78rem;">${esc(a.difficultyNote)}</div>`,
+                    `<strong>${esc(b.difficulty)}</strong><div class="muted" style="font-size:.78rem;">${esc(b.difficultyNote)}</div>`],
+                ['Certifications', certCell(a), certCell(b)],
+                ['Pathway', esc(a.pathway), esc(b.pathway)],
+                ['Legal status', esc(a.legal), esc(b.legal)],
+                ['Policy risk', esc(a.policy), esc(b.policy)],
+                ['Evidence (same therapy)', esc(a.evidence) + (a.evidenceCondition !== '—' ? ` · ${esc(a.evidenceCondition)}` : ''),
+                    esc(b.evidence) + (b.evidenceCondition !== '—' ? ` · ${esc(b.evidenceCondition)}` : '')],
+                ['Cash price ref', a.price, b.price],
+                ['Authority', esc(a.authority), esc(b.authority)],
+                ['Regulation links', regCell(a), regCell(b)],
+                ['Setup summary', esc(a.setupSummary), esc(b.setupSummary)],
+                ['Market note', esc(a.note), esc(b.note)],
+            ];
+            return `
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="mkt">${esc(a.name)}</th>
+                            <th class="mkt">${esc(b.name)}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(([lab, ca, cb]) =>
+                            `<tr><td class="lbl">${esc(lab)}</td><td>${ca}</td><td>${cb}</td></tr>`
+                        ).join('')}
+                    </tbody>
+                </table>
+                <p class="muted" style="margin-top:.65rem;font-size:.75rem;">Not legal advice. Open each market dossier for full checklists. Evidence grades are therapy-level (identical across markets).</p>
+            `;
+        }
+
+        function buildCompareText(a, b) {
+            const proc = allProcedures.find(p => p.id === selectedProcedureId);
+            const lines = [
+                'MedFreedom — Market comparison',
+                `Therapy: ${proc?.name || selectedProcedureId || '—'}`,
+                `A: ${a.name}`,
+                `B: ${b.name}`,
+                '',
+                `Operate: ${a.verdict.label} | ${b.verdict.label}`,
+                `Setup: ${a.difficulty} | ${b.difficulty}`,
+                `Pathway: ${a.pathway} | ${b.pathway}`,
+                `Policy: ${a.policy} | ${b.policy}`,
+                `Evidence: ${a.evidence} | ${b.evidence}`,
+                '',
+                `— Certs · ${a.name} —`,
+                ...(a.certs.map((c, i) => `${i + 1}. ${c}`)),
+                '',
+                `— Certs · ${b.name} —`,
+                ...(b.certs.map((c, i) => `${i + 1}. ${c}`)),
+                '',
+                'Not legal advice. Source: MedFreedom Provider Map',
+            ];
+            return lines.join('\n');
+        }
+
+        window.__runCompare = function () {
+            if (compareJurIds.length < 2) {
+                showToast('Pin two markets with + to compare');
+                return;
+            }
+            const ra = currentAccess.find(a => a.jurisdiction?.id === compareJurIds[0]);
+            const rb = currentAccess.find(a => a.jurisdiction?.id === compareJurIds[1]);
+            if (!ra || !rb) {
+                showToast('Could not load both markets for this therapy');
+                return;
+            }
+            const a = marketSnapshot(ra);
+            const b = marketSnapshot(rb);
+            const proc = allProcedures.find(p => p.id === selectedProcedureId);
+            document.getElementById('compareIntro').textContent =
+                `${proc?.name || 'Service line'}: ${a.name} vs ${b.name}`;
+            document.getElementById('compareBody').innerHTML = buildCompareHtml(a, b);
+            const panel = document.getElementById('comparePanel');
+            panel.classList.add('visible');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            window.__lastCompare = { a, b };
+        };
+
+        window.__copyCompare = function () {
+            if (!window.__lastCompare) { showToast('Run a comparison first'); return; }
+            copyText(buildCompareText(window.__lastCompare.a, window.__lastCompare.b), 'Comparison copied');
+        };
+
+        window.__exportCompare = function () {
+            if (!window.__lastCompare) { showToast('Run a comparison first'); return; }
+            const safe = (s) => String(s || 'm').replace(/[^\w\-]+/g, '_').slice(0, 30);
+            const { a, b } = window.__lastCompare;
+            downloadText(`compare_${safe(a.name)}_vs_${safe(b.name)}.txt`, buildCompareText(a, b));
+        };
 
         function showToast(msg) {
             const el = document.getElementById('toast');
@@ -1215,18 +1574,19 @@
                 const m = L.marker([lat, lng], { icon: circleIcon(color), title: j.name });
                 const price = fmtPrice(row);
                 const setup = row.setup_requirements || {};
+                const v = operateVerdict(row);
                 m.bindPopup(`
                     <strong>${esc(j.name)}</strong><br>
-                    <span class="pill status sm" style="background:${meta.color};margin-top:.35rem;display:inline-block;">${esc(meta.label)}</span>
-                    <div class="flag-row" style="margin-top:.4rem;">${flagPills(row)}${setupDifficultyPill(row)}</div>
+                    <span class="pl-status ${esc(v.cls)}" style="margin-top:.35rem;">${esc(v.label)}</span>
                     <div style="margin-top:.45rem;color:#64748b;font-size:.82rem;">
-                        <b>Operate via:</b> ${esc(friendlyPathway(row.access_pathway))}<br>
-                        <b>Setup:</b> ${esc(setup.difficulty || '—')}<br>
-                        <b>Policy:</b> ${esc(f.legislation_label)}<br>
-                        <b>Cash ref:</b> ${price}
+                        ${esc(v.short)}<br>
+                        <b>Pathway:</b> ${esc(friendlyPathway(row.access_pathway))}<br>
+                        <b>Setup:</b> ${esc(setup.difficulty || '—')}${(setup.certifications || []).length ? ` · ${(setup.certifications || []).length} certs` : ''}<br>
+                        <b>Policy:</b> ${esc(f.legislation_label)}
                     </div>
                     <div class="popup-actions">
                         <button type="button" onclick="window.__openJur(${JSON.stringify(j.id)})">Open market dossier</button>
+                        <button type="button" class="btn-outline" style="margin-left:.35rem;" onclick="window.__toggleComparePin(${JSON.stringify(j.id)})">Compare +</button>
                     </div>
                 `);
                 m.on('click', () => selectJurisdiction(j.id, row));
@@ -1486,8 +1846,14 @@
             if (!opts.keepJurisdiction) {
                 selectedJurisdictionId = null;
             }
+            // Reset market compare when switching service lines (unless restoring deep link)
+            if (!opts.keepCompare) {
+                compareJurIds = [];
+                document.getElementById('comparePanel')?.classList.remove('visible');
+                document.getElementById('compareBar')?.classList.remove('visible');
+            }
             document.getElementById('detailBody').innerHTML =
-                '<div class="empty"><strong>Next:</strong> pick a green/enterable market in the list or map to open the go/caution verdict, certifications checklist, and regulation links.</div>';
+                '<div class="empty"><strong>Next:</strong> pick a green/enterable market in the list or map. Use <strong>+</strong> on two rows to compare side-by-side.</div>';
 
             const summary = document.getElementById('selectedSummary');
             const p = allProcedures.find(x => x.id === id);
@@ -1589,31 +1955,43 @@
             const ul = document.getElementById('placeList');
             if (!rows.length) {
                 ul.innerHTML = '<li class="muted" style="cursor:default;padding:1rem 0;">No places match the current filters.</li>';
+                updateCompareBar();
                 return;
             }
             ul.innerHTML = rows.map(row => {
                 const j = row.jurisdiction || {};
-                const meta = statusMeta(row.legal_status);
+                const v = operateVerdict(row);
                 const f = flagsOf(row);
                 const active = j.id === selectedJurisdictionId ? 'active' : '';
+                const pinned = compareJurIds.includes(j.id);
                 const setup = row.setup_requirements || {};
-                return `<li class="${active}" data-jid="${esc(j.id)}">
-                    <div class="title">${esc(j.name)}</div>
-                    <div class="flag-row">${flagPills(row)}${setupDifficultyPill(row)}</div>
-                    <div class="meta" style="margin-top:.35rem;">
-                        <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
-                        <span class="pill">${esc(friendlyPathway(row.access_pathway))}</span>
-                        ${(row.regulation_links || []).length ? `<span class="pill">${row.regulation_links.length} reg link${row.regulation_links.length === 1 ? '' : 's'}</span>` : ''}
-                        ${(setup.certifications || []).length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${setup.certifications.length} cert${setup.certifications.length === 1 ? '' : 's'}</span>` : ''}
+                const diff = setup.difficulty || '—';
+                const certN = (setup.certifications || []).length;
+                const pathShort = friendlyPathway(row.access_pathway);
+                // Compact secondary line — one status + setup/certs/pathway
+                const subParts = [
+                    `Setup: ${diff}`,
+                    certN ? `${certN} cert${certN === 1 ? '' : 's'}` : null,
+                    pathShort && pathShort !== '—' ? pathShort : null,
+                    f.legislation_watch ? f.legislation_label : null,
+                ].filter(Boolean);
+                return `<li class="${active}${pinned ? ' compare-on' : ''}" data-jid="${esc(j.id)}">
+                    <div class="pl-row">
+                        <div class="pl-main">
+                            <div class="title">${esc(j.name)}</div>
+                            <span class="pl-status ${esc(v.cls)}" title="${esc(v.short)}">${esc(v.label)}</span>
+                            <div class="pl-sub" title="${esc(difficultyExplain(diff))}">${esc(subParts.join(' · '))}</div>
+                        </div>
+                        <button type="button" class="btn-compare-pin ${pinned ? 'on' : ''}"
+                            data-compare-jid="${esc(j.id)}"
+                            title="${pinned ? 'Remove from compare' : 'Add to compare (max 2)'}"
+                            aria-label="${pinned ? 'Remove from compare' : 'Add to compare'}">${pinned ? '✓' : '+'}</button>
                     </div>
-                    <p class="muted" style="margin-top:.35rem;font-size:.8rem;">
-                        ${esc(f.legislation_label)} · Oversight: ${esc(friendlyOversight(row.oversight_quality))}
-                        ${(setup.certifications || [])[0] ? ' · Certs: ' + esc(setup.certifications[0].slice(0, 70)) + (setup.certifications[0].length > 70 || setup.certifications.length > 1 ? '…' : '') : (setup.summary ? ' · ' + esc(setup.summary.slice(0, 90)) + (setup.summary.length > 90 ? '…' : '') : '')}
-                    </p>
                 </li>`;
             }).join('');
             ul.querySelectorAll('li[data-jid]').forEach(li => {
-                li.addEventListener('click', () => {
+                li.addEventListener('click', e => {
+                    if (e.target.closest('[data-compare-jid]')) return;
                     const jid = li.getAttribute('data-jid');
                     const row = currentAccess.find(a => a.jurisdiction?.id === jid);
                     selectJurisdiction(jid, row);
@@ -1621,6 +1999,12 @@
                     if (m) { map.panTo(m.getLatLng()); m.openPopup(); }
                 });
             });
+            ul.querySelectorAll('[data-compare-jid]').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    window.__toggleComparePin(btn.getAttribute('data-compare-jid'), e);
+                });
+            });
+            updateCompareBar();
         }
 
         function evidenceCardsHtml(indications) {
@@ -1696,21 +2080,26 @@
             </div>`;
         }
 
-        function renderCertifications(certs) {
+        function renderCertifications(certs, regLinks) {
+            regLinks = regLinks || (lastDossierCtx && lastDossierCtx.ar && lastDossierCtx.ar.regulation_links) || [];
             if (!certs || !certs.length) {
                 return `<div class="cert-box" style="margin-top:.4rem;padding:.75rem .9rem;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;">
                     <div style="font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#64748b;">Certifications & credentials</div>
                     <p class="muted" style="margin-top:.3rem;font-size:.86rem;">No structured certification list for this cell yet — see licenses & training below, and confirm with the competent authority.</p>
                 </div>`;
             }
+            let linkedCount = 0;
             const items = certs.map((c, i) => {
                 const cls = classifyCert(c);
                 const badgeClass = cls.key === 'req' ? 'req' : (cls.key === 'rec' ? 'rec' : 'na');
+                const regHtml = renderCertRegLinks(c, regLinks);
+                if (regHtml) linkedCount++;
                 return `<li>
                     <input type="checkbox" id="cert-cb-${i}" onchange="window.__toggleCertDone(this)" aria-label="Mark done: ${esc(c).slice(0, 80)}">
                     <div>
                         <span class="cert-badge ${badgeClass}">${esc(cls.label)}</span>
                         <span class="cert-text">${esc(c)}</span>
+                        ${regHtml}
                     </div>
                 </li>`;
             }).join('');
@@ -1724,8 +2113,9 @@
                     ${nReq ? `<span class="cert-badge req">${nReq} required</span>` : ''}
                     ${nRec ? `<span class="cert-badge rec">${nRec} recommended</span>` : ''}
                     ${nNa ? `<span class="cert-badge na">${nNa} no path</span>` : ''}
+                    ${linkedCount ? `<span class="pill sm" style="background:#dbeafe;color:#1e40af;">${linkedCount} with reg link</span>` : ''}
                 </div>
-                <p class="muted" style="font-size:.78rem;margin-bottom:.4rem;color:#4338ca;">Check off what you already hold. Tags are heuristic (Required / Recommended / No path) — confirm with the competent authority.</p>
+                <p class="muted" style="font-size:.78rem;margin-bottom:.4rem;color:#4338ca;">Check off what you already hold. <strong>↗ links</strong> jump to matching regulation pages when we can match keywords (OHA, REMS, FACT, HFEA, TGA…). Heuristic — confirm with the competent authority.</p>
                 <ul class="cert-list">${items}</ul>
                 <div class="cert-actions">
                     <button type="button" class="btn-sm" onclick="window.__copyCertChecklist()">Copy checklist</button>
@@ -1905,7 +2295,7 @@
                     </div>
 
                     <div class="dossier-tab-panel active" data-panel="certs" role="tabpanel">
-                        ${renderCertifications((ar.setup_requirements || {}).certifications)}
+                        ${renderCertifications((ar.setup_requirements || {}).certifications, ar.regulation_links || [])}
                     </div>
                     <div class="dossier-tab-panel" data-panel="regulation" role="tabpanel">
                         ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
