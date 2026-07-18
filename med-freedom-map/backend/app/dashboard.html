@@ -339,6 +339,50 @@
             opacity: 0; pointer-events: none; transition: opacity .2s;
         }
         .toast.show { opacity: 1; }
+
+        /* Therapy card picker */
+        .therapy-list {
+            max-height: min(52vh, 420px); overflow: auto; margin-top: .35rem;
+            border: 1px solid var(--line); border-radius: 12px; background: #f8fafc;
+        }
+        .therapy-group-label {
+            position: sticky; top: 0; z-index: 1;
+            font-size: .68rem; font-weight: 750; text-transform: uppercase; letter-spacing: .05em;
+            color: var(--muted); background: #f1f5f9; padding: .45rem .7rem;
+            border-bottom: 1px solid var(--line);
+        }
+        .therapy-card {
+            display: block; width: 100%; text-align: left;
+            border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+            background: #fff; color: var(--ink); padding: .7rem .75rem;
+            cursor: pointer; font-weight: 500;
+        }
+        .therapy-card:hover { background: #eef2ff; color: var(--ink); }
+        .therapy-card.active {
+            background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+            box-shadow: inset 3px 0 0 var(--brand);
+        }
+        .therapy-card .tc-name { font-weight: 750; font-size: .9rem; line-height: 1.3; }
+        .therapy-card .tc-meta { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .35rem; }
+        .therapy-card .tc-ind { font-size: .75rem; color: var(--muted); margin-top: .25rem; line-height: 1.35; }
+        .therapy-count { font-size: .78rem; color: var(--muted); margin: .35rem 0 0; font-weight: 600; }
+
+        /* Dossier tabs */
+        .dossier-tabs {
+            display: flex; flex-wrap: wrap; gap: .35rem; margin: .75rem 0 .55rem;
+            border-bottom: 1px solid var(--line); padding-bottom: .55rem;
+        }
+        .dossier-tabs button {
+            font-size: .78rem; padding: .4rem .7rem; border-radius: 999px;
+            background: #fff; color: var(--ink); border: 1px solid var(--line); font-weight: 650;
+        }
+        .dossier-tabs button:hover { background: #eef2ff; color: var(--brand2); }
+        .dossier-tabs button.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+        .dossier-tab-panel { display: none; }
+        .dossier-tab-panel.active { display: block; }
+        .decision-strip.cols-5 { grid-template-columns: repeat(5, 1fr); }
+        @media (max-width: 900px) { .decision-strip.cols-5 { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 700px) { .decision-strip.cols-5 { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
@@ -369,6 +413,7 @@
             <div class="context-actions">
                 <button type="button" class="btn-outline btn-sm" id="ctxChangeTherapy" onclick="window.__focusTherapy()">Change therapy</button>
                 <button type="button" class="btn-outline btn-sm" id="ctxChangeMarket" onclick="window.__focusMarkets()" style="display:none;">Change market</button>
+                <button type="button" class="btn-outline btn-sm" id="ctxShareLink" onclick="window.__copyShareLink()" style="display:none;">Copy link</button>
                 <button type="button" class="btn-sm" id="ctxCopyCerts" onclick="window.__copyCertChecklist()" style="display:none;">Copy cert checklist</button>
                 <button type="button" class="ghost btn-sm" id="ctxExportDossier" onclick="window.__exportMarketBrief()" style="display:none;">Export brief</button>
             </div>
@@ -410,11 +455,12 @@
                     </select>
                 </div>
                 <div class="field-block">
-                    <label class="field" for="procedureSelect">Therapy / service</label>
-                    <select id="procedureSelect" size="12" style="min-height:280px;">
-                        <option value="">Loading service lines…</option>
-                    </select>
-                    <p class="hint">Select a therapy to map markets by whether you can lawfully stand up a program, and how hard setup is.</p>
+                    <label class="field" id="therapyListLabel">Therapy / service</label>
+                    <p class="therapy-count" id="therapyCount">Loading service lines…</p>
+                    <div class="therapy-list" id="therapyList" role="listbox" aria-labelledby="therapyListLabel" tabindex="0">
+                        <div class="muted" style="padding:1rem;text-align:center;">Loading…</div>
+                    </div>
+                    <p class="hint">Click a card to map markets. Search and filters narrow the list. Share deep links from the context bar.</p>
                 </div>
                 <div id="selectedSummary" class="treatment-card" style="display:none;"></div>
             </aside>
@@ -673,6 +719,7 @@
             const btnMarket = document.getElementById('ctxChangeMarket');
             const btnCerts = document.getElementById('ctxCopyCerts');
             const btnExport = document.getElementById('ctxExportDossier');
+            const btnShare = document.getElementById('ctxShareLink');
             if (!proc) {
                 bar.classList.remove('visible');
                 lastDossierCtx = null;
@@ -681,9 +728,12 @@
             bar.classList.add('visible');
             const setup = ar?.setup_requirements || proc.practitioner_setup || {};
             const certs = setup.certifications || [];
+            if (btnShare) btnShare.style.display = '';
             if (j && ar) {
                 const v = operateVerdict(ar);
                 const diff = setup.difficulty || '—';
+                const pe = primaryEvidence();
+                const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
                 main.innerHTML = `
                     <span class="ctx-title">${esc(proc.name)}</span>
                     <span class="ctx-sep">·</span>
@@ -691,6 +741,7 @@
                     <span class="pill ${v.cls === 'go' ? 'allowed' : (v.cls === 'no' ? 'not-allowed' : 'pending')}">${esc(v.label)}</span>
                     <span class="pill" style="background:${diff === 'Low' ? '#065f46' : (diff === 'High' || diff === 'Extreme' ? '#991b1b' : '#92400e')};color:#fff;">Setup: ${esc(diff)}</span>
                     ${certs.length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>` : ''}
+                    ${eg ? `<span class="pill" style="background:${eg.color};color:#fff;">${esc(eg.grade)}</span>` : ''}
                 `;
                 btnMarket.style.display = '';
                 btnCerts.style.display = certs.length ? '' : 'none';
@@ -720,7 +771,7 @@
             const riskCls = f.pending_legislation ? 'caution' : (f.active_flux ? 'caution' : (f.prohibited ? 'no' : 'go'));
             const diffCls = (diff === 'High' || diff === 'Extreme') ? 'caution' : (diff === 'Low' ? 'go' : 'neutral');
             return `
-                <div class="decision-strip" role="group" aria-label="Market entry decision summary">
+                <div class="decision-strip cols-5" role="group" aria-label="Market entry decision summary">
                     <div class="decision-cell ${v.cls}">
                         <div class="lbl">Can you operate?</div>
                         <div class="val">${esc(v.label)}</div>
@@ -734,13 +785,14 @@
                     <div class="decision-cell neutral">
                         <div class="lbl">Certifications</div>
                         <div class="val">${certs.length ? certs.length + ' listed' : 'See licenses'}</div>
-                        <div class="sub">${certs.length ? 'Checklist below — copy or export' : 'Confirm with medical board'}</div>
+                        <div class="sub">${certs.length ? 'Open Certs tab to check off' : 'Confirm with medical board'}</div>
                     </div>
                     <div class="decision-cell ${riskCls}">
                         <div class="lbl">Policy risk</div>
                         <div class="val">${esc(f.legislation_label)}</div>
                         <div class="sub">${f.pending_legislation ? 'Freeze major spend until outcome clear' : (f.active_flux ? 'Build change-control into SOPs' : 'No active legislation flag')}</div>
                     </div>
+                    ${renderEvidenceChipHtml()}
                 </div>
             `;
         }
@@ -971,10 +1023,107 @@
         let allProcedures = [];
         let currentAccess = []; // access rows for selected procedure
         let currentSummary = null;
+        let currentIndications = []; // evidence grades for selected procedure
         let selectedProcedureId = null;
         let selectedJurisdictionId = null;
         let markerByJur = {};
         let mapColorMode = 'availability';
+        let suppressUrlWrite = false;
+        let filteredTherapyList = [];
+        let therapyFocusIndex = -1;
+
+        // ── Deep links (?therapy=&jur=) ───────────────────────────────────
+        function readUrlParams() {
+            const q = new URLSearchParams(window.location.search);
+            // Accept therapy= / procedure= / t= and jur= / jurisdiction= / j=
+            const therapy = q.get('therapy') || q.get('procedure') || q.get('t') || null;
+            const jur = q.get('jur') || q.get('jurisdiction') || q.get('j') || null;
+            return { therapy, jur };
+        }
+
+        function writeUrlParams(opts) {
+            if (suppressUrlWrite) return;
+            opts = opts || {};
+            const url = new URL(window.location.href);
+            const therapy = opts.therapy !== undefined ? opts.therapy : selectedProcedureId;
+            const jur = opts.jur !== undefined ? opts.jur : selectedJurisdictionId;
+            if (therapy) url.searchParams.set('therapy', therapy);
+            else url.searchParams.delete('therapy');
+            url.searchParams.delete('procedure');
+            url.searchParams.delete('t');
+            if (jur) url.searchParams.set('jur', jur);
+            else url.searchParams.delete('jur');
+            url.searchParams.delete('jurisdiction');
+            url.searchParams.delete('j');
+            const next = url.pathname + url.search + url.hash;
+            const cur = window.location.pathname + window.location.search + window.location.hash;
+            if (next !== cur) {
+                history.replaceState({ therapy, jur }, '', next);
+            }
+        }
+
+        function shareUrl() {
+            const url = new URL(window.location.href);
+            if (selectedProcedureId) url.searchParams.set('therapy', selectedProcedureId);
+            if (selectedJurisdictionId) url.searchParams.set('jur', selectedJurisdictionId);
+            return url.toString();
+        }
+
+        window.__copyShareLink = function () {
+            copyText(shareUrl(), 'Share link copied');
+        };
+
+        function evidenceGradeMeta(grade) {
+            const g = String(grade || '');
+            const color = (g === 'E1' || g === 'E2') ? '#065f46'
+                : (g === 'E3' || g === 'E4') ? '#92400e' : '#64748b';
+            const labels = {
+                E1: 'Multi-RCT', E2: 'Strong RCT', E3: 'Small/mixed', E4: 'Uncontrolled',
+                E5: 'Case series', E6: 'Preclinical', E7: 'Expert only', E8: 'None',
+            };
+            return { grade: g, color, label: labels[g] || g || '—' };
+        }
+
+        function primaryEvidence() {
+            if (!currentIndications || !currentIndications.length) return null;
+            const gradeOrder = { E1: 1, E2: 2, E3: 3, E4: 4, E5: 5, E6: 6, E7: 7, E8: 8 };
+            const sorted = currentIndications.slice().sort((a, b) =>
+                (gradeOrder[a.evidence_grade] || 9) - (gradeOrder[b.evidence_grade] || 9)
+            );
+            return sorted[0];
+        }
+
+        function renderEvidenceChipHtml() {
+            const pe = primaryEvidence();
+            if (!pe) {
+                return `<div class="decision-cell neutral">
+                    <div class="lbl">Evidence (primary)</div>
+                    <div class="val">Not graded</div>
+                    <div class="sub">See Evidence tab when available</div>
+                </div>`;
+            }
+            const m = evidenceGradeMeta(pe.evidence_grade);
+            const name = (pe.condition && pe.condition.name) || 'Indication';
+            const cls = (m.grade === 'E1' || m.grade === 'E2') ? 'go'
+                : (m.grade === 'E3' || m.grade === 'E4') ? 'caution' : 'neutral';
+            return `<div class="decision-cell ${cls}">
+                <div class="lbl">Evidence (primary)</div>
+                <div class="val"><span class="pill" style="background:${m.color};color:#fff;">${esc(m.grade)}</span> ${esc(m.label)}</div>
+                <div class="sub">${esc(name)}</div>
+            </div>`;
+        }
+
+        window.__switchDossierTab = function (btn) {
+            const wrap = btn.closest('.dossier-wrap') || document;
+            const tab = btn.getAttribute('data-tab');
+            wrap.querySelectorAll('.dossier-tabs button').forEach(b => {
+                b.classList.toggle('active', b === btn);
+                b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+            });
+            wrap.querySelectorAll('.dossier-tab-panel').forEach(p => {
+                p.classList.toggle('active', p.getAttribute('data-panel') === tab);
+            });
+        };
 
         async function api(path, opts) {
             const res = await fetch(API + path, opts);
@@ -1253,7 +1402,7 @@
             renderProcedureSelect();
         }
 
-        function renderProcedureSelect() {
+        function getFilteredProcedures() {
             const mod = document.getElementById('modalityFilter').value;
             const disease = document.getElementById('diseaseFilter').value;
             const q = document.getElementById('searchBox').value.trim().toLowerCase();
@@ -1265,38 +1414,86 @@
             if (q) {
                 list = list.filter(p => {
                     const hay = [
-                        p.name, p.description, p.indications,
+                        p.name, p.description, p.indications, p.id,
                         (p.therapeutic_areas || []).join(' '),
                         (p.diseases || []).join(' '),
                     ].join(' ').toLowerCase();
                     return hay.includes(q);
                 });
             }
-            list.sort((a, b) => a.name.localeCompare(b.name));
-            const sel = document.getElementById('procedureSelect');
-            const keep = selectedProcedureId;
-            if (!list.length) {
-                sel.innerHTML = '<option value="">No treatments match</option>';
-                return;
-            }
-            sel.innerHTML = list.map(p => {
-                const diseasetip = (p.diseases || []).slice(0, 2).join(', ');
-                const label = diseasetip ? `${p.name} — ${diseasetip}` : p.name;
-                return `<option value="${esc(p.id)}" ${p.id === keep ? 'selected' : ''}>${esc(label)}</option>`;
-            }).join('');
-            if (keep && list.some(p => p.id === keep)) sel.value = keep;
+            list.sort((a, b) => {
+                const ma = humanize(a.regulatory_modality || a.modality || '');
+                const mb = humanize(b.regulatory_modality || b.modality || '');
+                if (ma !== mb) return ma.localeCompare(mb);
+                return a.name.localeCompare(b.name);
+            });
+            return list;
         }
 
-        async function selectProcedure(id) {
+        function renderProcedureSelect() {
+            const list = getFilteredProcedures();
+            filteredTherapyList = list;
+            const el = document.getElementById('therapyList');
+            const count = document.getElementById('therapyCount');
+            if (count) {
+                count.textContent = list.length
+                    ? `${list.length} service line${list.length === 1 ? '' : 's'}${selectedProcedureId ? '' : ' — pick one'}`
+                    : 'No service lines match';
+            }
+            if (!list.length) {
+                el.innerHTML = '<div class="muted" style="padding:1rem;text-align:center;">No treatments match filters.</div>';
+                therapyFocusIndex = -1;
+                return;
+            }
+            // Group by modality
+            const groups = {};
+            list.forEach(p => {
+                const g = humanize(p.regulatory_modality || p.modality || 'Other') || 'Other';
+                if (!groups[g]) groups[g] = [];
+                groups[g].push(p);
+            });
+            let html = '';
+            Object.keys(groups).sort().forEach(gName => {
+                html += `<div class="therapy-group-label">${esc(gName)} · ${groups[gName].length}</div>`;
+                groups[gName].forEach(p => {
+                    const active = p.id === selectedProcedureId ? 'active' : '';
+                    const inds = (p.diseases || []).slice(0, 2).join(' · ');
+                    const more = (p.diseases || []).length > 2 ? ` +${p.diseases.length - 2}` : '';
+                    const diff = p.practitioner_setup && p.practitioner_setup.difficulty;
+                    const diffColor = diff === 'Low' ? '#065f46' : (diff === 'High' || diff === 'Extreme' ? '#991b1b' : '#92400e');
+                    const certN = (p.practitioner_setup && p.practitioner_setup.certifications || []).length;
+                    html += `<button type="button" class="therapy-card ${active}" role="option" aria-selected="${active ? 'true' : 'false'}" data-pid="${esc(p.id)}">
+                        <div class="tc-name">${esc(p.name)}</div>
+                        ${inds ? `<div class="tc-ind">${esc(inds)}${esc(more)}</div>` : ''}
+                        <div class="tc-meta">
+                            ${diff ? `<span class="pill sm" style="background:${diffColor};color:#fff;">Setup: ${esc(diff)}</span>` : ''}
+                            ${certN ? `<span class="pill sm" style="background:#e0e7ff;color:#3730a3;">${certN} certs</span>` : ''}
+                        </div>
+                    </button>`;
+                });
+            });
+            el.innerHTML = html;
+            el.querySelectorAll('.therapy-card[data-pid]').forEach(btn => {
+                btn.addEventListener('click', () => selectProcedure(btn.getAttribute('data-pid')));
+            });
+            therapyFocusIndex = list.findIndex(p => p.id === selectedProcedureId);
+        }
+
+        async function selectProcedure(id, opts) {
+            opts = opts || {};
             if (!id) return;
             selectedProcedureId = id;
-            selectedJurisdictionId = null;
+            if (!opts.keepJurisdiction) {
+                selectedJurisdictionId = null;
+            }
             document.getElementById('detailBody').innerHTML =
                 '<div class="empty"><strong>Next:</strong> pick a green/enterable market in the list or map to open the go/caution verdict, certifications checklist, and regulation links.</div>';
 
             const summary = document.getElementById('selectedSummary');
             const p = allProcedures.find(x => x.id === id);
             updateContextBar(p || null, null, null);
+            renderProcedureSelect(); // refresh active card
+            if (!opts.skipUrl) writeUrlParams({ therapy: id, jur: opts.keepJurisdiction ? selectedJurisdictionId : null });
             if (p) {
                 summary.style.display = 'block';
                 const diseaseChips = (p.diseases || []).map(d =>
@@ -1372,7 +1569,16 @@
                 });
                 renderSummary(currentSummary, currentAccess);
                 refreshPlacesView();
-                renderEvidence(d.indications || []);
+                currentIndications = d.indications || [];
+                renderEvidence(currentIndications);
+                // Deep-link market restore
+                if (opts.openJur) {
+                    const jid = opts.openJur;
+                    const row = currentAccess.find(a => a.jurisdiction?.id === jid || a.jurisdiction_id === jid);
+                    if (row || currentAccess.length) {
+                        await selectJurisdiction(jid, row, { skipUrl: opts.skipUrl });
+                    }
+                }
             } catch (e) {
                 document.getElementById('placesIntro').textContent = 'Could not load places: ' + e.message;
                 document.getElementById('evidenceBody').innerHTML = `<div class="empty">${esc(e.message)}</div>`;
@@ -1417,29 +1623,36 @@
             });
         }
 
-        function renderEvidence(indications) {
-            const el = document.getElementById('evidenceBody');
-            if (!indications.length) {
-                el.innerHTML = '<div class="empty">No condition-level evidence grades seeded for this treatment yet. Click “Refresh map data” after deploy if the database is behind.</div>';
-                return;
+        function evidenceCardsHtml(indications) {
+            if (!indications || !indications.length) {
+                return '<div class="empty">No condition-level evidence grades seeded for this treatment yet.</div>';
             }
             const gradeOrder = { E1: 1, E2: 2, E3: 3, E4: 4, E5: 5, E6: 6, E7: 7, E8: 8 };
             const sorted = indications.slice().sort((a, b) =>
                 (gradeOrder[a.evidence_grade] || 9) - (gradeOrder[b.evidence_grade] || 9)
             );
-            el.innerHTML = sorted.map(ind => {
+            return sorted.map(ind => {
                 const c = ind.condition || {};
-                const g = ind.evidence_grade || '';
-                const gColor = g === 'E1' || g === 'E2' ? '#065f46' : (g === 'E3' || g === 'E4' ? '#92400e' : '#64748b');
+                const m = evidenceGradeMeta(ind.evidence_grade);
                 return `<div class="treatment-card">
                     <div class="chip-row">
-                        <span class="pill" style="background:${gColor};color:#fff;">${esc(g)}</span>
+                        <span class="pill" style="background:${m.color};color:#fff;">${esc(m.grade)}</span>
+                        <span class="pill sm">${esc(m.label)}</span>
                         <strong>${esc(c.name || 'Disease / condition')}</strong>
                         ${c.icd_code ? `<span class="muted">${esc(c.icd_code)}</span>` : ''}
                     </div>
                     <p class="prose muted" style="margin-top:.35rem;">${esc(ind.evidence_summary || '')}</p>
                 </div>`;
             }).join('');
+        }
+
+        function renderEvidence(indications) {
+            const el = document.getElementById('evidenceBody');
+            if (!indications.length) {
+                el.innerHTML = '<div class="empty">No condition-level evidence grades seeded for this treatment yet. Click “Refresh map data” after deploy if the database is behind.</div>';
+                return;
+            }
+            el.innerHTML = evidenceCardsHtml(indications);
         }
 
         function renderClinics(clinics) {
@@ -1599,7 +1812,8 @@
             `;
         }
 
-        async function selectJurisdiction(jid, accessRow) {
+        async function selectJurisdiction(jid, accessRow, opts) {
+            opts = opts || {};
             selectedJurisdictionId = jid;
             renderPlaceList(filteredAccess()); // refresh active state on visible list
             const body = document.getElementById('detailBody');
@@ -1620,6 +1834,7 @@
                 const proc = allProcedures.find(x => x.id === selectedProcedureId)
                     || (ar ? allProcedures.find(x => x.id === ar.procedure_id) : null);
                 updateContextBar(proc, j, ar);
+                if (!opts.skipUrl) writeUrlParams({ therapy: selectedProcedureId, jur: jid });
                 body.innerHTML = renderJurisdictionDetail(j, ar, proc);
             } catch (e) {
                 body.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
@@ -1638,15 +1853,25 @@
             let accessBlock = '';
             if (ar && selectedProcedureId) {
                 const f = flagsOf(ar);
-                const v = operateVerdict(ar);
                 const blockedBanner = f.prohibited
                     ? `<div style="margin:.5rem 0 .75rem;padding:.75rem .9rem;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;">
                         <strong style="color:#991b1b;">Cannot lawfully operate here</strong>
                         <p class="muted" style="margin-top:.3rem;font-size:.86rem;">${esc(ar.arbitrage_summary || ar.legal_basis || 'This market is marked prohibited for this service line. Review regulation links and open markets instead.')}</p>
                        </div>`
                     : '';
+                const pe = primaryEvidence();
+                const peLine = pe
+                    ? (() => {
+                        const m = evidenceGradeMeta(pe.evidence_grade);
+                        return `<p class="muted" style="margin-top:.45rem;font-size:.84rem;"><strong>Primary evidence:</strong>
+                            <span class="pill" style="background:${m.color};color:#fff;">${esc(m.grade)}</span>
+                            ${esc(m.label)} · ${esc((pe.condition && pe.condition.name) || 'Indication')}
+                            <button type="button" class="btn-outline btn-sm" style="margin-left:.35rem;" onclick="window.__switchDossierTab(this.closest('.dossier-wrap').querySelector('[data-tab=evidence]'))">Open Evidence tab</button>
+                        </p>`;
+                    })()
+                    : '';
                 accessBlock = `
-                    <div class="section-title">Snapshot — can you open here?</div>
+                    <div class="dossier-wrap">
                     ${renderDecisionStrip(ar)}
                     ${blockedBanner}
                     <div class="flag-row">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
@@ -1661,33 +1886,57 @@
                         <dt>Policy risk</dt><dd><strong>${esc(f.legislation_label)}</strong>${f.pending_legislation ? ' — freeze major spend until bill outcome is clear' : (f.active_flux ? ' — build change-control into SOPs' : '')}</dd>
                         <dt>Market note</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
                     </dl>
+                    ${peLine}
                     <div class="cert-actions" style="margin:.55rem 0 0;">
                         <button type="button" class="btn-sm" onclick="window.__copyCertChecklist()">Copy cert checklist</button>
                         <button type="button" class="ghost btn-sm" onclick="window.__exportMarketBrief()">Export market brief</button>
                         <button type="button" class="btn-outline btn-sm" onclick="window.__copyMarketBrief()">Copy market brief</button>
+                        <button type="button" class="btn-outline btn-sm" onclick="window.__copyShareLink()">Copy share link</button>
                     </div>
 
-                    <div class="section-title">1 · Certifications &amp; credentials</div>
-                    ${renderCertifications((ar.setup_requirements || {}).certifications)}
+                    <div class="dossier-tabs" role="tablist" aria-label="Market dossier sections">
+                        <button type="button" role="tab" class="active" data-tab="certs" aria-selected="true" onclick="window.__switchDossierTab(this)">Certs</button>
+                        <button type="button" role="tab" data-tab="regulation" aria-selected="false" onclick="window.__switchDossierTab(this)">Regulation</button>
+                        <button type="button" role="tab" data-tab="setup" aria-selected="false" onclick="window.__switchDossierTab(this)">Setup</button>
+                        <button type="button" role="tab" data-tab="patient" aria-selected="false" onclick="window.__switchDossierTab(this)">Patient screen</button>
+                        <button type="button" role="tab" data-tab="peers" aria-selected="false" onclick="window.__switchDossierTab(this)">Peers</button>
+                        <button type="button" role="tab" data-tab="evidence" aria-selected="false" onclick="window.__switchDossierTab(this)">Evidence</button>
+                        <button type="button" role="tab" data-tab="context" aria-selected="false" onclick="window.__switchDossierTab(this)">Market context</button>
+                    </div>
 
-                    <div class="section-title">2 · Governing regulation (open these first)</div>
-                    ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
-
-                    <div class="section-title">3 · Licenses, facility &amp; staffing to set up</div>
-                    ${renderSetup(ar.setup_requirements, ar.provider_requirements, { skipCerts: true })}
-
-                    <div class="section-title">4 · Patient eligibility you must screen</div>
-                    <dl class="kv">
-                        <dt>Who may be treated</dt><dd>${esc(ar.eligibility_requirements || 'Define inclusion/exclusion per local protocol')}</dd>
-                        <dt>Care pathway</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
-                        <dt>Residency / travel</dt><dd>${esc(ar.residency_travel_notes || '—')}</dd>
-                        <dt>Cash price reference</dt><dd>${fmtPrice(ar)}</dd>
-                        <dt>Clinical / operational risks</dt><dd>${esc(ar.risk_notes || '—')}</dd>
-                        <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
-                    </dl>
-
-                    <div class="section-title">5 · Peers, directories &amp; referral landscape</div>
-                    ${renderClinics(ar.example_clinics || [])}
+                    <div class="dossier-tab-panel active" data-panel="certs" role="tabpanel">
+                        ${renderCertifications((ar.setup_requirements || {}).certifications)}
+                    </div>
+                    <div class="dossier-tab-panel" data-panel="regulation" role="tabpanel">
+                        ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
+                    </div>
+                    <div class="dossier-tab-panel" data-panel="setup" role="tabpanel">
+                        ${renderSetup(ar.setup_requirements, ar.provider_requirements, { skipCerts: true })}
+                    </div>
+                    <div class="dossier-tab-panel" data-panel="patient" role="tabpanel">
+                        <dl class="kv">
+                            <dt>Who may be treated</dt><dd>${esc(ar.eligibility_requirements || 'Define inclusion/exclusion per local protocol')}</dd>
+                            <dt>Care pathway</dt><dd>${esc(ar.access_pathway_details || friendlyPathway(ar.access_pathway))}</dd>
+                            <dt>Residency / travel</dt><dd>${esc(ar.residency_travel_notes || '—')}</dd>
+                            <dt>Cash price reference</dt><dd>${fmtPrice(ar)}</dd>
+                            <dt>Clinical / operational risks</dt><dd>${esc(ar.risk_notes || '—')}</dd>
+                            <dt>Oversight notes</dt><dd>${esc(ar.oversight_notes || '—')}</dd>
+                        </dl>
+                    </div>
+                    <div class="dossier-tab-panel" data-panel="peers" role="tabpanel">
+                        ${renderClinics(ar.example_clinics || [])}
+                    </div>
+                    <div class="dossier-tab-panel" data-panel="evidence" role="tabpanel">
+                        <p class="muted" style="margin-bottom:.55rem;font-size:.82rem;">Indication-level grades (same in every market). E1 = multi-RCT · E2 = strong RCT · E3–E4 mixed/uncontrolled · E5–E8 weaker.</p>
+                        ${evidenceCardsHtml(currentIndications)}
+                        <p class="muted" style="margin-top:.55rem;font-size:.78rem;"><a href="#evidenceSection">Also shown in the full evidence section below</a></p>
+                    </div>
+                    <div class="dossier-tab-panel" data-panel="context" role="tabpanel">
+                        <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
+                        ${children}
+                        ${renderRegulation(j.regulation)}
+                    </div>
+                    </div>
                 `;
             }
 
@@ -1720,15 +1969,12 @@
                         <span class="pill">${esc(j.country_code || '')}</span>
                     </div>
                     ${parentLine}
-                    ${accessBlock}
-                    <details style="margin-top:1rem;">
-                        <summary class="muted" style="cursor:pointer;font-weight:650;font-size:.85rem;">Market context &amp; jurisdiction regulatory profile</summary>
-                        <div style="margin-top:.55rem;">
-                            <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
-                            ${children}
-                            ${renderRegulation(j.regulation)}
-                        </div>
-                    </details>
+                    ${accessBlock || `
+                        <div class="section-title">Market context</div>
+                        <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
+                        ${children}
+                        ${renderRegulation(j.regulation)}
+                    `}
                     ${otherBlock}
                     ${ar && ar.last_verified ? `<p class="muted" style="margin-top:1rem;font-size:.78rem;">Cell last verified: ${esc(ar.last_verified)}${ar.verified_by ? ' · ' + esc(ar.verified_by) : ''}</p>` : ''}
                 </div>
@@ -1736,24 +1982,15 @@
         }
 
         window.__pickProc = function (pid) {
-            document.getElementById('procedureSelect').value = pid;
             selectProcedure(pid);
         };
 
         // ── Events ────────────────────────────────────────────────────────
-        document.getElementById('procedureSelect').addEventListener('change', e => {
-            if (e.target.value) selectProcedure(e.target.value);
-        });
         document.getElementById('modalityFilter').addEventListener('change', () => renderProcedureSelect());
         document.getElementById('diseaseFilter').addEventListener('change', () => {
             renderProcedureSelect();
-            // If exactly one treatment matches the disease, auto-select it.
-            const sel = document.getElementById('procedureSelect');
-            const opts = [...sel.options].filter(o => o.value);
-            if (opts.length === 1) {
-                sel.value = opts[0].value;
-                selectProcedure(opts[0].value);
-            }
+            const list = getFilteredProcedures();
+            if (list.length === 1) selectProcedure(list[0].id);
         });
         document.getElementById('searchBox').addEventListener('input', () => renderProcedureSelect());
         ['fAllowed', 'fOffered', 'fPending', 'fTrial', 'fProhibited'].forEach(id => {
@@ -1770,20 +2007,56 @@
         document.getElementById('searchBox').addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const sel = document.getElementById('procedureSelect');
-                if (sel.value) selectProcedure(sel.value);
+                const list = getFilteredProcedures();
+                if (list.length === 1) selectProcedure(list[0].id);
+                else if (list.length && selectedProcedureId && list.some(p => p.id === selectedProcedureId)) {
+                    selectProcedure(selectedProcedureId);
+                } else if (list.length) {
+                    selectProcedure(list[0].id);
+                }
+            }
+        });
+        // Keyboard navigation on therapy list
+        document.getElementById('therapyList')?.addEventListener('keydown', e => {
+            if (!filteredTherapyList.length) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (therapyFocusIndex < 0) therapyFocusIndex = filteredTherapyList.findIndex(p => p.id === selectedProcedureId);
+                if (therapyFocusIndex < 0) therapyFocusIndex = 0;
+                else if (e.key === 'ArrowDown') therapyFocusIndex = Math.min(filteredTherapyList.length - 1, therapyFocusIndex + 1);
+                else therapyFocusIndex = Math.max(0, therapyFocusIndex - 1);
+                const pid = filteredTherapyList[therapyFocusIndex].id;
+                const btn = document.querySelector(`.therapy-card[data-pid="${pid}"]`);
+                if (btn) {
+                    document.querySelectorAll('.therapy-card').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    btn.scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (therapyFocusIndex >= 0 && filteredTherapyList[therapyFocusIndex]) {
+                    selectProcedure(filteredTherapyList[therapyFocusIndex].id);
+                }
             }
         });
 
         async function bootstrap() {
             await refreshStats();
             await loadProcedures();
-            // Auto-select first treatment with a friendly default if none chosen
-            if (!selectedProcedureId && allProcedures.length) {
+            const params = readUrlParams();
+            const fromUrl = params.therapy && allProcedures.some(p => p.id === params.therapy)
+                ? params.therapy
+                : null;
+
+            if (fromUrl) {
+                await selectProcedure(fromUrl, {
+                    openJur: params.jur || null,
+                    skipUrl: false,
+                });
+            } else if (!selectedProcedureId && allProcedures.length) {
                 const preferred = allProcedures.find(p => p.id === 'proc-psilocybin-trd')
                     || allProcedures.find(p => p.id === 'proc-ketamine-depression')
                     || allProcedures[0];
-                document.getElementById('procedureSelect').value = preferred.id;
                 await selectProcedure(preferred.id);
             } else if (selectedProcedureId) {
                 await selectProcedure(selectedProcedureId);
@@ -1806,6 +2079,19 @@
             }
             setTimeout(() => map.invalidateSize(), 200);
             window.addEventListener('resize', () => map.invalidateSize());
+            window.addEventListener('popstate', async () => {
+                const params = readUrlParams();
+                if (!params.therapy) return;
+                suppressUrlWrite = true;
+                try {
+                    await selectProcedure(params.therapy, {
+                        openJur: params.jur || null,
+                        skipUrl: true,
+                    });
+                } finally {
+                    suppressUrlWrite = false;
+                }
+            });
         })();
     </script>
 </body>
