@@ -297,8 +297,8 @@ class AccessRecord(Base):
     example_clinics: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Practitioner-side setup requirements to offer this therapy in this jurisdiction
-    # JSON: {summary, licenses[], facility[], training[], staffing[], product_source[],
-    #        regulatory_steps[], capital_notes, ongoing_compliance[], difficulty?}
+    # JSON: {summary, certifications[], licenses[], facility[], training[], staffing[],
+    #        product_source[], regulatory_steps[], capital_notes, ongoing_compliance[], difficulty?}
     setup_requirements: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     procedure: Mapped["Procedure"] = relationship(back_populates="access_records")

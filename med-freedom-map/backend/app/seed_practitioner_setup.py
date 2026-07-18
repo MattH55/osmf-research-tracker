@@ -9,6 +9,7 @@ Informational only — not legal advice.
 def S(
     summary,
     *,
+    certifications=None,
     licenses=None,
     facility=None,
     training=None,
@@ -23,6 +24,7 @@ def S(
     return {
         "summary": summary,
         "difficulty": difficulty,  # Low | Moderate | High | Extreme
+        "certifications": certifications or [],  # credentials practitioners must hold
         "licenses": licenses or [],
         "facility": facility or [],
         "training": training or [],
@@ -1247,12 +1249,476 @@ ACCESS_SETUP_OVERRIDES = {
 }
 
 
+# ── Explicit certifications practitioners need (what to put on your wall / file) ─
+# Distinct from facility permits and general training: board certs, program
+# enrollments, REMS, facilitator licenses, center accreditations, etc.
+# Informational only — verify with the competent authority and medical board.
+
+PROCEDURE_CERTIFICATIONS = {
+    "proc-psilocybin-trd": [
+        "Jurisdiction-approved facilitator credential (e.g. Oregon OHA Facilitator License) — not a US federal medical board cert",
+        "Service-center operator license where the program separates center vs facilitator credentials",
+        "No standalone US DEA/FDA pathway for retail psilocybin clinics (Schedule I)",
+    ],
+    "proc-psilocybin-eol": [
+        "Same facilitator / service-center credentials as regulated psilocybin programs",
+        "Recommended: palliative care or end-of-life competency (clinical, not always a separate state license)",
+    ],
+    "proc-psilocybin-microdose": [
+        "Usually no lawful practitioner certification for commercial microdose in most jurisdictions",
+        "Where full-dose programs exist, microdose is typically not a separate licensed product line",
+    ],
+    "proc-mdma-ptsd": [
+        "Medical license with psychiatry preferred (specialist registration in many countries)",
+        "Controlled-substance prescribing authority (e.g. DEA in US where applicable)",
+        "MDMA-AT protocol training certificate (MAPS-style or jurisdiction-recognized equivalent)",
+        "Ethics / special-access or Authorized Prescriber status where required (e.g. TGA AP in Australia)",
+    ],
+    "proc-ketamine-depression": [
+        "Active medical license (MD/DO) or advanced practice license (NP/PA) with independent or collaborative prescribing as state law allows",
+        "DEA registration Schedule III (US) for controlled-substance ketamine",
+        "If offering Spravato (esketamine): REMS Healthcare Setting certification + enrolled prescriber",
+        "Recommended (not always mandatory): ACLS; ASKP-aligned clinic protocols",
+    ],
+    "proc-ketamine-assisted-psychotherapy": [
+        "Prescriber controlled-substance authority (same base as ketamine clinics)",
+        "Independent therapist license for psychotherapy component (LCSW / LMFT / psychologist / psychiatrist) as state scope requires",
+        "KAP / psychedelic-assisted psychotherapy model training certificate (voluntary standards vary)",
+    ],
+    "proc-ibogaine-addiction": [
+        "Local medical facility authorization + physician license where operating (no US FDA approved pathway)",
+        "No government-issued 'ibogaine practitioner' certification in most countries",
+        "Recommended minimum: ACLS + continuous cardiac monitoring competency; GITA guidelines are voluntary not law",
+    ],
+    "proc-gene-crispr": [
+        "Manufacturer-authorized treatment center status (e.g. Casgevy network) — not individual private-practice cert",
+        "Hospital transplant / cellular therapy program credentials",
+        "Product-specific REMS or center training completion for all involved staff",
+    ],
+    "proc-gene-aa9": [
+        "Manufacturer-authorized center / specialty pharmacy agreements for Zolgensma-class products",
+        "Pediatric neurology / neuromuscular program privileges in treating hospital",
+        "Product-specific administration and liver-toxicity monitoring training",
+    ],
+    "proc-stem-car-t": [
+        "REMS-certified CAR-T treatment center per commercial product (Kymriah, Yescarta, etc.)",
+        "FACT (or JACIE) cellular therapy accreditation strongly expected by manufacturers/payers",
+        "Hospital privileges for cellular therapy / hematologic malignancy",
+        "Product-specific CRS/ICANS management training for the full care team",
+    ],
+    "proc-car-t-solid": [
+        "Trial-site investigator credentials (GCP) or future commercial center certification when approved",
+        "FACT-level cell therapy infrastructure expected for commercial solid-tumor CAR-T if/when available",
+    ],
+    "proc-stem-msc": [
+        "Medical license; procedure privileges for the delivery method used",
+        "No FDA-recognized 'stem cell clinic' certification for unapproved MSC products in the US",
+        "If claiming therapeutic effect in US: IND/BLA path — not a certificate you can buy",
+    ],
+    "proc-stem-exosome": [
+        "Medical license where injections are medical practice",
+        "No legitimate FDA product pathway certification for most commercial 'exosome' therapies in the US",
+    ],
+    "proc-stem-nsc": [
+        "Neurosurgery privileges + IRB/trial investigator status for legitimate NSC programs",
+        "No retail clinic certification pathway for experimental neural stem cell therapy in most countries",
+    ],
+    "proc-cord-blood": [
+        "Transplant program accreditation for therapeutic HCT (FACT standards)",
+        "AABB / FACT cord blood bank standards for banking side",
+        "Board-eligible/certified hematology/oncology or transplant medicine for clinical use",
+    ],
+    "proc-til-melanoma": [
+        "Manufacturer/center certification for Amtagvi (lifileucel) or equivalent commercial TIL product",
+        "Hospital cell therapy program with ICU backup",
+        "Product-specific REMS-style center training",
+    ],
+    "proc-dendritic-vaccine": [
+        "Authorized center status for Provenge (sipuleucel-T) where offering that product",
+        "Otherwise: clinical trial site authorization for experimental dendritic vaccines",
+    ],
+    "proc-photoimmunotherapy": [
+        "Hospital oncology program privileges",
+        "Product-specific training (e.g. ASP-1929 / NIR-PIT) in markets where authorized (e.g. Japan)",
+    ],
+    "proc-maid": [
+        "Medical or NP license as statute allows in the jurisdiction",
+        "Jurisdiction-specific MAID assessor/provider training modules (mandatory in many Canadian provinces)",
+        "Hospital or health-authority privileging where institutional provision is required",
+        "No single international 'MAID certificate' — rules are jurisdiction-specific",
+    ],
+    "proc-repro-ivf": [
+        "Board certification in Reproductive Endocrinology & Infertility (REI / ABOG pathway) preferred for medical directors",
+        "CLIA laboratory certification for embryology/andrology lab",
+        "Embryologist certification / competency (AAB, ESHRE, or national equivalent)",
+        "FDA registration for donor gametes; state tissue bank licenses where required",
+        "SART membership / CDC ART reporting participation expected in US",
+    ],
+    "proc-repro-surrogacy": [
+        "ART clinic licenses as for IVF",
+        "Agency licensing where the jurisdiction regulates surrogacy agencies separately",
+        "Attorney collaboration is not a medical cert but is operationally required in many US states",
+    ],
+    "proc-egg-freezing": [
+        "Same ART clinic + REI / embryologist credentials as IVF programs",
+        "Embryology vitrification competency documentation",
+    ],
+    "proc-mito-replacement": [
+        "HFEA mitochondrial donation license (UK) — unique regulated pathway; handful of centers worldwide",
+        "Underlying HFEA IVF clinic license foundation",
+        "Specialist embryologist competency under the mitochondrial donation license conditions",
+    ],
+    "proc-uterine-transplant": [
+        "Transplant center credentials + IRB/ethics approval",
+        "Surgical privileges for complex transplant/gynecologic oncology-level procedures",
+        "No retail fertility-clinic certification path",
+    ],
+    "proc-tms-depression": [
+        "Physician medical license with psychiatric/neurologic oversight as payer rules require",
+        "Manufacturer device training certificate (NeuroStar, MagVenture, BrainsWay, etc.)",
+        "TMS technician competency under medical director supervision",
+        "Payer credentialing for TMS (not a board cert, but required to bill)",
+    ],
+    "proc-tms-ocd": [
+        "Same base as depression TMS plus device/protocol clearance for OCD indication",
+        "Manufacturer OCD protocol training",
+    ],
+    "proc-dbs-parkinson": [
+        "Board certification / eligibility neurosurgery + neurology privileges",
+        "Hospital OR privileges for DBS implant and programming partnership",
+        "Device manufacturer proctoring for implant systems used",
+    ],
+    "proc-fus-tremor": [
+        "Neurosurgery / focused ultrasound program privileges",
+        "Manufacturer proctoring for MR-guided FUS systems",
+        "Hospital imaging + neurosurgery joint credentialing",
+    ],
+    "proc-vns-depression": [
+        "Surgical privileges for VNS implant (neurosurgery/ENT as institution defines)",
+        "Psychiatry programming/titration competency for depression indication",
+        "Device manufacturer implant training",
+    ],
+    "proc-pef-ablation": [
+        "Electrophysiology privileges for pulsed-field ablation",
+        "Manufacturer PFA system proctoring / EP fellowship-level experience",
+    ],
+    "proc-lecanemab": [
+        "Medical license; neurology or geriatrics preferred for appropriate-use alignment",
+        "Infusion center standards / nursing competencies for mAb infusion",
+        "No separate FDA 'lecanemab certificate' — but CMS/registry and appropriate-use criteria effectively gate programs",
+        "APOE counseling competency or genetics referral pathway",
+    ],
+    "proc-proton-therapy": [
+        "Radiation oncology board certification (ABR or national equivalent)",
+        "Facility radiation/nuclear safety licenses",
+        "Proton-specific physics and RO training for the platform used",
+        "Certificate of Need in some US states (facility, not individual)",
+    ],
+    "proc-fmt": [
+        "Medical license with GI or infectious disease scope for administration",
+        "No separate 'FMT certificate' for FDA-cleared microbiota products — follow product labeling",
+        "If operating a stool bank: FDA IND/enforcement policy compliance and lab standards",
+    ],
+    "proc-fecal-sibo": [
+        "Standard medical license (GI preferred for complex SIBO)",
+        "No specialty board cert required beyond general practice scope for rifaximin prescribing",
+    ],
+    "proc-hbot": [
+        "Physician hyperbaric medicine credentials (ABPM Undersea & Hyperbaric Medicine board cert preferred; state/payer rules vary)",
+        "Chamber operator / technician certification (NBDHMT Certified Hyperbaric Technologist pathways)",
+        "Facility safety program aligned with UHMS / NFPA chamber standards",
+    ],
+    "proc-prp-therapy": [
+        "Medical license with injection privileges for target tissue",
+        "No FDA 'PRP board cert' — device 510(k) systems and scope of practice drive legality",
+        "Sports medicine / orthopedics / PM&R training common but not universally mandated",
+    ],
+    "proc-ivig": [
+        "Medical license with infusion privileges",
+        "Infusion nursing competency for reaction management (not always a named national cert)",
+        "Specialty pharmacy / REMS as applicable for specific IG products",
+    ],
+    "proc-apheresis-longcovid": [
+        "Facility authorized for therapeutic apheresis",
+        "Apheresis nursing certification / competency (ASFA-aligned programs common)",
+        "Physician medical director privileges for therapeutic apheresis indications",
+    ],
+    "proc-repurposed-semaglutide": [
+        "Prescriptive authority (MD/DO/NP/PA as state allows)",
+        "No special 'GLP-1 certificate' required by FDA for labeled products",
+        "Compounded versions: 503A/503B compliance — not a personal board cert",
+    ],
+    "proc-glp1-addiction": [
+        "Same prescriptive authority as other GLP-1 use",
+        "Addiction medicine collaboration recommended for AUD/SUD contexts (not always required by law)",
+    ],
+    "proc-sglt2-hf": [
+        "Prescriptive authority for SGLT2 inhibitors",
+        "No special certification beyond medical license for labeled HF/CKD indications",
+    ],
+    "proc-repurposed-rapamycin": [
+        "Medical license with prescribing authority",
+        "No longevity-medicine board cert recognized as a license to prescribe; transplant-dose knowledge for safety is clinical standard of care",
+    ],
+    "proc-metformin-longevity": [
+        "Prescriptive authority",
+        "No special certification for off-label longevity use — standard medical license + documentation of rationale",
+    ],
+    "proc-repurposed-ldn": [
+        "Prescriptive authority",
+        "No FDA LDN certification program; compounding pharmacy quality is the practical gate",
+    ],
+    "proc-repurposed-methylene": [
+        "Prescriptive authority",
+        "G6PD screening knowledge before use — clinical competency, not a named cert",
+    ],
+    "proc-prazosin-ptsd": [
+        "Prescriptive authority",
+        "No special prazosin-for-PTSD certificate; first-dose hypotension counseling is standard",
+    ],
+    "proc-baclofen-aud": [
+        "Prescriptive authority; addiction clinic setting preferred",
+        "No international baclofen-AUD certification standard; titration/withdrawal competency essential",
+    ],
+    "proc-trt": [
+        "Medical license; DEA registration (US) for testosterone (Schedule III)",
+        "No mandatory 'TRT clinic cert'; endocrine guidelines for hypogonadism diagnosis set the clinical bar",
+    ],
+    "proc-pt-141": [
+        "Prescriptive authority for bremelanotide (Vyleesi) labeled use",
+        "No special certification beyond medical license for FDA-labeled HSDD indication",
+    ],
+    "proc-peptide-bpc": [
+        "No lawful US compounding pathway cert for BPC-157 as a bulk substance for routine compounding (FDA category 2 concerns)",
+        "Medical license alone does not authorize illegal peptide sales",
+    ],
+    "proc-peptide-cjc-ipa": [
+        "Unclear/not authorized for many secretagogues in US medical commerce",
+        "No legitimate practitioner certification that legalizes unapproved peptide clinics",
+    ],
+    "proc-peptide-ss31": [
+        "Clinical trial site credentials if investigational",
+        "No commercial medical certification path in most markets",
+    ],
+    "proc-peptide-tesamorelin": [
+        "Medical license; HIV care experience for labeled lipodystrophy indication",
+        "Specialty pharmacy channel for Egrifta — product access not a separate board cert",
+    ],
+    "proc-peptide-thymosin": [
+        "Local product registration pathway where approved; otherwise often unauthorized",
+        "No US FDA therapeutic thymosin-α1 retail certification for most claims",
+    ],
+    "proc-nmn-nmad": [
+        "Supplement retail: business license, not medical board certification",
+        "Disease claims convert this into unapproved drug territory — no cert fixes that",
+    ],
+    "proc-nad-iv": [
+        "Medical director license; facility registration as state requires for IV therapy",
+        "IV therapy competency / infusion certification common (varies by state nursing rules)",
+        "No FDA-approved NAD IV drug product certification for anti-aging claims",
+    ],
+    "proc-senolytics": [
+        "Medical license able to prescribe dasatinib (and related agents)",
+        "No FDA senolytic protocol certification; oncology toxicity knowledge for dasatinib is clinical necessity",
+    ],
+    "proc-chelation": [
+        "Medical license; preferably medical toxicology expertise for labeled heavy-metal chelation",
+        "No legitimate 'anti-aging chelation' certification recognized by FDA",
+    ],
+    "proc-ozone-therapy": [
+        "Often not lawful as medical therapy in the US — no FDA-recognized ozone therapy board cert that makes it legal",
+        "Where practiced abroad: local medical license + facility rules only",
+    ],
+    "proc-cryotherapy": [
+        "Business / facility safety codes; medical director if marketed as medical treatment",
+        "Operator safety training; no national medical board cert for whole-body cryo wellness",
+    ],
+    "proc-medical-cannabis": [
+        "State medical license + any state-required cannabis CME / recommend-authority registration",
+        "For dispensary retail (separate career track): state cannabis business license (e.g. CA DCC) — not a physician cert",
+        "No DEA registration authorizes cannabis as Schedule I federally in the US",
+    ],
+    "proc-ayahuasca": [
+        "Religious organization recognition where applicable (e.g. Brazil UDV/Santo Daime models; limited US RFRA church cases)",
+        "No medical board 'ayahuasca therapist' license in most countries",
+    ],
+    "proc-5meo-dmt": [
+        "No medical license pathway for commercial 5-MeO-DMT therapy in most jurisdictions",
+        "Trial investigator credentials only where research is authorized",
+    ],
+    "proc-mescaline-therapy": [
+        "No major medical product certification path; local controlled-substance law governs",
+        "Facilitation training is voluntary / cultural, not a government medical cert in most places",
+    ],
+    "proc-dmt-depression": [
+        "Clinical trial site / investigator credentials (GCP) for IV DMT research",
+        "Future approved-product center training if a product is authorized",
+    ],
+    "proc-lsd-anxiety": [
+        "Physician license + exceptional authorization (e.g. Swiss BAG compassionate use) where that model exists",
+        "Psychedelic-assisted therapy experience expected; formal national board cert rare",
+    ],
+    "proc-ecmo-bridge": [
+        "Hospital ICU program privileges",
+        "ELSO-aligned ECMO specialist team training (perfusionists, ECMO nurses, intensivists)",
+        "Not a private outpatient certification",
+    ],
+    "proc-low-dose-lithium": [
+        "Prescriptive authority for lithium carbonate",
+        "No special low-dose lithium certificate; toxicity monitoring competency applies even at low dose",
+    ],
+}
+
+# Jurisdiction-specific certification lists (replace procedure defaults for that market)
+ACCESS_CERTIFICATIONS = {
+    ("proc-psilocybin-trd", "jur-us-or"): [
+        "OHA Psilocybin Facilitator License (after completing an OHA-approved training program — historically ~120+ hours including practicum)",
+        "OHA Psilocybin Service Center License (if you operate a center — separate from facilitator license)",
+        "Manufacturer and/or testing lab licenses only if you vertically integrate product",
+        "Local business / land-use permits as required by city or county",
+        "No physician prescription or DEA registration is part of the OPS model (federal Schedule I risk remains for banking/tax planning)",
+    ],
+    ("proc-psilocybin-eol", "jur-us-or"): [
+        "Same OPS Facilitator + Service Center licenses as general Oregon psilocybin services",
+        "Recommended clinical competence for medically complex / end-of-life clients (not a separate OHA license class)",
+    ],
+    ("proc-psilocybin-trd", "jur-au"): [
+        "AHPRA specialist psychiatrist registration",
+        "TGA Authorized Prescriber approval (or SAS pathway) for psilocybin for TRD",
+        "Institutional ethics committee approval as required for the site/protocol",
+        "Psilocybin-assisted therapy protocol training (jurisdiction/ethics expectations)",
+    ],
+    ("proc-mdma-ptsd", "jur-au"): [
+        "AHPRA psychiatrist registration",
+        "TGA Authorized Prescriber for MDMA-assisted therapy for PTSD",
+        "Ethics committee approval",
+        "MDMA-AT protocol training certificate (MAPS-style or recognized equivalent)",
+    ],
+    ("proc-ketamine-depression", "jur-us-federal"): [
+        "State medical license (MD/DO) or advanced practice license (NP/PA per state collaborative rules)",
+        "DEA registration (Schedule III) for ketamine",
+        "If offering Spravato: Janssen REMS Healthcare Setting certification + REMS-enrolled prescriber",
+        "Pharmacy/distributor agreements for controlled substances",
+        "Recommended: ACLS; ASKP-aligned clinic standards (voluntary)",
+    ],
+    ("proc-maid", "jur-ca"): [
+        "Provincial/territorial medical license or NP registration as Criminal Code + provincial rules allow",
+        "Province-specific MAID assessor and/or provider training modules (often mandatory before acting as assessor/provider)",
+        "Institutional privileging if providing within a hospital or health authority",
+        "No single national 'MAID board certification' — federal reporting and provincial process compliance are the gate",
+    ],
+    ("proc-maid", "jur-ch"): [
+        "Swiss physician license for prescribing the lethal medication",
+        "Affiliation / process compliance with a recognized right-to-die organization model (Dignitas, EXIT, etc.) — organizational credential more than a medical specialty board",
+        "Cantonal practice familiarity (not a single federal medical board cert)",
+    ],
+    ("proc-stem-car-t", "jur-us-federal"): [
+        "Hospital institutional license / CMS provider status",
+        "Manufacturer REMS certification for each CAR-T product you will administer (separate network applications)",
+        "FACT accreditation for cellular therapy (strongly expected)",
+        "Privileges for cellular therapy physicians and apheresis program credentials",
+        "Product-specific REMS training completion for all staff who touch the pathway",
+    ],
+    ("proc-gene-crispr", "jur-us-federal"): [
+        "Manufacturer-authorized Casgevy (or other product) treatment center designation",
+        "Hospital hematopoietic stem cell transplant / cell therapy program credentials",
+        "Product-specific center training for conditioning, apheresis, and long-term follow-up",
+    ],
+    ("proc-mito-replacement", "jur-uk"): [
+        "HFEA mitochondrial donation licence (highly restricted)",
+        "HFEA standard IVF treatment licence as foundation",
+        "Named specialist embryologists approved under the mitochondrial donation licence conditions",
+        "HFEA inspection clearance before offering the technique",
+    ],
+    ("proc-lecanemab", "jur-us-federal"): [
+        "Active medical license (neurology/geriatrics preferred for appropriate-use criteria)",
+        "Infusion program nursing competencies for monoclonal antibody administration",
+        "CMS coverage / registry participation as applicable (program gate, not a board cert)",
+        "MRI access agreements and ARIA recognition training for the clinical team",
+    ],
+    ("proc-tms-depression", "jur-us-federal"): [
+        "Physician license for medical director oversight",
+        "Manufacturer device training certificate for the TMS system you purchase/lease",
+        "Medicare and commercial payer credentialing for TMS services",
+        "Technician competency documentation under the medical director",
+    ],
+    ("proc-medical-cannabis", "jur-us-ca"): [
+        "California medical license (MD/DO/NP as statute allows) for recommendations",
+        "Any state-required cannabis CME or Medical Board recommend-authority rules current at time of practice",
+        "If retail: Department of Cannabis Control license type(s) + local city/county cannabis permits",
+        "Responsible Vendor training for retail staff (DCC rules)",
+        "No DEA Schedule I registration authorizes cannabis prescribing federally",
+    ],
+    ("proc-medical-cannabis", "jur-de"): [
+        "German medical license (Approbation)",
+        "Narcotic / controlled prescribing compliance as post-reclassification rules require",
+        "No separate 'cannabis clinic' board specialty — pharmacy dispenses prescribed product",
+    ],
+    ("proc-repro-ivf", "jur-us-federal"): [
+        "ABOG board certification (or eligibility) in Reproductive Endocrinology & Infertility strongly preferred for medical directors",
+        "CLIA certification for the ART laboratory",
+        "Embryologist certification / documented competency (AAB or equivalent)",
+        "FDA establishment registration for donor tissue if applicable",
+        "State tissue bank / ART licenses where the state requires them",
+        "SART membership and CDC ART outcome reporting participation",
+    ],
+    ("proc-fmt", "jur-us-federal"): [
+        "Medical license with GI or ID scope for administration of FDA-cleared microbiota products",
+        "Product-specific training per commercial manufacturer labeling",
+        "IND/investigator credentials if using investigational stool products outside cleared indications",
+    ],
+    ("proc-hbot", "jur-us-federal"): [
+        "Physician credentials in hyperbaric medicine (ABPM Undersea & Hyperbaric Medicine board certification preferred; payer rules vary by state)",
+        "NBDHMT Certified Hyperbaric Technologist (or equivalent) for chamber operators",
+        "UHMS-aligned facility safety program documentation",
+        "Payer enrollment for covered UHMS-accepted indications",
+    ],
+    ("proc-ibogaine-addiction", "jur-mx"): [
+        "Mexican professional cédula for treating physicians",
+        "COFEPRIS-compliant medical facility registration as applicable",
+        "No Mexican federal 'ibogaine specialist' board equivalent to US specialty boards",
+        "Documented ACLS / cardiac emergency competency for the on-site medical team (ethical minimum, not a tourism badge)",
+    ],
+    ("proc-gene-crispr", "jur-hn-prospera"): [
+        "Próspera / ZEDE health-services authorization as then-current rules allow",
+        "Not FDA center certification — experimental informed-consent framework",
+        "Protocol-specific investigator-style credentials defined by the operating entity",
+    ],
+}
+
+
+def _with_certifications(setup, proc_id, jur_id=None):
+    """Attach explicit certifications list for practitioner-facing display."""
+    if not setup:
+        return setup
+    out = dict(setup)
+    certs = None
+    if jur_id:
+        certs = ACCESS_CERTIFICATIONS.get((proc_id, jur_id))
+    if not certs:
+        certs = out.get("certifications") or PROCEDURE_CERTIFICATIONS.get(proc_id)
+    if certs:
+        out["certifications"] = list(certs)
+    elif not out.get("certifications"):
+        # Last resort: surface license lines so the UI still has a "credentials" block
+        out["certifications"] = list(out.get("licenses") or [])[:6] or [
+            "Confirm credentialing with the competent medical board and regulator for this service line"
+        ]
+    return out
+
+
 def all_procedure_setup_defaults():
-    return dict(PROCEDURE_SETUP_DEFAULTS)
+    return {
+        pid: _with_certifications(setup, pid)
+        for pid, setup in PROCEDURE_SETUP_DEFAULTS.items()
+    }
 
 
 def all_access_setup_overrides():
-    return dict(ACCESS_SETUP_OVERRIDES)
+    return {
+        key: _with_certifications(setup, key[0], key[1])
+        for key, setup in ACCESS_SETUP_OVERRIDES.items()
+    }
 
 
 def merged_setup(proc_id, jur_id=None):
@@ -1261,5 +1727,5 @@ def merged_setup(proc_id, jur_id=None):
     if jur_id:
         over = ACCESS_SETUP_OVERRIDES.get((proc_id, jur_id))
         if over:
-            return over
-    return base
+            return _with_certifications(over, proc_id, jur_id)
+    return _with_certifications(base, proc_id, jur_id) if base else None

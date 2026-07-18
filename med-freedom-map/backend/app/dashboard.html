@@ -257,7 +257,7 @@
                 <div>
                     <p class="muted" style="color:rgba(255,255,255,.85);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem;">For clinicians · clinics · hospital programs · operators</p>
                     <h1>MedFreedom Provider Map</h1>
-                    <p class="lede">Pick a therapy, then see where you may lawfully <strong>offer</strong> it — licensing and facility requirements, governing regulations, whether the market is open or prohibited, and what peers already operate there.</p>
+                    <p class="lede">Pick a therapy, then see where you may lawfully <strong>offer</strong> it — the <strong>certifications and credentials</strong> you need, licensing and facility requirements, governing regulations, whether the market is open or prohibited, and what peers already operate there.</p>
                 </div>
                 <span class="status-pill wait" id="statusBadge">Connecting…</span>
             </div>
@@ -279,7 +279,7 @@
         </div>
         <div id="enrichPanel" class="setup-banner" style="display:none; background:#eef2ff; border-color:#c7d2fe; color:#3730a3;">
             <strong>Regulatory data update available.</strong>
-            <p class="muted" style="margin:.35rem 0 .7rem; color:#3730a3;">Refresh licenses, prohibitions, and setup checklists without wiping the database.</p>
+            <p class="muted" style="margin:.35rem 0 .7rem; color:#3730a3;">Refresh certifications, licenses, prohibitions, and setup checklists without wiping the database.</p>
             <button class="ghost" id="enrichBtn" onclick="seed()">Refresh regulatory data</button>
             <span id="enrichStatus" class="muted" style="margin-left:.6rem;"></span>
         </div>
@@ -850,6 +850,7 @@
                     <p class="muted" style="font-size:.84rem;margin-top:.5rem;">${esc((p.description || '').slice(0, 220))}${(p.description || '').length > 220 ? '…' : ''}</p>
                     ${p.typical_us_cost_range ? `<p class="muted" style="margin-top:.35rem;"><strong>US cash reference (patient-facing):</strong> ${esc(p.typical_us_cost_range)}</p>` : ''}
                     ${p.practitioner_setup && p.practitioner_setup.summary ? `<p class="muted" style="margin-top:.45rem;font-size:.82rem;"><strong>Baseline to stand up a program:</strong> ${esc(p.practitioner_setup.summary)}</p>` : ''}
+                    ${renderCertPreview(p.practitioner_setup && p.practitioner_setup.certifications, 'Baseline certifications & credentials')}
                 `;
             }
 
@@ -927,10 +928,11 @@
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
                         <span class="pill">${esc(friendlyPathway(row.access_pathway))}</span>
                         ${(row.regulation_links || []).length ? `<span class="pill">${row.regulation_links.length} reg link${row.regulation_links.length === 1 ? '' : 's'}</span>` : ''}
+                        ${(setup.certifications || []).length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${setup.certifications.length} cert${setup.certifications.length === 1 ? '' : 's'}</span>` : ''}
                     </div>
                     <p class="muted" style="margin-top:.35rem;font-size:.8rem;">
                         ${esc(f.legislation_label)} · Oversight: ${esc(friendlyOversight(row.oversight_quality))}
-                        ${setup.summary ? ' · ' + esc(setup.summary.slice(0, 90)) + (setup.summary.length > 90 ? '…' : '') : ''}
+                        ${(setup.certifications || [])[0] ? ' · Certs: ' + esc(setup.certifications[0].slice(0, 70)) + (setup.certifications[0].length > 70 || setup.certifications.length > 1 ? '…' : '') : (setup.summary ? ' · ' + esc(setup.summary.slice(0, 90)) + (setup.summary.length > 90 ? '…' : '') : '')}
                     </p>
                 </li>`;
             }).join('');
@@ -998,6 +1000,38 @@
             </div>`;
         }
 
+        function renderCertPreview(certs, title) {
+            if (!certs || !certs.length) return '';
+            const shown = certs.slice(0, 4);
+            const more = certs.length > 4 ? `<li class="muted" style="margin:.15rem 0;">+${certs.length - 4} more in the market dossier →</li>` : '';
+            return `<div class="cert-box" style="margin-top:.65rem;padding:.75rem .9rem;background:linear-gradient(135deg,#eef2ff 0%,#f5f3ff 100%);border:1px solid #c7d2fe;border-radius:12px;">
+                <div style="font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#3730a3;margin-bottom:.35rem;">${esc(title || 'Certifications & credentials you need')}</div>
+                <ul style="margin:0 0 0 1.05rem;font-size:.86rem;color:#1e1b4b;">
+                    ${shown.map(c => `<li style="margin:.2rem 0;">${esc(c)}</li>`).join('')}
+                    ${more}
+                </ul>
+            </div>`;
+        }
+
+        function renderCertifications(certs) {
+            if (!certs || !certs.length) {
+                return `<div class="cert-box" style="margin-top:.4rem;padding:.75rem .9rem;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;">
+                    <div style="font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#64748b;">Certifications & credentials</div>
+                    <p class="muted" style="margin-top:.3rem;font-size:.86rem;">No structured certification list for this cell yet — see licenses & training below, and confirm with the competent authority.</p>
+                </div>`;
+            }
+            return `<div class="cert-box" style="margin-top:.4rem;padding:.85rem 1rem;background:linear-gradient(135deg,#eef2ff 0%,#f5f3ff 100%);border:1px solid #a5b4fc;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                    <div style="font-size:.78rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#312e81;">Certifications & credentials you need</div>
+                    <span class="pill" style="background:#312e81;color:#fff;">${certs.length} item${certs.length === 1 ? '' : 's'}</span>
+                </div>
+                <p class="muted" style="font-size:.78rem;margin-bottom:.4rem;color:#4338ca;">Board certs, program enrollments (REMS, OPS, FACT), facilitator licenses, and other credentials — verify before hiring or opening.</p>
+                <ol style="margin:0 0 0 1.15rem;font-size:.9rem;color:#1e1b4b;font-weight:500;">
+                    ${certs.map(c => `<li style="margin:.35rem 0;padding-left:.15rem;">${esc(c)}</li>`).join('')}
+                </ol>
+            </div>`;
+        }
+
         function renderRegulationLinks(links, legalBasis, authority) {
             const head = `
                 <dl class="kv">
@@ -1054,11 +1088,13 @@
             return `
                 <div class="chip-row" style="margin-bottom:.4rem;">
                     <span class="pill" style="background:${diffColor};color:#fff;">Setup difficulty: ${esc(diff)}</span>
+                    ${(setup.certifications || []).length ? `<span class="pill" style="background:#312e81;color:#fff;">${setup.certifications.length} certification${setup.certifications.length === 1 ? '' : 's'}</span>` : ''}
                 </div>
                 <p class="prose">${esc(setup.summary || '')}</p>
-                ${renderListSection('Licenses & credentials', setup.licenses)}
+                ${renderCertifications(setup.certifications)}
+                ${renderListSection('Facility / business licenses & permits', setup.licenses)}
                 ${renderListSection('Facility requirements', setup.facility)}
-                ${renderListSection('Training', setup.training)}
+                ${renderListSection('Training (beyond formal certs)', setup.training)}
                 ${renderListSection('Staffing', setup.staffing)}
                 ${renderListSection('Product / supply source', setup.product_source)}
                 ${renderListSection('Regulatory steps to open', setup.regulatory_steps)}
@@ -1066,7 +1102,7 @@
                 ${renderListSection('Ongoing compliance', setup.ongoing_compliance)}
                 ${setup.notes ? `<p class="muted" style="margin-top:.55rem;font-size:.82rem;"><strong>Note:</strong> ${esc(setup.notes)}</p>` : ''}
                 ${providerText ? `<p class="muted" style="margin-top:.5rem;font-size:.82rem;"><strong>Additional provider notes:</strong> ${esc(providerText)}</p>` : ''}
-                <p class="muted" style="font-size:.75rem;margin-top:.55rem;">Not legal or business advice. Validate with counsel, medical board, and the competent authority before capital commitment.</p>
+                <p class="muted" style="font-size:.75rem;margin-top:.55rem;">Not legal or business advice. Validate certifications, board eligibility, and program enrollments with counsel, the medical board, and the competent authority before capital commitment.</p>
             `;
         }
 
@@ -1124,7 +1160,7 @@
                     <div class="section-title">2 · Governing regulation (open these first)</div>
                     ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
 
-                    <div class="section-title">3 · Requirements to set up &amp; staff the program</div>
+                    <div class="section-title">3 · Certifications &amp; requirements to set up the program</div>
                     ${renderSetup(ar.setup_requirements, ar.provider_requirements)}
 
                     <div class="section-title">4 · Patient eligibility you must screen</div>

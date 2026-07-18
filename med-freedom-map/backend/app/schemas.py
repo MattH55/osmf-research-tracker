@@ -63,6 +63,7 @@ class JurisdictionResponse(JurisdictionBase):
 class PractitionerSetup(BaseModel):
     summary: Optional[str] = None
     difficulty: Optional[str] = None
+    certifications: List[str] = []
     licenses: List[str] = []
     facility: List[str] = []
     training: List[str] = []
