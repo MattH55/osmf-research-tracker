@@ -28,6 +28,7 @@ TOP_N = 8
 # disease-intelligence set gains pages for more monogenic diseases.
 SLUG_MAP = {
     "scd": "sickle-cell-disease",
+    "beta-thal": "beta-thalassemia",
     "hemophilia-a": "hemophilia",
     "hemophilia-b": "hemophilia",
     "cf": "cystic-fibrosis",
