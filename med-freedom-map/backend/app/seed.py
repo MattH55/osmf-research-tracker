@@ -39,6 +39,7 @@ from .seed_prohibitions import (
     all_jurisdiction_regulation,
     all_therapy_control_meta,
 )
+from .seed_regulatory_inference import build_inferred_access_records
 from .seed_regulation_links import apply_regulation_links_to_record, links_for_pair
 
 # Merge base + expansion disease maps (expansion wins on key clash).
@@ -1257,6 +1258,50 @@ def seed_database():
                 db.rollback()
                 result["skipped"].append(
                     f"{ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__}: {row_err})"
+                )
+
+        # ── Regulatory inference for remaining empty cells ──
+        # Uses jurisdiction defaults (psychedelic/cannabis/MAID/RTT/compounding)
+        # + therapy class. Never overwrites explicit or prohibited rows.
+        existing_pairs = {
+            (a.procedure_id, a.jurisdiction_id)
+            for a in db.query(AccessRecord.procedure_id, AccessRecord.jurisdiction_id).all()
+        }
+        procs_all = db.query(Procedure).all()
+        jurs_all = db.query(Jurisdiction).all()
+        inferred_batch = build_inferred_access_records(
+            existing_pairs,
+            procedures=procs_all,
+            jurisdictions=jurs_all,
+        )
+        result["inferred_added"] = 0
+        for ar_data in inferred_batch:
+            key = (ar_data["procedure_id"], ar_data["jurisdiction_id"])
+            if key in existing_pairs:
+                continue
+            ar_copy = ar_data.copy()
+            if isinstance(ar_copy.get("sources"), (list, dict)):
+                ar_copy["sources"] = json.dumps(ar_copy.get("sources") or [])
+            if isinstance(ar_copy.get("setup_requirements"), dict):
+                ar_copy["setup_requirements"] = json.dumps(ar_copy["setup_requirements"])
+            if ar_copy.get("setup_requirements") is None:
+                ar_copy.pop("setup_requirements", None)
+            if isinstance(ar_copy.get("regulation_links"), list):
+                ar_copy["regulation_links"] = json.dumps(ar_copy.get("regulation_links") or [])
+            if not ar_copy.get("regulation_links"):
+                ar_copy.pop("regulation_links", None)
+            if isinstance(ar_copy.get("known_risk_flags"), list):
+                ar_copy["known_risk_flags"] = json.dumps(ar_copy["known_risk_flags"])
+            # known_risk_flags already string from inference helper when set via dumps
+            try:
+                db.add(AccessRecord(**ar_copy))
+                db.commit()
+                existing_pairs.add(key)
+                result["inferred_added"] += 1
+            except Exception as row_err:
+                db.rollback()
+                result["skipped"].append(
+                    f"infer {ar_data['procedure_id']} @ {ar_data['jurisdiction_id']} ({row_err.__class__.__name__}: {row_err})"
                 )
         result["access_records"] = db.query(AccessRecord).count()
 

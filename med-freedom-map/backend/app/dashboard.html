@@ -2429,18 +2429,33 @@
             };
         }
 
+        function isInferredCell(ar) {
+            if (!ar) return false;
+            const vb = String(ar.verified_by || '');
+            if (/inference|inferred/i.test(vb)) return true;
+            try {
+                const flags = ar.known_risk_flags;
+                if (Array.isArray(flags) && flags.includes('inferred_policy')) return true;
+                if (typeof flags === 'string' && flags.includes('inferred_policy')) return true;
+            } catch (e) { /* ignore */ }
+            return false;
+        }
+
         function renderTrustStrip(ar) {
             const t = cellTrustMeta(ar);
+            const inferred = isInferredCell(ar);
             const verified = t.lastVerified
-                ? `Verified ${esc(t.lastVerified)}${t.verifiedBy ? ' · ' + esc(t.verifiedBy) : ''}`
+                ? `${inferred ? 'Inferred' : 'Verified'} ${esc(t.lastVerified)}${t.verifiedBy ? ' · ' + esc(t.verifiedBy) : ''}`
                 : 'Last verified: not dated — treat as provisional';
             return `<div class="trust-strip" title="Data provenance for counsel diligence">
                 <span class="t-label">Trust</span>
+                ${inferred ? `<span class="pill sm" style="background:#fae8ff;color:#86198e;" title="No explicit curated policy for this pair — derived from jurisdiction defaults + therapy class">Inferred policy</span>` : ''}
                 <span class="pill sm ${t.confClass}">Confidence: ${esc(humanize(t.confidence))}</span>
                 <span class="muted">${verified}</span>
                 ${t.sources ? `<span class="pill sm">${t.sources} source${t.sources === 1 ? '' : 's'}/links</span>` : ''}
                 ${t.volatility && t.volatility !== 'Stable' ? `<span class="pill pending sm">${esc(humanize(t.volatility))}</span>` : ''}
-            </div>`;
+            </div>
+            ${inferred ? `<p class="muted" style="font-size:.8rem;margin:.25rem 0 .5rem;">This cell was <strong>inferred</strong> because no explicit policy row existed. It uses the jurisdiction’s regulatory defaults (e.g. psychedelic/cannabis/MAID posture, expanded access, compounding climate) and the therapy class. Confirm primary law before capital or clinical decisions.</p>` : ''}`;
         }
 
         // ── Counsel-ready export pack ─────────────────────────────────────
@@ -3428,6 +3443,7 @@
                             <span class="pl-status ${esc(v.cls)}" title="${esc(v.short)}">${esc(v.label)}</span>
                             ${readinessPillHtml(ready)}
                             <span class="pill sm ${trust.confClass}" title="Data confidence">${esc(humanize(trust.confidence))}</span>
+                            ${isInferredCell(row) ? `<span class="pill sm" style="background:#fae8ff;color:#86198e;" title="Inferred from jurisdiction defaults">Inferred</span>` : ''}
                             <div class="pl-sub" title="${esc(difficultyExplain(diff))}">${esc(subParts.join(' · '))}${ready.key !== 'unknown' ? ' · ' + esc(ready.short) : ''}</div>
                         </div>
                         <div style="display:flex;flex-direction:column;gap:.25rem;align-items:flex-end;">
