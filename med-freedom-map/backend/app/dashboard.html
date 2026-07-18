@@ -513,6 +513,74 @@
             a[href]::after { content: ""; }
             .compare-panel { break-before: page; }
         }
+
+        /* Onboarding / modals */
+        .modal-backdrop {
+            position: fixed; inset: 0; z-index: 3000;
+            background: rgba(15, 23, 42, .55); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; padding: 1rem;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal {
+            background: #fff; border-radius: 16px; max-width: 560px; width: 100%;
+            max-height: min(90vh, 720px); overflow: auto; box-shadow: 0 24px 60px rgba(0,0,0,.25);
+            padding: 1.35rem 1.4rem 1.25rem;
+        }
+        .modal h2 { font-size: 1.2rem; margin-bottom: .35rem; }
+        .modal .modal-lede { color: var(--muted); font-size: .9rem; margin-bottom: 1rem; }
+        .job-grid { display: grid; gap: .55rem; }
+        .job-card {
+            text-align: left; width: 100%; padding: .85rem 1rem; border-radius: 12px;
+            border: 1px solid var(--line); background: #f8fafc; color: var(--ink);
+            cursor: pointer; font-weight: 500;
+        }
+        .job-card:hover, .job-card.selected { border-color: #a5b4fc; background: #eef2ff; color: var(--ink); }
+        .job-card strong { display: block; font-size: .95rem; margin-bottom: .2rem; }
+        .job-card span { font-size: .8rem; color: var(--muted); }
+        .modal-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; justify-content: flex-end; }
+        .profile-grid { display: grid; gap: .45rem; }
+        .profile-grid label {
+            display: flex; align-items: flex-start; gap: .5rem; font-size: .88rem;
+            padding: .45rem .55rem; border-radius: 10px; background: #f8fafc; border: 1px solid var(--line);
+            cursor: pointer;
+        }
+        .profile-grid label input { margin-top: .2rem; accent-color: var(--brand); }
+        .profile-grid .full { display: block; }
+        .profile-grid .full input[type=text], .profile-grid .full select {
+            width: 100%; margin-top: .35rem; padding: .5rem .65rem; border-radius: 8px; border: 1px solid var(--line);
+        }
+
+        /* Readiness + watchlist chips */
+        .ready-pill { font-size: .68rem; font-weight: 750; padding: .15rem .45rem; border-radius: 999px; }
+        .ready-pill.ready { background: #d1fae5; color: #065f46; }
+        .ready-pill.gaps { background: #fef3c7; color: #92400e; }
+        .ready-pill.blocked { background: #fee2e2; color: #991b1b; }
+        .ready-pill.unknown { background: #f1f5f9; color: #64748b; }
+        .ready-box {
+            margin: .55rem 0; padding: .75rem .9rem; border-radius: 12px;
+            border: 1px solid var(--line); background: #f8fafc;
+        }
+        .ready-box.ready { background: #ecfdf5; border-color: #a7f3d0; }
+        .ready-box.gaps { background: #fffbeb; border-color: #fde68a; }
+        .ready-box.blocked { background: #fef2f2; border-color: #fecaca; }
+        .watch-star.on { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+        .watch-panel {
+            margin: .65rem 0; padding: .7rem .8rem; border-radius: 12px;
+            background: #f5f3ff; border: 1px solid #ddd6fe; display: none;
+        }
+        .watch-panel.open { display: block; }
+        .watch-item {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+            gap: .4rem; padding: .45rem 0; border-top: 1px solid #e9e5ff; font-size: .86rem;
+        }
+        .watch-item:first-child { border-top: 0; }
+        .tool-strip {
+            display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; align-items: center;
+        }
+        .change-badge {
+            font-size: .65rem; font-weight: 750; background: #fef3c7; color: #92400e;
+            padding: .12rem .4rem; border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -532,6 +600,9 @@
                 <button type="button" data-role="clinic">Clinic operator</button>
                 <button type="button" data-role="hospital">Hospital program</button>
                 <button type="button" data-role="investor">Investor / BD</button>
+                <button type="button" class="btn-outline" style="margin-left:auto;background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="window.__openOnboarding(true)">Guide me</button>
+                <button type="button" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="window.__openProfile()">My readiness</button>
+                <button type="button" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);" onclick="window.__toggleWatchPanel()">Watchlist <span id="watchCountBadge" style="opacity:.85;"></span></button>
             </div>
             <div class="hero-stats">
                 <div class="hero-stat"><div class="n" id="s-proc">–</div><div class="l">Service lines</div></div>
@@ -554,12 +625,88 @@
                 <button type="button" class="btn-sm" id="ctxCopyCerts" onclick="window.__copyCertChecklist()" style="display:none;">Copy cert checklist</button>
                 <button type="button" class="ghost btn-sm" id="ctxExportDossier" onclick="window.__exportMarketBrief()" style="display:none;">Export brief</button>
                 <button type="button" class="btn-outline btn-sm" id="ctxPrint" onclick="window.__printOnePager()" style="display:none;">Print one-pager</button>
+                <button type="button" class="btn-outline btn-sm" id="ctxWatch" onclick="window.__toggleWatchCurrent()" style="display:none;">☆ Watch</button>
             </div>
         </div>
     </div>
 
     <!-- Built for print; hidden on screen -->
     <div id="printSheet" aria-hidden="true"></div>
+
+    <!-- Onboarding modal -->
+    <div class="modal-backdrop no-print" id="onboardModal" role="dialog" aria-modal="true" aria-labelledby="onboardTitle">
+        <div class="modal">
+            <h2 id="onboardTitle">What are you trying to do?</h2>
+            <p class="modal-lede">We’ll set your view, suggest a starting therapy, and show markets you can actually enter. Takes ~20 seconds.</p>
+            <div class="job-grid" id="jobGrid">
+                <button type="button" class="job-card" data-job="clinic">
+                    <strong>Open or expand a clinic</strong>
+                    <span>Licenses, facility setup, staffing, capital notes, certifications to hire against.</span>
+                </button>
+                <button type="button" class="job-card" data-job="hospital">
+                    <strong>Stand up a hospital program</strong>
+                    <span>REMS/FACT-class center requirements, regulation, ICU readiness.</span>
+                </button>
+                <button type="button" class="job-card" data-job="invest">
+                    <strong>Screen markets for investment / BD</strong>
+                    <span>Operability, policy risk, setup difficulty, open markets across jurisdictions.</span>
+                </button>
+                <button type="button" class="job-card" data-job="creds">
+                    <strong>Check my credentials &amp; readiness</strong>
+                    <span>Match what you hold against cert checklists — Ready / Gaps / Blocked per market.</span>
+                </button>
+            </div>
+            <div style="margin-top:1rem;">
+                <label class="field" for="onboardTherapy">Start with therapy (optional)</label>
+                <select id="onboardTherapy">
+                    <option value="">Suggested for my job</option>
+                    <option value="proc-ketamine-depression">Ketamine (depression)</option>
+                    <option value="proc-psilocybin-trd">Psilocybin (TRD / regulated programs)</option>
+                    <option value="proc-stem-car-t">CAR-T</option>
+                    <option value="proc-tms-depression">TMS (depression)</option>
+                    <option value="proc-repro-ivf">IVF / fertility</option>
+                    <option value="proc-medical-cannabis">Medical cannabis</option>
+                    <option value="proc-repurposed-semaglutide">Semaglutide / GLP-1</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-outline" onclick="window.__skipOnboarding()">Skip for now</button>
+                <button type="button" class="btn-sm" id="onboardContinue" disabled onclick="window.__finishOnboarding()">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Readiness profile modal -->
+    <div class="modal-backdrop no-print" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+        <div class="modal">
+            <h2 id="profileTitle">My readiness profile</h2>
+            <p class="modal-lede">Check what you already hold. We score each market as <strong>Ready</strong>, <strong>Gaps</strong>, or <strong>Blocked</strong> against that market’s certification list. Stored only in this browser.</p>
+            <div class="profile-grid" id="profileGrid">
+                <label><input type="checkbox" data-prof="md_do"> MD / DO medical license (active)</label>
+                <label><input type="checkbox" data-prof="np_pa"> NP / PA license with prescribing authority</label>
+                <label><input type="checkbox" data-prof="dea"> DEA registration (US controlled substances)</label>
+                <label><input type="checkbox" data-prof="psychiatry"> Psychiatry / mental health specialty</label>
+                <label><input type="checkbox" data-prof="rei"> REI / fertility specialty</label>
+                <label><input type="checkbox" data-prof="hemonc"> Heme/onc or transplant privileges</label>
+                <label><input type="checkbox" data-prof="rems"> REMS program enrollment (any product)</label>
+                <label><input type="checkbox" data-prof="facilitator"> Regulated facilitator license (e.g. Oregon OPS)</label>
+                <label><input type="checkbox" data-prof="hospital"> Hospital / institutional privileges</label>
+                <label><input type="checkbox" data-prof="fact"> FACT / cell-therapy center affiliation</label>
+                <label><input type="checkbox" data-prof="clia"> CLIA lab / embryology access</label>
+                <label><input type="checkbox" data-prof="nursing_iv"> Infusion / IV / monitoring nursing team</label>
+                <label><input type="checkbox" data-prof="capital"> Access to program capital / facility build budget</label>
+                <label class="full">Primary practice region (free text)
+                    <input type="text" data-prof-text="region" placeholder="e.g. Oregon, US federal, Australia">
+                </label>
+            </div>
+            <p class="muted" style="margin-top:.75rem;font-size:.78rem;" id="profileSummary"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-outline" onclick="window.__clearProfile()">Clear</button>
+                <button type="button" class="btn-outline" onclick="window.__closeProfile()">Cancel</button>
+                <button type="button" class="btn-sm" onclick="window.__saveProfile()">Save profile</button>
+            </div>
+        </div>
+    </div>
 
     <main class="app">
         <div id="setupPanel" class="setup-banner" style="display:none;">
@@ -627,6 +774,20 @@
         <div class="detail-grid">
             <section class="card card-pad">
                 <h2><span class="step">2</span> Markets for this service</h2>
+                <div class="tool-strip no-print">
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__openProfile()">My readiness</button>
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__toggleWatchPanel()">Watchlist</button>
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__openOnboarding(true)">Guide me</button>
+                    <span class="muted" style="font-size:.78rem;" id="readinessHint"></span>
+                </div>
+                <div class="watch-panel no-print" id="watchPanel">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;">
+                        <strong style="font-size:.9rem;color:#4c1d95;">Your watchlist</strong>
+                        <button type="button" class="btn-outline btn-sm" onclick="window.__clearWatchlist()">Clear all</button>
+                    </div>
+                    <p class="muted" style="font-size:.78rem;margin:.35rem 0 .25rem;">Therapy × market pairs saved in this browser. We’ll flag if operability status changes when you reopen this therapy.</p>
+                    <div id="watchListBody"></div>
+                </div>
                 <p class="muted" id="placesIntro">Choose a service line to list jurisdictions by operability and setup burden.</p>
                 <div id="placeSummary" class="summary-bar" style="display:none;"></div>
                 <div class="filter-presets" id="filterPresets" style="display:none;">
@@ -1180,20 +1341,25 @@
                 const pe = primaryEvidence();
                 const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
                 const role = getRole();
+                const ready = scoreMarketReadiness(ar);
+                btnMarket.style.display = '';
+                btnCerts.style.display = certs.length ? '' : 'none';
+                btnExport.style.display = '';
+                if (btnPrint) btnPrint.style.display = '';
+                const btnWatch = document.getElementById('ctxWatch');
+                if (btnWatch) btnWatch.style.display = '';
+                updateWatchBadge();
                 main.innerHTML = `
                     <span class="ctx-title">${esc(proc.name)}</span>
                     <span class="ctx-sep">·</span>
                     <span class="ctx-title">${esc(j.name)}</span>
                     <span class="pill ${v.cls === 'go' ? 'allowed' : (v.cls === 'no' ? 'not-allowed' : 'pending')}">${esc(v.label)}</span>
+                    ${readinessPillHtml(ready)}
                     <span class="pill" style="background:${diff === 'Low' ? '#065f46' : (diff === 'High' || diff === 'Extreme' ? '#991b1b' : '#92400e')};color:#fff;">Setup: ${esc(diff)}</span>
                     ${certs.length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>` : ''}
                     ${eg ? `<span class="pill" style="background:${eg.color};color:#fff;">${esc(eg.grade)}</span>` : ''}
                     <span class="pill sm" style="background:#f1f5f9;color:#475569;">${esc(role.label)}</span>
                 `;
-                btnMarket.style.display = '';
-                btnCerts.style.display = certs.length ? '' : 'none';
-                btnExport.style.display = '';
-                if (btnPrint) btnPrint.style.display = '';
                 lastDossierCtx = { procName: proc.name, jurName: j.name, ar, setup, verdict: v, proc };
             } else {
                 main.innerHTML = `
@@ -1206,6 +1372,8 @@
                 btnCerts.style.display = (setup.certifications || []).length ? '' : 'none';
                 btnExport.style.display = 'none';
                 if (btnPrint) btnPrint.style.display = 'none';
+                const btnWatch = document.getElementById('ctxWatch');
+                if (btnWatch) btnWatch.style.display = 'none';
                 lastDossierCtx = { procName: proc.name, jurName: null, ar: null, setup, verdict: null, proc };
             }
         }
@@ -1651,8 +1819,516 @@
                 const row = currentAccess.find(a => a.jurisdiction?.id === selectedJurisdictionId);
                 if (row) selectJurisdiction(selectedJurisdictionId, row, { skipUrl: true });
             }
-            showToast('View: ' + (ROLES[roleId].label));
+            if (!opts.silent) showToast('View: ' + (ROLES[roleId].label));
         }
+
+        // ── Guided onboarding ─────────────────────────────────────────────
+        const ONBOARD_KEY = 'medfreedom_onboard_v1';
+        let selectedJob = null;
+        const JOBS = {
+            clinic: {
+                role: 'clinic',
+                therapy: 'proc-ketamine-depression',
+                msg: 'Clinic operator view · enterable markets · try ketamine or your service line',
+            },
+            hospital: {
+                role: 'hospital',
+                therapy: 'proc-stem-car-t',
+                msg: 'Hospital program view · CAR-T is a good template for center-class setup',
+            },
+            invest: {
+                role: 'investor',
+                therapy: 'proc-psilocybin-trd',
+                msg: 'Investor view · compare open vs regulated psychedelic markets',
+            },
+            creds: {
+                role: 'physician',
+                therapy: 'proc-ketamine-depression',
+                msg: 'Physician view · open My readiness to score markets against your credentials',
+                openProfile: true,
+            },
+        };
+
+        window.__openOnboarding = function (force) {
+            const modal = document.getElementById('onboardModal');
+            if (!modal) return;
+            selectedJob = null;
+            document.querySelectorAll('#jobGrid .job-card').forEach(c => c.classList.remove('selected'));
+            const cont = document.getElementById('onboardContinue');
+            if (cont) cont.disabled = true;
+            modal.classList.add('open');
+        };
+
+        window.__skipOnboarding = function () {
+            try { localStorage.setItem(ONBOARD_KEY, JSON.stringify({ skipped: true, at: Date.now() })); } catch (e) {}
+            document.getElementById('onboardModal')?.classList.remove('open');
+        };
+
+        window.__finishOnboarding = async function () {
+            if (!selectedJob || !JOBS[selectedJob]) return;
+            const job = JOBS[selectedJob];
+            setRole(job.role, { silent: true, skipRerender: true });
+            try {
+                localStorage.setItem(ONBOARD_KEY, JSON.stringify({ job: selectedJob, at: Date.now() }));
+            } catch (e) {}
+            document.getElementById('onboardModal')?.classList.remove('open');
+            applyFilterPreset('enterable');
+            const therapySel = document.getElementById('onboardTherapy')?.value;
+            let therapy = therapySel || job.therapy;
+            if (!allProcedures.some(p => p.id === therapy)) {
+                therapy = allProcedures.find(p => p.id === job.therapy)?.id
+                    || allProcedures.find(p => p.id === 'proc-ketamine-depression')?.id
+                    || allProcedures[0]?.id;
+            }
+            if (therapy) await selectProcedure(therapy);
+            showToast(job.msg);
+            if (job.openProfile) setTimeout(() => window.__openProfile(), 400);
+        };
+
+        function maybeShowOnboarding() {
+            try {
+                if (localStorage.getItem(ONBOARD_KEY)) return;
+            } catch (e) { return; }
+            // Only auto-show when we have data
+            if (allProcedures.length) window.__openOnboarding(false);
+        }
+
+        document.getElementById('jobGrid')?.addEventListener('click', e => {
+            const card = e.target.closest('.job-card[data-job]');
+            if (!card) return;
+            selectedJob = card.getAttribute('data-job');
+            document.querySelectorAll('#jobGrid .job-card').forEach(c => c.classList.toggle('selected', c === card));
+            const cont = document.getElementById('onboardContinue');
+            if (cont) cont.disabled = false;
+        });
+
+        // ── Operator readiness profile ────────────────────────────────────
+        const PROFILE_KEY = 'medfreedom_profile_v1';
+        const PROFILE_FLAGS = [
+            'md_do', 'np_pa', 'dea', 'psychiatry', 'rei', 'hemonc', 'rems',
+            'facilitator', 'hospital', 'fact', 'clia', 'nursing_iv', 'capital',
+        ];
+        let operatorProfile = { flags: {}, region: '' };
+
+        function loadProfile() {
+            try {
+                const raw = localStorage.getItem(PROFILE_KEY);
+                if (raw) operatorProfile = JSON.parse(raw);
+            } catch (e) { /* ignore */ }
+            if (!operatorProfile.flags) operatorProfile.flags = {};
+            syncProfileForm();
+            updateReadinessHint();
+        }
+
+        function syncProfileForm() {
+            PROFILE_FLAGS.forEach(k => {
+                const el = document.querySelector(`#profileGrid [data-prof="${k}"]`);
+                if (el) el.checked = !!operatorProfile.flags[k];
+            });
+            const region = document.querySelector('#profileGrid [data-prof-text="region"]');
+            if (region) region.value = operatorProfile.region || '';
+            const n = PROFILE_FLAGS.filter(k => operatorProfile.flags[k]).length;
+            const sum = document.getElementById('profileSummary');
+            if (sum) sum.textContent = n
+                ? `${n} credential flag${n === 1 ? '' : 's'} saved. Markets will show Ready / Gaps / Blocked.`
+                : 'No flags yet — scores stay “Set profile” until you save at least one.';
+        }
+
+        function profileHasAny() {
+            return PROFILE_FLAGS.some(k => operatorProfile.flags[k]);
+        }
+
+        window.__openProfile = function () {
+            syncProfileForm();
+            document.getElementById('profileModal')?.classList.add('open');
+        };
+        window.__closeProfile = function () {
+            document.getElementById('profileModal')?.classList.remove('open');
+        };
+        window.__saveProfile = function () {
+            const flags = {};
+            PROFILE_FLAGS.forEach(k => {
+                const el = document.querySelector(`#profileGrid [data-prof="${k}"]`);
+                flags[k] = !!(el && el.checked);
+            });
+            const region = document.querySelector('#profileGrid [data-prof-text="region"]');
+            operatorProfile = { flags, region: region ? region.value.trim() : '', updatedAt: Date.now() };
+            try { localStorage.setItem(PROFILE_KEY, JSON.stringify(operatorProfile)); } catch (e) {}
+            document.getElementById('profileModal')?.classList.remove('open');
+            updateReadinessHint();
+            refreshPlacesView();
+            if (selectedJurisdictionId) {
+                const row = currentAccess.find(a => a.jurisdiction?.id === selectedJurisdictionId);
+                if (row) selectJurisdiction(selectedJurisdictionId, row, { skipUrl: true });
+            }
+            showToast('Readiness profile saved');
+        };
+        window.__clearProfile = function () {
+            operatorProfile = { flags: {}, region: '' };
+            try { localStorage.removeItem(PROFILE_KEY); } catch (e) {}
+            syncProfileForm();
+            updateReadinessHint();
+            refreshPlacesView();
+            showToast('Profile cleared');
+        };
+
+        function updateReadinessHint() {
+            const el = document.getElementById('readinessHint');
+            if (!el) return;
+            if (!profileHasAny()) {
+                el.textContent = 'Set My readiness to score markets against your credentials.';
+            } else {
+                const n = PROFILE_FLAGS.filter(k => operatorProfile.flags[k]).length;
+                el.textContent = `Scoring with ${n} profile flag${n === 1 ? '' : 's'}${operatorProfile.region ? ' · ' + operatorProfile.region : ''}.`;
+            }
+        }
+
+        /**
+         * Map certification text → profile flags that would satisfy it.
+         * Heuristic only — not legal advice.
+         */
+        function certSatisfiedByProfile(certText) {
+            const t = String(certText || '').toLowerCase();
+            const f = operatorProfile.flags || {};
+            // "No path" certs aren't things the user "holds"
+            const cls = classifyCert(certText);
+            if (cls.key === 'na') return { status: 'na', flags: [] };
+
+            const needed = [];
+            if (/facilitator|ops\b|oha psilocybin|service.center license/.test(t)) needed.push('facilitator');
+            if (/\brems\b|spravato|esketamine/.test(t)) needed.push('rems');
+            if (/\bfact\b|jacie|car-?t|cellular therapy|casgevy|transplant/.test(t)) {
+                needed.push('fact');
+                needed.push('hospital');
+                needed.push('hemonc');
+            }
+            if (/\bdea\b|schedule iii|controlled.substance registration/.test(t)) needed.push('dea');
+            if (/\bclia\b|embryolog|art lab/.test(t)) needed.push('clia');
+            if (/\brei\b|reproductive endocrin|abog|ivf medical director/.test(t)) needed.push('rei');
+            if (/psychiatr|ranzcp|mental health specialty/.test(t)) needed.push('psychiatry');
+            if (/hospital|institutional privileg|inpatient|icu/.test(t)) needed.push('hospital');
+            if (/infusion|nursing|monitoring staff|acls|apheresis nurs/.test(t)) needed.push('nursing_iv');
+            if (/np\/pa|advanced practice|nurse practitioner|physician assistant/.test(t)) needed.push('np_pa');
+            if (/md\/do|medical license|physician license|prescriptive authority|active medical license|state medical license|ahpra|approbation/.test(t)
+                && !/facilitator/.test(t)) {
+                needed.push('md_do');
+                // NP/PA can also satisfy many prescribing certs
+                if (/prescri|np|pa |license/.test(t)) needed.push('np_pa');
+            }
+            if (/capital|facility build|multi-million/.test(t)) needed.push('capital');
+
+            // Deduplicate
+            const uniq = [...new Set(needed)];
+            if (!uniq.length) {
+                // Generic medical license fallback for "required" clinical certs
+                if (cls.key === 'req' && /license|credential|certif|board|privileg|enrollment|authority/.test(t)) {
+                    return {
+                        status: (f.md_do || f.np_pa) ? 'met' : 'gap',
+                        flags: ['md_do'],
+                        note: 'General license/credential — mark MD/DO or NP/PA if applicable',
+                    };
+                }
+                if (cls.key === 'rec') {
+                    return { status: 'rec_open', flags: [], note: 'Recommended — not required for Ready score' };
+                }
+                return { status: 'unknown', flags: [], note: 'Could not map to profile flags' };
+            }
+            const met = uniq.filter(k => f[k]);
+            // Satisfied if any alternative flag met (e.g. md_do OR np_pa when both listed for prescribing)
+            // For fact+hospital+hemonc, require all that are "hard"
+            if (uniq.includes('fact') || uniq.includes('facilitator') || uniq.includes('rems')) {
+                // All hard flags required
+                const hard = uniq.filter(k => ['fact', 'facilitator', 'rems', 'dea', 'clia', 'rei'].includes(k));
+                const soft = uniq.filter(k => !hard.includes(k));
+                const hardOk = hard.every(k => f[k]);
+                // soft: at least hospital if hospital in list
+                const softOk = !soft.includes('hospital') || f.hospital || f.hemonc;
+                if (hard.length && hardOk && softOk) return { status: 'met', flags: uniq };
+                if (hard.length && hard.some(k => f[k])) return { status: 'partial', flags: uniq, met };
+                return { status: 'gap', flags: uniq, met };
+            }
+            // License alternatives: md_do OR np_pa
+            if (uniq.includes('md_do') && uniq.includes('np_pa')) {
+                if (f.md_do || f.np_pa) return { status: 'met', flags: uniq };
+                return { status: 'gap', flags: uniq, met };
+            }
+            if (uniq.every(k => f[k])) return { status: 'met', flags: uniq };
+            if (met.length) return { status: 'partial', flags: uniq, met };
+            return { status: 'gap', flags: uniq, met };
+        }
+
+        function scoreMarketReadiness(row) {
+            const f = flagsOf(row);
+            if (f.prohibited) {
+                return {
+                    key: 'blocked',
+                    label: 'Blocked',
+                    short: 'Cannot lawfully operate in this market',
+                    pct: 0,
+                    gaps: [],
+                    met: 0,
+                    total: 0,
+                };
+            }
+            if (!profileHasAny()) {
+                return {
+                    key: 'unknown',
+                    label: 'Set profile',
+                    short: 'Add credentials in My readiness to score this market',
+                    pct: null,
+                    gaps: [],
+                    met: 0,
+                    total: 0,
+                };
+            }
+            const certs = (row.setup_requirements && row.setup_requirements.certifications) || [];
+            if (!certs.length) {
+                return {
+                    key: f.allowed && f.offered ? 'gaps' : 'unknown',
+                    label: f.allowed && f.offered ? 'Review setup' : 'Unclear',
+                    short: 'No cert list — review setup tab manually',
+                    pct: null,
+                    gaps: [],
+                    met: 0,
+                    total: 0,
+                };
+            }
+            const required = [];
+            const gaps = [];
+            let met = 0;
+            let counted = 0;
+            certs.forEach(c => {
+                const r = certSatisfiedByProfile(c);
+                if (r.status === 'na' || r.status === 'rec_open') return;
+                if (r.status === 'unknown') return;
+                counted++;
+                if (r.status === 'met') met++;
+                else {
+                    gaps.push({ text: c, need: r.flags || [], status: r.status });
+                }
+            });
+            if (!counted) {
+                return {
+                    key: 'ready',
+                    label: 'No hard cert map',
+                    short: 'Listed items are N/A or unmapped — still verify manually',
+                    pct: 100,
+                    gaps: [],
+                    met: 0,
+                    total: 0,
+                };
+            }
+            const pct = Math.round((met / counted) * 100);
+            if (gaps.length === 0) {
+                return {
+                    key: 'ready',
+                    label: 'Ready',
+                    short: `Profile covers ${met}/${counted} mapped requirements`,
+                    pct,
+                    gaps: [],
+                    met,
+                    total: counted,
+                };
+            }
+            return {
+                key: 'gaps',
+                label: `${gaps.length} gap${gaps.length === 1 ? '' : 's'}`,
+                short: `${met}/${counted} mapped requirements met`,
+                pct,
+                gaps,
+                met,
+                total: counted,
+            };
+        }
+
+        function readinessPillHtml(score) {
+            if (!score) return '';
+            return `<span class="ready-pill ${esc(score.key)}" title="${esc(score.short)}">${esc(score.label)}</span>`;
+        }
+
+        function renderReadinessBox(row) {
+            const score = scoreMarketReadiness(row);
+            const flagHelp = {
+                md_do: 'MD/DO license', np_pa: 'NP/PA license', dea: 'DEA', rems: 'REMS enrollment',
+                facilitator: 'Facilitator license', hospital: 'Hospital privileges', fact: 'FACT/cell therapy',
+                clia: 'CLIA/lab', rei: 'REI specialty', hemonc: 'Heme/onc/transplant', psychiatry: 'Psychiatry',
+                nursing_iv: 'Infusion/nursing team', capital: 'Program capital',
+            };
+            let gapsHtml = '';
+            if (score.key === 'unknown') {
+                gapsHtml = `<p class="muted" style="margin-top:.35rem;font-size:.84rem;">${esc(score.short)}
+                    <button type="button" class="btn-outline btn-sm" style="margin-left:.35rem;" onclick="window.__openProfile()">Set profile</button></p>`;
+            } else if (score.gaps && score.gaps.length) {
+                gapsHtml = `<ul style="margin:.4rem 0 0 1.05rem;font-size:.84rem;">${score.gaps.slice(0, 6).map(g => {
+                    const need = (g.need || []).map(k => flagHelp[k] || k).join(' or ');
+                    return `<li style="margin:.2rem 0;"><strong>Gap:</strong> ${esc(g.text.slice(0, 140))}${g.text.length > 140 ? '…' : ''}${need ? ` <span class="muted">→ need: ${esc(need)}</span>` : ''}</li>`;
+                }).join('')}${score.gaps.length > 6 ? `<li class="muted">+${score.gaps.length - 6} more in Certs tab</li>` : ''}</ul>
+                <button type="button" class="btn-outline btn-sm no-print" style="margin-top:.45rem;" onclick="window.__openProfile()">Update profile</button>`;
+            } else if (score.key === 'ready') {
+                gapsHtml = `<p class="muted" style="margin-top:.35rem;font-size:.84rem;">${esc(score.short)}. Still confirm with counsel and the competent authority.</p>`;
+            } else if (score.key === 'blocked') {
+                gapsHtml = `<p class="muted" style="margin-top:.35rem;font-size:.84rem;">Credentials won’t open a prohibited market — see alternatives below.</p>`;
+            }
+            return `<div class="ready-box ${esc(score.key)}">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;">
+                    <strong style="font-size:.9rem;">Your readiness</strong>
+                    ${readinessPillHtml(score)}
+                    ${score.pct != null ? `<span class="muted" style="font-size:.78rem;">${score.pct}% of mapped certs</span>` : ''}
+                </div>
+                ${gapsHtml}
+            </div>`;
+        }
+
+        // ── Watchlist (localStorage) ──────────────────────────────────────
+        const WATCH_KEY = 'medfreedom_watch_v1';
+        let watchlist = [];
+
+        function loadWatchlist() {
+            try {
+                const raw = localStorage.getItem(WATCH_KEY);
+                if (raw) watchlist = JSON.parse(raw) || [];
+            } catch (e) { watchlist = []; }
+            if (!Array.isArray(watchlist)) watchlist = [];
+            updateWatchBadge();
+        }
+
+        function saveWatchlist() {
+            try { localStorage.setItem(WATCH_KEY, JSON.stringify(watchlist)); } catch (e) {}
+            updateWatchBadge();
+            renderWatchPanel();
+        }
+
+        function watchKey(therapyId, jurId) {
+            return `${therapyId}::${jurId}`;
+        }
+
+        function isWatched(therapyId, jurId) {
+            return watchlist.some(w => w.therapyId === therapyId && w.jurId === jurId);
+        }
+
+        function updateWatchBadge() {
+            const el = document.getElementById('watchCountBadge');
+            if (el) el.textContent = watchlist.length ? `(${watchlist.length})` : '';
+            const btn = document.getElementById('ctxWatch');
+            if (btn && selectedProcedureId && selectedJurisdictionId) {
+                const on = isWatched(selectedProcedureId, selectedJurisdictionId);
+                btn.textContent = on ? '★ Watching' : '☆ Watch';
+                btn.classList.toggle('watch-star', true);
+                btn.classList.toggle('on', on);
+            }
+        }
+
+        window.__toggleWatchCurrent = function () {
+            if (!selectedProcedureId || !selectedJurisdictionId) {
+                showToast('Open a market first');
+                return;
+            }
+            window.__toggleWatch(selectedProcedureId, selectedJurisdictionId);
+        };
+
+        window.__toggleWatch = function (therapyId, jurId, meta) {
+            therapyId = therapyId || selectedProcedureId;
+            jurId = jurId || selectedJurisdictionId;
+            if (!therapyId || !jurId) return;
+            const idx = watchlist.findIndex(w => w.therapyId === therapyId && w.jurId === jurId);
+            if (idx >= 0) {
+                watchlist.splice(idx, 1);
+                showToast('Removed from watchlist');
+            } else {
+                const proc = allProcedures.find(p => p.id === therapyId);
+                const row = (therapyId === selectedProcedureId)
+                    ? currentAccess.find(a => a.jurisdiction?.id === jurId)
+                    : null;
+                const v = row ? operateVerdict(row) : null;
+                watchlist.unshift({
+                    therapyId,
+                    jurId,
+                    therapyName: meta?.therapyName || proc?.name || therapyId,
+                    jurName: meta?.jurName || row?.jurisdiction?.name || jurId,
+                    addedAt: Date.now(),
+                    lastVerdict: v?.label || meta?.lastVerdict || 'Unknown',
+                    lastVerdictCode: v?.code || '',
+                });
+                showToast('Added to watchlist');
+            }
+            saveWatchlist();
+            updateWatchBadge();
+            renderPlaceList(filteredAccess());
+        };
+
+        window.__clearWatchlist = function () {
+            watchlist = [];
+            saveWatchlist();
+            showToast('Watchlist cleared');
+        };
+
+        window.__toggleWatchPanel = function () {
+            const panel = document.getElementById('watchPanel');
+            if (!panel) return;
+            panel.classList.toggle('open');
+            if (panel.classList.contains('open')) renderWatchPanel();
+        };
+
+        function checkWatchChangesForTherapy(therapyId) {
+            // Update lastVerdict for watched items of this therapy; mark changed
+            let changed = 0;
+            watchlist.forEach(w => {
+                if (w.therapyId !== therapyId) return;
+                const row = currentAccess.find(a => a.jurisdiction?.id === w.jurId);
+                if (!row) return;
+                const v = operateVerdict(row);
+                if (w.lastVerdict && w.lastVerdict !== v.label) {
+                    w.changedFrom = w.lastVerdict;
+                    w.changed = true;
+                    changed++;
+                } else {
+                    w.changed = false;
+                    w.changedFrom = null;
+                }
+                w.lastVerdict = v.label;
+                w.lastVerdictCode = v.code;
+                w.jurName = row.jurisdiction?.name || w.jurName;
+            });
+            if (changed) saveWatchlist();
+            else {
+                try { localStorage.setItem(WATCH_KEY, JSON.stringify(watchlist)); } catch (e) {}
+            }
+            return changed;
+        }
+
+        function renderWatchPanel() {
+            const body = document.getElementById('watchListBody');
+            if (!body) return;
+            if (!watchlist.length) {
+                body.innerHTML = '<p class="muted" style="font-size:.84rem;margin:.35rem 0;">No watches yet. Open a market and click <strong>☆ Watch</strong>.</p>';
+                return;
+            }
+            body.innerHTML = watchlist.map(w => {
+                const change = w.changed
+                    ? `<span class="change-badge">Changed from ${esc(w.changedFrom)}</span>`
+                    : '';
+                return `<div class="watch-item">
+                    <div>
+                        <strong>${esc(w.therapyName)}</strong> · ${esc(w.jurName)}
+                        <div class="muted" style="font-size:.78rem;margin-top:.15rem;">Last status: ${esc(w.lastVerdict || '—')} ${change}</div>
+                    </div>
+                    <div class="btn-row" style="margin:0;">
+                        <button type="button" class="btn-sm" onclick="window.__openWatch(${JSON.stringify(w.therapyId)},${JSON.stringify(w.jurId)})">Open</button>
+                        <button type="button" class="btn-outline btn-sm" onclick="window.__toggleWatch(${JSON.stringify(w.therapyId)},${JSON.stringify(w.jurId)})">Remove</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.__openWatch = async function (therapyId, jurId) {
+            document.getElementById('watchPanel')?.classList.add('open');
+            if (therapyId !== selectedProcedureId) {
+                await selectProcedure(therapyId, { openJur: jurId });
+            } else {
+                const row = currentAccess.find(a => a.jurisdiction?.id === jurId);
+                await selectJurisdiction(jurId, row);
+            }
+        };
 
         function roleFocusHtml() {
             const r = getRole();
@@ -1789,6 +2465,7 @@
             const eg = pe ? evidenceGradeMeta(pe.evidence_grade) : null;
             const certs = setup.certifications || [];
             const role = getRole();
+            const ready = scoreMarketReadiness(ar);
             const links = (ar.regulation_links || []).slice(0, 6);
             return `
                 <h1>MedFreedom market one-pager</h1>
@@ -1797,6 +2474,7 @@
                     <div>
                         <div class="kv-print">
                             <div><strong>Operate</strong></div><div>${esc(v.label)} — ${esc(v.short)}</div>
+                            <div><strong>Your readiness</strong></div><div>${esc(ready.label)} — ${esc(ready.short)}</div>
                             <div><strong>Setup</strong></div><div>${esc(setup.difficulty || '—')} — ${esc(difficultyExplain(setup.difficulty))}</div>
                             <div><strong>Policy risk</strong></div><div>${esc(f.legislation_label)}</div>
                             <div><strong>Pathway</strong></div><div>${esc(friendlyPathway(ar.access_pathway))}</div>
@@ -2309,9 +2987,15 @@
                     return (a.jurisdiction?.name || '').localeCompare(b.jurisdiction?.name || '');
                 });
                 renderSummary(currentSummary, currentAccess);
+                const watchChanges = checkWatchChangesForTherapy(id);
                 refreshPlacesView();
                 currentIndications = d.indications || [];
                 renderEvidence(currentIndications);
+                if (watchChanges) {
+                    showToast(`${watchChanges} watched market${watchChanges === 1 ? '' : 's'} changed status — open Watchlist`);
+                    document.getElementById('watchPanel')?.classList.add('open');
+                    renderWatchPanel();
+                }
                 // Deep-link market restore
                 if (opts.openJur) {
                     const jid = opts.openJur;
@@ -2344,6 +3028,8 @@
                 const certN = (setup.certifications || []).length;
                 const pathShort = friendlyPathway(row.access_pathway);
                 // Compact secondary line — one status + setup/certs/pathway
+                const ready = scoreMarketReadiness(row);
+                const watched = selectedProcedureId && isWatched(selectedProcedureId, j.id);
                 const subParts = [
                     `Setup: ${diff}`,
                     certN ? `${certN} cert${certN === 1 ? '' : 's'}` : null,
@@ -2353,20 +3039,27 @@
                 return `<li class="${active}${pinned ? ' compare-on' : ''}" data-jid="${esc(j.id)}">
                     <div class="pl-row">
                         <div class="pl-main">
-                            <div class="title">${esc(j.name)}</div>
+                            <div class="title">${esc(j.name)} ${watched ? '<span title="On watchlist">★</span>' : ''}</div>
                             <span class="pl-status ${esc(v.cls)}" title="${esc(v.short)}">${esc(v.label)}</span>
-                            <div class="pl-sub" title="${esc(difficultyExplain(diff))}">${esc(subParts.join(' · '))}</div>
+                            ${readinessPillHtml(ready)}
+                            <div class="pl-sub" title="${esc(difficultyExplain(diff))}">${esc(subParts.join(' · '))}${ready.key !== 'unknown' ? ' · ' + esc(ready.short) : ''}</div>
                         </div>
-                        <button type="button" class="btn-compare-pin ${pinned ? 'on' : ''}"
-                            data-compare-jid="${esc(j.id)}"
-                            title="${pinned ? 'Remove from compare' : 'Add to compare (max 2)'}"
-                            aria-label="${pinned ? 'Remove from compare' : 'Add to compare'}">${pinned ? '✓' : '+'}</button>
+                        <div style="display:flex;flex-direction:column;gap:.25rem;align-items:flex-end;">
+                            <button type="button" class="btn-compare-pin ${pinned ? 'on' : ''}"
+                                data-compare-jid="${esc(j.id)}"
+                                title="${pinned ? 'Remove from compare' : 'Add to compare (max 2)'}"
+                                aria-label="${pinned ? 'Remove from compare' : 'Add to compare'}">${pinned ? '✓' : '+'}</button>
+                            <button type="button" class="btn-compare-pin ${watched ? 'on' : ''}"
+                                data-watch-jid="${esc(j.id)}"
+                                title="${watched ? 'Unwatch' : 'Watch this market'}"
+                                aria-label="Watch">${watched ? '★' : '☆'}</button>
+                        </div>
                     </div>
                 </li>`;
             }).join('');
             ul.querySelectorAll('li[data-jid]').forEach(li => {
                 li.addEventListener('click', e => {
-                    if (e.target.closest('[data-compare-jid]')) return;
+                    if (e.target.closest('[data-compare-jid], [data-watch-jid]')) return;
                     const jid = li.getAttribute('data-jid');
                     const row = currentAccess.find(a => a.jurisdiction?.id === jid);
                     selectJurisdiction(jid, row);
@@ -2377,6 +3070,13 @@
             ul.querySelectorAll('[data-compare-jid]').forEach(btn => {
                 btn.addEventListener('click', e => {
                     window.__toggleComparePin(btn.getAttribute('data-compare-jid'), e);
+                });
+            });
+            ul.querySelectorAll('[data-watch-jid]').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (!selectedProcedureId) return;
+                    window.__toggleWatch(selectedProcedureId, btn.getAttribute('data-watch-jid'));
                 });
             });
             updateCompareBar();
@@ -2637,6 +3337,7 @@
                     <div class="dossier-wrap">
                     ${roleFocusHtml()}
                     ${renderDecisionStrip(ar)}
+                    ${renderReadinessBox(ar)}
                     ${blockedBanner}
                     <div class="flag-row no-print">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
                     <div class="chip-row no-print" style="margin-top:.4rem;">
@@ -2829,16 +3530,22 @@
 
         (async function init() {
             loadRole();
+            loadProfile();
+            loadWatchlist();
             initMap();
             const s = await refreshStats();
             if (s && s.jurisdictions > 0) {
                 await bootstrap();
+                setTimeout(() => maybeShowOnboarding(), 600);
             } else if (!s) {
                 const t = setInterval(async () => {
                     const s2 = await refreshStats();
                     if (s2) {
                         clearInterval(t);
-                        if (s2.jurisdictions > 0) await bootstrap();
+                        if (s2.jurisdictions > 0) {
+                            await bootstrap();
+                            setTimeout(() => maybeShowOnboarding(), 600);
+                        }
                     }
                 }, 5000);
             }
