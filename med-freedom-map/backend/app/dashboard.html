@@ -248,6 +248,97 @@
         .popup-actions button { font-size: .8rem; padding: .4rem .7rem; }
 
         .loading-inline { color: var(--muted); font-size: .9rem; padding: .5rem 0; }
+
+        /* Sticky context bar */
+        .context-bar {
+            position: sticky; top: 0; z-index: 900;
+            background: rgba(255,255,255,.97); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 4px 16px rgba(15, 23, 42, .06);
+            display: none;
+        }
+        .context-bar.visible { display: block; }
+        .context-inner {
+            max-width: 1200px; margin: 0 auto; padding: .65rem 1rem;
+            display: flex; flex-wrap: wrap; align-items: center; gap: .55rem .85rem;
+            justify-content: space-between;
+        }
+        .context-main { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .65rem; min-width: 0; }
+        .context-main .ctx-title { font-weight: 750; font-size: .95rem; color: var(--ink); }
+        .context-main .ctx-sep { color: #cbd5e1; }
+        .context-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
+        .context-actions button, button.btn-sm {
+            font-size: .78rem; padding: .4rem .7rem; border-radius: 8px; font-weight: 650;
+        }
+        button.btn-outline {
+            background: #fff; color: var(--ink); border: 1px solid var(--line);
+        }
+        button.btn-outline:hover { background: #f8fafc; color: var(--brand); border-color: #c7d2fe; }
+
+        /* Decision strip */
+        .decision-strip {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: .55rem;
+            margin: .65rem 0 1rem;
+        }
+        @media (max-width: 700px) { .decision-strip { grid-template-columns: 1fr 1fr; } }
+        .decision-cell {
+            border-radius: 12px; padding: .7rem .75rem; border: 1px solid var(--line);
+            background: #f8fafc; min-height: 4.2rem;
+        }
+        .decision-cell .lbl {
+            font-size: .65rem; font-weight: 750; text-transform: uppercase; letter-spacing: .04em;
+            color: var(--muted); margin-bottom: .3rem;
+        }
+        .decision-cell .val { font-size: .95rem; font-weight: 750; line-height: 1.25; }
+        .decision-cell .sub { font-size: .75rem; color: var(--muted); margin-top: .2rem; font-weight: 500; }
+        .decision-cell.go { background: #ecfdf5; border-color: #a7f3d0; }
+        .decision-cell.go .val { color: #065f46; }
+        .decision-cell.caution { background: #fffbeb; border-color: #fde68a; }
+        .decision-cell.caution .val { color: #92400e; }
+        .decision-cell.no { background: #fef2f2; border-color: #fecaca; }
+        .decision-cell.no .val { color: #991b1b; }
+        .decision-cell.neutral .val { color: var(--ink); }
+
+        /* Filter presets */
+        .filter-presets { display: flex; flex-wrap: wrap; gap: .4rem; margin: .55rem 0 .15rem; }
+        .filter-presets button {
+            font-size: .78rem; padding: .4rem .75rem; border-radius: 999px;
+            background: #fff; color: var(--ink); border: 1px solid var(--line); font-weight: 650;
+        }
+        .filter-presets button.active {
+            background: var(--brand); color: #fff; border-color: var(--brand);
+        }
+        .filter-presets button:hover { background: #eef2ff; color: var(--brand2); }
+        .filter-presets button.active:hover { background: var(--brand2); color: #fff; }
+
+        /* Cert checklist */
+        .cert-list { list-style: none; margin: .35rem 0 0; padding: 0; }
+        .cert-list li {
+            display: flex; gap: .55rem; align-items: flex-start;
+            padding: .55rem .6rem; margin: .3rem 0; border-radius: 10px;
+            background: #fff; border: 1px solid #e0e7ff;
+        }
+        .cert-list li input[type=checkbox] {
+            margin-top: .2rem; width: 1rem; height: 1rem; accent-color: var(--brand); flex-shrink: 0;
+        }
+        .cert-list li.done { opacity: .72; }
+        .cert-list li.done .cert-text { text-decoration: line-through; color: var(--muted); }
+        .cert-badge {
+            display: inline-block; font-size: .65rem; font-weight: 750; text-transform: uppercase;
+            letter-spacing: .03em; padding: .12rem .4rem; border-radius: 6px; margin-right: .35rem;
+            vertical-align: middle;
+        }
+        .cert-badge.req { background: #fee2e2; color: #991b1b; }
+        .cert-badge.rec { background: #dbeafe; color: #1e40af; }
+        .cert-badge.na { background: #f1f5f9; color: #475569; }
+        .cert-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .65rem; }
+        .toast {
+            position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+            background: #1e1b4b; color: #fff; padding: .65rem 1.1rem; border-radius: 999px;
+            font-size: .85rem; font-weight: 650; z-index: 2000; box-shadow: var(--shadow);
+            opacity: 0; pointer-events: none; transition: opacity .2s;
+        }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
@@ -257,7 +348,7 @@
                 <div>
                     <p class="muted" style="color:rgba(255,255,255,.85);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem;">For clinicians · clinics · hospital programs · operators</p>
                     <h1>MedFreedom Provider Map</h1>
-                    <p class="lede">Pick a therapy, then see where you may lawfully <strong>offer</strong> it — the <strong>certifications and credentials</strong> you need, licensing and facility requirements, governing regulations, whether the market is open or prohibited, and what peers already operate there.</p>
+                    <p class="lede"><strong>1.</strong> Pick a therapy → <strong>2.</strong> See operable markets → <strong>3.</strong> Open certifications &amp; setup checklist. Informational only — confirm with counsel and the competent authority.</p>
                 </div>
                 <span class="status-pill wait" id="statusBadge">Connecting…</span>
             </div>
@@ -269,6 +360,20 @@
             </div>
         </div>
     </header>
+
+    <div class="context-bar" id="contextBar" aria-live="polite">
+        <div class="context-inner">
+            <div class="context-main" id="contextMain">
+                <span class="muted" style="font-size:.82rem;">Select a therapy and market</span>
+            </div>
+            <div class="context-actions">
+                <button type="button" class="btn-outline btn-sm" id="ctxChangeTherapy" onclick="window.__focusTherapy()">Change therapy</button>
+                <button type="button" class="btn-outline btn-sm" id="ctxChangeMarket" onclick="window.__focusMarkets()" style="display:none;">Change market</button>
+                <button type="button" class="btn-sm" id="ctxCopyCerts" onclick="window.__copyCertChecklist()" style="display:none;">Copy cert checklist</button>
+                <button type="button" class="ghost btn-sm" id="ctxExportDossier" onclick="window.__exportMarketBrief()" style="display:none;">Export brief</button>
+            </div>
+        </div>
+    </div>
 
     <main class="app">
         <div id="setupPanel" class="setup-banner" style="display:none;">
@@ -337,12 +442,16 @@
                 <h2><span class="step">2</span> Markets for this service</h2>
                 <p class="muted" id="placesIntro">Choose a service line to list jurisdictions by operability and setup burden.</p>
                 <div id="placeSummary" class="summary-bar" style="display:none;"></div>
+                <div class="filter-presets" id="filterPresets" style="display:none;">
+                    <button type="button" class="active" data-preset="enterable" id="presetEnterable">Markets I can enter</button>
+                    <button type="button" data-preset="all" id="presetAll">All markets (research)</button>
+                </div>
                 <div class="filter-toggles" id="placeFilters" style="display:none;">
                     <label><input type="checkbox" id="fAllowed" checked> Law allows program</label>
                     <label><input type="checkbox" id="fOffered" checked> Pathway to operate</label>
                     <label><input type="checkbox" id="fPending"> Pending law / flux only</label>
                     <label><input type="checkbox" id="fTrial"> Include trial-site only</label>
-                    <label><input type="checkbox" id="fProhibited" checked> Show prohibited markets</label>
+                    <label><input type="checkbox" id="fProhibited"> Show prohibited markets</label>
                 </div>
                 <ul class="place-list" id="placeList"></ul>
             </section>
@@ -350,9 +459,10 @@
             <section class="card card-pad" id="detailPanel">
                 <h2><span class="step">3</span> Market dossier</h2>
                 <div id="detailBody">
-                    <div class="empty">Select a market on the map or list to open the provider dossier: regulation links, setup checklist, patient screening rules, and competitive directories.</div>
+                    <div class="empty">Select a market on the map or list to open the provider dossier: go/caution verdict, certifications checklist, regulation links, and setup steps.</div>
                 </div>
             </section>
+            <div id="toast" class="toast" role="status" aria-live="polite"></div>
         </div>
 
         <section class="card card-pad" style="margin-top:1rem;" id="evidenceSection">
@@ -493,6 +603,348 @@
             const color = d === 'Low' ? '#065f46' : (d === 'High' || d === 'Extreme' ? '#991b1b' : '#92400e');
             return `<span class="pill" style="background:${color};color:#fff;">Setup: ${esc(d)}</span>`;
         }
+
+        /** Go / Caution / No for market-entry decision strip */
+        function operateVerdict(row) {
+            const f = flagsOf(row);
+            if (f.prohibited) {
+                return { code: 'no', label: 'Blocked', short: 'Cannot lawfully operate', cls: 'no' };
+            }
+            if (f.allowed && f.offered && !f.trial_only) {
+                if (f.pending_legislation || f.active_flux) {
+                    return { code: 'caution', label: 'Open — policy risk', short: 'Pathway exists; rules may change', cls: 'caution' };
+                }
+                return { code: 'go', label: 'Open to license', short: 'Law + operational pathway', cls: 'go' };
+            }
+            if (f.allowed && f.offered && f.trial_only) {
+                return { code: 'caution', label: 'Trial-site only', short: 'Research / trial pathway', cls: 'caution' };
+            }
+            if (f.allowed && !f.offered) {
+                return { code: 'caution', label: 'Lawful, no pathway', short: 'Legal space but no clear program path', cls: 'caution' };
+            }
+            if (f.offered) {
+                return { code: 'caution', label: 'Gray / cash path', short: 'Diligence required', cls: 'caution' };
+            }
+            return { code: 'unclear', label: 'Unclear', short: 'Status not resolved', cls: 'neutral' };
+        }
+
+        function difficultyExplain(d) {
+            const map = {
+                Low: 'Outpatient / standard clinic scope for most operators',
+                Moderate: 'Specialized clinic build or controlled-substance infrastructure',
+                High: 'Regulated program licenses, heavy staffing, or multi-year prep',
+                Extreme: 'Hospital/transplant-class or special-access only — not a simple private startup',
+            };
+            return map[d] || 'Confirm capital and staffing with local counsel';
+        }
+
+        function classifyCert(text) {
+            const t = String(text || '').toLowerCase();
+            if (
+                /no (lawful|legitimate|government|standalone|medical|major|fda|us federal)/.test(t)
+                || /not (a |an )?(us |fda |lawful|legitimate|available)/.test(t)
+                || /cannot|does not authorize|not available|n\/a|no .* path/.test(t)
+                || /schedule i risk|no dea.*authorizes|no .*board cert that makes it legal/.test(t)
+            ) {
+                return { key: 'na', label: 'Not available / no path' };
+            }
+            if (
+                /recommended|preferred|strongly expected|voluntary|common but not|not always|often mandatory|collaboration recommended/.test(t)
+            ) {
+                return { key: 'rec', label: 'Recommended' };
+            }
+            return { key: 'req', label: 'Required' };
+        }
+
+        function showToast(msg) {
+            const el = document.getElementById('toast');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => el.classList.remove('show'), 2200);
+        }
+
+        let lastDossierCtx = null; // { procName, jurName, ar, setup, verdict }
+
+        function updateContextBar(proc, j, ar) {
+            const bar = document.getElementById('contextBar');
+            const main = document.getElementById('contextMain');
+            const btnMarket = document.getElementById('ctxChangeMarket');
+            const btnCerts = document.getElementById('ctxCopyCerts');
+            const btnExport = document.getElementById('ctxExportDossier');
+            if (!proc) {
+                bar.classList.remove('visible');
+                lastDossierCtx = null;
+                return;
+            }
+            bar.classList.add('visible');
+            const setup = ar?.setup_requirements || proc.practitioner_setup || {};
+            const certs = setup.certifications || [];
+            if (j && ar) {
+                const v = operateVerdict(ar);
+                const diff = setup.difficulty || '—';
+                main.innerHTML = `
+                    <span class="ctx-title">${esc(proc.name)}</span>
+                    <span class="ctx-sep">·</span>
+                    <span class="ctx-title">${esc(j.name)}</span>
+                    <span class="pill ${v.cls === 'go' ? 'allowed' : (v.cls === 'no' ? 'not-allowed' : 'pending')}">${esc(v.label)}</span>
+                    <span class="pill" style="background:${diff === 'Low' ? '#065f46' : (diff === 'High' || diff === 'Extreme' ? '#991b1b' : '#92400e')};color:#fff;">Setup: ${esc(diff)}</span>
+                    ${certs.length ? `<span class="pill" style="background:#e0e7ff;color:#3730a3;">${certs.length} cert${certs.length === 1 ? '' : 's'}</span>` : ''}
+                `;
+                btnMarket.style.display = '';
+                btnCerts.style.display = certs.length ? '' : 'none';
+                btnExport.style.display = '';
+                lastDossierCtx = { procName: proc.name, jurName: j.name, ar, setup, verdict: v, proc };
+            } else {
+                main.innerHTML = `
+                    <span class="ctx-title">${esc(proc.name)}</span>
+                    <span class="ctx-sep">·</span>
+                    <span class="muted" style="font-size:.85rem;">Pick a market for the full dossier</span>
+                    ${setup.difficulty ? `<span class="pill" style="background:#312e81;color:#fff;">Baseline setup: ${esc(setup.difficulty)}</span>` : ''}
+                `;
+                btnMarket.style.display = 'none';
+                btnCerts.style.display = (setup.certifications || []).length ? '' : 'none';
+                btnExport.style.display = 'none';
+                lastDossierCtx = { procName: proc.name, jurName: null, ar: null, setup, verdict: null, proc };
+            }
+        }
+
+        function renderDecisionStrip(ar) {
+            if (!ar) return '';
+            const v = operateVerdict(ar);
+            const setup = ar.setup_requirements || {};
+            const diff = setup.difficulty || '—';
+            const certs = setup.certifications || [];
+            const f = flagsOf(ar);
+            const riskCls = f.pending_legislation ? 'caution' : (f.active_flux ? 'caution' : (f.prohibited ? 'no' : 'go'));
+            const diffCls = (diff === 'High' || diff === 'Extreme') ? 'caution' : (diff === 'Low' ? 'go' : 'neutral');
+            return `
+                <div class="decision-strip" role="group" aria-label="Market entry decision summary">
+                    <div class="decision-cell ${v.cls}">
+                        <div class="lbl">Can you operate?</div>
+                        <div class="val">${esc(v.label)}</div>
+                        <div class="sub">${esc(v.short)}</div>
+                    </div>
+                    <div class="decision-cell ${diffCls}">
+                        <div class="lbl">Setup difficulty</div>
+                        <div class="val">${esc(diff)}</div>
+                        <div class="sub">${esc(difficultyExplain(diff))}</div>
+                    </div>
+                    <div class="decision-cell neutral">
+                        <div class="lbl">Certifications</div>
+                        <div class="val">${certs.length ? certs.length + ' listed' : 'See licenses'}</div>
+                        <div class="sub">${certs.length ? 'Checklist below — copy or export' : 'Confirm with medical board'}</div>
+                    </div>
+                    <div class="decision-cell ${riskCls}">
+                        <div class="lbl">Policy risk</div>
+                        <div class="val">${esc(f.legislation_label)}</div>
+                        <div class="sub">${f.pending_legislation ? 'Freeze major spend until outcome clear' : (f.active_flux ? 'Build change-control into SOPs' : 'No active legislation flag')}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function applyFilterPreset(preset) {
+            const allowed = document.getElementById('fAllowed');
+            const offered = document.getElementById('fOffered');
+            const pending = document.getElementById('fPending');
+            const trial = document.getElementById('fTrial');
+            const prohibited = document.getElementById('fProhibited');
+            if (preset === 'enterable') {
+                if (allowed) allowed.checked = true;
+                if (offered) offered.checked = true;
+                if (pending) pending.checked = false;
+                if (trial) trial.checked = false;
+                if (prohibited) prohibited.checked = false;
+            } else {
+                if (allowed) allowed.checked = true;
+                if (offered) offered.checked = true;
+                if (pending) pending.checked = false;
+                if (trial) trial.checked = true;
+                if (prohibited) prohibited.checked = true;
+            }
+            document.querySelectorAll('.filter-presets button').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-preset') === preset);
+            });
+            refreshPlacesView();
+        }
+
+        function syncPresetButtons() {
+            const prohibited = document.getElementById('fProhibited')?.checked;
+            const trial = document.getElementById('fTrial')?.checked;
+            const pending = document.getElementById('fPending')?.checked;
+            const isEnterable = !prohibited && !trial && !pending
+                && document.getElementById('fAllowed')?.checked
+                && document.getElementById('fOffered')?.checked;
+            document.querySelectorAll('.filter-presets button').forEach(b => {
+                const p = b.getAttribute('data-preset');
+                b.classList.toggle('active', isEnterable ? p === 'enterable' : p === 'all' && prohibited);
+            });
+            // If mixed custom filters, clear active highlight on presets when neither matches cleanly
+            if (!isEnterable && !(prohibited && trial)) {
+                document.querySelectorAll('.filter-presets button').forEach(b => b.classList.remove('active'));
+            }
+        }
+
+        function buildCertChecklistText(procName, jurName, certs) {
+            const lines = [
+                'MedFreedom — Certification checklist',
+                `Therapy: ${procName || '—'}`,
+                `Market: ${jurName || 'Baseline (all markets)'}`,
+                '',
+            ];
+            (certs || []).forEach((c, i) => {
+                const cls = classifyCert(c);
+                lines.push(`[ ] ${i + 1}. [${cls.label}] ${c}`);
+            });
+            lines.push('');
+            lines.push('Not legal advice. Verify with counsel, medical board, and competent authority.');
+            lines.push('Source: MedFreedom Provider Map');
+            return lines.join('\n');
+        }
+
+        function buildMarketBriefText(ctx) {
+            if (!ctx || !ctx.ar) return '';
+            const ar = ctx.ar;
+            const setup = ctx.setup || {};
+            const f = flagsOf(ar);
+            const v = ctx.verdict || operateVerdict(ar);
+            const lines = [
+                'MedFreedom Provider Map — Market brief',
+                `Therapy: ${ctx.procName}`,
+                `Market: ${ctx.jurName}`,
+                '',
+                '— Decision —',
+                `Operate: ${v.label} (${v.short})`,
+                `Setup difficulty: ${setup.difficulty || '—'} — ${difficultyExplain(setup.difficulty)}`,
+                `Policy risk: ${f.legislation_label}`,
+                `Legal status: ${statusMeta(ar.legal_status).label}`,
+                `Pathway: ${friendlyPathway(ar.access_pathway)}`,
+                '',
+                '— Certifications & credentials —',
+            ];
+            (setup.certifications || []).forEach((c, i) => {
+                const cls = classifyCert(c);
+                lines.push(`${i + 1}. [${cls.label}] ${c}`);
+            });
+            if (!(setup.certifications || []).length) lines.push('(none listed)');
+            lines.push('');
+            lines.push('— Facility / business licenses —');
+            (setup.licenses || []).forEach((x, i) => lines.push(`${i + 1}. ${x}`));
+            if (!(setup.licenses || []).length) lines.push('(none listed)');
+            lines.push('');
+            lines.push('— Training —');
+            (setup.training || []).forEach((x, i) => lines.push(`${i + 1}. ${x}`));
+            lines.push('');
+            lines.push('— Regulatory authority / basis —');
+            lines.push(`Authority: ${ar.regulatory_authority || '—'}`);
+            lines.push(`Legal basis: ${ar.legal_basis || '—'}`);
+            (ar.regulation_links || []).forEach(l => {
+                lines.push(`- ${l.title || 'Link'}: ${l.url}`);
+            });
+            lines.push('');
+            lines.push(`Market note: ${ar.arbitrage_summary || '—'}`);
+            lines.push(`Eligibility (patient screen): ${ar.eligibility_requirements || '—'}`);
+            lines.push('');
+            lines.push('Not legal, regulatory, or investment advice. Confirm before capital commitment.');
+            return lines.join('\n');
+        }
+
+        async function copyText(text, okMsg) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(okMsg || 'Copied');
+            } catch (e) {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    showToast(okMsg || 'Copied');
+                } catch (e2) {
+                    showToast('Copy failed — select text manually');
+                }
+                document.body.removeChild(ta);
+            }
+        }
+
+        function downloadText(filename, text) {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 500);
+            showToast('Download started');
+        }
+
+        window.__copyCertChecklist = function () {
+            const ctx = lastDossierCtx;
+            if (!ctx) return;
+            const certs = (ctx.setup && ctx.setup.certifications) || [];
+            if (!certs.length) {
+                showToast('No certifications listed for this selection');
+                return;
+            }
+            copyText(buildCertChecklistText(ctx.procName, ctx.jurName, certs), 'Cert checklist copied');
+        };
+
+        window.__exportCertChecklist = function () {
+            const ctx = lastDossierCtx;
+            if (!ctx) return;
+            const certs = (ctx.setup && ctx.setup.certifications) || [];
+            if (!certs.length) {
+                showToast('No certifications listed');
+                return;
+            }
+            const safe = (s) => String(s || 'item').replace(/[^\w\-]+/g, '_').slice(0, 40);
+            downloadText(
+                `certs_${safe(ctx.procName)}_${safe(ctx.jurName || 'baseline')}.txt`,
+                buildCertChecklistText(ctx.procName, ctx.jurName, certs)
+            );
+        };
+
+        window.__exportMarketBrief = function () {
+            const ctx = lastDossierCtx;
+            if (!ctx || !ctx.ar) {
+                showToast('Open a market dossier first');
+                return;
+            }
+            const safe = (s) => String(s || 'item').replace(/[^\w\-]+/g, '_').slice(0, 40);
+            downloadText(
+                `market_brief_${safe(ctx.procName)}_${safe(ctx.jurName)}.txt`,
+                buildMarketBriefText(ctx)
+            );
+        };
+
+        window.__copyMarketBrief = function () {
+            const ctx = lastDossierCtx;
+            if (!ctx || !ctx.ar) {
+                showToast('Open a market dossier first');
+                return;
+            }
+            copyText(buildMarketBriefText(ctx), 'Market brief copied');
+        };
+
+        window.__focusTherapy = function () {
+            document.getElementById('pickerCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('searchBox')?.focus();
+        };
+
+        window.__focusMarkets = function () {
+            document.getElementById('placeList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        window.__toggleCertDone = function (el) {
+            const li = el.closest('li');
+            if (li) li.classList.toggle('done', el.checked);
+        };
 
         function markerColor(row, mode) {
             const f = flagsOf(row);
@@ -648,17 +1100,22 @@
             const onlyPending = document.getElementById('fPending')?.checked;
             const includeTrial = document.getElementById('fTrial')?.checked;
             const showProhibited = document.getElementById('fProhibited')?.checked;
+            const enterableStrict = document.getElementById('presetEnterable')?.classList.contains('active');
             return currentAccess.filter(row => {
                 const f = flagsOf(row);
                 if (onlyPending && !f.legislation_watch) return false;
                 if (f.prohibited) return !!showProhibited;
 
+                // "Markets I can enter": law + pathway, hide trial-only unless explicitly included
+                if (enterableStrict) {
+                    if (f.trial_only && !includeTrial) return false;
+                    return f.allowed && f.offered;
+                }
+
                 const matchAllowed = wantAllowed && f.allowed;
                 const matchOffered = wantOffered && f.offered && (!f.trial_only || includeTrial);
-                // If both allowed & offered are checked → show places matching either
-                // (union), so "allowed not offered" still appears under Allowed.
+                // Union when both dimensions checked so "allowed not offered" still appears
                 if (wantAllowed || wantOffered) return matchAllowed || matchOffered;
-                // Neither dimension checked → show all non-prohibited (pending filter may still apply)
                 return true;
             });
         }
@@ -670,31 +1127,42 @@
             const intro = document.getElementById('placesIntro');
             if (!currentAccess.length) {
                 intro.textContent = 'No market cells for this service line yet.';
+            } else if (!rows.length) {
+                intro.textContent = `No markets match the current filters (${currentAccess.length} total). Try “All markets (research)” or turn on prohibited / trial-site.`;
             } else {
-                intro.textContent = `Showing ${rows.length} of ${currentAccess.length} markets. Law permits = legal to structure a program · Pathway = how patients/products flow · Flux = rules may change before you open.`;
+                const enterable = !document.getElementById('fProhibited')?.checked && !document.getElementById('fTrial')?.checked;
+                intro.textContent = enterable
+                    ? `Showing ${rows.length} of ${currentAccess.length} markets (enterable focus: law + pathway; prohibited & trial-only hidden).`
+                    : `Showing ${rows.length} of ${currentAccess.length} markets. Law permits = structure a program · Pathway = how care flows · Flux = rules may change.`;
             }
+            syncPresetButtons();
         }
 
         function renderSummary(summary, rows) {
             const el = document.getElementById('placeSummary');
             const filters = document.getElementById('placeFilters');
+            const presets = document.getElementById('filterPresets');
             if (!rows.length && !summary) {
                 el.style.display = 'none';
                 filters.style.display = 'none';
+                if (presets) presets.style.display = 'none';
                 return;
             }
+            // Summary counts from full currentAccess, not filtered rows
+            const all = currentAccess.length ? currentAccess : rows;
             const s = summary || {};
-            const allowed = s.allowed ?? rows.filter(r => flagsOf(r).allowed).length;
-            const offered = s.offered ?? rows.filter(r => flagsOf(r).offered).length;
-            const operable = rows.filter(r => {
+            const allowed = s.allowed ?? all.filter(r => flagsOf(r).allowed).length;
+            const offered = s.offered ?? all.filter(r => flagsOf(r).offered).length;
+            const operable = all.filter(r => {
                 const f = flagsOf(r);
                 return f.allowed && f.offered && !f.trial_only && !f.prohibited;
             }).length;
-            const pending = s.pending_legislation ?? rows.filter(r => flagsOf(r).pending_legislation).length;
-            const flux = s.legislation_watch ?? rows.filter(r => flagsOf(r).legislation_watch).length;
-            const prohibited = s.prohibited ?? rows.filter(r => flagsOf(r).prohibited).length;
+            const pending = s.pending_legislation ?? all.filter(r => flagsOf(r).pending_legislation).length;
+            const flux = s.legislation_watch ?? all.filter(r => flagsOf(r).legislation_watch).length;
+            const prohibited = s.prohibited ?? all.filter(r => flagsOf(r).prohibited).length;
             el.style.display = 'grid';
             filters.style.display = 'flex';
+            if (presets) presets.style.display = 'flex';
             el.innerHTML = `
                 <div class="s ok"><div class="n">${operable}</div><div class="l">Operable markets</div></div>
                 <div class="s"><div class="n">${allowed}</div><div class="l">Law permits</div></div>
@@ -703,6 +1171,7 @@
                 <div class="s warn"><div class="n">${flux}</div><div class="l">Watch (flux)</div></div>
                 <div class="s bad"><div class="n">${prohibited}</div><div class="l">Prohibited</div></div>
             `;
+            syncPresetButtons();
         }
 
         window.__openJur = function (id) {
@@ -823,10 +1292,11 @@
             selectedProcedureId = id;
             selectedJurisdictionId = null;
             document.getElementById('detailBody').innerHTML =
-                '<div class="empty">Select a market for the provider dossier (setup, regulation, screening).</div>';
+                '<div class="empty"><strong>Next:</strong> pick a green/enterable market in the list or map to open the go/caution verdict, certifications checklist, and regulation links.</div>';
 
             const summary = document.getElementById('selectedSummary');
             const p = allProcedures.find(x => x.id === id);
+            updateContextBar(p || null, null, null);
             if (p) {
                 summary.style.display = 'block';
                 const diseaseChips = (p.diseases || []).map(d =>
@@ -1020,15 +1490,36 @@
                     <p class="muted" style="margin-top:.3rem;font-size:.86rem;">No structured certification list for this cell yet — see licenses & training below, and confirm with the competent authority.</p>
                 </div>`;
             }
+            const items = certs.map((c, i) => {
+                const cls = classifyCert(c);
+                const badgeClass = cls.key === 'req' ? 'req' : (cls.key === 'rec' ? 'rec' : 'na');
+                return `<li>
+                    <input type="checkbox" id="cert-cb-${i}" onchange="window.__toggleCertDone(this)" aria-label="Mark done: ${esc(c).slice(0, 80)}">
+                    <div>
+                        <span class="cert-badge ${badgeClass}">${esc(cls.label)}</span>
+                        <span class="cert-text">${esc(c)}</span>
+                    </div>
+                </li>`;
+            }).join('');
+            const nReq = certs.filter(c => classifyCert(c).key === 'req').length;
+            const nRec = certs.filter(c => classifyCert(c).key === 'rec').length;
+            const nNa = certs.filter(c => classifyCert(c).key === 'na').length;
             return `<div class="cert-box" style="margin-top:.4rem;padding:.85rem 1rem;background:linear-gradient(135deg,#eef2ff 0%,#f5f3ff 100%);border:1px solid #a5b4fc;border-radius:12px;">
                 <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem;">
                     <div style="font-size:.78rem;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#312e81;">Certifications & credentials you need</div>
                     <span class="pill" style="background:#312e81;color:#fff;">${certs.length} item${certs.length === 1 ? '' : 's'}</span>
+                    ${nReq ? `<span class="cert-badge req">${nReq} required</span>` : ''}
+                    ${nRec ? `<span class="cert-badge rec">${nRec} recommended</span>` : ''}
+                    ${nNa ? `<span class="cert-badge na">${nNa} no path</span>` : ''}
                 </div>
-                <p class="muted" style="font-size:.78rem;margin-bottom:.4rem;color:#4338ca;">Board certs, program enrollments (REMS, OPS, FACT), facilitator licenses, and other credentials — verify before hiring or opening.</p>
-                <ol style="margin:0 0 0 1.15rem;font-size:.9rem;color:#1e1b4b;font-weight:500;">
-                    ${certs.map(c => `<li style="margin:.35rem 0;padding-left:.15rem;">${esc(c)}</li>`).join('')}
-                </ol>
+                <p class="muted" style="font-size:.78rem;margin-bottom:.4rem;color:#4338ca;">Check off what you already hold. Tags are heuristic (Required / Recommended / No path) — confirm with the competent authority.</p>
+                <ul class="cert-list">${items}</ul>
+                <div class="cert-actions">
+                    <button type="button" class="btn-sm" onclick="window.__copyCertChecklist()">Copy checklist</button>
+                    <button type="button" class="ghost btn-sm" onclick="window.__exportCertChecklist()">Download .txt</button>
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__copyMarketBrief()">Copy full market brief</button>
+                    <button type="button" class="btn-outline btn-sm" onclick="window.__exportMarketBrief()">Export market brief</button>
+                </div>
             </div>`;
         }
 
@@ -1076,7 +1567,8 @@
             `;
         }
 
-        function renderSetup(setup, providerText) {
+        function renderSetup(setup, providerText, opts) {
+            opts = opts || {};
             if (!setup && !providerText) {
                 return '<p class="muted">No practitioner setup checklist for this place yet.</p>';
             }
@@ -1088,10 +1580,11 @@
             return `
                 <div class="chip-row" style="margin-bottom:.4rem;">
                     <span class="pill" style="background:${diffColor};color:#fff;">Setup difficulty: ${esc(diff)}</span>
-                    ${(setup.certifications || []).length ? `<span class="pill" style="background:#312e81;color:#fff;">${setup.certifications.length} certification${setup.certifications.length === 1 ? '' : 's'}</span>` : ''}
+                    ${!opts.skipCerts && (setup.certifications || []).length ? `<span class="pill" style="background:#312e81;color:#fff;">${setup.certifications.length} certification${setup.certifications.length === 1 ? '' : 's'}</span>` : ''}
                 </div>
                 <p class="prose">${esc(setup.summary || '')}</p>
-                ${renderCertifications(setup.certifications)}
+                <p class="muted" style="font-size:.78rem;margin:.25rem 0 .4rem;">${esc(difficultyExplain(diff))}</p>
+                ${opts.skipCerts ? '' : renderCertifications(setup.certifications)}
                 ${renderListSection('Facility / business licenses & permits', setup.licenses)}
                 ${renderListSection('Facility requirements', setup.facility)}
                 ${renderListSection('Training (beyond formal certs)', setup.training)}
@@ -1124,13 +1617,16 @@
                 if (!ar && (j.treatments || []).length) {
                     ar = j.treatments[0];
                 }
-                body.innerHTML = renderJurisdictionDetail(j, ar);
+                const proc = allProcedures.find(x => x.id === selectedProcedureId)
+                    || (ar ? allProcedures.find(x => x.id === ar.procedure_id) : null);
+                updateContextBar(proc, j, ar);
+                body.innerHTML = renderJurisdictionDetail(j, ar, proc);
             } catch (e) {
                 body.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
             }
         }
 
-        function renderJurisdictionDetail(j, ar) {
+        function renderJurisdictionDetail(j, ar, proc) {
             const meta = statusMeta(ar?.legal_status);
             const parentLine = j.parent
                 ? `<p class="muted" style="margin-bottom:.5rem;">Part of <strong>${esc(j.parent.name)}</strong> (${esc(humanize(j.parent.level))})</p>`
@@ -1142,8 +1638,17 @@
             let accessBlock = '';
             if (ar && selectedProcedureId) {
                 const f = flagsOf(ar);
+                const v = operateVerdict(ar);
+                const blockedBanner = f.prohibited
+                    ? `<div style="margin:.5rem 0 .75rem;padding:.75rem .9rem;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;">
+                        <strong style="color:#991b1b;">Cannot lawfully operate here</strong>
+                        <p class="muted" style="margin-top:.3rem;font-size:.86rem;">${esc(ar.arbitrage_summary || ar.legal_basis || 'This market is marked prohibited for this service line. Review regulation links and open markets instead.')}</p>
+                       </div>`
+                    : '';
                 accessBlock = `
-                    <div class="section-title">1 · Can you operate here?</div>
+                    <div class="section-title">Snapshot — can you open here?</div>
+                    ${renderDecisionStrip(ar)}
+                    ${blockedBanner}
                     <div class="flag-row">${flagPills(ar)}${setupDifficultyPill(ar)}</div>
                     <div class="chip-row" style="margin-top:.4rem;">
                         <span class="pill status" style="background:${meta.color}">${esc(meta.label)}</span>
@@ -1156,12 +1661,20 @@
                         <dt>Policy risk</dt><dd><strong>${esc(f.legislation_label)}</strong>${f.pending_legislation ? ' — freeze major spend until bill outcome is clear' : (f.active_flux ? ' — build change-control into SOPs' : '')}</dd>
                         <dt>Market note</dt><dd>${esc(ar.arbitrage_summary || '—')}</dd>
                     </dl>
+                    <div class="cert-actions" style="margin:.55rem 0 0;">
+                        <button type="button" class="btn-sm" onclick="window.__copyCertChecklist()">Copy cert checklist</button>
+                        <button type="button" class="ghost btn-sm" onclick="window.__exportMarketBrief()">Export market brief</button>
+                        <button type="button" class="btn-outline btn-sm" onclick="window.__copyMarketBrief()">Copy market brief</button>
+                    </div>
+
+                    <div class="section-title">1 · Certifications &amp; credentials</div>
+                    ${renderCertifications((ar.setup_requirements || {}).certifications)}
 
                     <div class="section-title">2 · Governing regulation (open these first)</div>
                     ${renderRegulationLinks(ar.regulation_links, ar.legal_basis, ar.regulatory_authority)}
 
-                    <div class="section-title">3 · Certifications &amp; requirements to set up the program</div>
-                    ${renderSetup(ar.setup_requirements, ar.provider_requirements)}
+                    <div class="section-title">3 · Licenses, facility &amp; staffing to set up</div>
+                    ${renderSetup(ar.setup_requirements, ar.provider_requirements, { skipCerts: true })}
 
                     <div class="section-title">4 · Patient eligibility you must screen</div>
                     <dl class="kv">
@@ -1197,20 +1710,25 @@
                 `;
             }
 
+            const procLabel = proc ? esc(proc.name) : '';
             return `
                 <div>
-                    <h3 style="font-size:1.15rem;margin-bottom:.25rem;">${esc(j.name)}</h3>
+                    <h3 style="font-size:1.15rem;margin-bottom:.25rem;">${esc(j.name)}${procLabel ? ` <span class="muted" style="font-weight:500;font-size:.9rem;">· ${procLabel}</span>` : ''}</h3>
                     <div class="chip-row">
                         <span class="pill">${esc(humanize(j.level))}</span>
                         <span class="pill">${esc(humanize(j.type))}</span>
                         <span class="pill">${esc(j.country_code || '')}</span>
                     </div>
                     ${parentLine}
-                    <div class="section-title">Market context</div>
-                    <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
-                    ${children}
-                    ${renderRegulation(j.regulation)}
                     ${accessBlock}
+                    <details style="margin-top:1rem;">
+                        <summary class="muted" style="cursor:pointer;font-weight:650;font-size:.85rem;">Market context &amp; jurisdiction regulatory profile</summary>
+                        <div style="margin-top:.55rem;">
+                            <div class="prose">${esc(j.general_notes || 'No overview notes yet.')}</div>
+                            ${children}
+                            ${renderRegulation(j.regulation)}
+                        </div>
+                    </details>
                     ${otherBlock}
                     ${ar && ar.last_verified ? `<p class="muted" style="margin-top:1rem;font-size:.78rem;">Cell last verified: ${esc(ar.last_verified)}${ar.verified_by ? ' · ' + esc(ar.verified_by) : ''}</p>` : ''}
                 </div>
@@ -1239,7 +1757,15 @@
         });
         document.getElementById('searchBox').addEventListener('input', () => renderProcedureSelect());
         ['fAllowed', 'fOffered', 'fPending', 'fTrial', 'fProhibited'].forEach(id => {
-            document.getElementById(id)?.addEventListener('change', () => refreshPlacesView());
+            document.getElementById(id)?.addEventListener('change', () => {
+                refreshPlacesView();
+                syncPresetButtons();
+            });
+        });
+        document.getElementById('filterPresets')?.addEventListener('click', e => {
+            const btn = e.target.closest('button[data-preset]');
+            if (!btn) return;
+            applyFilterPreset(btn.getAttribute('data-preset'));
         });
         document.getElementById('searchBox').addEventListener('keydown', e => {
             if (e.key === 'Enter') {
