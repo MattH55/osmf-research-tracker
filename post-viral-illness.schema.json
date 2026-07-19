@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research.opensourcemed.info/post-viral-illness.schema.json",
+  "title": "PostViralIllnessPage",
+  "description": "Curated, reference-backed record of post-viral / post-infectious illnesses and their current treatment options. Every reference must resolve to a real, published article, guideline, or authoritative clinical resource.",
+  "type": "object",
+  "required": ["schema_version", "slug", "title", "description", "last_updated", "disclaimer", "conditions"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "last_updated": { "type": "string", "format": "date" },
+    "disclaimer": { "type": "string" },
+    "conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/condition" }
+    }
+  },
+  "$defs": {
+    "condition": {
+      "type": "object",
+      "required": ["id", "name", "trigger_pathogens", "overview", "treatments", "references"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "name": { "type": "string" },
+        "aka": { "type": "array", "items": { "type": "string" } },
+        "trigger_pathogens": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Infectious triggers (e.g., SARS-CoV-2, dengue virus, poliovirus)."
+        },
+        "typical_onset": { "type": "string" },
+        "overview": { "type": "string" },
+        "core_features": { "type": "array", "items": { "type": "string" } },
+        "epidemiology": { "type": ["string", "null"] },
+        "mechanisms": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Leading pathophysiologic hypotheses (may be unproven)."
+        },
+        "diagnosis": { "type": ["string", "null"] },
+        "treatments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/treatment" }
+        },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/reference" }
+        }
+      }
+    },
+    "treatment": {
+      "type": "object",
+      "required": ["name", "category", "evidence_level", "status", "summary", "reference_ids"],
+      "properties": {
+        "name": { "type": "string" },
+        "category": {
+          "type": "string",
+          "enum": ["supportive", "rehabilitative", "pharmacologic", "immunomodulatory", "disease_modifying", "preventive", "procedural"]
+        },
+        "evidence_level": {
+          "type": "string",
+          "enum": [
+            "systematic_review_or_meta_analysis",
+            "randomized_controlled_trial",
+            "prospective_cohort",
+            "case_series_or_observational",
+            "expert_consensus_or_guideline",
+            "no_proven_disease_specific_therapy"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["recommended", "reasonable_option", "investigational", "mixed_or_uncertain", "not_recommended"]
+        },
+        "summary": { "type": "string" },
+        "reference_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs of entries in the parent condition's references array."
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "required": ["id", "title", "source", "url", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "authors": { "type": ["string", "null"] },
+        "source": { "type": "string", "description": "Journal or publishing organization." },
+        "year": { "type": ["integer", "null"] },
+        "type": {
+          "type": "string",
+          "enum": ["systematic_review", "meta_analysis", "randomized_controlled_trial", "cohort_study", "case_control_study", "case_series", "clinical_guideline", "narrative_review", "government_or_agency_resource"]
+        },
+        "url": { "type": "string", "format": "uri" },
+        "pmid": { "type": ["string", "null"] },
+        "doi": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
