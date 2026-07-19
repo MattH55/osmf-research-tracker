@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Long COVID Causal Models &amp; the Treatments Each One Implies</title>
+  <meta name="description" content="Five major causal models of Long COVID — viral persistence, immune dysregulation, vascular/microclot, mitochondrial, autonomic — and the specific treatments each model logically implies, with trial evidence for each.">
+  <meta name="keywords" content="long covid treatment models, long covid causal hypotheses, long covid mechanism treatment, viral persistence antivirals, rituximab long covid, microclot treatment, mitochondrial long covid treatment, POTS long covid treatment">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <style>
+    :root {
+      --surface-light: #fcfcfb;
+      --surface-dark: #1a1a19;
+      --text-primary-light: #0b0b0b;
+      --text-primary-dark: #ffffff;
+      --text-secondary-light: #52514e;
+      --text-secondary-dark: #c3c2b7;
+      --text-muted: #898781;
+      --gridline-light: #e1e0d9;
+      --gridline-dark: #2c2c2a;
+      --series-normal-light: #2a78d6;
+      --series-normal-dark: #3987e5;
+      --page-light: #f9f9f7;
+      --page-dark: #0d0d0d;
+    }
+
+    html { color-scheme: light; }
+    html.dark-mode { color-scheme: dark; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: var(--surface-light);
+      color: var(--text-primary-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    html.dark-mode body { background: var(--surface-dark); color: var(--text-primary-dark); }
+
+    .header {
+      background: linear-gradient(135deg, #0068f8 0%, #0052c7 100%);
+      color: white;
+      padding: 3.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .header h1 { font-size: clamp(1.6rem, 4vw, 2.25rem); font-weight: 700; margin-bottom: 0.75rem; max-width: 900px; margin-left: auto; margin-right: auto; }
+    .header p { font-size: 1.0625rem; opacity: 0.92; max-width: 780px; margin: 0 auto; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+
+    .controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
+
+    .theme-toggle {
+      padding: 0.375rem 0.875rem;
+      border: 1.5px solid var(--gridline-light);
+      background: white;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary-light);
+    }
+
+    html.dark-mode .theme-toggle { background: #383835; border-color: #383835; color: var(--text-secondary-dark); }
+
+    .info-box {
+      background: #f1f5f9;
+      border-left: 4px solid var(--series-normal-light);
+      padding: 1.25rem 1.5rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary-light);
+      line-height: 1.75;
+    }
+
+    html.dark-mode .info-box { background: #202733; color: var(--text-secondary-dark); border-left-color: var(--series-normal-dark); }
+    .info-box strong { color: var(--text-primary-light); }
+    html.dark-mode .info-box strong { color: var(--text-primary-dark); }
+
+    .model-block {
+      background: var(--surface-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    html.dark-mode .model-block { background: #232322; border-color: var(--gridline-dark); }
+
+    .model-header { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+    .model-header h2 { font-size: 1.3rem; font-weight: 700; }
+
+    .model-claim {
+      font-size: 0.92rem;
+      color: var(--text-secondary-light);
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--gridline-light);
+    }
+
+    html.dark-mode .model-claim { color: var(--text-secondary-dark); border-bottom-color: var(--gridline-dark); }
+
+    .treatments-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .treatment-card {
+      background: var(--page-light);
+      border: 1px solid var(--gridline-light);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 0.9rem;
+    }
+
+    html.dark-mode .treatment-card { background: #1c1c1b; border-color: var(--gridline-dark); }
+
+    .treatment-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+    .treatment-name { font-weight: 700; font-size: 0.95rem; }
+
+    .rationale { font-size: 0.85rem; color: var(--text-secondary-light); margin-bottom: 0.6rem; font-style: italic; }
+    html.dark-mode .rationale { color: var(--text-secondary-dark); }
+
+    .outcome { font-size: 0.87rem; margin-bottom: 0.5rem; }
+
+    .cite-row { font-size: 0.78rem; color: var(--text-muted); }
+    .cite-row a { color: var(--series-normal-light); text-decoration: none; font-weight: 600; }
+    html.dark-mode .cite-row a { color: var(--series-normal-dark); }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .badge-supported { background: #dbeafe; color: #1e3a8a; }
+    .badge-emerging { background: #fef3c7; color: #78350f; }
+    .badge-contested { background: #fee2e2; color: #991b1b; }
+    .badge-null { background: #e5e7eb; color: #374151; }
+    .badge-mechanistic { background: #ede9fe; color: #6b21a8; }
+    .badge-mixed { background: #fef3c7; color: #78350f; }
+
+    html.dark-mode .badge-supported { background: #1e2f4c; color: #93c5fd; }
+    html.dark-mode .badge-emerging { background: #3a2f10; color: #fcd34d; }
+    html.dark-mode .badge-contested { background: #4c1d1d; color: #fca5a5; }
+    html.dark-mode .badge-null { background: #374151; color: #d1d5db; }
+    html.dark-mode .badge-mechanistic { background: #3b2560; color: #c4b5fd; }
+    html.dark-mode .badge-mixed { background: #3a2f10; color: #fcd34d; }
+
+    .model-tier { font-size: 0.7rem; color: var(--text-muted); }
+
+    .caveat-box {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 1.25rem 1.5rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      color: #78350f;
+      line-height: 1.7;
+    }
+
+    html.dark-mode .caveat-box { background: #2c2410; color: #fcd34d; border-left-color: #f59e0b; }
+    .caveat-box strong { display: block; margin-bottom: 0.4rem; }
+
+    @media (max-width: 768px) {
+      .header { padding: 2rem 1.5rem; }
+      .model-block { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Long COVID Causal Models &amp; the Treatments Each One Implies</h1>
+  <p>Different models of what's driving Long COVID point to different treatments &mdash; and a treatment's failure in a trial doesn't refute the others. This page maps five major causal models to the specific interventions they logically predict should work, and reports what the trial evidence for each actually shows.</p>
+</div>
+
+<div class="container">
+  <div class="controls">
+    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+  </div>
+
+  <div class="info-box">
+    <strong>How to read this page:</strong> Each model section states its core causal claim, then lists the treatments that follow logically from believing that model &mdash; with the rationale connecting mechanism to intervention made explicit, and the actual trial evidence (positive, null, or mixed) reported honestly rather than smoothed over. A null trial result for one model's treatment says nothing about whether a different model is correct. Most patients likely have more than one mechanism active at once; see <a href="long-covid-hypotheses.html" style="color:inherit;font-weight:600;">Long COVID Hypotheses</a> for how these combine, and <a href="long-covid-endotypes.html" style="color:inherit;font-weight:600;">Endotypes</a> for how they cluster into patient subgroups.
+  </div>
+
+  <!-- MODEL 1: VIRAL PERSISTENCE -->
+  <div class="model-block">
+    <div class="model-header">
+      <h2>1. Viral Persistence Model</h2>
+      <span class="model-tier">Model evidence: supported (contested on symptom association) &mdash; see <a href="long-covid-viral-persistence.html" style="color:var(--series-normal-light);">full evidence page</a></span>
+    </div>
+    <div class="model-claim">SARS-CoV-2 antigen (spike/nucleocapsid) or RNA persists in tissue reservoirs after acute infection, providing an ongoing antigenic stimulus that drives chronic immune activation and downstream symptoms.</div>
+    <div class="treatments-label">Treatments this model implies</div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Direct-acting antivirals (nirmatrelvir-ritonavir) to clear residual antigen in already-diagnosed Long COVID</span>
+        <span class="badge badge-null">Null</span>
+      </div>
+      <div class="rationale">If persistent antigen is driving symptoms, clearing it with an antiviral should resolve them.</div>
+      <div class="outcome">Two completed RCTs treating established Long COVID found no significant symptom benefit; one found brain fog numerically worse on the drug.</div>
+      <div class="cite-row">
+        <a href="https://doi.org/10.1001/jamainternmed.2024.2007" target="_blank">Geng et al., STOP-PASC, JAMA Intern Med 2024</a> ·
+        Sawano, Iwasaki, Krumholz et al., PAX LC, Lancet Infect Dis 2025
+      </div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Early antiviral treatment during acute infection, to prevent Long COVID from developing</span>
+        <span class="badge badge-mixed">Modest positive</span>
+      </div>
+      <div class="rationale">A distinct prediction from the same model: if persistence is seeded during acute infection, clearing virus faster and more completely during that window should reduce the rate of later persistence.</div>
+      <div class="outcome">A 25,783-participant RCT of molnupiravir given acutely found reduced symptom severity/duration at 3&ndash;6 months, though no difference in hospitalization. This answers a different question from the two null trials above &mdash; prevention, not treatment of existing Long COVID &mdash; and the two should not be conflated.</div>
+      <div class="cite-row">
+        <a href="https://doi.org/10.1016/S1473-3099(24)00431-6" target="_blank">Harris et al., PANORAMIC, Lancet Infect Dis 2024</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODEL 2: IMMUNE DYSREGULATION / AUTOIMMUNITY -->
+  <div class="model-block">
+    <div class="model-header">
+      <h2>2. Immune Dysregulation / Autoimmunity Model</h2>
+      <span class="model-tier">Model evidence: supported (autoantibody component contested)</span>
+    </div>
+    <div class="model-claim">Persistent T-cell activation/exhaustion, altered B-cell populations, and autoantibodies targeting GPCRs (beta-adrenergic, muscarinic receptors) drive ongoing symptoms independent of any remaining virus.</div>
+    <div class="treatments-label">Treatments this model implies</div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">B-cell depletion (rituximab)</span>
+        <span class="badge badge-null">Null</span>
+      </div>
+      <div class="rationale">If autoreactive B-cells producing pathogenic autoantibodies are driving disease, depleting them should improve symptoms.</div>
+      <div class="outcome">The largest randomized, double-blind, placebo-controlled trial (ME/CFS, not Long COVID specifically, but the same rationale applies) found no significant benefit over placebo.</div>
+      <div class="cite-row">
+        <a href="https://doi.org/10.7326/M18-1451" target="_blank">Fluge et al., Ann Intern Med 2019</a>
+      </div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">GPCR-autoantibody-neutralizing aptamer (BC007 / rovunaptabin)</span>
+        <span class="badge badge-emerging">Emerging</span>
+      </div>
+      <div class="rationale">Targets the specific proposed autoantibodies directly, rather than depleting B-cells broadly.</div>
+      <div class="outcome">A 2025 phase IIa randomized, placebo-controlled, double-blind crossover trial ("reCOVer") reported safety, tolerability, and clinical effects on fatigue and quality of life in Post-COVID syndrome &mdash; an early positive signal, not yet a large confirmatory trial.</div>
+      <div class="cite-row">
+        <a href="https://doi.org/10.1016/j.eclinm.2025.103358" target="_blank">reCOVer trial, EClinicalMedicine 2025</a>
+      </div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Low-dose naltrexone (immunomodulatory)</span>
+        <span class="badge badge-emerging">Emerging</span>
+      </div>
+      <div class="rationale">Proposed to modulate microglial and broader immune activation at low doses, independent of its opioid-receptor activity.</div>
+      <div class="outcome">A pilot study combining low-dose naltrexone with NAD⁺ reported improvement in persistent fatigue symptoms after COVID-19 &mdash; a small, early signal.</div>
+      <div class="cite-row">
+        <a href="https://doi.org/10.1016/j.bbih.2024.100733" target="_blank">Isman et al., Brain Behav Immun Health 2024</a>
+      </div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Underlying premise: do GPCR autoantibodies actually distinguish patients from controls?</span>
+        <span class="badge badge-contested">Contested</span>
+      </div>
+      <div class="rationale">This is the load-bearing assumption behind both BC007 and part of the case for immunomodulation &mdash; worth stating plainly that it is not settled.</div>
+      <div class="outcome">One Charité-group study found elevated beta-adrenergic/muscarinic receptor autoantibodies in a CFS subset; a larger 2025 replication using different profiling technology found no significant difference from controls.</div>
+      <div class="cite-row">
+        <a href="https://doi.org/10.1016/j.bbi.2015.09.013" target="_blank">Loebel et al., Brain Behav Immun 2016</a> ·
+        <a href="https://doi.org/10.3390/ijms26062799" target="_blank">Germain et al., Int J Mol Sci 2025 (non-replication)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODEL 3: VASCULAR / MICROCLOT -->
+  <div class="model-block">
+    <div class="model-header">
+      <h2>3. Vascular / Microclot Model</h2>
+      <span class="model-tier">Model evidence: emerging &mdash; treatment evidence largely absent</span>
+    </div>
+    <div class="model-claim">Fibrinaloid microclots, platelet activation, and endothelial dysfunction impair peripheral oxygen delivery and extraction, producing tissue hypoxia that drives fatigue and exercise intolerance.</div>
+    <div class="treatments-label">Treatments this model implies</div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Anticoagulation / antiplatelet therapy</span>
+        <span class="badge badge-mechanistic">No RCT identified</span>
+      </div>
+      <div class="rationale">If microclots are mechanically obstructing capillary flow, dissolving or preventing them should restore perfusion.</div>
+      <div class="outcome">No completed randomized controlled trial of anticoagulant or antiplatelet treatment based on this hypothesis was identified. Clinical bodies have publicly cautioned against unlicensed anticoagulant/apheresis treatment pending such evidence. This should be read as an untested extrapolation, not a validated treatment.</div>
+      <div class="cite-row">Underlying microclot finding: <a href="https://doi.org/10.1186/s12933-022-01579-5" target="_blank">Pretorius et al., Cardiovasc Diabetol 2022</a></div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Nattokinase (fibrinolytic enzyme)</span>
+        <span class="badge badge-mechanistic">Mechanistic / in vitro</span>
+      </div>
+      <div class="rationale">Proposed fibrinolytic action could degrade microclots directly; separately proposed to degrade spike protein itself, giving it a second rationale under the viral-persistence model too.</div>
+      <div class="outcome">In vitro evidence shows nattokinase degrades SARS-CoV-2 spike protein. This is cell-free/enzymatic evidence, not a clinical trial in Long COVID patients.</div>
+      <div class="cite-row"><a href="https://doi.org/10.3390/molecules27175405" target="_blank">Tanikawa et al., Molecules 2022</a></div>
+    </div>
+  </div>
+
+  <!-- MODEL 4: MITOCHONDRIAL / METABOLIC -->
+  <div class="model-block">
+    <div class="model-header">
+      <h2>4. Mitochondrial / Metabolic Dysfunction Model</h2>
+      <span class="model-tier">Model evidence: supported &mdash; see <a href="long-covid-metabolites.html" style="color:var(--series-normal-light);">metabolite data</a></span>
+    </div>
+    <div class="model-claim">Impaired oxidative phosphorylation, redox imbalance, and NAD⁺ depletion reduce cellular energy production, directly limiting the capacity for sustained physical and cognitive activity.</div>
+    <div class="treatments-label">Treatments this model implies</div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Coenzyme Q10 (± NADH)</span>
+        <span class="badge badge-supported">Supported</span>
+      </div>
+      <div class="rationale">CoQ10 is a required electron carrier in the respiratory chain; supplementing it should support oxidative phosphorylation directly if endogenous levels are limiting.</div>
+      <div class="outcome">A prospective, randomized, double-blind, placebo-controlled trial in ME/CFS found significant improvement in fatigue perception and quality of life with CoQ10 plus NADH.</div>
+      <div class="cite-row"><a href="https://doi.org/10.3390/nu13082658" target="_blank">Castro-Marrero et al., Nutrients 2021</a></div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Creatine</span>
+        <span class="badge badge-emerging">Emerging</span>
+      </div>
+      <div class="rationale">Phosphocreatine buffers cellular ATP supply during high demand; if the resting phosphocreatine pool is depleted, supplementation should improve capacity to meet exertional energy demand.</div>
+      <div class="outcome">A trial of six-month creatine supplementation reported improved patient- and clinician-reported outcomes and tissue creatine levels in post-COVID-19 fatigue syndrome.</div>
+      <div class="cite-row"><a href="https://doi.org/10.1002/fsn3.3597" target="_blank">Slankamenac et al., Food Sci Nutr 2023</a></div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">NAD⁺ precursors (nicotinamide riboside)</span>
+        <span class="badge badge-mixed">Mixed</span>
+      </div>
+      <div class="rationale">If NAD⁺ depletion is limiting mitochondrial function, restoring it with a precursor should improve energy metabolism and symptoms together.</div>
+      <div class="outcome">A randomized controlled trial in Long COVID confirmed NAD⁺ levels rose with nicotinamide riboside supplementation, but did not find a significant effect on symptoms or cognition &mdash; NAD⁺ restoration alone was not sufficient in this trial.</div>
+      <div class="cite-row"><a href="https://doi.org/10.1016/j.eclinm.2025.103633" target="_blank">EClinicalMedicine 2025</a></div>
+    </div>
+  </div>
+
+  <!-- MODEL 5: AUTONOMIC -->
+  <div class="model-block">
+    <div class="model-header">
+      <h2>5. Autonomic Dysfunction Model</h2>
+      <span class="model-tier">Model evidence: supported</span>
+    </div>
+    <div class="model-claim">Sympathetic overdrive and vagal withdrawal drive orthostatic intolerance (including POTS) and a loss of the vagally-mediated cholinergic anti-inflammatory reflex, linking autonomic and inflammatory symptoms.</div>
+    <div class="treatments-label">Treatments this model implies</div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Heart-rate-lowering agents (ivabradine, beta-blockers)</span>
+        <span class="badge badge-supported">Supported</span>
+      </div>
+      <div class="rationale">If sympathetically-driven tachycardia is the proximate cause of orthostatic symptoms, directly lowering heart rate should relieve them.</div>
+      <div class="outcome">A randomized crossover trial comparing ivabradine, propranolol, and placebo in POTS found both active agents effective, with some differences between them &mdash; real RCT-level evidence, though not Long-COVID-specific.</div>
+      <div class="cite-row"><a href="https://doi.org/10.1016/j.jacc.2026.03.167" target="_blank">J Am Coll Cardiol 2026</a></div>
+    </div>
+
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <span class="treatment-name">Vagal/cholinergic modulation</span>
+        <span class="badge badge-mechanistic">Mechanistic only</span>
+      </div>
+      <div class="rationale">If loss of vagal tone is disabling the cholinergic anti-inflammatory reflex, restoring vagal signaling should dampen the downstream inflammatory loops as well as autonomic symptoms.</div>
+      <div class="outcome">The cholinergic anti-inflammatory reflex is well-established in general neuroimmunology. Whether restoring it specifically improves Long COVID or ME/CFS symptoms has not been demonstrated in a clinical trial identified in this review.</div>
+      <div class="cite-row">General mechanism: <a href="https://doi.org/10.1038/35013070" target="_blank">Borovikova et al., Nature 2000</a> · <a href="https://doi.org/10.1038/nature01321" target="_blank">Tracey, Nature 2002</a></div>
+    </div>
+  </div>
+
+  <div class="caveat-box">
+    <strong>Why null results don't rule models out or in</strong>
+    A null trial tests one treatment's ability to reverse one proposed mechanism in an unselected population. If only a subset of patients have that mechanism operating (see <a href="long-covid-endotypes.html" style="color:inherit;">Endotypes</a>), diluting them into an all-comers trial can produce a null result even when the model is correct for that subset. Conversely, a positive result doesn't confirm the full causal story &mdash; CoQ10 improving fatigue is consistent with the mitochondrial model but doesn't rule out other mechanisms operating alongside it. Treat each row above as one data point, not a verdict on the model as a whole.
+  </div>
+</div>
+
+<script>
+  let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const themeToggle = document.getElementById("themeToggle");
+  themeToggle.addEventListener("click", () => {
+    isDarkMode = !isDarkMode;
+    document.documentElement.classList.toggle("dark-mode", isDarkMode);
+    themeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
+  });
+  if (isDarkMode) {
+    document.documentElement.classList.add("dark-mode");
+    themeToggle.textContent = "☀️ Light";
+  }
+</script>
+
+</body>
+</html>
