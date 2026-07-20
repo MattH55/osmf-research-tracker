@@ -22,6 +22,10 @@ on:
       - "scripts/build_pais_cohorts.py"
   workflow_dispatch:
 
+# v1.1 adds symptom_findings + the Symptom reference table; validation enforces the
+# four SymptomFinding rules (mapping_note, comparator sentinel, numerator/percent
+# consistency, instrument for validated-instrument ascertainment).
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -41,7 +45,7 @@ jobs:
       - name: Rebuild and confirm committed artifacts are in sync
         run: |
           python scripts/build_pais_cohorts.py
-          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv pais-cohorts.html pais-cohorts/; then
+          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-symptom-findings.csv pais-cohorts.html pais-cohorts/; then
             echo "::error::Built artifacts are out of date. Run 'python scripts/build_pais_cohorts.py' and commit the result."
             git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv pais-cohorts.html pais-cohorts/
             exit 1

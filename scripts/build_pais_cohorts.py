@@ -3,10 +3,11 @@
 Build + validate the PAIS cohort database.
 
 Reads:  data/pais-cohort.schema.json, data/ref/*.json, data/cohorts/*.json
-Writes: data/pais-cohorts-index.json   (compiled static index the frontend loads)
-        data/pais-cohorts.csv           (one-click bulk CSV, works with JS disabled)
-        pais-cohorts.html               (default cohort table + gap matrices, pre-rendered)
-        pais-cohorts/<id>.html          (pre-rendered cohort detail pages)
+Writes: data/pais-cohorts-index.json     (compiled static index the frontend loads)
+        data/pais-cohorts.csv            (one-click bulk cohort CSV, works with JS disabled)
+        data/pais-symptom-findings.csv   (denormalised symptom-finding CSV, one row per finding)
+        pais-cohorts.html                (cohort table + symptom matrix + gap matrices, pre-rendered)
+        pais-cohorts/<id>.html           (pre-rendered cohort detail pages with symptom profile)
 
 Validation is part of the build: schema (Draft 2020-12) + cross-reference checks.
 Exit code is non-zero on any failure so CI can block a merge.
@@ -20,18 +21,27 @@ import json, glob, os, sys, html, csv, io
 
 # Deterministic build label (do NOT use a wall-clock date: the CI "artifacts in
 # sync" check rebuilds and diffs, so output must be reproducible across days).
-BUILD_VERSION = "1.0.0-seed"
+BUILD_VERSION = "1.1.0-seed"
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCHEMA = os.path.join(ROOT, "data", "pais-cohort.schema.json")
 COHORT_GLOB = os.path.join(ROOT, "data", "cohorts", "*.json")
 PATHOGENS = os.path.join(ROOT, "data", "ref", "pathogens.json")
 INSTRUMENTS = os.path.join(ROOT, "data", "ref", "instruments.json")
+SYMPTOMS = os.path.join(ROOT, "data", "ref", "symptoms.json")
 
 INDEX_OUT = os.path.join(ROOT, "data", "pais-cohorts-index.json")
 CSV_OUT = os.path.join(ROOT, "data", "pais-cohorts.csv")
+SYMPTOM_CSV_OUT = os.path.join(ROOT, "data", "pais-symptom-findings.csv")
 HTML_OUT = os.path.join(ROOT, "pais-cohorts.html")
 DETAIL_DIR = os.path.join(ROOT, "pais-cohorts")
+
+# symptom domains, in display order for the matrices
+DOMAIN_ORDER = ["fatigue_pem", "neurocognitive", "autonomic", "musculoskeletal", "sleep",
+                "sensory", "gastrointestinal", "respiratory", "cardiovascular", "dermatologic",
+                "neuropathic", "psychiatric", "reproductive", "constitutional", "other"]
+# the four axes a comparability check compares two cohorts on (spec sec 5)
+COMPARABILITY_AXES = ["ascertainment", "reference_period", "denominator_basis"]
 
 # ---- human-readable labels for enum values -------------------------------
 LABELS = {
@@ -54,6 +64,34 @@ LABELS = {
     "not_reported": "Not reported", "not_applicable": "N/A",
     "yes_validated_instrument": "Yes (validated instrument)",
     "yes_single_item": "Yes (single item)",
+    # symptom-inventory scope
+    "comprehensive_inventory": "Comprehensive inventory", "targeted_panel": "Targeted panel",
+    "single_domain": "Single domain", "incidental": "Incidental",
+    # symptom ascertainment
+    "validated_instrument_threshold": "Validated instrument (threshold)",
+    "structured_checklist": "Structured checklist", "open_ended_report": "Open-ended report",
+    "clinician_assessed": "Clinician-assessed", "medical_record_code": "Medical-record code",
+    "physical_exam": "Physical exam",
+    # reference period
+    "current": "Current", "past_7d": "Past 7 days", "past_30d": "Past 30 days",
+    "past_3mo": "Past 3 months", "since_infection": "Since infection",
+    "ever_since_onset": "Ever since onset",
+    # denominator basis
+    "enrolled": "Enrolled", "assessed_at_timepoint": "Assessed at timepoint",
+    "symptomatic_subset": "Symptomatic subset", "responders": "Responders",
+    # value precision
+    "exact": "Exact", "approximate": "Approximate", "derived": "Derived",
+    "digitised_from_figure": "Digitised from figure",
+    # symptom domains
+    "fatigue_pem": "Fatigue / PEM", "neurocognitive": "Neurocognitive", "autonomic": "Autonomic",
+    "musculoskeletal": "Musculoskeletal", "sleep": "Sleep", "sensory": "Sensory",
+    "gastrointestinal": "Gastrointestinal", "respiratory": "Respiratory",
+    "cardiovascular": "Cardiovascular", "dermatologic": "Dermatologic", "neuropathic": "Neuropathic",
+    "psychiatric": "Psychiatric", "reproductive": "Reproductive", "constitutional": "Constitutional",
+    "other": "Other",
+    # relation
+    "sibling_analysis": "Sibling analysis", "overlapping_population": "Overlapping population",
+    "parent": "Parent cohort", "child": "Child cohort",
 }
 # design columns for the gap matrix, in quality order (strongest first)
 DESIGN_ORDER = ["prospective_inception", "prospective_non_inception", "retrospective_cohort",
@@ -72,7 +110,7 @@ def load_json(p):
         return json.load(f)
 
 
-def validate(cohorts, pathogens, instruments):
+def validate(cohorts, pathogens, instruments, symptoms):
     """Schema + cross-reference validation. Returns list of error strings."""
     from jsonschema import Draft202012Validator
     schema = load_json(SCHEMA)
@@ -80,6 +118,7 @@ def validate(cohorts, pathogens, instruments):
     errors = []
     pathogen_ids = {p["id"] for p in pathogens["pathogens"]}
     instrument_ids = {i["id"] for i in instruments["instruments"]}
+    symptom_ids = {s["id"] for s in symptoms["symptoms"]}
     seen_ids = set()
     for path, d in cohorts:
         name = os.path.basename(path)
@@ -102,6 +141,44 @@ def validate(cohorts, pathogens, instruments):
             iid = fnd.get("instrument_id")
             if iid is not None and iid not in instrument_ids:
                 errors.append(f"{name}: finding '{fnd.get('id')}' instrument_id '{iid}' not in instruments.json")
+        # ---- SymptomFinding cross-references + v1.1 validation rules ----
+        has_control = d.get("control_group") != "none"
+        for sf in d.get("symptom_findings", []):
+            sid = sf.get("id")
+            if sf.get("publication_id") not in pub_ids:
+                errors.append(f"{name}: symptom_finding '{sid}' publication_id "
+                              f"'{sf.get('publication_id')}' not among this cohort's publications")
+            if sf.get("symptom_id") not in symptom_ids:
+                errors.append(f"{name}: symptom_finding '{sid}' symptom_id '{sf.get('symptom_id')}' not in symptoms.json")
+            iid = sf.get("instrument_id")
+            if iid is not None and iid not in instrument_ids:
+                errors.append(f"{name}: symptom_finding '{sid}' instrument_id '{iid}' not in instruments.json")
+            # Rule 1: mapping_note required when mapping_confidence != exact
+            if sf.get("mapping_confidence") != "exact" and not sf.get("mapping_note"):
+                errors.append(f"{name}: symptom_finding '{sid}' mapping_confidence is "
+                              f"'{sf.get('mapping_confidence')}' but mapping_note is missing (rule 1)")
+            # Rule 2: comparator_percent must be set (number or sentinel) when the cohort has controls
+            if has_control and sf.get("comparator_percent") is None:
+                errors.append(f"{name}: symptom_finding '{sid}': cohort has a control group, so "
+                              f"comparator_percent must be a number or the sentinel 'not_reported', never null (rule 2)")
+            # Rule 4: instrument_id required when ascertainment = validated_instrument_threshold
+            if sf.get("ascertainment") == "validated_instrument_threshold" and not sf.get("instrument_id"):
+                errors.append(f"{name}: symptom_finding '{sid}' ascertainment is validated_instrument_threshold "
+                              f"but instrument_id is missing (rule 4)")
+            # Rule 3: n_with_symptom / n_assessed must match percent to within rounding,
+            # unless explicitly acknowledged via value_precision: approximate
+            nw, na_, pct = sf.get("n_with_symptom"), sf.get("n_assessed"), sf.get("percent")
+            if nw is not None and na_ and pct is not None and sf.get("value_precision") != "approximate":
+                implied = 100.0 * nw / na_
+                if abs(implied - pct) > 1.0:
+                    errors.append(f"{name}: symptom_finding '{sid}': percent {pct} is inconsistent with "
+                                  f"{nw}/{na_} ({implied:.1f}%); reconcile or set value_precision:approximate (rule 3)")
+        # related_cohorts must point at real cohort ids (checked after all ids seen -> second pass)
+    all_ids = {d["id"] for _, d in cohorts}
+    for path, d in cohorts:
+        for rel in d.get("related_cohorts", []):
+            if rel.get("id") not in all_ids:
+                errors.append(f"{os.path.basename(path)}: related_cohorts references unknown cohort id '{rel.get('id')}'")
     return errors
 
 
@@ -160,7 +237,36 @@ padding:10px 12px;border-radius:6px;margin:10px 0;font-size:.9rem}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted)}
 .pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line)}
 .pill.good{color:var(--good)}.pill.no{color:var(--muted)}
+.badge{font-size:.66rem;padding:0 5px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.nav a{font-size:.82rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);text-decoration:none}
+.smx td,.smx th{text-align:center;padding:5px 7px;font-size:.8rem}
+.smx th.row,.smx td.row{text-align:left}
+.smx .dom{background:var(--card);font-weight:600;text-align:left}
+.sv{color:#fff;border-radius:3px;padding:1px 4px;font-size:.76rem;display:inline-block;min-width:34px}
+.cell-nm{color:var(--muted);opacity:.45}
+.cell-nr{color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.76rem;color:var(--muted);margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.barrow{display:grid;grid-template-columns:230px 1fr;gap:8px;align-items:center;margin:3px 0;font-size:.82rem}
+.barrow .lab{color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barwrap{position:relative;background:var(--chip);border-radius:4px;height:18px}
+.bar{position:absolute;left:0;top:0;height:18px;border-radius:4px;background:var(--accent)}
+.bar.cmp{background:var(--muted);opacity:.55;height:8px;top:5px}
+.barnum{position:relative;font-size:.72rem;padding-left:5px;line-height:18px}
+.axis{color:var(--warn);font-style:normal}
 """
+
+
+def attrition_html(d):
+    """n_analysed / n_enrolled as a retention %, so selection bias is visible in the table."""
+    ne, na_ = d.get("n_enrolled"), d.get("n_analysed")
+    if not ne or na_ is None:
+        return '<span class="na">n/r</span>', ""
+    pct = round(100.0 * na_ / ne)
+    cls = ' style="color:var(--warn)"' if pct < 70 else ""
+    return f'<span{cls}>{na_}/{ne} ({pct}%)</span>', str(pct)
 
 
 def cohort_row_cells(d, pmap):
@@ -172,11 +278,13 @@ def cohort_row_cells(d, pmap):
                  else '<span class="pill no">none</span>')
     if d.get("specimens_collected") and acute == "yes":
         spec_html += ' <span class="chip">acute-phase</span>'
+    retention_html, retention_val = attrition_html(d)
     return {
         "name": f'<a href="pais-cohorts/{esc(d["id"])}.html">{esc(d["name"])}</a>',
         "pathogen": esc(pth), "pclass": lab(d["pathogen_class"]),
         "design": lab(d["design"]),
         "n": esc(n) if n is not None else '<span class="na">n/r</span>',
+        "retention": retention_html,
         "fu": esc(d.get("max_followup_months")) if d.get("max_followup_months") is not None else '<span class="na">n/r</span>',
         "control": lab(d["control_group"]),
         "denom": lab(d["denominator_defined"]),
@@ -186,14 +294,15 @@ def cohort_row_cells(d, pmap):
                   f'data-control="{esc(d["control_group"])}" data-denom="{esc(d["denominator_defined"])}" '
                   f'data-spec="{esc(spec)}" data-acute="{esc(acute)}" '
                   f'data-n="{esc(n if n is not None else "")}" data-fu="{esc(d.get("max_followup_months") if d.get("max_followup_months") is not None else "")}" '
+                  f'data-ret="{esc(retention_val)}" '
                   f'data-name="{esc(d["name"].lower())}"'),
     }
 
 
 def build_table(cohorts, pmap):
     cols = [("name", "Cohort"), ("pathogen", "Pathogen"), ("design", "Design"),
-            ("n", "N"), ("fu", "Max follow-up (mo)"), ("control", "Control group"),
-            ("denom", "Denominator"), ("spec", "Specimens")]
+            ("n", "N"), ("retention", "Analysed/Enrolled"), ("fu", "Max follow-up (mo)"),
+            ("control", "Control group"), ("denom", "Denominator"), ("spec", "Specimens")]
     head = "".join(f'<th data-sort="{k}">{esc(t)}</th>' for k, t in cols)
     rows = []
     for _, d in sorted(cohorts, key=lambda c: c[1]["name"].lower()):
@@ -236,6 +345,238 @@ def facet_select(name, label, values):
     return f'<label>{esc(label)}<select data-facet="{esc(name)}">{opts}</select></label>'
 
 
+# ---- symptom-frequency views (v1.1) --------------------------------------
+def _shade(pct):
+    """Background style for a symptom-prevalence cell, shaded by magnitude."""
+    a = 0.30 + 0.65 * (max(0.0, min(100.0, pct)) / 100.0)
+    return f'background:rgba(37,99,235,{a:.2f});color:#fff'
+
+
+def _short(name):
+    """Short cohort label: text before the first parenthesis, else the whole name."""
+    return name.split(" (")[0].strip()
+
+
+def _sf_latest(sfs):
+    """Pick the symptom-finding at the latest timepoint (the most chronic estimate)."""
+    return sorted(sfs, key=lambda s: s.get("timepoint_months") or 0)[-1]
+
+
+def _cmp_str(sf):
+    cp = sf.get("comparator_percent")
+    if cp is None:
+        return ""
+    if cp == "not_reported":
+        return ' <span class="axis" title="controls exist but this symptom was not reported in them">(vs controls: n/r)</span>'
+    grp = f" {lab(sf['comparator_group'])}" if sf.get("comparator_group") else ""
+    return f' <span class="na">(vs{grp}: {cp}%)</span>'
+
+
+def build_symptom_matrix(cohorts, smap):
+    """4.1 Symptom (rows, grouped by domain) x cohort (cols). Three empty states."""
+    # columns = cohorts that reported at least one symptom finding
+    cols = [d for _, d in sorted(cohorts, key=lambda c: c[1]["name"].lower()) if d.get("symptom_findings")]
+    if not cols:
+        return ""
+    # index findings by (cohort_id, symptom_id)
+    by = {}
+    used_symptoms = set()
+    for d in cols:
+        for sf in d["symptom_findings"]:
+            by.setdefault((d["id"], sf["symptom_id"]), []).append(sf)
+            used_symptoms.add(sf["symptom_id"])
+    head = '<th class="row">Symptom</th>' + "".join(
+        f'<th>{esc(_short(d["name"]))}<br><span class="badge">{esc(lab(smap["_pathogen"].get(d["id"],"")))}</span> '
+        f'<span class="badge">{esc(lab(d["symptom_inventory_scope"]))}</span></th>' for d in cols)
+    body = []
+    for dom in DOMAIN_ORDER:
+        dom_syms = [s for s in smap["_by_domain"].get(dom, []) if s["id"] in used_symptoms]
+        if not dom_syms:
+            continue
+        body.append(f'<tr><td class="dom" colspan="{len(cols)+1}">{esc(lab(dom))}</td></tr>')
+        for s in dom_syms:
+            cells = [f'<td class="row">{esc(s["label"])}</td>']
+            for d in cols:
+                sfs = by.get((d["id"], s["id"]))
+                if sfs:
+                    sf = _sf_latest(sfs)
+                    tt = f'{sf["percent"]}% at {sf.get("timepoint_months")}mo; {lab(sf["ascertainment"])}'
+                    cells.append(f'<td><span class="sv" style="{_shade(sf["percent"])}" title="{esc(tt)}">{sf["percent"]}%</span></td>')
+                elif d["symptom_inventory_scope"] == "comprehensive_inventory":
+                    cells.append('<td class="cell-nr" title="comprehensive inventory: measured but not tabulated here / reported absent">·</td>')
+                else:
+                    cells.append('<td class="cell-nm" title="not measured in this cohort">–</td>')
+            body.append("<tr>" + "".join(cells) + "</tr>")
+    legend = ('<div class="legend">'
+              '<span><i style="background:rgba(37,99,235,.7)"></i> value = reported prevalence (shaded by magnitude)</span>'
+              '<span><i style="background:transparent;border-color:var(--warn)"></i> <span class="cell-nr">·</span> measured (comprehensive inventory) but not reported here</span>'
+              '<span><i style="background:transparent"></i> <span class="cell-nm">–</span> not measured in this cohort</span>'
+              '</div>')
+    return (f'<p class="meta">Cells show the reported prevalence at the latest available timepoint for that '
+            f'symptom; hover for timepoint and ascertainment. Timepoints differ between cells — use the '
+            f'cross-pathogen view below to compare like with like. Column badges show pathogen and symptom-inventory scope.</p>'
+            f'{legend}<div class="tablewrap"><table class="matrix smx"><thead><tr>{head}</tr></thead>'
+            f'<tbody>{"".join(body)}</tbody></table></div>')
+
+
+def _comparability_warning(findings):
+    """Inline, specific warning naming any axis on which the compared findings differ (spec sec 5)."""
+    diffs = []
+    for axis in COMPARABILITY_AXES:
+        vals = sorted({f.get(axis) for f in findings})
+        if len(vals) > 1:
+            diffs.append(f"{axis.replace('_',' ')}: " + " vs ".join(lab(v) for v in vals))
+    scopes = sorted({f["_scope"] for f in findings})
+    if len(scopes) > 1:
+        diffs.append("symptom-inventory scope: " + " vs ".join(lab(v) for v in scopes))
+    if not diffs:
+        return ""
+    items = "".join(f"<li>{esc(x)}</li>" for x in diffs)
+    return (f'<div class="warnbox"><strong>Not directly comparable.</strong> The cohorts below differ on: '
+            f'<ul style="margin:.3em 0 0 1.1em">{items}</ul></div>')
+
+
+def build_single_symptom_views(cohorts, pmap, smap):
+    """4.2 One block per symptom measured in >=2 cohorts: point estimates + comparator, grouped by pathogen."""
+    rows_by_symptom = {}
+    for _, d in cohorts:
+        for sf in d.get("symptom_findings", []):
+            rec = dict(sf)
+            rec["_cohort"] = d
+            rec["_scope"] = d["symptom_inventory_scope"]
+            rows_by_symptom.setdefault(sf["symptom_id"], []).append(rec)
+    blocks = []
+    toc = []
+    for sid in [s["id"] for s in smap["symptoms"]]:
+        recs = rows_by_symptom.get(sid, [])
+        if len(recs) < 2:
+            continue
+        s = smap["_by_id"][sid]
+        recs.sort(key=lambda r: (pmap.get(r["_cohort"]["pathogen_id"], {}).get("name", ""), r.get("timepoint_months") or 0))
+        toc.append(f'<a href="#sym-{esc(sid)}">{esc(s["label"])}</a>')
+        bars = []
+        for r in recs:
+            d = r["_cohort"]
+            pth = pmap.get(d["pathogen_id"], {}).get("name", d["pathogen_id"])
+            label = f'{_short(d["name"])} · {esc(pth)} · {r.get("timepoint_months")}mo'
+            cmpbar = ""
+            cp = r.get("comparator_percent")
+            if isinstance(cp, (int, float)):
+                cmpbar = f'<div class="bar cmp" style="width:{min(100.0,float(cp)):.1f}%"></div>'
+            bars.append(
+                f'<div class="barrow"><div class="lab" title="{esc(d["name"])}">{label}</div>'
+                f'<div class="barwrap"><div class="bar" style="width:{min(100.0,float(r["percent"])):.1f}%"></div>{cmpbar}'
+                f'<span class="barnum">{r["percent"]}%{_cmp_str(r)}</span></div></div>')
+        warn = _comparability_warning(recs)
+        blocks.append(f'<h3 id="sym-{esc(sid)}">{esc(s["label"])}'
+                      f' <span class="badge">{esc(lab(s["domain"]))}</span></h3>{warn}{"".join(bars)}')
+    if not blocks:
+        return ""
+    toc_html = '<p class="meta">Jump to symptom: ' + " · ".join(toc) + "</p>"
+    return (toc_html + '<p class="meta">Solid bar = prevalence in the affected cohort; faint bar = the '
+            'control-group comparator where one was reported. No pooling — each estimate stands alone.</p>'
+            + "".join(blocks))
+
+
+def build_symptom_gap_matrices(cohorts, pmap, smap):
+    """4.4 domain x pathogen (cohorts measuring anything in domain) and 4.5 pem_assessed x pathogen."""
+    used_pathogens = []
+    for _, d in cohorts:
+        if d["pathogen_id"] not in used_pathogens:
+            used_pathogens.append(d["pathogen_id"])
+    # domain x pathogen
+    domains_present = [dm for dm in DOMAIN_ORDER
+                       if any(smap["_by_id"].get(sf["symptom_id"], {}).get("domain") == dm
+                              for _, d in cohorts for sf in d.get("symptom_findings", []))]
+    dom_counts = {}
+    for _, d in cohorts:
+        doms = {smap["_by_id"].get(sf["symptom_id"], {}).get("domain") for sf in d.get("symptom_findings", [])}
+        for dm in doms:
+            dom_counts.setdefault((d["pathogen_id"], dm), set()).add(d["id"])
+    head = '<th class="row"></th>' + "".join(f"<th>{esc(lab(dm))}</th>" for dm in domains_present)
+    body = []
+    for pid in used_pathogens:
+        cells = [f'<td class="row">{esc(pmap.get(pid,{}).get("name",pid))}</td>']
+        for dm in domains_present:
+            n = len(dom_counts.get((pid, dm), set()))
+            cells.append(f'<td class="{"cell0" if n==0 else "cellN"}">{n if n else ""}</td>')
+        body.append("<tr>" + "".join(cells) + "</tr>")
+    m3 = (f'<h3>Gap matrix 3 — symptom domain × pathogen</h3>'
+          f'<p class="meta">Cell = number of cohorts that measured <em>anything</em> in that domain for that pathogen. '
+          f'The empty cells are the point: outside SARS-CoV-2, whole domains (autonomic, PEM) are barely measured.</p>'
+          f'<div class="tablewrap"><table class="matrix"><thead><tr>{head}</tr></thead><tbody>{"".join(body)}</tbody></table></div>')
+    # pem_assessed x pathogen
+    pem_order = ["yes_validated_instrument", "yes_single_item", "no", "unclear"]
+    pem_counts = {}
+    for _, d in cohorts:
+        pem_counts.setdefault((d["pathogen_id"], d["pem_assessed"]), 0)
+        pem_counts[(d["pathogen_id"], d["pem_assessed"])] += 1
+    head2 = '<th class="row"></th>' + "".join(f"<th>{esc(lab(x))}</th>" for x in pem_order)
+    body2 = []
+    for pid in used_pathogens:
+        cells = [f'<td class="row">{esc(pmap.get(pid,{}).get("name",pid))}</td>']
+        for x in pem_order:
+            n = pem_counts.get((pid, x), 0)
+            cells.append(f'<td class="{"cell0" if n==0 else "cellN"}">{n if n else ""}</td>')
+        body2.append("<tr>" + "".join(cells) + "</tr>")
+    m4 = (f'<h3>Gap matrix 4 — post-exertional malaise assessment × pathogen</h3>'
+          f'<p class="meta">Whether each cohort assessed PEM at all. That the field\'s landmark inception cohort '
+          f'(Dubbo) never measured PEM is itself a finding, visible here rather than buried.</p>'
+          f'<div class="tablewrap"><table class="matrix"><thead><tr>{head2}</tr></thead><tbody>{"".join(body2)}</tbody></table></div>')
+    return m3 + m4
+
+
+def build_cohort_symptom_profile(d, smap):
+    """4.3 sorted horizontal bars of a cohort's symptom findings, grouped by domain."""
+    sfs = d.get("symptom_findings", [])
+    if not sfs:
+        return '<p class="na">No symptom-frequency findings recorded for this cohort yet.</p>'
+    by_dom = {}
+    for sf in sfs:
+        dom = smap["_by_id"].get(sf["symptom_id"], {}).get("domain", "other")
+        by_dom.setdefault(dom, []).append(sf)
+    out = []
+    for dom in DOMAIN_ORDER:
+        group = by_dom.get(dom)
+        if not group:
+            continue
+        out.append(f'<h3>{esc(lab(dom))}</h3>')
+        for sf in sorted(group, key=lambda x: -x["percent"]):
+            s = smap["_by_id"].get(sf["symptom_id"], {})
+            cp = sf.get("comparator_percent")
+            cmpbar = f'<div class="bar cmp" style="width:{min(100.0,float(cp)):.1f}%"></div>' if isinstance(cp, (int, float)) else ""
+            label = f'{esc(s.get("label", sf["symptom_id"]))} · {sf.get("timepoint_months")}mo'
+            verbatim = f' <span class="badge" title="verbatim in source">“{esc(sf["symptom_verbatim"])}”</span>'
+            out.append(
+                f'<div class="barrow"><div class="lab">{label}{verbatim}</div>'
+                f'<div class="barwrap"><div class="bar" style="width:{min(100.0,float(sf["percent"])):.1f}%"></div>{cmpbar}'
+                f'<span class="barnum">{sf["percent"]}%{_cmp_str(sf)}</span></div></div>')
+    return ("".join(out) + '<p class="meta">Bars show reported prevalence; the verbatim wording from each paper is '
+            'preserved (hover) and never normalised. Faint bar = control comparator where reported.</p>')
+
+
+def symptom_finding_csv_rows(cohorts, pmap, smap):
+    header = ["cohort_id", "cohort_name", "pathogen", "symptom_id", "symptom_domain", "symptom_verbatim",
+              "mapping_confidence", "ascertainment", "instrument_id", "severity_threshold", "reference_period",
+              "timepoint_months", "denominator_basis", "n_with_symptom", "n_assessed", "percent",
+              "ci_low", "ci_high", "value_precision", "comparator_percent", "comparator_n", "comparator_group",
+              "effect_estimate", "effect_type", "p_value", "publication_id", "source_locator", "last_verified"]
+    rows = [header]
+    for _, d in sorted(cohorts, key=lambda c: c[1]["name"].lower()):
+        for sf in d.get("symptom_findings", []):
+            dom = smap["_by_id"].get(sf["symptom_id"], {}).get("domain", "")
+            rows.append([
+                d["id"], d["name"], pmap.get(d["pathogen_id"], {}).get("name", d["pathogen_id"]),
+                sf["symptom_id"], dom, sf["symptom_verbatim"], sf["mapping_confidence"], sf["ascertainment"],
+                sf.get("instrument_id"), sf.get("severity_threshold"), sf["reference_period"],
+                sf["timepoint_months"], sf["denominator_basis"], sf.get("n_with_symptom"), sf["n_assessed"],
+                sf["percent"], sf.get("ci_low"), sf.get("ci_high"), sf["value_precision"],
+                sf.get("comparator_percent"), sf.get("comparator_n"), sf.get("comparator_group"),
+                sf.get("effect_estimate"), sf.get("effect_type"), sf.get("p_value"),
+                sf["publication_id"], sf["source_locator"], sf["last_verified"]])
+    return rows
+
+
 PAGE_JS = r"""
 <script>
 (function(){
@@ -276,16 +617,17 @@ PAGE_JS = r"""
  // export
  function dl(name,txt,type){ var b=new Blob([txt],{type:type}); var u=URL.createObjectURL(b);
    var a=document.createElement('a'); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u); }
- var ej=document.getElementById('exp-json'), ec=document.getElementById('exp-csv');
+ var ej=document.getElementById('exp-json'), ec=document.getElementById('exp-csv'), es=document.getElementById('exp-scsv');
  if(ej)ej.addEventListener('click',function(){ fetch('data/pais-cohorts-index.json').then(function(r){return r.text();}).then(function(t){dl('pais-cohorts-index.json',t,'application/json');}); });
  if(ec)ec.addEventListener('click',function(){ fetch('data/pais-cohorts.csv').then(function(r){return r.text();}).then(function(t){dl('pais-cohorts.csv',t,'text/csv');}); });
+ if(es)es.addEventListener('click',function(){ fetch('data/pais-symptom-findings.csv').then(function(r){return r.text();}).then(function(t){dl('pais-symptom-findings.csv',t,'text/csv');}); });
  apply();
 })();
 </script>
 """
 
 
-def build_main_page(cohorts, pmap, generated):
+def build_main_page(cohorts, pmap, smap, generated):
     pclasses = sorted({d["pathogen_class"] for _, d in cohorts})
     designs = [x for x in DESIGN_ORDER if x in {d["design"] for _, d in cohorts}]
     controls = sorted({d["control_group"] for _, d in cohorts})
@@ -301,10 +643,20 @@ def build_main_page(cohorts, pmap, generated):
         + facet_select("acute", "Acute-phase spec.", ["yes", "no", "unclear", "not_applicable"])
         + '<span style="flex:1"></span>'
         '<button class="btn sec" id="exp-json">Export JSON</button>'
-        '<button class="btn sec" id="exp-csv">Export CSV</button>'
+        '<button class="btn sec" id="exp-csv">Export cohorts CSV</button>'
+        '<button class="btn sec" id="exp-scsv">Export symptom CSV</button>'
         '</div>'
     )
+    nav = ('<div class="nav">'
+           '<a href="#cohort-table">Cohort table</a>'
+           '<a href="#symptom-matrix">Symptom × cohort</a>'
+           '<a href="#symptom-compare">Cross-pathogen symptoms</a>'
+           '<a href="#gap-matrices">Gap matrices</a></div>')
     table = build_table(cohorts, pmap)
+    n_sf = sum(len(d.get("symptom_findings", [])) for _, d in cohorts)
+    smx = build_symptom_matrix(cohorts, smap)
+    ssv = build_single_symptom_views(cohorts, pmap, smap)
+    sgm = build_symptom_gap_matrices(cohorts, pmap, smap)
     m1 = build_matrix(cohorts, pmap, designs, "design",
                       "Gap matrix — pathogen × study design",
                       "Cell = number of cohorts. Red (empty) cells mark pathogen/design combinations where no cohort yet exists — the evidence gaps this database exists to expose.")
@@ -316,16 +668,25 @@ def build_main_page(cohorts, pmap, generated):
 <h1>PAIS Cohort Database</h1>
 <p class="lede">A catalogue of <strong>cohorts</strong> (study populations followed for post-acute infection syndrome outcomes), not patients and not publications. The unit of record is the cohort, so that one cohort's many papers do not overstate how much independent evidence exists. The point of the database is to make the <em>design</em> of each study — denominator, controls, timepoints, specimens — machine-readable, so the incomparability of the literature and its gaps become visible.</p>
 <p class="meta">{len(cohorts)} cohorts · seed release · every field human-verified against source · data licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="data/pais-cohort.schema.json">schema</a> · <a href="pais-cohort-database-spec.md">spec</a></p>
-<div class="warnbox">This is a <strong>seed</strong> of {len(cohorts)} design-verified cohorts, not a complete census. It deliberately mixes strong designs (prospective inception cohorts with unexposed controls) and weak ones (self-selected online surveys) so the gap matrices below are honest. Contributions are made as pull requests; schema validation runs in CI and blocks merges that break it. No pooled estimates or quality scores are computed — filter the design fields and judge for yourself.</div>
+<div class="warnbox">This is a <strong>seed</strong> of {len(cohorts)} design-verified cohorts ({n_sf} symptom-frequency findings), not a complete census. It deliberately mixes strong designs (prospective inception cohorts with unexposed controls) and weak ones (self-selected online surveys) so the gap matrices below are honest. Contributions are made as pull requests; schema validation runs in CI and blocks merges that break it. No pooled estimates or quality scores are computed — filter the design fields and judge for yourself.</div>
+{nav}
 {toolbar}
+<h2 id="cohort-table">Cohort table</h2>
 <p class="count" id="count">{len(cohorts)} cohorts</p>
 {table}
-<h2>Gap matrices</h2>
+<h2 id="symptom-matrix">Symptom × cohort matrix</h2>
+<p class="lede">Symptom prevalence is the field's most-quoted and least-comparable number. Each cell carries its own ascertainment method, reference period and denominator basis (see the symptom CSV); the columns are not interchangeable.</p>
+{smx}
+<h2 id="symptom-compare">Cross-pathogen symptom comparison</h2>
+<p class="lede">One symptom at a time, every cohort that measured it, with its control comparator — the empirical version of the shared-core-versus-pathogen-specific question. Each block flags the axes on which the cohorts are not directly comparable.</p>
+{ssv}
+<h2 id="gap-matrices">Gap matrices</h2>
 {m1}
 {m2}
+{sgm}
 <footer>
-<p>Build {generated}, compiled by <code>scripts/build_pais_cohorts.py</code>. Cohort table and detail pages are pre-rendered and work with JavaScript disabled; filtering, sorting and export are progressive enhancements. No analytics, no third-party fonts or scripts.</p>
-<p>Bulk export: <a href="data/pais-cohorts-index.json">JSON</a> · <a href="data/pais-cohorts.csv">CSV</a>. Per-cohort permalinks under <code>pais-cohorts/&lt;id&gt;.html</code>.</p>
+<p>Build {generated}, compiled by <code>scripts/build_pais_cohorts.py</code>. Cohort table, detail pages and all matrices are pre-rendered and work with JavaScript disabled; filtering, sorting and export are progressive enhancements. No analytics, no third-party fonts or scripts.</p>
+<p>Bulk export: cohorts <a href="data/pais-cohorts-index.json">JSON</a> · <a href="data/pais-cohorts.csv">CSV</a> · symptom findings <a href="data/pais-symptom-findings.csv">CSV</a>. Reference tables: <a href="data/ref/symptoms.json">symptoms</a>, <a href="data/ref/pathogens.json">pathogens</a>, <a href="data/ref/instruments.json">instruments</a>. Per-cohort permalinks under <code>pais-cohorts/&lt;id&gt;.html</code>.</p>
 </footer>
 </div>{PAGE_JS}"""
     return html_doc("PAIS Cohort Database", body)
@@ -341,7 +702,7 @@ def dl_list(items):
     return "<dl class=grid2>" + "".join(f"<dt>{esc(k)}</dt><dd>{v}</dd>" for k, v in items) + "</dl>"
 
 
-def build_detail(d, pmap, imap):
+def build_detail(d, pmap, imap, smap):
     pth = pmap.get(d["pathogen_id"], {})
     identity = dl_list([
         ("Cohort id", f"<code>{esc(d['id'])}</code>"),
@@ -382,11 +743,18 @@ def build_detail(d, pmap, imap):
         ("Consent for future use", lab(d.get("consent_future_use"))),
         ("External access", lab(d.get("external_access"))),
     ])
+    related = d.get("related_cohorts", [])
+    related_html = (", ".join(f'<a href="{esc(r["id"])}.html">{esc(r["id"])}</a> ({lab(r["relation"])})' for r in related)
+                    if related else '<span class="na">none recorded</span>')
     prov = dl_list([
         ("Registration", na(d.get("registration_id"))),
         ("Funders", ", ".join(map(esc, d.get("funders", []))) or '<span class="na">not reported</span>'),
         ("Conflicts", na(d.get("conflicts"))),
         ("Data availability", na(d.get("data_availability"))),
+        ("Related cohorts", related_html),
+        ("Symptom-inventory scope", lab(d.get("symptom_inventory_scope"))
+            + (f' ({d["n_symptoms_queried"]} symptoms queried)' if d.get("n_symptoms_queried") else "")),
+        ("Last verified", f'{esc(d.get("last_verified"))} — {esc(d.get("verified_by"))}'),
     ])
     # findings table
     if d.get("findings"):
@@ -394,9 +762,18 @@ def build_detail(d, pmap, imap):
                      ["Outcome", "Timepoint (mo)", "n/N", "%", "95% CI", "Effect", "As worded", "Source"])
         frows = []
         for f in d["findings"]:
-            nN = (f"{f['n_with_outcome']}/{f['n_assessed']}" if f.get("n_with_outcome") is not None and f.get("n_assessed") is not None
-                  else (f"–/{f['n_assessed']}" if f.get("n_assessed") is not None else '<span class="na">n/r</span>'))
-            pct = f"{f['percent']}%" if f.get("percent") is not None else '<span class="na">n/r</span>'
+            if f.get("n_with_outcome") is not None and f.get("n_assessed") is not None:
+                nN = f"{f['n_with_outcome']}/{f['n_assessed']}"
+            elif f.get("n_assessed") is not None:
+                nN = f"N={f['n_assessed']}"
+            else:
+                nN = '<span class="na">n/r</span>'
+            if f.get("percent") is not None:
+                pct = f"{f['percent']}%"
+                if f.get("n_with_outcome") is None and f.get("n_assessed") is not None:
+                    pct += ' <span class="na">(numerator not reported)</span>'
+            else:
+                pct = '<span class="na">n/r</span>'
             ci = (f"{f['ci_low']}–{f['ci_high']}" if f.get("ci_low") is not None and f.get("ci_high") is not None else "")
             eff = (f"{lab(f['effect_type'])} {f['effect_estimate']}" if f.get("effect_estimate") is not None and f.get("effect_type") != "none" else "")
             frows.append("<tr>" + "".join(f"<td>{c}</td>" for c in [
@@ -405,7 +782,8 @@ def build_detail(d, pmap, imap):
         findings = (f'<div class="tablewrap"><table><thead><tr>{fh}</tr></thead>'
                     f'<tbody>{"".join(frows)}</tbody></table></div>')
     else:
-        findings = '<p class="na">No findings extracted yet — contributions welcome via pull request.</p>'
+        findings = '<p class="na">No (non-symptom) findings extracted yet — contributions welcome via pull request.</p>'
+    symptom_profile = build_cohort_symptom_profile(d, smap)
     # publications
     pubs = []
     for p in d.get("publications", []):
@@ -428,9 +806,10 @@ def build_detail(d, pmap, imap):
 <h2>Size & attrition</h2>{size}
 <h2>Measurement</h2>{measure}
 <h2>Biospecimens</h2>{spec}
-<h2>Findings</h2>{findings}
+<h2>Symptom profile</h2>{symptom_profile}
+<h2>Other findings</h2>{findings}
 <h2>Publications</h2>{pubs_html}
-<h2>Provenance</h2>{prov}
+<h2>Provenance &amp; verification</h2>{prov}
 <footer><p>PAIS Cohort Database · <a href="../pais-cohorts.html">back to table</a></p></footer>
 </div>"""
     return html_doc(f"{d['name']} — PAIS Cohort", body)
@@ -453,62 +832,83 @@ def cohort_to_csv_rows(cohorts, pmap):
     return rows
 
 
+def build_symptom_index(symptoms, cohorts):
+    by_domain = {}
+    for s in symptoms["symptoms"]:
+        by_domain.setdefault(s["domain"], []).append(s)
+    return {
+        "symptoms": symptoms["symptoms"],
+        "_by_id": {s["id"]: s for s in symptoms["symptoms"]},
+        "_by_domain": by_domain,
+        "_pathogen": {d["id"]: d["pathogen_class"] for _, d in cohorts},
+    }
+
+
 def main():
     check_only = "--check" in sys.argv
     pathogens = load_json(PATHOGENS)
     instruments = load_json(INSTRUMENTS)
+    symptoms = load_json(SYMPTOMS)
     cohorts = [(p, load_json(p)) for p in sorted(glob.glob(COHORT_GLOB))]
     if not cohorts:
         print("No cohort files found.", file=sys.stderr); sys.exit(1)
 
-    errors = validate(cohorts, pathogens, instruments)
+    errors = validate(cohorts, pathogens, instruments, symptoms)
     if errors:
         print(f"VALIDATION FAILED ({len(errors)} error(s)):", file=sys.stderr)
         for e in errors:
             print("  - " + e, file=sys.stderr)
         sys.exit(1)
+    n_sf = sum(len(d.get('symptom_findings', [])) for _, d in cohorts)
     print(f"Validation OK: {len(cohorts)} cohorts, "
           f"{sum(len(d.get('publications', [])) for _, d in cohorts)} publications, "
-          f"{sum(len(d.get('findings', [])) for _, d in cohorts)} findings.")
+          f"{sum(len(d.get('findings', [])) for _, d in cohorts)} findings, "
+          f"{n_sf} symptom findings.")
     if check_only:
         return
 
     pmap = {p["id"]: p for p in pathogens["pathogens"]}
     imap = {i["id"]: i for i in instruments["instruments"]}
+    smap = build_symptom_index(symptoms, cohorts)
     generated = BUILD_VERSION
 
     # compiled index
     index = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "generated": generated,
         "license": "CC BY 4.0",
         "pathogens": pathogens["pathogens"],
         "instruments": instruments["instruments"],
+        "symptoms": symptoms["symptoms"],
         "cohorts": [d for _, d in sorted(cohorts, key=lambda c: c[1]["name"].lower())],
     }
     with open(INDEX_OUT, "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False, indent=2)
 
-    # bulk CSV
-    buf = io.StringIO()
-    w = csv.writer(buf)
-    for r in cohort_to_csv_rows(cohorts, pmap):
-        w.writerow(r)
-    with open(CSV_OUT, "w", encoding="utf-8", newline="") as f:
-        f.write(buf.getvalue())
+    # bulk CSVs (cohorts + denormalised symptom findings)
+    def write_csv(path, rows):
+        buf = io.StringIO()
+        w = csv.writer(buf)
+        for r in rows:
+            w.writerow(r)
+        with open(path, "w", encoding="utf-8", newline="") as f:
+            f.write(buf.getvalue())
+    write_csv(CSV_OUT, cohort_to_csv_rows(cohorts, pmap))
+    write_csv(SYMPTOM_CSV_OUT, symptom_finding_csv_rows(cohorts, pmap, smap))
 
     # main page
     with open(HTML_OUT, "w", encoding="utf-8") as f:
-        f.write(build_main_page(cohorts, pmap, generated))
+        f.write(build_main_page(cohorts, pmap, smap, generated))
 
     # detail pages
     os.makedirs(DETAIL_DIR, exist_ok=True)
     for _, d in cohorts:
         with open(os.path.join(DETAIL_DIR, f"{d['id']}.html"), "w", encoding="utf-8") as f:
-            f.write(build_detail(d, pmap, imap))
+            f.write(build_detail(d, pmap, imap, smap))
 
     print(f"Built: {os.path.relpath(INDEX_OUT, ROOT)}, {os.path.relpath(CSV_OUT, ROOT)}, "
-          f"{os.path.relpath(HTML_OUT, ROOT)}, {len(cohorts)} detail pages in {os.path.relpath(DETAIL_DIR, ROOT)}/")
+          f"{os.path.relpath(SYMPTOM_CSV_OUT, ROOT)}, {os.path.relpath(HTML_OUT, ROOT)}, "
+          f"{len(cohorts)} detail pages in {os.path.relpath(DETAIL_DIR, ROOT)}/")
 
 
 if __name__ == "__main__":
