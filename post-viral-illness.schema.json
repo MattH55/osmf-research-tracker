@@ -16,6 +16,91 @@
       "type": "array",
       "minItems": 1,
       "items": { "$ref": "#/$defs/condition" }
+    },
+    "comparison": {
+      "type": "object",
+      "description": "Cross-condition analysis: shared-mechanism matrix and symptom-frequency matrix. Every populated cell must carry at least one reference_id resolving to a real reference (in comparison.references or any condition's references). Cells with no located evidence use strength/level 'insufficient_data' and no reference.",
+      "required": ["symptom_axes", "mechanism_axes", "symptom_matrix", "mechanism_matrix", "references"],
+      "properties": {
+        "note": { "type": "string" },
+        "symptom_axes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "properties": { "id": { "type": "string" }, "label": { "type": "string" } }
+          }
+        },
+        "mechanism_axes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "symptom_matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition_id", "cells"],
+            "properties": {
+              "condition_id": { "type": "string" },
+              "cells": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["axis_id", "level"],
+                  "properties": {
+                    "axis_id": { "type": "string" },
+                    "level": {
+                      "type": "string",
+                      "enum": ["defining", "high", "moderate", "reported", "insufficient_data"]
+                    },
+                    "display": { "type": "string", "description": "Human-readable value, e.g. '≈88%', '55–89%', 'defining feature'." },
+                    "note": { "type": ["string", "null"] },
+                    "reference_ids": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "mechanism_matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition_id", "cells"],
+            "properties": {
+              "condition_id": { "type": "string" },
+              "cells": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["axis_id", "evidence_strength"],
+                  "properties": {
+                    "axis_id": { "type": "string" },
+                    "evidence_strength": {
+                      "type": "string",
+                      "enum": ["established", "emerging", "hypothesized", "not_applicable", "insufficient_data"]
+                    },
+                    "note": { "type": ["string", "null"] },
+                    "reference_ids": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "references": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/reference" }
+        }
+      }
     }
   },
   "$defs": {

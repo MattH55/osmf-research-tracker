@@ -74,6 +74,26 @@
       .tx-table td { border:none; padding:.25rem 0; }
       .tx-table td::before { content:attr(data-label); font-size:.68rem; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block; }
     }
+    .mtx { border-collapse:collapse; width:100%; font-size:.78rem; }
+    .mtx th, .mtx td { border:1px solid #e5e7eb; padding:.4rem .5rem; text-align:center; vertical-align:middle; }
+    .mtx thead th { background:#f8fafc; color:var(--primary-dark); font-weight:650; font-size:.72rem; }
+    .mtx th.row-head { text-align:left; background:#fff; white-space:nowrap; color:var(--primary-dark); font-weight:650; position:sticky; left:0; }
+    .mtx td .cite { font-size:.66rem; }
+    .mtx td .cite a { color:inherit; text-decoration:none; font-weight:700; }
+    .mtx .cell-lbl { font-weight:650; display:block; line-height:1.15; }
+    /* mechanism evidence strength */
+    .m-established { background:#dcfce7; color:#166534; }
+    .m-emerging { background:#fef9c3; color:#854d0e; }
+    .m-hypothesized { background:#f1f5f9; color:#475569; }
+    .m-not_applicable { background:#fafafa; color:#9ca3af; }
+    .m-insufficient_data, .s-insufficient_data { background:#fff; color:#cbd5e1; }
+    /* symptom frequency levels */
+    .s-defining { background:#e0e7ff; color:#3730a3; }
+    .s-high { background:#dcfce7; color:#166534; }
+    .s-moderate { background:#d1fae5; color:#065f46; }
+    .s-reported { background:#fef9c3; color:#854d0e; }
+    .mtx-legend { display:flex; flex-wrap:wrap; gap:.4rem; margin:.25rem 0 .55rem; }
+    .mtx-legend span { font-size:.68rem; font-weight:650; padding:.15rem .5rem; border-radius:6px; }
   </style>
   <script type="application/ld+json">
   {
@@ -140,6 +160,24 @@
 
     <p class="pvi-meta" id="meta-line"></p>
     <nav class="pvi-toc" id="toc" aria-label="Conditions"></nav>
+
+    <section id="comparison-card" class="cond-card" style="display:none;">
+      <h2>Cross-Condition Comparison</h2>
+      <p class="cond-overview" id="cmp-note"></p>
+
+      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.15rem;color:var(--primary-dark);">Shared mechanisms</h3>
+      <p class="pvi-meta" style="margin:.1rem 0 .5rem;">Strength of evidence implicating each candidate mechanism. Every filled cell is cited; blanks mean no clear evidence was located.</p>
+      <div class="mtx-legend" id="mech-legend"></div>
+      <div class="table-wrap"><table class="mtx" id="mechanism-matrix"></table></div>
+
+      <h3 style="font-size:0.95rem;margin:1.1rem 0 0.15rem;color:var(--primary-dark);">Symptom frequency</h3>
+      <p class="pvi-meta" style="margin:.1rem 0 .5rem;">Reported prevalence of core post-viral symptoms. Figures are not fully standardized across studies; cells show ranges or qualitative levels and cite their source.</p>
+      <div class="mtx-legend" id="sym-legend"></div>
+      <div class="table-wrap"><table class="mtx" id="symptom-matrix"></table></div>
+
+      <div class="refs"><h3>References for this comparison</h3><ol id="cmp-refs"></ol></div>
+    </section>
+
     <div id="conditions-root"></div>
     <div id="empty-state" class="pvi-empty hidden">No conditions match your search.</div>
     <div id="error-state" class="state-error hidden">
@@ -255,6 +293,7 @@
         (allConditions.length) + ' conditions · Updated ' + (payload.last_updated || '—') +
         ' · Schema ' + (payload.schema_version || '');
       renderToc(allConditions);
+      renderComparison(payload.comparison);
       renderConditions(allConditions);
     } catch (e) {
       console.error(e);
@@ -274,6 +313,81 @@
     const m = {};
     (condition.references || []).forEach(r => { m[r.id] = r; });
     return m;
+  }
+
+  const MECH_SHORT = { established:'Established', emerging:'Emerging', hypothesized:'Hypothesized', not_applicable:'N/A', insufficient_data:'' };
+
+  function renderComparison(comp) {
+    const card = document.getElementById('comparison-card');
+    if (!comp || !comp.mechanism_matrix) { if (card) card.style.display = 'none'; return; }
+    document.getElementById('cmp-note').textContent = comp.note || '';
+
+    // Global reference pool: comparison refs + every condition's refs.
+    const pool = {};
+    (comp.references || []).forEach(r => { pool[r.id] = r; });
+    allConditions.forEach(c => (c.references || []).forEach(r => { if (!pool[r.id]) pool[r.id] = r; }));
+
+    // Number references in order first used across both matrices.
+    const order = [];
+    const numOf = {};
+    const useRef = id => { if (!(id in numOf)) { numOf[id] = order.push(id); } return numOf[id]; };
+    const cite = ids => (ids || []).map(id => pool[id] ? `<sup class="cite"><a href="#cmp-ref-${useRef(id)}">[${useRef(id)}]</a></sup>` : '').join('');
+
+    const nameOf = {};
+    allConditions.forEach(c => { nameOf[c.id] = c.name; });
+
+    // ── Mechanism matrix ──
+    const mAxes = comp.mechanism_axes || [];
+    let mh = '<thead><tr><th class="row-head">Condition</th>' +
+      mAxes.map(a => `<th title="${esc(a.description || '')}">${esc(a.label)}</th>`).join('') + '</tr></thead><tbody>';
+    mh += (comp.mechanism_matrix || []).map(row => {
+      const cells = {};
+      (row.cells || []).forEach(c => { cells[c.axis_id] = c; });
+      const tds = mAxes.map(a => {
+        const cell = cells[a.id];
+        if (!cell || cell.evidence_strength === 'insufficient_data') return `<td class="m-insufficient_data" title="insufficient data">·</td>`;
+        const lbl = MECH_SHORT[cell.evidence_strength] || cell.evidence_strength;
+        return `<td class="m-${esc(cell.evidence_strength)}" title="${esc(cell.note || '')}"><span class="cell-lbl">${esc(lbl)}</span>${cite(cell.reference_ids)}</td>`;
+      }).join('');
+      return `<tr><th class="row-head"><a href="#${esc(row.condition_id)}">${esc(nameOf[row.condition_id] || row.condition_id)}</a></th>${tds}</tr>`;
+    }).join('') + '</tbody>';
+    document.getElementById('mechanism-matrix').innerHTML = mh;
+
+    // ── Symptom matrix ──
+    const sAxes = comp.symptom_axes || [];
+    let sh = '<thead><tr><th class="row-head">Condition</th>' +
+      sAxes.map(a => `<th>${esc(a.label)}</th>`).join('') + '</tr></thead><tbody>';
+    sh += (comp.symptom_matrix || []).map(row => {
+      const cells = {};
+      (row.cells || []).forEach(c => { cells[c.axis_id] = c; });
+      const tds = sAxes.map(a => {
+        const cell = cells[a.id];
+        if (!cell || cell.level === 'insufficient_data') return `<td class="s-insufficient_data" title="insufficient data">·</td>`;
+        return `<td class="s-${esc(cell.level)}" title="${esc(cell.note || '')}"><span class="cell-lbl">${esc(cell.display || '')}</span>${cite(cell.reference_ids)}</td>`;
+      }).join('');
+      return `<tr><th class="row-head"><a href="#${esc(row.condition_id)}">${esc(nameOf[row.condition_id] || row.condition_id)}</a></th>${tds}</tr>`;
+    }).join('') + '</tbody>';
+    document.getElementById('symptom-matrix').innerHTML = sh;
+
+    // Legends
+    document.getElementById('mech-legend').innerHTML =
+      ['established','emerging','hypothesized','not_applicable'].map(k =>
+        `<span class="m-${k}">${esc(MECH_SHORT[k])}</span>`).join('') +
+      '<span class="m-insufficient_data" style="border:1px solid #e5e7eb;">· insufficient data</span>';
+    document.getElementById('sym-legend').innerHTML =
+      [['defining','Defining'],['high','High'],['moderate','Moderate'],['reported','Reported']].map(([k,l]) =>
+        `<span class="s-${k}">${esc(l)}</span>`).join('') +
+      '<span class="s-insufficient_data" style="border:1px solid #e5e7eb;">· insufficient data</span>';
+
+    // Reference list (numbered in order used)
+    document.getElementById('cmp-refs').innerHTML = order.map((id, i) => {
+      const r = pool[id];
+      const meta = [r.authors, r.source, r.year].filter(Boolean).join(' · ');
+      const type = r.type ? ` <span class="ref-type">(${esc(r.type.replace(/_/g,' '))})</span>` : '';
+      return `<li id="cmp-ref-${i + 1}"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>${type}<br><span class="ref-type">${esc(meta)}</span></li>`;
+    }).join('');
+
+    card.style.display = '';
   }
 
   function treatmentRows(condition) {
