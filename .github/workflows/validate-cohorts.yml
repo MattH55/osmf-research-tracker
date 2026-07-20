@@ -1,0 +1,48 @@
+name: Validate PAIS cohorts
+
+# Schema + cross-reference validation for the PAIS cohort database.
+# Blocks merge if any cohort record breaks the schema or references a
+# missing pathogen / instrument / publication. Also verifies the committed
+# build artifacts (index JSON, CSV, HTML) are in sync with the source records.
+
+on:
+  pull_request:
+    paths:
+      - "data/cohorts/**"
+      - "data/ref/**"
+      - "data/pais-cohort.schema.json"
+      - "scripts/build_pais_cohorts.py"
+      - ".github/workflows/validate-cohorts.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/cohorts/**"
+      - "data/ref/**"
+      - "data/pais-cohort.schema.json"
+      - "scripts/build_pais_cohorts.py"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install validator
+        run: pip install "jsonschema>=4.18"
+
+      - name: Validate cohort records against schema + cross-references
+        run: python scripts/build_pais_cohorts.py --check
+
+      - name: Rebuild and confirm committed artifacts are in sync
+        run: |
+          python scripts/build_pais_cohorts.py
+          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv pais-cohorts.html pais-cohorts/; then
+            echo "::error::Built artifacts are out of date. Run 'python scripts/build_pais_cohorts.py' and commit the result."
+            git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv pais-cohorts.html pais-cohorts/
+            exit 1
+          fi

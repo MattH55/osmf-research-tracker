@@ -1,0 +1,106 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PAIS Cohort Database</title><style>
+:root{--bg:#fff;--fg:#1a1f26;--muted:#6b7480;--line:#e3e7ec;--card:#f7f9fb;
+--accent:#0b6bcb;--warn:#b26a00;--good:#1a7f4b;--chip:#eef2f6;--zero:#faeaea;--zerofg:#a33}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1216;--fg:#e6e9ee;--muted:#9aa4b0;
+--line:#252b33;--card:#161b21;--accent:#5aa2ea;--warn:#e0a24a;--good:#5cc68d;
+--chip:#1c232b;--zero:#2a1c1c;--zerofg:#e08a8a}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+background:var(--bg);color:var(--fg)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 80px}
+a{color:var(--accent)}h1{font-size:1.7rem;margin:.2em 0}
+h2{font-size:1.2rem;margin:1.8em 0 .5em;border-bottom:1px solid var(--line);padding-bottom:.3em}
+h3{font-size:1rem;margin:1.4em 0 .3em}
+.lede{color:var(--muted);max-width:70ch}
+.meta{font-size:.82rem;color:var(--muted);margin:.4em 0}
+.chip{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;
+padding:1px 9px;font-size:.78rem;margin:2px 3px 2px 0;white-space:nowrap}
+.na{color:var(--muted);font-style:italic;font-size:.92em}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:14px 0;padding:12px;
+background:var(--card);border:1px solid var(--line);border-radius:10px}
+.toolbar label{display:flex;flex-direction:column;font-size:.72rem;color:var(--muted);gap:2px}
+.toolbar select,.toolbar input{font-size:.86rem;padding:4px 6px;background:var(--bg);color:var(--fg);
+border:1px solid var(--line);border-radius:6px}
+.btn{cursor:pointer;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:6px 12px;font-size:.84rem}
+.btn.sec{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--card);position:sticky;top:0;cursor:pointer;white-space:nowrap}
+tbody tr:hover{background:var(--card)}
+.matrix td,.matrix th{text-align:center;padding:6px 8px}
+.matrix th.row,.matrix td.row{text-align:left;font-weight:600}
+.cell0{background:var(--zero);color:var(--zerofg)}
+.cellN{font-weight:700}
+.count{color:var(--muted);font-size:.85rem}
+.back{font-size:.85rem}
+.grid2{display:grid;grid-template-columns:180px 1fr;gap:2px 14px;font-size:.9rem}
+.grid2 dt{color:var(--muted)}.grid2 dd{margin:0}
+.warnbox{background:var(--zero);border:1px solid var(--line);border-left:3px solid var(--warn);
+padding:10px 12px;border-radius:6px;margin:10px 0;font-size:.9rem}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted)}
+.pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line)}
+.pill.good{color:var(--good)}.pill.no{color:var(--muted)}
+</style></head><body><div class="wrap">
+<p class="back"><a href="index.html">← Research tracker</a></p>
+<h1>PAIS Cohort Database</h1>
+<p class="lede">A catalogue of <strong>cohorts</strong> (study populations followed for post-acute infection syndrome outcomes), not patients and not publications. The unit of record is the cohort, so that one cohort's many papers do not overstate how much independent evidence exists. The point of the database is to make the <em>design</em> of each study — denominator, controls, timepoints, specimens — machine-readable, so the incomparability of the literature and its gaps become visible.</p>
+<p class="meta">10 cohorts · seed release · every field human-verified against source · data licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="data/pais-cohort.schema.json">schema</a> · <a href="pais-cohort-database-spec.md">spec</a></p>
+<div class="warnbox">This is a <strong>seed</strong> of 10 design-verified cohorts, not a complete census. It deliberately mixes strong designs (prospective inception cohorts with unexposed controls) and weak ones (self-selected online surveys) so the gap matrices below are honest. Contributions are made as pull requests; schema validation runs in CI and blocks merges that break it. No pooled estimates or quality scores are computed — filter the design fields and judge for yourself.</div>
+<div class="toolbar"><label>Search<input id="q" type="search" placeholder="cohort name…"></label><label>Pathogen class<select data-facet="pclass"><option value="">all</option><option value="mixed">Mixed</option><option value="protozoan">Protozoan</option><option value="virus">Virus</option></select></label><label>Design<select data-facet="design"><option value="">all</option><option value="prospective_inception">Prospective (inception)</option><option value="prospective_non_inception">Prospective (non-inception)</option><option value="retrospective_cohort">Retrospective cohort</option><option value="case_control">Case-control</option><option value="survey">Survey</option></select></label><label>Control group<select data-facet="control"><option value="">all</option><option value="healthy_convenience">Healthy convenience</option><option value="household_contacts">Household contacts</option><option value="none">None</option><option value="other_disease">Other-disease</option><option value="unexposed_matched">Unexposed (matched)</option><option value="unexposed_unmatched">Unexposed (unmatched)</option></select></label><label>Denominator<select data-facet="denom"><option value="">all</option><option value="yes">Yes</option><option value="partial">Partial</option><option value="no">No</option><option value="unclear">Unclear</option></select></label><label>Specimens<select data-facet="spec"><option value="">all</option><option value="banked">banked</option><option value="none">None</option></select></label><label>Acute-phase spec.<select data-facet="acute"><option value="">all</option><option value="yes">Yes</option><option value="no">No</option><option value="unclear">Unclear</option><option value="not_applicable">N/A</option></select></label><span style="flex:1"></span><button class="btn sec" id="exp-json">Export JSON</button><button class="btn sec" id="exp-csv">Export CSV</button></div>
+<p class="count" id="count">10 cohorts</p>
+<div class="tablewrap"><table id="cohorts"><thead><tr><th data-sort="name">Cohort</th><th data-sort="pathogen">Pathogen</th><th data-sort="design">Design</th><th data-sort="n">N</th><th data-sort="fu">Max follow-up (mo)</th><th data-sort="control">Control group</th><th data-sort="denom">Denominator</th><th data-sort="spec">Specimens</th></tr></thead><tbody><tr data-pclass="protozoan" data-design="retrospective_cohort" data-control="unexposed_matched" data-denom="yes" data-spec="none" data-acute="no" data-n="1252" data-fu="120" data-name="bergen giardiasis cohort"><td><a href="pais-cohorts/bergen-giardiasis-2004.html">Bergen Giardiasis Cohort</a></td><td>Giardia duodenalis (lamblia)</td><td>Retrospective cohort</td><td>1252</td><td>120</td><td>Unexposed (matched)</td><td>Yes</td><td><span class="pill no">none</span></td></tr><tr data-pclass="virus" data-design="prospective_inception" data-control="none" data-denom="partial" data-spec="banked" data-acute="yes" data-n="" data-fu="12" data-name="brisbane ross river virus polyarthritis cohort (mylonas)"><td><a href="pais-cohorts/mylonas-rrv-polyarthritis.html">Brisbane Ross River Virus Polyarthritis Cohort (Mylonas)</a></td><td>Ross River virus</td><td>Prospective (inception)</td><td><span class="na">n/r</span></td><td>12</td><td>None</td><td>Partial</td><td><span class="pill good">banked</span> <span class="chip">acute-phase</span></td></tr><tr data-pclass="virus" data-design="prospective_non_inception" data-control="other_disease" data-denom="yes" data-spec="banked" data-acute="yes" data-n="260" data-fu="2" data-name="colombo dengue study (cds)"><td><a href="pais-cohorts/colombo-dengue.html">Colombo Dengue Study (CDS)</a></td><td>Dengue virus</td><td>Prospective (non-inception)</td><td>260</td><td>2</td><td>Other-disease</td><td>Yes</td><td><span class="pill good">banked</span> <span class="chip">acute-phase</span></td></tr><tr data-pclass="mixed" data-design="prospective_inception" data-control="none" data-denom="yes" data-spec="banked" data-acute="yes" data-n="253" data-fu="12" data-name="dubbo infection outcomes study (dios)"><td><a href="pais-cohorts/dubbo-infection-outcomes.html">Dubbo Infection Outcomes Study (DIOS)</a></td><td>Mixed (EBV / Ross River virus / Coxiella burnetii)</td><td>Prospective (inception)</td><td>253</td><td>12</td><td>None</td><td>Yes</td><td><span class="pill good">banked</span> <span class="chip">acute-phase</span></td></tr><tr data-pclass="virus" data-design="case_control" data-control="other_disease" data-denom="no" data-spec="banked" data-acute="yes" data-n="42" data-fu="" data-name="french polynesia zika–guillain-barré case-control study"><td><a href="pais-cohorts/cao-lormeau-zika-gbs.html">French Polynesia Zika–Guillain-Barré case-control study</a></td><td>Zika virus</td><td>Case-control</td><td>42</td><td><span class="na">n/r</span></td><td>Other-disease</td><td>No</td><td><span class="pill good">banked</span> <span class="chip">acute-phase</span></td></tr><tr data-pclass="virus" data-design="survey" data-control="none" data-denom="no" data-spec="none" data-acute="no" data-n="3762" data-fu="7" data-name="patient-led long covid international cohort (davis 2021)"><td><a href="pais-cohorts/davis-2021-longcovid.html">Patient-Led Long COVID international cohort (Davis 2021)</a></td><td>SARS-CoV-2</td><td>Survey</td><td>3762</td><td>7</td><td>None</td><td>No</td><td><span class="pill no">none</span></td></tr><tr data-pclass="virus" data-design="prospective_non_inception" data-control="household_contacts" data-denom="yes" data-spec="banked" data-acute="no" data-n="1126" data-fu="60" data-name="prevail iii ebola survivor cohort"><td><a href="pais-cohorts/prevail-iii-ebola.html">PREVAIL III Ebola Survivor Cohort</a></td><td>Ebola virus</td><td>Prospective (non-inception)</td><td>1126</td><td>60</td><td>Household contacts</td><td>Yes</td><td><span class="pill good">banked</span></td></tr><tr data-pclass="virus" data-design="prospective_inception" data-control="none" data-denom="yes" data-spec="banked" data-acute="yes" data-n="55" data-fu="3" data-name="sejvar west nile neuroinvasive disease cohort"><td><a href="pais-cohorts/sejvar-wnv-neuroinvasive.html">Sejvar West Nile Neuroinvasive Disease Cohort</a></td><td>West Nile virus</td><td>Prospective (inception)</td><td>55</td><td>3</td><td>None</td><td>Yes</td><td><span class="pill good">banked</span> <span class="chip">acute-phase</span></td></tr><tr data-pclass="virus" data-design="retrospective_cohort" data-control="unexposed_unmatched" data-denom="yes" data-spec="banked" data-acute="no" data-n="1094" data-fu="34" data-name="telechik cohort (réunion chikungunya)"><td><a href="pais-cohorts/telechik-reunion.html">TELECHIK cohort (Réunion chikungunya)</a></td><td>Chikungunya virus</td><td>Retrospective cohort</td><td>1094</td><td>34</td><td>Unexposed (unmatched)</td><td>Yes</td><td><span class="pill good">banked</span></td></tr><tr data-pclass="virus" data-design="case_control" data-control="healthy_convenience" data-denom="no" data-spec="none" data-acute="no" data-n="29" data-fu="36" data-name="toronto chronic post-sars cohort (moldofsky)"><td><a href="pais-cohorts/moldofsky-post-sars.html">Toronto Chronic Post-SARS Cohort (Moldofsky)</a></td><td>SARS-CoV-1</td><td>Case-control</td><td>29</td><td>36</td><td>Healthy convenience</td><td>No</td><td><span class="pill no">none</span></td></tr></tbody></table></div>
+<h2>Gap matrices</h2>
+<h3>Gap matrix — pathogen × study design</h3><p class="meta">Cell = number of cohorts. Red (empty) cells mark pathogen/design combinations where no cohort yet exists — the evidence gaps this database exists to expose.</p><div class="tablewrap"><table class="matrix"><thead><tr><th class="row"></th><th>Prospective (inception)</th><th>Prospective (non-inception)</th><th>Retrospective cohort</th><th>Case-control</th><th>Survey</th></tr></thead><tbody><tr><td class="row">Giardia duodenalis (lamblia)</td><td class="cell0"></td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Zika virus</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td></tr><tr><td class="row">Dengue virus</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">SARS-CoV-2</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cellN">1</td></tr><tr><td class="row">Mixed (EBV / Ross River virus / Coxiella burnetii)</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">SARS-CoV-1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td></tr><tr><td class="row">Ross River virus</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Ebola virus</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">West Nile virus</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Chikungunya virus</td><td class="cell0"></td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr></tbody></table></div>
+<h3>Gap matrix — pathogen × acute-phase specimens banked</h3><p class="meta">Cell = number of cohorts. Acute-phase specimens (drawn during infection, before the outcome is known) are what make a cohort useful for mechanism studies; empty cells show where they are missing.</p><div class="tablewrap"><table class="matrix"><thead><tr><th class="row"></th><th>Yes</th><th>No</th><th>Unclear</th><th>N/A</th></tr></thead><tbody><tr><td class="row">Giardia duodenalis (lamblia)</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Zika virus</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Dengue virus</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">SARS-CoV-2</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Mixed (EBV / Ross River virus / Coxiella burnetii)</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">SARS-CoV-1</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Ross River virus</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Ebola virus</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">West Nile virus</td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td><td class="cell0"></td></tr><tr><td class="row">Chikungunya virus</td><td class="cell0"></td><td class="cellN">1</td><td class="cell0"></td><td class="cell0"></td></tr></tbody></table></div>
+<footer>
+<p>Build 1.0.0-seed, compiled by <code>scripts/build_pais_cohorts.py</code>. Cohort table and detail pages are pre-rendered and work with JavaScript disabled; filtering, sorting and export are progressive enhancements. No analytics, no third-party fonts or scripts.</p>
+<p>Bulk export: <a href="data/pais-cohorts-index.json">JSON</a> · <a href="data/pais-cohorts.csv">CSV</a>. Per-cohort permalinks under <code>pais-cohorts/&lt;id&gt;.html</code>.</p>
+</footer>
+</div>
+<script>
+(function(){
+ var tb=document.getElementById('cohorts'); if(!tb) return;
+ var rows=[].slice.call(tb.tBodies[0].rows);
+ var facets=[].slice.call(document.querySelectorAll('[data-facet]'));
+ var q=document.getElementById('q');
+ function apply(){
+   var f={}; facets.forEach(function(s){ if(s.value) f[s.dataset.facet]=s.value; });
+   var term=(q&&q.value||'').toLowerCase();
+   var shown=0;
+   rows.forEach(function(r){
+     var ok=true;
+     for(var k in f){ if(r.getAttribute('data-'+k)!==f[k]){ ok=false; break; } }
+     if(ok&&term){ ok=r.getAttribute('data-name').indexOf(term)>-1; }
+     r.style.display=ok?'':'none'; if(ok)shown++;
+   });
+   var c=document.getElementById('count'); if(c)c.textContent=shown+' of '+rows.length+' cohorts';
+ }
+ facets.forEach(function(s){s.addEventListener('change',apply);});
+ if(q)q.addEventListener('input',apply);
+ // sorting
+ var ths=[].slice.call(tb.tHead.rows[0].cells); var dir={};
+ ths.forEach(function(th){ th.addEventListener('click',function(){
+   var key=th.dataset.sort, num=(key==='n'||key==='fu');
+   dir[key]=!dir[key]; var s=dir[key]?1:-1;
+   var vis=rows.slice();
+   vis.sort(function(a,b){
+     var av=a.getAttribute('data-'+ (key==='name'?'name':key))||'';
+     var bv=b.getAttribute('data-'+ (key==='name'?'name':key))||'';
+     if(key==='n'||key==='fu'){ av=parseFloat(a.getAttribute('data-'+key)); bv=parseFloat(b.getAttribute('data-'+key));
+       if(isNaN(av))av=-1; if(isNaN(bv))bv=-1; return (av-bv)*s; }
+     if(key==='pathogen'||key==='design'||key==='control'||key==='denom'){ av=a.cells[0].textContent; bv=b.cells[0].textContent; }
+     return av<bv?-s:av>bv?s:0;
+   });
+   var body=tb.tBodies[0]; vis.forEach(function(r){body.appendChild(r);});
+ });});
+ // export
+ function dl(name,txt,type){ var b=new Blob([txt],{type:type}); var u=URL.createObjectURL(b);
+   var a=document.createElement('a'); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u); }
+ var ej=document.getElementById('exp-json'), ec=document.getElementById('exp-csv');
+ if(ej)ej.addEventListener('click',function(){ fetch('data/pais-cohorts-index.json').then(function(r){return r.text();}).then(function(t){dl('pais-cohorts-index.json',t,'application/json');}); });
+ if(ec)ec.addEventListener('click',function(){ fetch('data/pais-cohorts.csv').then(function(r){return r.text();}).then(function(t){dl('pais-cohorts.csv',t,'text/csv');}); });
+ apply();
+})();
+</script>
+</body></html>
