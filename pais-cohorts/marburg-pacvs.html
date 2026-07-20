@@ -1,0 +1,69 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PACVS registry cohort (Semmler/Mundorf) — PAIS Cohort</title><style>
+:root{--bg:#fff;--fg:#1a1f26;--muted:#6b7480;--line:#e3e7ec;--card:#f7f9fb;--accent:#0b6bcb;
+--warn:#b26a00;--good:#1a7f4b;--chip:#eef2f6;--zero:#faeaea;--zerofg:#a33}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1216;--fg:#e6e9ee;--muted:#9aa4b0;--line:#252b33;
+--card:#161b21;--accent:#5aa2ea;--warn:#e0a24a;--good:#5cc68d;--chip:#1c232b;--zero:#2a1c1c;--zerofg:#e08a8a}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 18px 80px}
+a{color:var(--accent)}h1{font-size:1.7rem;margin:.2em 0}
+h2{font-size:1.2rem;margin:1.8em 0 .5em;border-bottom:1px solid var(--line);padding-bottom:.3em}
+h3{font-size:1rem;margin:1.4em 0 .3em}
+.lede{color:var(--muted);max-width:74ch}.meta{font-size:.82rem;color:var(--muted);margin:.4em 0}
+.chip{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:.78rem;margin:2px 3px 2px 0;white-space:nowrap}
+.badge{font-size:.66rem;padding:0 5px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.na{color:var(--muted);font-style:italic;font-size:.92em}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.nav a{font-size:.82rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);text-decoration:none}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:14px 0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.toolbar label{display:flex;flex-direction:column;font-size:.72rem;color:var(--muted);gap:2px}
+.toolbar select,.toolbar input{font-size:.86rem;padding:4px 6px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+.btn{cursor:pointer;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:6px 12px;font-size:.84rem}
+.btn.sec{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--card);position:sticky;top:0;cursor:pointer;white-space:nowrap}
+tbody tr:hover{background:var(--card)}
+.matrix td,.matrix th{text-align:center;padding:5px 7px}.matrix th.row,.matrix td.row{text-align:left;font-weight:600}
+.matrix .dom{background:var(--card);text-align:left;font-weight:600}
+.cell0{background:var(--zero);color:var(--zerofg)}.cellN{font-weight:700}
+.sv{color:#fff;border-radius:3px;padding:1px 4px;font-size:.76rem;display:inline-block;min-width:34px}
+.cell-nm{color:var(--muted);opacity:.45}.cell-nr{color:var(--warn)}
+.count{color:var(--muted);font-size:.85rem}.back{font-size:.85rem}
+.grid2{display:grid;grid-template-columns:190px 1fr;gap:2px 14px;font-size:.9rem}.grid2 dt{color:var(--muted)}.grid2 dd{margin:0}
+.warnbox{background:var(--zero);border:1px solid var(--line);border-left:3px solid var(--warn);padding:10px 12px;border-radius:6px;margin:10px 0;font-size:.9rem}
+.okbox{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--good);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.86rem}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted)}
+.pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line)}.pill.good{color:var(--good)}.pill.no{color:var(--muted)}
+.miss{font-size:.78rem;font-style:italic}.miss-not_measured{color:var(--muted);opacity:.6}
+.miss-measured_not_reported{color:var(--warn)}.miss-reported_as_zero{color:var(--good)}
+.miss-not_applicable{color:var(--muted)}.miss-unknown{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.76rem;color:var(--muted);margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:5px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.obs{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;background:var(--card)}
+.obs .big{font-size:1.05rem;font-weight:700}
+.sig{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem;color:var(--muted)}
+.cset{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
+.cset h4{margin:.2em 0;font-size:.9rem}
+.barrow{display:grid;grid-template-columns:250px 1fr;gap:8px;align-items:center;margin:3px 0;font-size:.82rem}
+.barrow .lab{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barwrap{position:relative;background:var(--chip);border-radius:4px;height:18px}
+.bar{position:absolute;left:0;top:0;height:18px;border-radius:4px;background:var(--accent)}
+.bar.cmp{background:var(--muted);opacity:.55;height:8px;top:5px}
+.barnum{position:relative;font-size:.72rem;padding-left:5px;line-height:18px}
+</style></head><body><div class="wrap">
+<p class="back"><a href="../pais-cohorts.html">← All cohorts</a></p>
+<h1>PACVS registry cohort (Semmler/Mundorf)</h1>
+<p class="meta"><a href="../data/cohorts/marburg-pacvs.json">source record (JSON)</a> · schema v2.0.0 · CC BY 4.0</p>
+<div class="warnbox"><strong>Design notes & limitations.</strong> Comparative registry cohort of 191 people reporting post-acute COVID-19 vaccination syndrome (PACVS) vs 89 healthy controls, with serum biomarkers measured before and 6 months after vaccination. Distinguishes the vaccine trigger class (with Nohynek). Self-referred, not denominator-defined, so prevalence figures describe the affected registry, not a population; control-group values for individual markers were not extracted here and are marked measured_not_reported.</div>
+<h2>Identity &amp; trigger</h2><dl class=grid2><dt>Cohort id</dt><dd><code>marburg-pacvs</code></dd><dt>Aliases</dt><dd>Post-Acute COVID-19 Vaccination Syndrome registry, Marburg/Düsseldorf PACVS cohort</dd><dt>Outbreak / event</dt><dd>COVID-19 vaccination campaign (2021-)</dd><dt>Pathogen</dt><dd>COVID-19 vaccine (mRNA / spike-based) (Vaccine)</dd><dt>Exposure ascertainment</dt><dd>clinical diagnosis</dd></dl>
+<h2>Design</h2><dl class=grid2><dt>Design</dt><dd>Cross-sectional</dd><dt>Denominator defined</dt><dd>No</dd><dt>Denominator method</dt><dd><span class="na">n/r</span></dd><dt>Recruitment</dt><dd>self referral</dd><dt>Time zero</dt><dd>First SARS-CoV-2 (mRNA) vaccination; chronic symptoms persisting &gt;=5 months (month)</dd><dt>Control group</dt><dd>Healthy convenience</dd></dl>
+<h2>Size &amp; attrition</h2><dl class=grid2><dt>Enrolled</dt><dd>191</dd><dt>Analysed / enrolled</dt><dd><span>191/191 (100%)</span></dd><dt>Max follow-up (months)</dt><dd>6</dd></dl>
+<h2>Biospecimens</h2><dl class=grid2><dt>Specimens</dt><dd>Yes</dd><dt>Types</dt><dd>serum</dd><dt>Acute-phase specimens</dt><dd>No</dd><dt>Biobank</dt><dd>Unknown</dd><dt>External access</dt><dd>Unknown</dd></dl>
+<h2>Observations (5)</h2><h3>Symptoms</h3><div class="obs"><p><span class="big">80%</span> <span class="badge">Proportion</span></p><dl class=grid2><dt>Measure</dt><dd>Fatigue <span class="badge">sym:fatigue</span></dd><dt>As worded</dt><dd>“malaise and chronic fatigue present in &gt;80% of cases”</dd><dt>Population</dt><dd>whole cohort · denominator Assessed at timepoint · N=n=191</dd><dt>Timing</dt><dd>6 mo (3-6 mo) · ref Current</dd><dt>Method</dt><dd>Structured checklist</dd><dt>Comparator</dt><dd>Healthy convenience: <span class="miss miss-measured_not_reported" title="measured, not reported">measured, not reported</span></dd><dt>Comparability signature</dt><dd><span class="sig">c030cf0354</span> — measure sym:fatigue · Structured checklist · ref Current · denom Assessed at timepoint · 3-6 mo · Proportion</dd><dt>Provenance</dt><dd>Abstract (&gt;80% malaise and chronic fatigue) · Manual · verified OSMF research-tracker (web-verified against source) on 2026-07-20</dd></dl></div><h3>Laboratory</h3><div class="obs"><p><span class="big">60%</span> <span class="badge">Proportion</span></p><dl class=grid2><dt>Measure</dt><dd>Interleukin-6 (elevated) <span class="badge">lab:il-6</span></dd><dt>As worded</dt><dd>“elevated interleukin-6”</dd><dt>Population</dt><dd>whole cohort · denominator Assessed at timepoint · N=n=191</dd><dt>Timing</dt><dd>6 mo (3-6 mo) · ref Current</dd><dt>Method</dt><dd>Lab assay · threshold above reference range</dd><dt>Comparator</dt><dd>Healthy convenience: <span class="miss miss-measured_not_reported" title="measured, not reported">measured, not reported</span></dd><dt>Comparability signature</dt><dd><span class="sig">1900d83c0d</span> — measure lab:il-6 · Lab assay · ref Current · denom Assessed at timepoint · 3-6 mo · Proportion</dd><dt>Provenance</dt><dd>Results (elevated IL-6 in 60%) · Manual · verified OSMF research-tracker (web-verified against source) on 2026-07-20</dd></dl></div><div class="obs"><p><span class="big">83%</span> <span class="badge">Proportion</span></p><dl class=grid2><dt>Measure</dt><dd>Interleukin-8 (elevated) <span class="badge">lab:il-8</span></dd><dt>As worded</dt><dd>“elevated interleukin-8 (reported 83-90%)”</dd><dt>Population</dt><dd>whole cohort · denominator Assessed at timepoint · N=n=191</dd><dt>Timing</dt><dd>6 mo (3-6 mo) · ref Current</dd><dt>Method</dt><dd>Lab assay · threshold above reference range</dd><dt>Comparator</dt><dd>Healthy convenience: <span class="miss miss-measured_not_reported" title="measured, not reported">measured, not reported</span></dd><dt>Comparability signature</dt><dd><span class="sig">20b5845b4e</span> — measure lab:il-8 · Lab assay · ref Current · denom Assessed at timepoint · 3-6 mo · Proportion</dd><dt>Provenance</dt><dd>Results (elevated IL-8, 83-90%) · Manual · verified OSMF research-tracker (web-verified against source) on 2026-07-20</dd></dl></div><div class="obs"><p><span class="big">80%</span> <span class="badge">Proportion</span></p><dl class=grid2><dt>Measure</dt><dd>Free tri-iodothyronine (low) <span class="badge">lab:ft3-low</span></dd><dt>As worded</dt><dd>“reduced free tri-iodine thyroxine (&gt;80%)”</dd><dt>Population</dt><dd>whole cohort · denominator Assessed at timepoint · N=n=191</dd><dt>Timing</dt><dd>6 mo (3-6 mo) · ref Current</dd><dt>Method</dt><dd>Lab assay · threshold below reference range</dd><dt>Comparator</dt><dd>Healthy convenience: <span class="miss miss-measured_not_reported" title="measured, not reported">measured, not reported</span></dd><dt>Comparability signature</dt><dd><span class="sig">4f0dbfa6c7</span> — measure lab:ft3-low · Lab assay · ref Current · denom Assessed at timepoint · 3-6 mo · Proportion</dd><dt>Provenance</dt><dd>Results (low fT3 in &gt;80%) · Manual · verified OSMF research-tracker (web-verified against source) on 2026-07-20</dd></dl></div><div class="obs"><p><span class="big">27%</span> <span class="badge">Proportion</span></p><dl class=grid2><dt>Measure</dt><dd>Serum neurofilament light chain (elevated) <span class="badge">lab:snfl</span></dd><dt>As worded</dt><dd>“elevated soluble neurofilament light chains above the 90th percentile”</dd><dt>Population</dt><dd>whole cohort · denominator Assessed at timepoint · N=n=191</dd><dt>Timing</dt><dd>6 mo (3-6 mo) · ref Current</dd><dt>Method</dt><dd>Lab assay · threshold &gt;90th percentile</dd><dt>Comparator</dt><dd>Healthy convenience: <span class="miss miss-measured_not_reported" title="measured, not reported">measured, not reported</span></dd><dt>Comparability signature</dt><dd><span class="sig">e71a8bb86a</span> — measure lab:snfl · Lab assay · ref Current · denom Assessed at timepoint · 3-6 mo · Proportion</dd><dt>Provenance</dt><dd>Results (sNfL &gt;90th percentile in 27%) · Manual · verified OSMF research-tracker (web-verified against source) on 2026-07-20</dd></dl></div>
+
+<h2>Publications</h2><ul><li>Mundorf AK, Semmler A, Heidecke H, et al. (2024). <strong>Clinical and Diagnostic Features of Post-Acute COVID-19 Vaccination Syndrome (PACVS)</strong>. <em>Vaccines (Basel)</em>. PMID <a href="https://pubmed.ncbi.nlm.nih.gov/39066428/">39066428</a> · DOI <a href="https://doi.org/10.3390/vaccines12070790">10.3390/vaccines12070790</a> <span class="chip">primary</span></li><li>Semmler A, Mundorf AK, Kuechler AS, et al. (2023). <strong>Chronic Fatigue and Dysautonomia following COVID-19 Vaccination Is Distinguished from Normal Vaccination Response by Altered Blood Markers</strong>. <em>Vaccines (Basel)</em>. PMID <a href="https://pubmed.ncbi.nlm.nih.gov/38005974/">38005974</a> · DOI <a href="https://doi.org/10.3390/vaccines11111642">10.3390/vaccines11111642</a></li></ul>
+<h2>Provenance &amp; verification</h2><dl class=grid2><dt>Registration</dt><dd><span class="na">n/r</span></dd><dt>Funders</dt><dd>not reported</dd><dt>Related cohorts</dt><dd><span class="na">none</span></dd><dt>Symptom-inventory scope</dt><dd>Targeted panel</dd><dt>Last verified</dt><dd>2026-07-20 — OSMF research-tracker (web-verified against source)</dd></dl>
+<footer><p>PAIS Cohort Database v2 · <a href="../pais-cohorts.html">back to table</a></p></footer>
+</div></body></html>
