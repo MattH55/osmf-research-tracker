@@ -1,9 +1,9 @@
 name: Validate PAIS cohorts
 
-# Schema + cross-reference validation for the PAIS cohort database.
-# Blocks merge if any cohort record breaks the schema or references a
-# missing pathogen / instrument / publication. Also verifies the committed
-# build artifacts (index JSON, CSV, HTML) are in sync with the source records.
+# Schema + cross-reference validation for the PAIS cohort database (v2, Observation model).
+# Blocks merge if any cohort breaks the v2 schema, references a missing measure / pathogen /
+# instrument / publication, or breaks a Layer-3 extension namespace that has a schema.
+# Also confirms the committed build artifacts are in sync and the frozen v1 snapshot still parses.
 
 on:
   pull_request:
@@ -11,6 +11,7 @@ on:
       - "data/cohorts/**"
       - "data/ref/**"
       - "data/pais-cohort.schema.json"
+      - "schema/ext/**"
       - "scripts/build_pais_cohorts.py"
       - ".github/workflows/validate-cohorts.yml"
   push:
@@ -19,12 +20,13 @@ on:
       - "data/cohorts/**"
       - "data/ref/**"
       - "data/pais-cohort.schema.json"
+      - "schema/ext/**"
       - "scripts/build_pais_cohorts.py"
   workflow_dispatch:
 
-# v1.1 adds symptom_findings + the Symptom reference table; validation enforces the
-# four SymptomFinding rules (mapping_note, comparator sentinel, numerator/percent
-# consistency, instrument for validated-instrument ascertainment).
+# v2 replaces Finding + SymptomFinding with one polymorphic Observation (discriminated-union
+# value + typed missingness), a unified Measure registry, comparability signatures, and
+# namespaced Layer-3 extensions. The v1.x dataset is frozen under data/v1/ at stable URLs.
 
 jobs:
   validate:
@@ -39,14 +41,23 @@ jobs:
       - name: Install validator
         run: pip install "jsonschema>=4.18"
 
-      - name: Validate cohort records against schema + cross-references
+      - name: Validate cohorts against v2 schema + cross-references + extensions
         run: python scripts/build_pais_cohorts.py --check
+
+      - name: Confirm frozen v1 snapshot still parses (both releases live one cycle)
+        run: |
+          python - <<'PY'
+          import json
+          json.load(open("data/v1/pais-cohorts-index.json", encoding="utf-8"))
+          json.load(open("data/v1/pais-cohort.schema.v1.json", encoding="utf-8"))
+          print("v1 snapshot OK")
+          PY
 
       - name: Rebuild and confirm committed artifacts are in sync
         run: |
           python scripts/build_pais_cohorts.py
-          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-symptom-findings.csv pais-cohorts.html pais-cohorts/; then
+          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv pais-cohorts.html pais-cohorts/; then
             echo "::error::Built artifacts are out of date. Run 'python scripts/build_pais_cohorts.py' and commit the result."
-            git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv pais-cohorts.html pais-cohorts/
+            git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv pais-cohorts.html pais-cohorts/
             exit 1
           fi

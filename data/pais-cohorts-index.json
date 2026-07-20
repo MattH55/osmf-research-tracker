@@ -1,7 +1,8 @@
 {
-  "schema_version": "1.1.0",
-  "generated": "1.1.0-seed",
+  "schema_version": "2.0.0",
+  "generated": "2.0.0-seed",
   "license": "CC BY 4.0",
+  "harmonisation_ruleset": "pais-harmony-v1",
   "pathogens": [
     {
       "id": "sars-cov-2",
@@ -216,13 +217,18 @@
       "validated_for": "GBS case ascertainment"
     }
   ],
-  "symptoms": [
+  "measures": [
     {
-      "id": "fatigue",
+      "id": "sym:fatigue",
+      "kind": "symptom",
       "label": "Fatigue",
-      "hpo_id": "HP:0012378",
-      "snomed_id": "84229001",
       "domain": "fatigue_pem",
+      "ontology": {
+        "hpo": "HP:0012378",
+        "snomed": "84229001",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "fatigue",
         "tiredness",
@@ -231,189 +237,430 @@
         "exhaustion",
         "fatigue or muscle weakness"
       ],
-      "definition_note": "Persistent tiredness/lack of energy reported as a symptom. Distinct from post-exertional malaise; a paper reporting only 'fatigue' maps here, not to PEM."
+      "boundary_note": "Never merged with sym:post-exertional-malaise, even where the source conflates them.",
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "post_exertional_malaise",
+      "id": "sym:post-exertional-malaise",
+      "kind": "symptom",
       "label": "Post-exertional malaise",
-      "hpo_id": null,
-      "snomed_id": "1217738000",
       "domain": "fatigue_pem",
+      "ontology": {
+        "hpo": null,
+        "snomed": "1217738000",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "post-exertional malaise",
         "PEM",
         "post-exertional symptom exacerbation",
-        "post-exertional worsening"
+        "PESE",
+        "relapse after exertion"
       ],
-      "definition_note": "Worsening of symptoms after physical/cognitive exertion, often delayed. Never merged with generic fatigue even where a paper conflates them."
+      "boundary_note": "Never merged with sym:fatigue.",
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "cfs_like_illness",
-      "label": "CFS-like illness / ME/CFS caseness",
-      "hpo_id": null,
-      "snomed_id": "52702003",
-      "domain": "fatigue_pem",
-      "synonyms": [
-        "CFS-like illness",
-        "chronic fatigue syndrome",
-        "ME/CFS",
-        "met CFS criteria",
-        "chronic fatigue syndrome-like illness"
-      ],
-      "definition_note": "Meeting a chronic fatigue syndrome case definition (a symptom-cluster outcome), as opposed to the single symptom of fatigue."
-    },
-    {
-      "id": "arthralgia",
-      "label": "Arthralgia / rheumatic musculoskeletal pain",
-      "hpo_id": "HP:0002829",
-      "snomed_id": "57676002",
-      "domain": "musculoskeletal",
-      "synonyms": [
-        "arthralgia",
-        "joint pain",
-        "rheumatic musculoskeletal pain",
-        "long-lasting rheumatic musculoskeletal pain",
-        "polyarthralgia",
-        "rheumatism"
-      ],
-      "definition_note": "Joint pain / rheumatic pain reported as a symptom (not radiographic arthritis)."
-    },
-    {
-      "id": "myalgia",
-      "label": "Myalgia",
-      "hpo_id": "HP:0003326",
-      "snomed_id": "68962001",
-      "domain": "musculoskeletal",
-      "synonyms": [
-        "myalgia",
-        "muscle pain",
-        "muscle aches"
-      ],
-      "definition_note": "Muscle pain."
-    },
-    {
-      "id": "muscle_weakness",
-      "label": "Muscle weakness",
-      "hpo_id": "HP:0001324",
-      "snomed_id": "26544005",
-      "domain": "musculoskeletal",
-      "synonyms": [
-        "muscle weakness",
-        "weakness"
-      ],
-      "definition_note": "Reduced muscle strength reported as a symptom."
-    },
-    {
-      "id": "cognitive_dysfunction",
+      "id": "sym:cognitive-dysfunction",
+      "kind": "symptom",
       "label": "Cognitive dysfunction",
-      "hpo_id": "HP:0100543",
-      "snomed_id": "386806002",
       "domain": "neurocognitive",
+      "ontology": {
+        "hpo": "HP:0100543",
+        "snomed": "386806002",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "cognitive dysfunction",
         "brain fog",
-        "concentration difficulty",
         "impaired concentration"
       ],
-      "definition_note": "Subjective or measured impairment of concentration, processing, or executive function."
+      "boundary_note": "Concentration/processing/executive impairment; distinct from sym:memory-impairment.",
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "memory_impairment",
+      "id": "sym:memory-impairment",
+      "kind": "symptom",
       "label": "Memory impairment",
-      "hpo_id": "HP:0002354",
-      "snomed_id": "386807006",
       "domain": "neurocognitive",
+      "ontology": {
+        "hpo": "HP:0002354",
+        "snomed": "386807006",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "memory troubles",
         "memory problems",
         "forgetfulness"
       ],
-      "definition_note": "Reported memory difficulty."
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "sleep_disturbance",
+      "id": "sym:sleep-disturbance",
+      "kind": "symptom",
       "label": "Sleep disturbance",
-      "hpo_id": "HP:0002360",
-      "snomed_id": "301345002",
       "domain": "sleep",
+      "ontology": {
+        "hpo": "HP:0002360",
+        "snomed": "301345002",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "sleep disorders",
         "insomnia",
-        "unrefreshing sleep",
-        "disturbed sleep"
+        "unrefreshing sleep"
       ],
-      "definition_note": "Any reported disturbance of sleep quality or continuity."
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "depression",
+      "id": "sym:depression",
+      "kind": "symptom",
       "label": "Depression / depressed mood",
-      "hpo_id": "HP:0000716",
-      "snomed_id": "35489007",
       "domain": "psychiatric",
+      "ontology": {
+        "hpo": "HP:0000716",
+        "snomed": "35489007",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "depression",
         "depressed mood",
         "low mood"
       ],
-      "definition_note": "Depressive symptoms or diagnosis reported as an outcome."
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "headache",
+      "id": "sym:headache",
+      "kind": "symptom",
       "label": "Headache",
-      "hpo_id": "HP:0002315",
-      "snomed_id": "25064002",
       "domain": "other",
+      "ontology": {
+        "hpo": "HP:0002315",
+        "snomed": "25064002",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "headache",
         "headaches"
       ],
-      "definition_note": "Headache reported as a persistent symptom."
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "dyspnea",
+      "id": "sym:dyspnea",
+      "kind": "symptom",
       "label": "Dyspnoea",
-      "hpo_id": "HP:0002094",
-      "snomed_id": "267036007",
       "domain": "respiratory",
+      "ontology": {
+        "hpo": "HP:0002094",
+        "snomed": "267036007",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "dyspnea",
-        "dyspnoea",
         "breathlessness",
         "shortness of breath"
       ],
-      "definition_note": "Breathlessness reported as a symptom."
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "anosmia_dysgeusia",
+      "id": "sym:anosmia-dysgeusia",
+      "kind": "symptom",
       "label": "Loss of smell/taste",
-      "hpo_id": "HP:0000458",
-      "snomed_id": "44169009",
       "domain": "sensory",
+      "ontology": {
+        "hpo": "HP:0000458",
+        "snomed": "44169009",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "loss of taste and/or smell",
         "anosmia",
         "ageusia",
         "dysgeusia"
       ],
-      "definition_note": "Reduced or altered smell/taste."
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
     },
     {
-      "id": "irritable_bowel_syndrome",
+      "id": "sym:myalgia",
+      "kind": "symptom",
+      "label": "Myalgia",
+      "domain": "musculoskeletal",
+      "ontology": {
+        "hpo": "HP:0003326",
+        "snomed": "68962001",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "myalgia",
+        "muscle pain"
+      ],
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "sym:muscle-weakness",
+      "kind": "symptom",
+      "label": "Muscle weakness",
+      "domain": "musculoskeletal",
+      "ontology": {
+        "hpo": "HP:0001324",
+        "snomed": "26544005",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "muscle weakness",
+        "weakness"
+      ],
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "sym:arthralgia",
+      "kind": "symptom",
+      "label": "Arthralgia / rheumatic musculoskeletal pain",
+      "domain": "musculoskeletal",
+      "ontology": {
+        "hpo": "HP:0002829",
+        "snomed": "57676002",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "arthralgia",
+        "joint pain",
+        "rheumatic musculoskeletal pain",
+        "long-lasting rheumatic musculoskeletal pain",
+        "polyarthralgia"
+      ],
+      "boundary_note": "Reported symptom, not radiographic arthritis.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "sym:irritable-bowel-syndrome",
+      "kind": "symptom",
       "label": "Irritable bowel syndrome (post-infectious)",
-      "hpo_id": null,
-      "snomed_id": "197130004",
       "domain": "gastrointestinal",
+      "ontology": {
+        "hpo": null,
+        "snomed": "197130004",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
       "synonyms": [
         "irritable bowel syndrome",
         "IBS",
         "post-infectious IBS"
       ],
-      "definition_note": "IBS meeting Rome criteria; a GI symptom-cluster outcome."
+      "boundary_note": "Rome-criteria IBS as a GI symptom-cluster outcome.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "case-def:cfs",
+      "kind": "case_definition",
+      "label": "Chronic fatigue syndrome / ME-CFS caseness",
+      "domain": "fatigue_pem",
+      "ontology": {
+        "hpo": null,
+        "snomed": "52702003",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "chronic fatigue syndrome",
+        "met CFS criteria",
+        "ME/CFS caseness"
+      ],
+      "boundary_note": "Meeting a formal CFS case definition (Fukuda/CDC etc.), a symptom-cluster outcome distinct from the single symptom sym:fatigue.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "case-def:cfs-like",
+      "kind": "case_definition",
+      "label": "CFS-like illness",
+      "domain": "fatigue_pem",
+      "ontology": {
+        "hpo": null,
+        "snomed": "52702003",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "chronic fatigue syndrome-like illness",
+        "CFS-like illness"
+      ],
+      "boundary_note": "Author-defined CFS-like caseness that does not claim a formal case definition.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "func:recovery",
+      "kind": "functional",
+      "label": "Felt fully recovered",
+      "domain": "constitutional",
+      "ontology": {
+        "hpo": null,
+        "snomed": null,
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "felt fully recovered",
+        "full recovery"
+      ],
+      "boundary_note": "Self-reported global recovery.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "func:qol-impairment",
+      "kind": "functional",
+      "label": "Impaired quality of life",
+      "domain": "constitutional",
+      "ontology": {
+        "hpo": null,
+        "snomed": null,
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "impaired quality of life",
+        "severely affected quality of life",
+        "functionally-impairing symptoms"
+      ],
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "func:unable-to-work",
+      "kind": "functional",
+      "label": "Not working due to illness",
+      "domain": "constitutional",
+      "ontology": {
+        "hpo": null,
+        "snomed": null,
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "not working due to illness",
+        "unable to work"
+      ],
+      "boundary_note": null,
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "func:any-persistent-symptom",
+      "kind": "functional",
+      "label": "Any persistent symptom",
+      "domain": "constitutional",
+      "ontology": {
+        "hpo": null,
+        "snomed": null,
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "any persistent symptom",
+        "persistent symptoms"
+      ],
+      "boundary_note": "A composite 'one or more symptoms' outcome; not a specific symptom and not comparable to single-symptom prevalences.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "event:narcolepsy",
+      "kind": "event",
+      "label": "Narcolepsy (incident)",
+      "domain": "sleep",
+      "ontology": {
+        "hpo": "HP:0030050",
+        "snomed": "60380001",
+        "loinc": null
+      },
+      "default_value_type": "rate",
+      "synonyms": [
+        "narcolepsy",
+        "incident narcolepsy"
+      ],
+      "boundary_note": "Incident diagnosed narcolepsy, typically an incidence rate.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "event:guillain-barre-syndrome",
+      "kind": "event",
+      "label": "Guillain-Barré syndrome",
+      "domain": "neuropathic",
+      "ontology": {
+        "hpo": "HP:0007113",
+        "snomed": "40956001",
+        "loinc": null
+      },
+      "default_value_type": "proportion",
+      "synonyms": [
+        "Guillain-Barré syndrome",
+        "GBS"
+      ],
+      "boundary_note": "Acute post-infectious immune neuropathy.",
+      "unit": null,
+      "unit_ucum": null
+    },
+    {
+      "id": "physio:skeletal-muscle-pathology",
+      "kind": "physiologic",
+      "label": "Skeletal muscle pathology (biopsy)",
+      "domain": "musculoskeletal",
+      "ontology": {
+        "hpo": null,
+        "snomed": null,
+        "loinc": null
+      },
+      "default_value_type": "qualitative",
+      "synonyms": [
+        "exercise-induced myopathy",
+        "muscle amyloid deposits",
+        "muscle fibre atrophy/necrosis"
+      ],
+      "boundary_note": "Tissue-level muscle findings from biopsy; typically qualitative or paired_change (pre/post exertion), not a prevalence.",
+      "unit": null,
+      "unit_ucum": null
     }
   ],
   "cohorts": [
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "appelman-2024-lc-muscle",
       "name": "Amsterdam Long COVID muscle-biopsy PEM cohort (Appelman)",
       "aliases": [
@@ -487,11 +734,59 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [],
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "appelman-myopathy-postpem",
+          "cohort_id": "appelman-2024-lc-muscle",
+          "publication_id": "appelman-2024",
+          "schema_version": "2.0.0",
+          "measure_id": "physio:skeletal-muscle-pathology",
+          "measure_verbatim": "exercise-induced myopathy, metabolic disturbance and amyloid-containing deposits in skeletal muscle, worsening after post-exertional malaise",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 25
+          },
+          "timing": {
+            "timepoint_months": null,
+            "timepoint_band": "unspecified",
+            "reference_period": "not_applicable",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "physiologic_test",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "qualitative",
+            "text": "Muscle biopsies after a two-day CPET-induced post-exertional malaise showed severe exercise-induced myopathy (atrophic fibres, focal necrosis), local and systemic metabolic disturbance, and amyloid-containing deposits; abnormalities were worse post-PEM than at baseline. No prevalence is reported — this is a mechanistic tissue finding.",
+            "n_supporting": 25
+          },
+          "comparator": {
+            "group": "healthy_convenience",
+            "value": {
+              "status": "measured_not_reported"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Abstract / Results (muscle biopsy pre/post exercise)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "blomberg-2021-bergen-covid",
       "name": "Bergen COVID-19 home-isolated cohort (Blomberg)",
       "aliases": [
@@ -560,199 +855,368 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "blomberg-persist-6mo",
-          "publication_id": "blomberg-2021",
-          "outcome": "other",
-          "outcome_verbatim": "any persistent symptom at 6 months (whole cohort)",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 6,
-          "n_with_outcome": 189,
-          "n_assessed": 312,
-          "percent": 61,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (61%, 189 of 312, persistent symptoms at 6 months)"
-        },
-        {
-          "id": "blomberg-young-6mo",
-          "publication_id": "blomberg-2021",
-          "outcome": "other",
-          "outcome_verbatim": "persistent symptoms at 6 months among home-isolated young adults aged 16-30",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 6,
-          "n_with_outcome": 32,
-          "n_assessed": 61,
-          "percent": 52,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (52%, 32 of 61, young home-isolated adults)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": [
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "blomberg-persist-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
+          "publication_id": "blomberg-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "func:any-persistent-symptom",
+          "measure_verbatim": "any persistent symptom at 6 months (whole cohort)",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 312
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 189,
+            "denominator": 312,
+            "percent": 61,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (61%, 189 of 312, persistent symptoms at 6 months)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "blomberg-young-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
+          "publication_id": "blomberg-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "func:any-persistent-symptom",
+          "measure_verbatim": "persistent symptoms at 6 months among home-isolated young adults aged 16-30",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 61
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 32,
+            "denominator": 61,
+            "percent": 52,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (52%, 32 of 61, young home-isolated adults)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
         {
           "id": "blomberg-fatigue-young-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
           "publication_id": "blomberg-2021",
-          "symptom_verbatim": "fatigue",
-          "symptom_id": "fatigue",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": null,
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": 13,
-          "n_assessed": 61,
-          "percent": 21,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "exact",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (home-isolated adults 16-30: fatigue 21%, 13 of 61)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "fatigue",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 61
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 13,
+            "denominator": 61,
+            "percent": 21,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (home-isolated adults 16-30: fatigue 21%, 13 of 61)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "blomberg-anosmia-young-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
           "publication_id": "blomberg-2021",
-          "symptom_verbatim": "loss of taste and/or smell",
-          "symptom_id": "anosmia_dysgeusia",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": null,
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": 17,
-          "n_assessed": 61,
-          "percent": 28,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "exact",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (home-isolated adults 16-30: loss of taste/smell 28%, 17 of 61)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:anosmia-dysgeusia",
+          "measure_verbatim": "loss of taste and/or smell",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 61
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 17,
+            "denominator": 61,
+            "percent": 28,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (home-isolated adults 16-30: loss of taste/smell 28%, 17 of 61)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "blomberg-dyspnea-young-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
           "publication_id": "blomberg-2021",
-          "symptom_verbatim": "dyspnea",
-          "symptom_id": "dyspnea",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": null,
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": 8,
-          "n_assessed": 61,
-          "percent": 13,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "exact",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (home-isolated adults 16-30: dyspnea 13%, 8 of 61)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:dyspnea",
+          "measure_verbatim": "dyspnea",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 61
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 8,
+            "denominator": 61,
+            "percent": 13,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (home-isolated adults 16-30: dyspnea 13%, 8 of 61)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "blomberg-cognitive-young-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
           "publication_id": "blomberg-2021",
-          "symptom_verbatim": "impaired concentration",
-          "symptom_id": "cognitive_dysfunction",
-          "mapping_confidence": "close",
-          "mapping_note": "Reported as 'impaired concentration'; mapped to cognitive dysfunction.",
-          "ascertainment": "structured_checklist",
-          "instrument_id": null,
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": 8,
-          "n_assessed": 61,
-          "percent": 13,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "exact",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (home-isolated adults 16-30: impaired concentration 13%, 8 of 61)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:cognitive-dysfunction",
+          "measure_verbatim": "impaired concentration",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 61
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 8,
+            "denominator": 61,
+            "percent": 13,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (home-isolated adults 16-30: impaired concentration 13%, 8 of 61)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "blomberg-memory-young-6mo",
+          "cohort_id": "blomberg-2021-bergen-covid",
           "publication_id": "blomberg-2021",
-          "symptom_verbatim": "memory problems",
-          "symptom_id": "memory_impairment",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": null,
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": 7,
-          "n_assessed": 61,
-          "percent": 11,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "exact",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (home-isolated adults 16-30: memory problems 11%, 7 of 61)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:memory-impairment",
+          "measure_verbatim": "memory problems",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 61
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 7,
+            "denominator": 61,
+            "percent": 11,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (home-isolated adults 16-30: memory problems 11%, 7 of 61)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         }
       ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "bergen-giardiasis-2004",
       "name": "Bergen Giardiasis Cohort",
       "aliases": [
@@ -832,58 +1296,130 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "bergen-ibs-6yr",
-          "publication_id": "hanevik-2014",
-          "outcome": "ibs",
-          "outcome_verbatim": "irritable bowel syndrome 6 years after giardiasis",
-          "instrument_id": "rome-criteria-ibs",
-          "timepoint_months": 72,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 39.4,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "risk_difference",
-          "p_value": null,
-          "source_locator": "Results/Abstract (IBS 39.4% in exposed, significantly elevated vs controls)"
-        },
-        {
-          "id": "bergen-cf-6yr",
-          "publication_id": "hanevik-2014",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "chronic fatigue 6 years after giardiasis",
-          "instrument_id": "chalder-fatigue-scale",
-          "timepoint_months": 72,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 30.8,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "risk_difference",
-          "p_value": null,
-          "source_locator": "Results/Abstract (chronic fatigue 30.8% in exposed, significantly elevated vs controls)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "bergen-ibs-6yr",
+          "cohort_id": "bergen-giardiasis-2004",
+          "publication_id": "hanevik-2014",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:irritable-bowel-syndrome",
+          "measure_verbatim": "irritable bowel syndrome 6 years after giardiasis",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 72,
+            "timepoint_band": "24mo+",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "rome-criteria-ibs",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 39.4,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (IBS 39.4% in exposed, significantly elevated vs controls)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "bergen-cf-6yr",
+          "cohort_id": "bergen-giardiasis-2004",
+          "publication_id": "hanevik-2014",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "chronic fatigue 6 years after giardiasis",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 72,
+            "timepoint_band": "24mo+",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "chalder-fatigue-scale",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 30.8,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (chronic fatigue 30.8% in exposed, significantly elevated vs controls)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "mylonas-rrv-polyarthritis",
       "name": "Brisbane Ross River Virus Polyarthritis Cohort (Mylonas)",
       "aliases": [
@@ -969,17 +1505,17 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": []
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "katz-2009-mononucleosis",
       "name": "Chicago adolescent post-mononucleosis cohort (Katz)",
       "aliases": [
@@ -1055,78 +1591,172 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "katz-cfs-6mo",
-          "publication_id": "katz-2009",
-          "outcome": "mecfs_criteria_met",
-          "outcome_verbatim": "met criteria for chronic fatigue syndrome 6 months after infectious mononucleosis",
-          "instrument_id": null,
-          "timepoint_months": 6,
-          "n_with_outcome": 39,
-          "n_assessed": 301,
-          "percent": 13,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (13% at 6 months)"
-        },
-        {
-          "id": "katz-cfs-12mo",
-          "publication_id": "katz-2009",
-          "outcome": "mecfs_criteria_met",
-          "outcome_verbatim": "met criteria for chronic fatigue syndrome 12 months after infectious mononucleosis",
-          "instrument_id": null,
-          "timepoint_months": 12,
-          "n_with_outcome": null,
-          "n_assessed": 301,
-          "percent": 7,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (7% at 12 months)"
-        },
-        {
-          "id": "katz-cfs-24mo",
-          "publication_id": "katz-2009",
-          "outcome": "mecfs_criteria_met",
-          "outcome_verbatim": "met criteria for chronic fatigue syndrome 24 months after infectious mononucleosis",
-          "instrument_id": null,
-          "timepoint_months": 24,
-          "n_with_outcome": null,
-          "n_assessed": 301,
-          "percent": 4,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (4% at 24 months)"
-        }
-      ],
       "symptom_inventory_scope": "single_domain",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "katz-cfs-6mo",
+          "cohort_id": "katz-2009-mononucleosis",
+          "publication_id": "katz-2009",
+          "schema_version": "2.0.0",
+          "measure_id": "case-def:cfs",
+          "measure_verbatim": "met criteria for chronic fatigue syndrome 6 months after infectious mononucleosis",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 301
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 39,
+            "denominator": 301,
+            "percent": 13,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (13% at 6 months)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "katz-cfs-12mo",
+          "cohort_id": "katz-2009-mononucleosis",
+          "publication_id": "katz-2009",
+          "schema_version": "2.0.0",
+          "measure_id": "case-def:cfs",
+          "measure_verbatim": "met criteria for chronic fatigue syndrome 12 months after infectious mononucleosis",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 301
+          },
+          "timing": {
+            "timepoint_months": 12,
+            "timepoint_band": "6-12mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 301,
+            "percent": 7,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (7% at 12 months)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "katz-cfs-24mo",
+          "cohort_id": "katz-2009-mononucleosis",
+          "publication_id": "katz-2009",
+          "schema_version": "2.0.0",
+          "measure_id": "case-def:cfs",
+          "measure_verbatim": "met criteria for chronic fatigue syndrome 24 months after infectious mononucleosis",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 301
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 301,
+            "percent": 4,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (4% at 24 months)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "colombo-dengue",
       "name": "Colombo Dengue Study (CDS)",
       "aliases": [
@@ -1193,38 +1823,68 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "cds-fatigue-2mo",
-          "publication_id": "sigera-2021",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "fatigue at 2 months post-infection",
-          "instrument_id": "chalder-fatigue-scale",
-          "timepoint_months": 2,
-          "n_with_outcome": 51,
-          "n_assessed": 158,
-          "percent": 32,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": 4.93,
-          "effect_type": "rr",
-          "p_value": null,
-          "source_locator": "Results/Abstract (51/158 dengue patients; RR 4.93, 95% CI 2.3–10.4 vs non-dengue)"
-        }
-      ],
       "symptom_inventory_scope": "single_domain",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "cds-fatigue-2mo",
+          "cohort_id": "colombo-dengue",
+          "publication_id": "sigera-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "fatigue at 2 months post-infection",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 158
+          },
+          "timing": {
+            "timepoint_months": 2,
+            "timepoint_band": "0-3mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "chalder-fatigue-scale",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 51,
+            "denominator": 158,
+            "percent": 32,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (51/158 dengue patients; RR 4.93, 95% CI 2.3–10.4 vs non-dengue)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "dubbo-infection-outcomes",
       "name": "Dubbo Infection Outcomes Study (DIOS)",
       "aliases": [
@@ -1300,38 +1960,70 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "dubbo-cfs-6mo",
-          "publication_id": "hickie-2006",
-          "outcome": "mecfs_criteria_met",
-          "outcome_verbatim": "met diagnostic criteria for a chronic fatigue syndrome at 6 months",
-          "instrument_id": null,
-          "timepoint_months": 6,
-          "n_with_outcome": null,
-          "n_assessed": 253,
-          "percent": 11,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (approx. 11% met CFS criteria at 6 months)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "dubbo-cfs-6mo",
+          "cohort_id": "dubbo-infection-outcomes",
+          "publication_id": "hickie-2006",
+          "schema_version": "2.0.0",
+          "measure_id": "case-def:cfs",
+          "measure_verbatim": "met diagnostic criteria for a chronic fatigue syndrome at 6 months",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 253
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 253,
+            "percent": 11,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (approx. 11% met CFS criteria at 6 months)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "nohynek-2012-pandemrix-narcolepsy",
       "name": "Finland Pandemrix childhood narcolepsy cohort (Nohynek)",
       "aliases": [
@@ -1389,38 +2081,81 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "narcolepsy-rate-ratio",
-          "publication_id": "nohynek-2012",
-          "outcome": "other",
-          "outcome_verbatim": "narcolepsy incidence 9.0 per 100 000 person-years in vaccinated vs 0.7 in unvaccinated children (rate ratio 12.7)",
-          "instrument_id": null,
-          "timepoint_months": null,
-          "n_with_outcome": 46,
-          "n_assessed": null,
-          "percent": null,
-          "ci_low": 6.1,
-          "ci_high": 30.8,
-          "ci_method": "95% CI (rate ratio)",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": 12.7,
-          "effect_type": "rr",
-          "p_value": null,
-          "source_locator": "Results/Abstract (rate ratio 12.7, 95% CI 6.1-30.8)"
-        }
-      ],
       "symptom_inventory_scope": "none",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "narcolepsy-rate-ratio",
+          "cohort_id": "nohynek-2012-pandemrix-narcolepsy",
+          "publication_id": "nohynek-2012",
+          "schema_version": "2.0.0",
+          "measure_id": "event:narcolepsy",
+          "measure_verbatim": "narcolepsy incidence 9.0 per 100 000 person-years in vaccinated vs 0.7 in unvaccinated children (rate ratio 12.7)",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "person_time",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": null,
+            "timepoint_band": "unspecified",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "rate",
+            "events": 46,
+            "person_time": {
+              "status": "measured_not_reported"
+            },
+            "person_time_unit": "per 100000 person-years",
+            "rate": 9.0,
+            "ci": null
+          },
+          "comparator": {
+            "group": "unexposed_unmatched",
+            "value": {
+              "type": "rate",
+              "rate": 0.7,
+              "person_time_unit": "per 100000 person-years"
+            },
+            "effect": {
+              "estimate": 12.7,
+              "effect_type": "rr",
+              "ci": [
+                6.1,
+                30.8
+              ]
+            }
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (rate ratio 12.7, 95% CI 6.1-30.8)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "cao-lormeau-zika-gbs",
       "name": "French Polynesia Zika–Guillain-Barré case-control study",
       "aliases": [
@@ -1487,38 +2222,68 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "zika-gbs-serology",
-          "publication_id": "cao-lormeau-2016",
-          "outcome": "other",
-          "outcome_verbatim": "Guillain-Barré syndrome patients with serological evidence of recent Zika virus infection (anti-ZIKV IgM or IgG)",
-          "instrument_id": "brighton-gbs-criteria",
-          "timepoint_months": 0,
-          "n_with_outcome": 41,
-          "n_assessed": 42,
-          "percent": 98,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (41/42 GBS cases had anti-ZIKV IgM or IgG)"
-        }
-      ],
       "symptom_inventory_scope": "single_domain",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "zika-gbs-serology",
+          "cohort_id": "cao-lormeau-zika-gbs",
+          "publication_id": "cao-lormeau-2016",
+          "schema_version": "2.0.0",
+          "measure_id": "event:guillain-barre-syndrome",
+          "measure_verbatim": "Guillain-Barré syndrome patients with serological evidence of recent Zika virus infection (anti-ZIKV IgM or IgG)",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 42
+          },
+          "timing": {
+            "timepoint_months": 0,
+            "timepoint_band": "acute",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "brighton-gbs-criteria",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 41,
+            "denominator": 42,
+            "percent": 98,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (41/42 GBS cases had anti-ZIKV IgM or IgG)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "lam-2009-sars-survivors",
       "name": "Hong Kong SARS survivors 4-year follow-up (Lam)",
       "aliases": [
@@ -1584,58 +2349,122 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "lam-chronic-fatigue-4yr",
-          "publication_id": "lam-2009",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "chronic fatigue at ~4 years after SARS",
-          "instrument_id": null,
-          "timepoint_months": 48,
-          "n_with_outcome": null,
-          "n_assessed": 181,
-          "percent": 40.3,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (40.3% chronic fatigue)"
-        },
-        {
-          "id": "lam-cfs-4yr",
-          "publication_id": "lam-2009",
-          "outcome": "mecfs_criteria_met",
-          "outcome_verbatim": "met modified CDC criteria for chronic fatigue syndrome at ~4 years after SARS",
-          "instrument_id": null,
-          "timepoint_months": 48,
-          "n_with_outcome": null,
-          "n_assessed": 181,
-          "percent": 27.1,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (27.1% met CFS criteria)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "lam-chronic-fatigue-4yr",
+          "cohort_id": "lam-2009-sars-survivors",
+          "publication_id": "lam-2009",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "chronic fatigue at ~4 years after SARS",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 181
+          },
+          "timing": {
+            "timepoint_months": 48,
+            "timepoint_band": "24mo+",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 181,
+            "percent": 40.3,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (40.3% chronic fatigue)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "lam-cfs-4yr",
+          "cohort_id": "lam-2009-sars-survivors",
+          "publication_id": "lam-2009",
+          "schema_version": "2.0.0",
+          "measure_id": "case-def:cfs",
+          "measure_verbatim": "met modified CDC criteria for chronic fatigue syndrome at ~4 years after SARS",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 181
+          },
+          "timing": {
+            "timepoint_months": 48,
+            "timepoint_band": "24mo+",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 181,
+            "percent": 27.1,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (27.1% met CFS criteria)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "huang-2021-wuhan",
       "name": "Jinyintan (Wuhan) COVID-19 discharge cohort (Huang)",
       "aliases": [
@@ -1731,67 +2560,118 @@
           "is_primary_cohort_paper": false
         }
       ],
-      "findings": [
-        {
-          "id": "huang-fatigue-6mo",
-          "publication_id": "huang-2021",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "fatigue or muscle weakness at 6 months after symptom onset",
-          "instrument_id": null,
-          "timepoint_months": 6,
-          "n_with_outcome": 1038,
-          "n_assessed": 1655,
-          "percent": 63,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (fatigue or muscle weakness 63%, 1038 of 1655)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": [
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "huang-fatigue-6mo",
+          "cohort_id": "huang-2021-wuhan",
+          "publication_id": "huang-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "fatigue or muscle weakness at 6 months after symptom onset",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 1655
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 1038,
+            "denominator": 1655,
+            "percent": 63,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (fatigue or muscle weakness 63%, 1038 of 1655)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
         {
           "id": "huang-fatigue-6mo-sf",
+          "cohort_id": "huang-2021-wuhan",
           "publication_id": "huang-2021",
-          "symptom_verbatim": "fatigue or muscle weakness",
-          "symptom_id": "fatigue",
-          "mapping_confidence": "close",
-          "mapping_note": "Reported as the compound item 'fatigue or muscle weakness'; mapped to fatigue (muscle weakness is tracked separately as a concept but this item cannot be split).",
-          "ascertainment": "structured_checklist",
-          "instrument_id": null,
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "assessed_at_timepoint",
-          "n_with_symptom": 1038,
-          "n_assessed": 1655,
-          "percent": 63,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "exact",
-          "comparator_percent": "not_reported",
-          "comparator_n": null,
-          "comparator_group": "unexposed_matched",
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (fatigue or muscle weakness 63%, 1038 of 1655)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "fatigue or muscle weakness",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 1655
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 1038,
+            "denominator": 1655,
+            "percent": 63,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "unexposed_matched",
+            "value": {
+              "status": "measured_not_reported"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (fatigue or muscle weakness 63%, 1038 of 1655)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         }
       ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "aucott-slice-ptlds",
       "name": "Johns Hopkins SLICE early-Lyme cohort (Aucott/Rebman)",
       "aliases": [
@@ -1866,38 +2746,73 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "aucott-ptld-1yr",
-          "publication_id": "aucott-2022",
-          "outcome": "qol_impairment",
-          "outcome_verbatim": "functionally-impairing persistent symptoms (post-treatment Lyme disease) after ideal treatment of early Lyme disease vs non-Lyme controls",
-          "instrument_id": "sf-36",
-          "timepoint_months": 12,
-          "n_with_outcome": null,
-          "n_assessed": 234,
-          "percent": 14,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": 4,
-          "comparator_n": 49,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (14% of treated Lyme patients vs 4% of controls)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "aucott-ptld-1yr",
+          "cohort_id": "aucott-slice-ptlds",
+          "publication_id": "aucott-2022",
+          "schema_version": "2.0.0",
+          "measure_id": "func:qol-impairment",
+          "measure_verbatim": "functionally-impairing persistent symptoms (post-treatment Lyme disease) after ideal treatment of early Lyme disease vs non-Lyme controls",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 234
+          },
+          "timing": {
+            "timepoint_months": 12,
+            "timepoint_band": "6-12mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "sf-36",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 234,
+            "percent": 14,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "healthy_convenience",
+            "value": {
+              "type": "proportion",
+              "percent": 4,
+              "precision": "exact",
+              "denominator": 49
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (14% of treated Lyme patients vs 4% of controls)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "white-1998-glandular-fever",
       "name": "London post-glandular-fever fatigue cohort (White)",
       "aliases": [
@@ -1970,38 +2885,76 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "white-acute-fatigue",
-          "publication_id": "white-1998",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "acute fatigue syndrome at onset after glandular fever (47%) vs after ordinary upper respiratory tract infection (20%)",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 0,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 47,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": 20,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (acute fatigue syndrome 47% GF vs 20% URTI)"
-        }
-      ],
       "symptom_inventory_scope": "single_domain",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "white-acute-fatigue",
+          "cohort_id": "white-1998-glandular-fever",
+          "publication_id": "white-1998",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "acute fatigue syndrome at onset after glandular fever (47%) vs after ordinary upper respiratory tract infection (20%)",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 0,
+            "timepoint_band": "acute",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 47,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "other_disease",
+            "value": {
+              "type": "proportion",
+              "percent": 20,
+              "precision": "exact"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (acute fatigue syndrome 47% GF vs 20% URTI)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "morroy-netherlands-qfever",
       "name": "Netherlands Q-fever outbreak cohort (Morroy)",
       "aliases": [
@@ -2067,58 +3020,130 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "qfever-fatigue-longterm",
-          "publication_id": "morroy-2011",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "severely affected by fatigue 12-26 months after acute Q-fever",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 18,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 43.5,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (fatigue severely affected 43.5%)"
-        },
-        {
-          "id": "qfever-qol-longterm",
-          "publication_id": "morroy-2011",
-          "outcome": "qol_impairment",
-          "outcome_verbatim": "severely affected general quality of life 12-26 months after acute Q-fever",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 18,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 44.9,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (general quality of life severely affected 44.9%)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "qfever-fatigue-longterm",
+          "cohort_id": "morroy-netherlands-qfever",
+          "publication_id": "morroy-2011",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "severely affected by fatigue 12-26 months after acute Q-fever",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 18,
+            "timepoint_band": "12-24mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 43.5,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (fatigue severely affected 43.5%)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "qfever-qol-longterm",
+          "cohort_id": "morroy-netherlands-qfever",
+          "publication_id": "morroy-2011",
+          "schema_version": "2.0.0",
+          "measure_id": "func:qol-impairment",
+          "measure_verbatim": "severely affected general quality of life 12-26 months after acute Q-fever",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 18,
+            "timepoint_band": "12-24mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 44.9,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (general quality of life severely affected 44.9%)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "davis-2021-longcovid",
       "name": "Patient-Led Long COVID international cohort (Davis 2021)",
       "aliases": [
@@ -2189,183 +3214,416 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "davis-fatigue-6mo",
-          "publication_id": "davis-2021",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "fatigue reported among respondents symptomatic after month 6",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 6,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 80.0,
-          "ci_low": 78.5,
-          "ci_high": 81.6,
-          "ci_method": "95% CI",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (most likely symptoms after month 6)"
-        },
-        {
-          "id": "davis-pem-6mo",
-          "publication_id": "davis-2021",
-          "outcome": "pem",
-          "outcome_verbatim": "post-exertional malaise reported among respondents symptomatic after month 6",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 6,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 73.3,
-          "ci_low": 71.5,
-          "ci_high": 75.1,
-          "ci_method": "95% CI",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (most likely symptoms after month 6)"
-        },
-        {
-          "id": "davis-cognitive-6mo",
-          "publication_id": "davis-2021",
-          "outcome": "neurocognitive",
-          "outcome_verbatim": "cognitive dysfunction reported among respondents symptomatic after month 6",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 6,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 58.4,
-          "ci_low": 56.5,
-          "ci_high": 60.2,
-          "ci_method": "95% CI",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (most likely symptoms after month 6)"
-        },
-        {
-          "id": "davis-work-7mo",
-          "publication_id": "davis-2021",
-          "outcome": "unable_to_work",
-          "outcome_verbatim": "not working at time of survey due to illness (a further 45.2% required a reduced work schedule)",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 7,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 22.3,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (employment impact)"
-        }
-      ],
       "symptom_inventory_scope": "comprehensive_inventory",
       "n_symptoms_queried": 203,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": [
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "davis-fatigue-6mo",
+          "cohort_id": "davis-2021-longcovid",
+          "publication_id": "davis-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "fatigue reported among respondents symptomatic after month 6",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 80.0,
+            "ci": [
+              78.5,
+              81.6
+            ],
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (most likely symptoms after month 6)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "davis-pem-6mo",
+          "cohort_id": "davis-2021-longcovid",
+          "publication_id": "davis-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:post-exertional-malaise",
+          "measure_verbatim": "post-exertional malaise reported among respondents symptomatic after month 6",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 73.3,
+            "ci": [
+              71.5,
+              75.1
+            ],
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (most likely symptoms after month 6)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "davis-cognitive-6mo",
+          "cohort_id": "davis-2021-longcovid",
+          "publication_id": "davis-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:cognitive-dysfunction",
+          "measure_verbatim": "cognitive dysfunction reported among respondents symptomatic after month 6",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 58.4,
+            "ci": [
+              56.5,
+              60.2
+            ],
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (most likely symptoms after month 6)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "davis-work-7mo",
+          "cohort_id": "davis-2021-longcovid",
+          "publication_id": "davis-2021",
+          "schema_version": "2.0.0",
+          "measure_id": "func:unable-to-work",
+          "measure_verbatim": "not working at time of survey due to illness (a further 45.2% required a reduced work schedule)",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 7,
+            "timepoint_band": "6-12mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 22.3,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (employment impact)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
         {
           "id": "davis-fatigue-6mo-sf",
+          "cohort_id": "davis-2021-longcovid",
           "publication_id": "davis-2021",
-          "symptom_verbatim": "fatigue",
-          "symptom_id": "fatigue",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": "somatic-symptom-self-report",
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": null,
-          "n_assessed": 3762,
-          "percent": 80.0,
-          "ci_low": 78.5,
-          "ci_high": 81.6,
-          "value_precision": "approximate",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results, symptoms after month 6 (fatigue 80.0%, 95% CI 78.5-81.6)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "fatigue",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 3762
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 3762,
+            "percent": 80.0,
+            "ci": [
+              78.5,
+              81.6
+            ],
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results, symptoms after month 6 (fatigue 80.0%, 95% CI 78.5-81.6)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "davis-pem-6mo-sf",
+          "cohort_id": "davis-2021-longcovid",
           "publication_id": "davis-2021",
-          "symptom_verbatim": "post-exertional malaise",
-          "symptom_id": "post_exertional_malaise",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": "somatic-symptom-self-report",
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": null,
-          "n_assessed": 3762,
-          "percent": 73.3,
-          "ci_low": 71.5,
-          "ci_high": 75.1,
-          "value_precision": "approximate",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results, symptoms after month 6 (post-exertional malaise 73.3%, 95% CI 71.5-75.1)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:post-exertional-malaise",
+          "measure_verbatim": "post-exertional malaise",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 3762
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 3762,
+            "percent": 73.3,
+            "ci": [
+              71.5,
+              75.1
+            ],
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results, symptoms after month 6 (post-exertional malaise 73.3%, 95% CI 71.5-75.1)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "davis-cognitive-6mo-sf",
+          "cohort_id": "davis-2021-longcovid",
           "publication_id": "davis-2021",
-          "symptom_verbatim": "cognitive dysfunction",
-          "symptom_id": "cognitive_dysfunction",
-          "mapping_confidence": "exact",
-          "mapping_note": "Percentages are among respondents still symptomatic after month 6; the exact subset denominator was not extracted, so n_assessed shows the full analysed cohort (3762) and value_precision is marked approximate.",
-          "ascertainment": "structured_checklist",
-          "instrument_id": "somatic-symptom-self-report",
-          "severity_threshold": null,
-          "reference_period": "current",
-          "timepoint_months": 6,
-          "denominator_basis": "symptomatic_subset",
-          "n_with_symptom": null,
-          "n_assessed": 3762,
-          "percent": 58.4,
-          "ci_low": 56.5,
-          "ci_high": 60.2,
-          "value_precision": "approximate",
-          "comparator_percent": null,
-          "comparator_n": null,
-          "comparator_group": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results, symptoms after month 6 (cognitive dysfunction 58.4%, 95% CI 56.5-60.2)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:cognitive-dysfunction",
+          "measure_verbatim": "cognitive dysfunction",
+          "population": {
+            "scope": "subgroup",
+            "stratum": null,
+            "denominator_basis": "symptomatic_subset",
+            "n_assessed": 3762
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "current",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 3762,
+            "percent": 58.4,
+            "ci": [
+              56.5,
+              60.2
+            ],
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results, symptoms after month 6 (cognitive dysfunction 58.4%, 95% CI 56.5-60.2)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         }
       ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "phosp-covid",
       "name": "PHOSP-COVID (UK post-hospitalisation COVID-19)",
       "aliases": [
@@ -2454,58 +3712,118 @@
           "is_primary_cohort_paper": false
         }
       ],
-      "findings": [
-        {
-          "id": "phosp-recovered-5mo",
-          "publication_id": "phosp-2022-1yr",
-          "outcome": "recovered",
-          "outcome_verbatim": "felt fully recovered at 5 months after discharge",
-          "instrument_id": null,
-          "timepoint_months": 5,
-          "n_with_outcome": 501,
-          "n_assessed": 1965,
-          "percent": 25.5,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (501 of 1965, 25.5% fully recovered at 5 months)"
-        },
-        {
-          "id": "phosp-recovered-1yr",
-          "publication_id": "phosp-2022-1yr",
-          "outcome": "recovered",
-          "outcome_verbatim": "felt fully recovered at 1 year after discharge",
-          "instrument_id": null,
-          "timepoint_months": 12,
-          "n_with_outcome": 232,
-          "n_assessed": 804,
-          "percent": 28.9,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (232 of 804, 28.9% fully recovered at 1 year)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "phosp-recovered-5mo",
+          "cohort_id": "phosp-covid",
+          "publication_id": "phosp-2022-1yr",
+          "schema_version": "2.0.0",
+          "measure_id": "func:recovery",
+          "measure_verbatim": "felt fully recovered at 5 months after discharge",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 1965
+          },
+          "timing": {
+            "timepoint_months": 5,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 501,
+            "denominator": 1965,
+            "percent": 25.5,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (501 of 1965, 25.5% fully recovered at 5 months)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
+        {
+          "id": "phosp-recovered-1yr",
+          "cohort_id": "phosp-covid",
+          "publication_id": "phosp-2022-1yr",
+          "schema_version": "2.0.0",
+          "measure_id": "func:recovery",
+          "measure_verbatim": "felt fully recovered at 1 year after discharge",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 804
+          },
+          "timing": {
+            "timepoint_months": 12,
+            "timepoint_band": "6-12mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": 232,
+            "denominator": 804,
+            "percent": 28.9,
+            "ci": null,
+            "precision": "exact"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (232 of 804, 28.9% fully recovered at 1 year)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "prevail-iii-ebola",
       "name": "PREVAIL III Ebola Survivor Cohort",
       "aliases": [
@@ -2588,38 +3906,82 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "prevail-uveitis",
-          "publication_id": "prevail-iii-2019",
-          "outcome": "other",
-          "outcome_verbatim": "uveitis (ocular sequela) significantly more prevalent among survivors than close contacts",
-          "instrument_id": null,
-          "timepoint_months": 6,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": null,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (uveitis among six symptoms significantly more common in survivors vs contacts; exact percentages pending extraction)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "extensions": {
+        "ebola": {
+          "baseline_ocular_exam_n": 789,
+          "uveitis_laterality": "not_reported"
+        }
+      },
+      "observations": [
+        {
+          "id": "prevail-uveitis",
+          "cohort_id": "prevail-iii-ebola",
+          "publication_id": "prevail-iii-2019",
+          "schema_version": "2.0.0",
+          "measure_id": "func:any-persistent-symptom",
+          "measure_verbatim": "uveitis (ocular sequela) significantly more prevalent among survivors than close contacts",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 6,
+            "timepoint_band": "3-6mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": {
+              "status": "measured_not_reported"
+            },
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (uveitis among six symptoms significantly more common in survivors vs contacts; exact percentages pending extraction)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "marimoutou-2012-gendarmes",
       "name": "Réunion chikungunya gendarmes comparative cohort (Marimoutou)",
       "aliases": [
@@ -2706,11 +4068,11 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [],
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": []
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "schilte-2013-chikungunya-reunion",
       "name": "Réunion chikungunya viremic inception cohort (Schilte)",
       "aliases": [
@@ -2790,28 +4152,6 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "schilte-arthralgia-36mo",
-          "publication_id": "schilte-2013",
-          "outcome": "arthralgia",
-          "outcome_verbatim": "experienced chikungunya-associated arthralgia during the 3-year follow-up",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 36,
-          "n_with_outcome": null,
-          "n_assessed": 180,
-          "percent": 60,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Abstract (about 60% experienced arthralgia over 3 years)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
@@ -2827,10 +4167,64 @@
       ],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "schilte-arthralgia-36mo",
+          "cohort_id": "schilte-2013-chikungunya-reunion",
+          "publication_id": "schilte-2013",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:arthralgia",
+          "measure_verbatim": "experienced chikungunya-associated arthralgia during the 3-year follow-up",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 180
+          },
+          "timing": {
+            "timepoint_months": 36,
+            "timepoint_band": "24mo+",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 180,
+            "percent": 60,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Abstract (about 60% experienced arthralgia over 3 years)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "sejvar-wnv-neuroinvasive",
       "name": "Sejvar West Nile Neuroinvasive Disease Cohort",
       "aliases": [
@@ -2908,38 +4302,70 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "wnv-weakness-onset",
-          "publication_id": "sejvar-2014",
-          "outcome": "other",
-          "outcome_verbatim": "limb weakness at initial clinical presentation",
-          "instrument_id": null,
-          "timepoint_months": 0,
-          "n_with_outcome": null,
-          "n_assessed": 55,
-          "percent": 49,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (49% weakness, 35% tremor, 16% cranial neuropathy at presentation)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "wnv-weakness-onset",
+          "cohort_id": "sejvar-wnv-neuroinvasive",
+          "publication_id": "sejvar-2014",
+          "schema_version": "2.0.0",
+          "measure_id": "func:any-persistent-symptom",
+          "measure_verbatim": "limb weakness at initial clinical presentation",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 55
+          },
+          "timing": {
+            "timepoint_months": 0,
+            "timepoint_band": "acute",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 55,
+            "percent": 49,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (49% weakness, 35% tremor, 16% cranial neuropathy at presentation)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "telechik-reunion",
       "name": "TELECHIK cohort (Réunion chikungunya)",
       "aliases": [
@@ -3021,28 +4447,6 @@
           "is_primary_cohort_paper": false
         }
       ],
-      "findings": [
-        {
-          "id": "telechik-msk-24mo",
-          "publication_id": "gerardin-2011",
-          "outcome": "arthralgia",
-          "outcome_verbatim": "musculoskeletal pain reported ~2 years after infection (43% in CHIKV-positive vs 17% in CHIKV-negative)",
-          "instrument_id": "somatic-symptom-self-report",
-          "timepoint_months": 24,
-          "n_with_outcome": null,
-          "n_assessed": 512,
-          "percent": 43.0,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": 17.0,
-          "comparator_n": 582,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (musculoskeletal pain 43% in CHIK+ vs 17% in CHIK-)"
-        }
-      ],
       "symptom_inventory_scope": "targeted_panel",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
@@ -3058,95 +4462,232 @@
       ],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": [
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "telechik-msk-24mo",
+          "cohort_id": "telechik-reunion",
+          "publication_id": "gerardin-2011",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:arthralgia",
+          "measure_verbatim": "musculoskeletal pain reported ~2 years after infection (43% in CHIKV-positive vs 17% in CHIKV-negative)",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 512
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 512,
+            "percent": 43.0,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "unexposed_unmatched",
+            "value": {
+              "type": "proportion",
+              "percent": 17.0,
+              "precision": "exact",
+              "denominator": 582
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (musculoskeletal pain 43% in CHIK+ vs 17% in CHIK-)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        },
         {
           "id": "telechik-lrmsp-sf",
+          "cohort_id": "telechik-reunion",
           "publication_id": "duvignaud-2018",
-          "symptom_verbatim": "long-lasting rheumatic musculoskeletal pain",
-          "symptom_id": "arthralgia",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": "somatic-symptom-self-report",
-          "severity_threshold": null,
-          "reference_period": "since_infection",
-          "timepoint_months": 24,
-          "denominator_basis": "assessed_at_timepoint",
-          "n_with_symptom": null,
-          "n_assessed": 512,
-          "percent": 29.9,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "derived",
-          "comparator_percent": 8.9,
-          "comparator_n": 582,
-          "comparator_group": "seronegative_contacts",
-          "effect_estimate": null,
-          "effect_type": "pr",
-          "p_value": null,
-          "source_locator": "Weighted prevalence, CHIKV+ vs CHIKV- (LRMSP 29.9% vs 8.9%)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:arthralgia",
+          "measure_verbatim": "long-lasting rheumatic musculoskeletal pain",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 512
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "since_infection",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 512,
+            "percent": 29.9,
+            "ci": null,
+            "precision": "derived"
+          },
+          "comparator": {
+            "group": "seronegative_contacts",
+            "value": {
+              "type": "proportion",
+              "percent": 8.9,
+              "precision": "exact",
+              "denominator": 582
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Weighted prevalence, CHIKV+ vs CHIKV- (LRMSP 29.9% vs 8.9%)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "telechik-icf-sf",
+          "cohort_id": "telechik-reunion",
           "publication_id": "duvignaud-2018",
-          "symptom_verbatim": "idiopathic chronic fatigue",
-          "symptom_id": "fatigue",
-          "mapping_confidence": "close",
-          "mapping_note": "Reported as 'idiopathic chronic fatigue' (a fatigue outcome distinct from the CFS-like caseness reported separately).",
-          "ascertainment": "structured_checklist",
-          "instrument_id": "somatic-symptom-self-report",
-          "severity_threshold": null,
-          "reference_period": "since_infection",
-          "timepoint_months": 24,
-          "denominator_basis": "assessed_at_timepoint",
-          "n_with_symptom": null,
-          "n_assessed": 512,
-          "percent": 34.3,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "derived",
-          "comparator_percent": 12.7,
-          "comparator_n": 582,
-          "comparator_group": "seronegative_contacts",
-          "effect_estimate": null,
-          "effect_type": "pr",
-          "p_value": null,
-          "source_locator": "Weighted prevalence, CHIKV+ vs CHIKV- (idiopathic chronic fatigue 34.3% vs 12.7%)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "idiopathic chronic fatigue",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 512
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "since_infection",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 512,
+            "percent": 34.3,
+            "ci": null,
+            "precision": "derived"
+          },
+          "comparator": {
+            "group": "seronegative_contacts",
+            "value": {
+              "type": "proportion",
+              "percent": 12.7,
+              "precision": "exact",
+              "denominator": 582
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Weighted prevalence, CHIKV+ vs CHIKV- (idiopathic chronic fatigue 34.3% vs 12.7%)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         },
         {
           "id": "telechik-cfslike-sf",
+          "cohort_id": "telechik-reunion",
           "publication_id": "duvignaud-2018",
-          "symptom_verbatim": "chronic fatigue syndrome-like illness",
-          "symptom_id": "cfs_like_illness",
-          "mapping_confidence": "exact",
-          "mapping_note": null,
-          "ascertainment": "structured_checklist",
-          "instrument_id": "somatic-symptom-self-report",
-          "severity_threshold": null,
-          "reference_period": "since_infection",
-          "timepoint_months": 24,
-          "denominator_basis": "assessed_at_timepoint",
-          "n_with_symptom": null,
-          "n_assessed": 512,
-          "percent": 21.5,
-          "ci_low": null,
-          "ci_high": null,
-          "value_precision": "derived",
-          "comparator_percent": 6.7,
-          "comparator_n": 582,
-          "comparator_group": "seronegative_contacts",
-          "effect_estimate": null,
-          "effect_type": "pr",
-          "p_value": null,
-          "source_locator": "Weighted prevalence, CHIKV+ vs CHIKV- (CFS-like illness 21.5% vs 6.7%)",
-          "last_verified": "2026-07-20"
+          "schema_version": "2.0.0",
+          "measure_id": "case-def:cfs-like",
+          "measure_verbatim": "chronic fatigue syndrome-like illness",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 512
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "since_infection",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "structured_checklist",
+            "instrument_id": "somatic-symptom-self-report",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 512,
+            "percent": 21.5,
+            "ci": null,
+            "precision": "derived"
+          },
+          "comparator": {
+            "group": "seronegative_contacts",
+            "value": {
+              "type": "proportion",
+              "percent": 6.7,
+              "precision": "exact",
+              "denominator": 582
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Weighted prevalence, CHIKV+ vs CHIKV- (CFS-like illness 21.5% vs 6.7%)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
         }
       ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "moldofsky-post-sars",
       "name": "Toronto Chronic Post-SARS Cohort (Moldofsky)",
       "aliases": [
@@ -3213,38 +4754,72 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "postsars-fatigue",
-          "publication_id": "moldofsky-2011",
-          "outcome": "chronic_fatigue",
-          "outcome_verbatim": "persistent fatigue among post-SARS subjects unable to return to former occupation",
-          "instrument_id": null,
-          "timepoint_months": 24,
-          "n_with_outcome": null,
-          "n_assessed": 22,
-          "percent": null,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": null,
-          "comparator_n": 7,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results (chronic fatigue, myalgia, weakness, depression, non-restorative sleep vs healthy controls)"
-        }
-      ],
       "symptom_inventory_scope": "single_domain",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "postsars-fatigue",
+          "cohort_id": "moldofsky-post-sars",
+          "publication_id": "moldofsky-2011",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:fatigue",
+          "measure_verbatim": "persistent fatigue among post-SARS subjects unable to return to former occupation",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "assessed_at_timepoint",
+            "n_assessed": 22
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": null,
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": 22,
+            "percent": {
+              "status": "measured_not_reported"
+            },
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "none",
+            "value": {
+              "status": "not_applicable"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results (chronic fatigue, myalgia, weakness, depression, non-restorative sleep vs healthy controls)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     },
     {
-      "schema_version": "1.0.0",
+      "schema_version": "2.0.0",
       "id": "walkerton-health-study",
       "name": "Walkerton Health Study (post-infectious IBS)",
       "aliases": [
@@ -3316,35 +4891,73 @@
           "is_primary_cohort_paper": true
         }
       ],
-      "findings": [
-        {
-          "id": "walkerton-piibs-2yr",
-          "publication_id": "marshall-2006",
-          "outcome": "ibs",
-          "outcome_verbatim": "post-infectious irritable bowel syndrome 2 years after outbreak in those with clinically suspected gastroenteritis vs those without acute gastroenteritis",
-          "instrument_id": "rome-criteria-ibs",
-          "timepoint_months": 24,
-          "n_with_outcome": null,
-          "n_assessed": null,
-          "percent": 36.2,
-          "ci_low": null,
-          "ci_high": null,
-          "ci_method": null,
-          "comparator_percent": 10.1,
-          "comparator_n": null,
-          "effect_estimate": null,
-          "effect_type": "none",
-          "p_value": null,
-          "source_locator": "Results/Abstract (36.2% with suspected GE vs 10.1% without)"
-        }
-      ],
       "symptom_inventory_scope": "single_domain",
       "n_symptoms_queried": null,
       "symptom_instrument_note": null,
       "related_cohorts": [],
       "last_verified": "2026-07-20",
       "verified_by": "OSMF research-tracker (web-verified against source)",
-      "symptom_findings": []
+      "harmonisation_ruleset": "pais-harmony-v1",
+      "observations": [
+        {
+          "id": "walkerton-piibs-2yr",
+          "cohort_id": "walkerton-health-study",
+          "publication_id": "marshall-2006",
+          "schema_version": "2.0.0",
+          "measure_id": "sym:irritable-bowel-syndrome",
+          "measure_verbatim": "post-infectious irritable bowel syndrome 2 years after outbreak in those with clinically suspected gastroenteritis vs those without acute gastroenteritis",
+          "population": {
+            "scope": "whole_cohort",
+            "stratum": null,
+            "denominator_basis": "unclear",
+            "n_assessed": {
+              "status": "measured_not_reported"
+            }
+          },
+          "timing": {
+            "timepoint_months": 24,
+            "timepoint_band": "12-24mo",
+            "reference_period": "not_reported",
+            "is_cumulative": false
+          },
+          "method": {
+            "ascertainment": "unclear",
+            "instrument_id": "rome-criteria-ibs",
+            "severity_threshold": null,
+            "blinded_assessment": "not_reported"
+          },
+          "value": {
+            "type": "proportion",
+            "numerator": {
+              "status": "measured_not_reported"
+            },
+            "denominator": {
+              "status": "measured_not_reported"
+            },
+            "percent": 36.2,
+            "ci": null,
+            "precision": "approximate"
+          },
+          "comparator": {
+            "group": "unexposed_unmatched",
+            "value": {
+              "type": "proportion",
+              "percent": 10.1,
+              "precision": "exact"
+            },
+            "effect": null
+          },
+          "harmonised": null,
+          "provenance": {
+            "source_locator": "Results/Abstract (36.2% with suspected GE vs 10.1% without)",
+            "extracted_by": null,
+            "extracted_on": null,
+            "verified_by": "OSMF research-tracker (web-verified against source)",
+            "verified_on": "2026-07-20",
+            "extraction_method": "manual"
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research.opensourcemed.info/data/pais-cohort.schema.json",
+  "title": "PAIS Cohort",
+  "description": "One post-infectious syndrome (PAIS) study COHORT (a followed study population), not a publication. One cohort has many publications and many findings. Controlled vocabularies are closed enums; 'not_reported' and 'not_applicable' are explicit values distinct from a missing field. Every publication needs a DOI or PMID; every finding needs a source_locator. See pais-cohort-database-spec.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "id", "name", "pathogen_id", "pathogen_class", "exposure_ascertainment",
+    "design", "denominator_defined", "recruitment_source", "time_zero_definition", "time_zero_precision",
+    "control_group", "case_definition", "pem_assessed", "specimens_collected",
+    "acute_phase_specimens", "biobank_status", "symptom_inventory_scope",
+    "last_verified", "verified_by", "publications", "findings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string" },
+    "aliases": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "outbreak_event": { "type": ["string", "null"] },
+
+    "pathogen_id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "pathogen_class": { "enum": ["virus", "bacterium", "protozoan", "vaccine", "mixed", "unknown"] },
+    "exposure_ascertainment": { "enum": ["pcr", "serology", "culture", "clinical_diagnosis", "registry_code", "self_report", "mixed", "not_reported"] },
+
+    "design": { "enum": ["prospective_inception", "prospective_non_inception", "retrospective_cohort", "cross_sectional", "case_control", "registry_linkage", "self_controlled", "survey"] },
+    "denominator_defined": { "enum": ["yes", "partial", "no", "unclear"] },
+    "denominator_method": { "type": ["string", "null"] },
+    "recruitment_source": { "enum": ["community", "population_registry", "hospital", "outpatient_clinic", "occupational", "household_contacts", "self_referral", "patient_organisation", "mixed"] },
+    "time_zero_definition": { "type": "string" },
+    "time_zero_precision": { "enum": ["exact_date", "week", "month", "quarter", "year", "undefined"] },
+    "control_group": { "enum": ["none", "unexposed_matched", "unexposed_unmatched", "seronegative_contacts", "household_contacts", "other_disease", "self_control", "healthy_convenience"] },
+    "control_matching_variables": { "type": "array", "items": { "type": "string" }, "default": [] },
+
+    "n_source_population": { "type": ["integer", "null"] },
+    "n_enrolled": { "type": ["integer", "null"] },
+    "n_analysed": { "type": ["integer", "null"] },
+    "followups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["months"],
+        "properties": {
+          "months": { "type": "number" },
+          "n_assessed": { "type": ["integer", "null"] },
+          "n_lost": { "type": ["integer", "null"] }
+        }
+      },
+      "default": []
+    },
+    "max_followup_months": { "type": ["number", "null"] },
+
+    "instruments": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "case_definition": { "enum": ["fukuda_1994", "canadian_consensus", "iom_nam_2015", "who_pcc_2021", "nice_ng188", "chalder_threshold", "author_defined", "none", "not_reported", "not_applicable"] },
+    "pem_assessed": { "enum": ["yes_validated_instrument", "yes_single_item", "no", "unclear"] },
+    "objective_measures": {
+      "type": "array",
+      "items": { "enum": ["cpet_single_day", "cpet_two_day", "tilt_table", "nasa_lean", "nirs", "muscle_biopsy", "other_biopsy", "imaging", "actigraphy", "polysomnography", "lab_panel", "none"] },
+      "default": []
+    },
+
+    "specimens_collected": { "type": "boolean" },
+    "specimen_types": {
+      "type": "array",
+      "items": { "enum": ["serum", "plasma", "pbmc", "whole_blood", "stool", "saliva", "urine", "csf", "muscle_tissue", "synovial", "other"] },
+      "default": []
+    },
+    "acute_phase_specimens": { "enum": ["yes", "no", "unclear", "not_applicable"] },
+    "storage": { "type": ["string", "null"] },
+    "biobank_status": { "enum": ["active", "archived", "destroyed", "unknown", "not_applicable"] },
+    "consent_future_use": { "enum": ["broad", "disease_specific", "none", "unknown", "not_applicable"] },
+    "external_access": { "enum": ["open_application", "collaboration_only", "closed", "unknown", "not_applicable"] },
+    "contact": { "type": ["string", "null"] },
+
+    "registration_id": { "type": ["string", "null"] },
+    "funders": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "conflicts": { "type": ["string", "null"] },
+    "data_availability": { "type": ["string", "null"] },
+    "notes": { "type": ["string", "null"] },
+
+    "symptom_inventory_scope": { "enum": ["comprehensive_inventory", "targeted_panel", "single_domain", "incidental", "none"] },
+    "n_symptoms_queried": { "type": ["integer", "null"] },
+    "symptom_instrument_note": { "type": ["string", "null"] },
+
+    "related_cohorts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "relation"],
+        "properties": {
+          "id": { "type": "string" },
+          "relation": { "enum": ["parent", "child", "overlapping_population", "sibling_analysis"] }
+        }
+      },
+      "default": []
+    },
+
+    "last_verified": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "verified_by": { "type": "string", "minLength": 1 },
+
+    "publications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "year", "is_primary_cohort_paper"],
+        "anyOf": [
+          { "required": ["doi"] },
+          { "required": ["pmid"] }
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "title": { "type": "string" },
+          "authors": { "type": ["string", "null"] },
+          "year": { "type": "integer", "minimum": 1900, "maximum": 2100 },
+          "journal": { "type": ["string", "null"] },
+          "doi": { "type": "string", "pattern": "^10\\.\\d{4,9}/[-._;()/:A-Za-z0-9]+$" },
+          "pmid": { "type": "string", "pattern": "^[0-9]{1,9}$" },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "open_access": { "type": "boolean", "default": false },
+          "is_primary_cohort_paper": { "type": "boolean" }
+        }
+      }
+    },
+
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "publication_id", "outcome", "outcome_verbatim", "timepoint_months", "source_locator"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "publication_id": { "type": "string" },
+          "outcome": { "enum": ["chronic_fatigue", "mecfs_criteria_met", "pem", "arthralgia", "myalgia", "joint_swelling", "neurocognitive", "sleep_disturbance", "orthostatic_intolerance", "ibs", "depression", "anxiety", "ptsd", "qol_impairment", "unable_to_work", "recovered", "other"] },
+          "outcome_verbatim": { "type": "string" },
+          "instrument_id": { "type": ["string", "null"] },
+          "timepoint_months": { "type": ["number", "null"] },
+          "n_with_outcome": { "type": ["integer", "null"] },
+          "n_assessed": { "type": ["integer", "null"] },
+          "percent": { "type": ["number", "null"] },
+          "ci_low": { "type": ["number", "null"] },
+          "ci_high": { "type": ["number", "null"] },
+          "ci_method": { "type": ["string", "null"] },
+          "comparator_percent": { "type": ["number", "null"] },
+          "comparator_n": { "type": ["integer", "null"] },
+          "effect_estimate": { "type": ["number", "null"] },
+          "effect_type": { "enum": ["rr", "or", "hr", "prevalence_ratio", "risk_difference", "none"] },
+          "p_value": { "type": ["number", "null"] },
+          "source_locator": { "type": "string", "minLength": 1 }
+        }
+      },
+      "default": []
+    },
+
+    "symptom_findings": {
+      "type": "array",
+      "description": "Symptom-prevalence findings. Kept separate from findings so that every symptom number carries its ascertainment method, reference period, and denominator basis. See pais-cohort-db-v1.1-symptoms-spec.md.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id", "publication_id", "symptom_verbatim", "symptom_id", "mapping_confidence",
+          "ascertainment", "reference_period", "timepoint_months", "denominator_basis",
+          "n_assessed", "percent", "value_precision", "source_locator", "last_verified"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "publication_id": { "type": "string" },
+          "symptom_verbatim": { "type": "string", "minLength": 1 },
+          "symptom_id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+          "mapping_confidence": { "enum": ["exact", "close", "broad", "uncertain"] },
+          "mapping_note": { "type": ["string", "null"] },
+          "ascertainment": { "enum": ["validated_instrument_threshold", "structured_checklist", "open_ended_report", "clinician_assessed", "medical_record_code", "physical_exam", "unclear"] },
+          "instrument_id": { "type": ["string", "null"] },
+          "severity_threshold": { "type": ["string", "null"] },
+          "reference_period": { "enum": ["current", "past_7d", "past_30d", "past_3mo", "since_infection", "ever_since_onset", "not_reported"] },
+          "timepoint_months": { "type": "number" },
+          "denominator_basis": { "enum": ["enrolled", "assessed_at_timepoint", "symptomatic_subset", "responders", "unclear"] },
+          "n_with_symptom": { "type": ["integer", "null"] },
+          "n_assessed": { "type": "integer" },
+          "percent": { "type": "number", "minimum": 0, "maximum": 100 },
+          "ci_low": { "type": ["number", "null"] },
+          "ci_high": { "type": ["number", "null"] },
+          "value_precision": { "enum": ["exact", "approximate", "derived", "digitised_from_figure"] },
+          "comparator_percent": {
+            "description": "number when a control-group prevalence is reported; the string 'not_reported' when the cohort has controls but this symptom was not reported in them; null when there is no control group.",
+            "anyOf": [
+              { "type": "number", "minimum": 0, "maximum": 100 },
+              { "const": "not_reported" },
+              { "type": "null" }
+            ]
+          },
+          "comparator_n": { "type": ["integer", "null"] },
+          "comparator_group": { "type": ["string", "null"] },
+          "effect_estimate": { "type": ["number", "null"] },
+          "effect_type": { "enum": ["rr", "or", "pr", "rd", "none"] },
+          "p_value": { "type": ["number", "null"] },
+          "source_locator": { "type": "string", "minLength": 1 },
+          "last_verified": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+        }
+      },
+      "default": []
+    }
+  }
+}
