@@ -52,7 +52,8 @@ LABELS = {
     "other_disease": "Other-disease", "self_control": "Self-control", "healthy_convenience": "Healthy convenience",
     "population_norm": "Population norm", "not_reported": "Not reported",
     "yes": "Yes", "partial": "Partial", "no": "No", "unclear": "Unclear",
-    "virus": "Virus", "bacterium": "Bacterium", "protozoan": "Protozoan", "vaccine": "Vaccine", "mixed": "Mixed",
+    "virus": "Virus", "bacterium": "Bacterium", "protozoan": "Protozoan", "vaccine": "Vaccine",
+    "environmental": "Environmental / exposure", "mixed": "Mixed",
     "unknown": "Unknown", "not_applicable": "N/A",
     "yes_validated_instrument": "Yes (validated instrument)", "yes_single_item": "Yes (single item)",
     "comprehensive_inventory": "Comprehensive inventory", "targeted_panel": "Targeted panel",
@@ -730,7 +731,7 @@ def cohorts_by_pathogen(cohorts):
     groups = {}
     for _, d in cohorts:
         groups.setdefault(d["pathogen_id"], []).append(d)
-    order = {c: i for i, c in enumerate(["virus", "bacterium", "protozoan", "vaccine", "mixed", "unknown"])}
+    order = {c: i for i, c in enumerate(["virus", "bacterium", "protozoan", "vaccine", "environmental", "mixed", "unknown"])}
 
     def keyf(pid):
         cls = groups[pid][0]["pathogen_class"]

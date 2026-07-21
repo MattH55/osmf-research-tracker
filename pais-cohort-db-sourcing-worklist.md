@@ -66,7 +66,7 @@ candidate against the live `data/cohorts/` directory before authoring a file.
 
 ### Patterns visible in the gaps
 - **0 ME/CFS or fibromyalgia cohorts** — the largest gap (see §4.A)
-- **0 Gulf War Illness cohorts** — requires schema decision (see §3.2)
+- **0 Gulf War Illness cohorts** — `environmental` trigger class now ready (see §3.2)
 - **0 post-sepsis/post-ICU cohorts** — strong comparator class, completely absent
 - **0 PANS/PANDAS cohorts** — entire IACC branch missing
 - **0 post-polio, enterovirus, parvovirus B19 cohorts** — known PAIS literature, no coverage
@@ -98,14 +98,14 @@ comparators for the fatigue-pain-spectrum IACCs.
 
 ### 3.2 Non-infectious exposure syndromes (Gulf War Illness)
 
-The trigger is deployment/chemical exposure, not a pathogen. The current `pathogen_class` enum
-has no "environmental/toxic" value. **This is a schema decision for the maintainer — do not
-silently bend the enum.** Options to propose in your PR: (a) add `environmental` to the
-`pathogen_class` enum and to the build's label map, with a pathogen entry like
-`gulf-war-exposures`; or (b) use class `mixed`/`unknown` with an explanatory `notes` and an
-`unverified_source`/`no_control`-style flag. Recommend (a); implement only after the maintainer
-agrees, because it is an enum change that touches the schema, the build labels, and the gap
-matrices.
+The trigger is deployment/chemical exposure, not a pathogen. **DECIDED (approved by maintainer):
+the trigger model is generalised to non-infectious exposures.** The `pathogen_class` enum now
+includes `environmental`, the build label map renders it "Environmental / exposure", the
+class-ordering places it after `vaccine`, and a trigger entry `gulf-war-exposures`
+(class `environmental`) exists in `data/ref/pathogens.json`. You may author GWI (and other
+exposure) cohorts directly against `pathogen_class: "environmental"` — no further schema change
+or sign-off is required for this class. Record the specific exposures in the trigger's `vector`
+and the cohort `notes`.
 
 This same `environmental` class would also cover: World Trade Center first-responder cohorts
 (toxic dust exposure → chronic respiratory/neurocognitive), Agent Orange exposure cohorts,
@@ -292,10 +292,11 @@ in the debate.
 - **German neuroborreliosis cohorts** — multiple small German studies; verify if any have
   sufficient follow-up and control data.
 
-### D. Gulf War Illness — resolve the trigger-class question (§3.2) first
+### D. Gulf War Illness — trigger-class question resolved (§3.2)
 
-**Priority: MEDIUM (blocked on schema decision).** Open the `environmental` pathogen_class
-discussion with the maintainer before authoring any GWI cohort files. GWI is the most
+**Priority: MEDIUM (unblocked).** The `environmental` pathogen_class and the
+`gulf-war-exposures` trigger now exist, so GWI cohorts can be authored directly — no further
+sign-off needed. GWI is the most
 important non-infectious comparator for the IACC spectrum — its symptom overlap with ME/CFS
 and fibromyalgia is well documented, and the deployment-exposure model is a clean test of
 "multi-system insult → chronic illness" independent of microbial trigger.
@@ -750,7 +751,7 @@ Check existing entries (§2 table) before adding. New triggers likely needed:
 |---|---|---|
 | `unknown-trigger` | `unknown` | For ME/CFS, fibromyalgia, and other idiopathic cohorts |
 | `mixed-infectious` | `mixed` | For cohorts with heterogeneous/unknown infectious onsets |
-| `gulf-war-exposures` | **pending enum change** | See §3.2 — requires adding `environmental` to `pathogen_class` |
+| `gulf-war-exposures` | `environmental` | Added and ready (§3.2); reuse for other exposure syndromes (WTC dust, Agent Orange, Camp Lejeune) |
 | `poliovirus` | `virus` | Post-polio syndrome |
 | `parvovirus-b19` | `virus` | Parvovirus B19 arthropathy / fatigue |
 | `enterovirus-coxsackie` | `virus` | Enterovirus / Coxsackie B chronic sequelae |
@@ -965,8 +966,9 @@ This order maximises early impact on the gap matrices and defers work blocked on
 decisions:
 
 ### Phase 1 — Foundation (ME/CFS, Long COVID controls, schema prerequisites)
-1. **Schema-enum conversation with maintainer** (environmental pathogen class, §3.2) —
-   open the conversation early so it doesn't block Phase 2.
+1. **Schema prerequisites — DONE.** The `environmental` pathogen class and
+   `gulf-war-exposures` trigger are already in place (§3.2); `unknown-trigger` and
+   `mixed-infectious` exist for idiopathic/mixed onsets. No enum work remains.
 2. **ME/CFS measure/instrument additions** — DSQ, IOM/CCC/ICC case definitions,
    Bell scale, CPET/tilt measures. Do these before authoring ME/CFS cohort files so
    records validate on first build.
@@ -984,7 +986,7 @@ decisions:
 ### Phase 3 — Trigger diversity and landmark studies
 8. **EBV→MS (§4.F1, Bjornevik)** — a landmark that showcases `event:`/`effect_only`
    at scale.
-9. **Gulf War Illness (§4.D)** — once the environmental enum is approved; start with
+9. **Gulf War Illness (§4.D)** — trigger class ready (`environmental`); start with
    Steele/Kansas and Millennium Cohort.
 10. **PANS/PANDAS (§4.H)** — group A strep → OCD/tics; Swedo NIMH cohorts.
 11. **Post-polio (§4.F2)** — classic post-viral fatigue, new trigger.
@@ -1004,9 +1006,9 @@ decisions:
 21. **Brucellosis, leptospirosis, scrub typhus, Mycoplasma (§4.N)** — fill out
     taxonomic coverage.
 
-Do the schema-enum conversation (environmental trigger class) **before** authoring Gulf
-War cohorts, and the ME/CFS measure/instrument additions **before** authoring ME/CFS
-cohorts, so the records validate on first build.
+The environmental trigger class is already in place, so Gulf War cohorts are unblocked. Do
+the ME/CFS measure/instrument additions **before** authoring ME/CFS cohorts, so the records
+validate on first build.
 
 ---
 
