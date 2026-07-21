@@ -17,7 +17,7 @@ exists, else preserved and flagged 'unvalidated', never rejected). Non-zero exit
 Usage: python scripts/build_pais_cohorts.py [--check]
 """
 from __future__ import annotations
-import json, glob, os, sys, html, csv, io, hashlib
+import json, glob, os, sys, html, csv, io, hashlib, subprocess
 
 BUILD_VERSION = "2.0.0-seed"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -937,6 +937,10 @@ def main():
             f.write(build_disease_page(pid, ds, pmap, mmap))
     print(f"Built: index, cohorts.csv, observations.csv, pais-cohorts.html, "
           f"{len(cohorts)} detail pages, {len(diseases)} disease pages.")
+    # The renderer writes complete HTML documents, so refresh the shared metadata
+    # and sitemap only after every PAIS page has been emitted.
+    seo = os.path.join(ROOT, "scripts", "build_site_seo.py")
+    subprocess.run([sys.executable, seo], check=True)
 
 
 if __name__ == "__main__":
