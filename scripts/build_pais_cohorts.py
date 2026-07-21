@@ -84,6 +84,11 @@ LABELS = {
     "parent": "Parent", "child": "Child",
     "rr": "RR", "or": "OR", "hr": "HR", "pr": "PR", "rd": "RD", "smd": "SMD", "beta": "β",
     "manual": "Manual", "assisted_verified": "Assisted (verified)",
+    "preprint": "preprint", "grey_literature": "grey literature", "patient_reported": "patient-reported",
+    "not_peer_reviewed": "not peer-reviewed", "self_selected": "self-selected", "small_sample": "small sample",
+    "author_conflict": "author conflict", "unverified_source": "unverified source",
+    "single_timepoint": "single timepoint", "no_control": "no control",
+    "journal": "Journal", "registry": "Registry", "dataset": "Dataset", "report": "Report",
 }
 
 
@@ -287,6 +292,9 @@ tbody tr:hover{background:var(--card)}
 .okbox{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--good);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.86rem}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted)}
 .pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line)}.pill.good{color:var(--good)}.pill.no{color:var(--muted)}
+.flag{display:inline-block;font-size:.66rem;padding:0 6px;border-radius:4px;border:1px solid var(--warn);color:var(--warn);background:transparent;margin:1px 3px 1px 0;white-space:nowrap}
+.flagbox{background:var(--zero);border:1px solid var(--line);border-left:3px solid var(--warn);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.85rem}
+.disease h3{margin-top:1.2em}
 .miss{font-size:.78rem;font-style:italic}.miss-not_measured{color:var(--muted);opacity:.6}
 .miss-measured_not_reported{color:var(--warn)}.miss-reported_as_zero{color:var(--good)}
 .miss-not_applicable{color:var(--muted)}.miss-unknown{color:var(--muted)}
@@ -325,6 +333,20 @@ def short(name):
     return name.split(" (")[0].strip()
 
 
+def flags_html(d, sep=" "):
+    return sep.join(f'<span class="flag" title="evidentiary caveat">{esc(lab(f))}</span>' for f in d.get("flags", []))
+
+
+def disease_href(pid, prefix=""):
+    return f'{prefix}pais-cohorts/disease/{esc(pid)}.html'
+
+
+def cohort_facts(d, pmap):
+    n = d.get("n_analysed") or d.get("n_enrolled")
+    return (f'{lab(d["design"])} · N={esc(n) if n is not None else "n/r"} · '
+            f'control {lab(d["control_group"])} · {len(d.get("observations", []))} obs')
+
+
 # ---------------------------------------------------------------- cohort table
 def attrition(d):
     ne, na_ = d.get("n_enrolled"), d.get("n_analysed")
@@ -345,9 +367,13 @@ def build_table(cohorts, pmap):
         n = d.get("n_analysed") or d.get("n_enrolled")
         ret_html, ret_val = attrition(d)
         pth = pmap.get(d["pathogen_id"], {}).get("name", d["pathogen_id"])
+        fl = flags_html(d)
+        name_cell = f'<a href="pais-cohorts/{esc(d["id"])}.html">{esc(d["name"])}</a>'
+        if fl:
+            name_cell += f'<br>{fl}'
         cells = {
-            "name": f'<a href="pais-cohorts/{esc(d["id"])}.html">{esc(d["name"])}</a>',
-            "pathogen": esc(pth), "design": lab(d["design"]),
+            "name": name_cell,
+            "pathogen": f'<a href="{disease_href(d["pathogen_id"])}">{esc(pth)}</a>', "design": lab(d["design"]),
             "n": esc(n) if n is not None else '<span class="na">n/r</span>',
             "ret": ret_html,
             "fu": esc(d.get("max_followup_months")) if d.get("max_followup_months") is not None else '<span class="na">n/r</span>',
@@ -646,12 +672,18 @@ def build_detail(d, pmap, imap, mmap, ext_schemas):
         if p.get("doi"):
             ident += (" · " if ident else "") + f'DOI <a href="https://doi.org/{esc(p["doi"])}">{esc(p["doi"])}</a>'
         primary = ' <span class="chip">primary</span>' if p.get("is_primary_cohort_paper") else ""
-        pubs.append(f'<li>{esc(p.get("authors"))} ({esc(p["year"])}). <strong>{esc(p["title"])}</strong>. <em>{esc(p.get("journal"))}</em>. {ident}{primary}</li>')
+        ptype = f' <span class="flag">{esc(lab(p["type"]))}</span>' if p.get("type") and p["type"] != "journal" else ""
+        if not p.get("pmid") and not p.get("doi") and p.get("url"):
+            ident = f'<a href="{esc(p["url"])}">source</a>'
+        pubs.append(f'<li>{esc(p.get("authors"))} ({esc(p["year"])}). <strong>{esc(p["title"])}</strong>. <em>{esc(p.get("journal"))}</em>. {ident}{ptype}{primary}</li>')
     notes = f'<div class="warnbox"><strong>Design notes & limitations.</strong> {esc(d.get("notes"))}</div>' if d.get("notes") else ""
+    flagbox = (f'<div class="flagbox"><strong>Flags:</strong> {flags_html(d)} — read the observations and design fields with these caveats in mind.</div>'
+               if d.get("flags") else "")
     body = f"""<div class="wrap">
-<p class="back"><a href="../pais-cohorts.html">← All cohorts</a></p>
+<p class="back"><a href="../pais-cohorts.html">← All cohorts</a> · <a href="{disease_href(d['pathogen_id'], '../')}">{esc(pmap.get(d['pathogen_id'],{}).get('name', d['pathogen_id']))} cohorts</a></p>
 <h1>{esc(d['name'])}</h1>
 <p class="meta"><a href="../data/cohorts/{esc(d['id'])}.json">source record (JSON)</a> · schema v2.0.0 · CC BY 4.0</p>
+{flagbox}
 {notes}
 <h2>Identity &amp; trigger</h2>{identity}
 <h2>Design</h2>{design}
@@ -693,6 +725,59 @@ def facet_select(name, label, values):
     return f'<label>{esc(label)}<select data-facet="{esc(name)}">{opts}</select></label>'
 
 
+def cohorts_by_pathogen(cohorts):
+    """Ordered list of (pathogen_id, [cohort,...]), grouped by pathogen class then name."""
+    groups = {}
+    for _, d in cohorts:
+        groups.setdefault(d["pathogen_id"], []).append(d)
+    order = {c: i for i, c in enumerate(["virus", "bacterium", "protozoan", "vaccine", "mixed", "unknown"])}
+
+    def keyf(pid):
+        cls = groups[pid][0]["pathogen_class"]
+        return (order.get(cls, 99), pid)
+    return [(pid, sorted(groups[pid], key=lambda d: d["name"].lower())) for pid in sorted(groups, key=keyf)]
+
+
+def build_by_disease(cohorts, pmap, prefix=""):
+    """Grouped view: one block per disease/pathogen (class-ordered) listing its cohorts."""
+    blocks = []
+    for pid, ds in cohorts_by_pathogen(cohorts):
+        pth = pmap.get(pid, {})
+        items = []
+        for d in ds:
+            items.append(f'<li><a href="{prefix}pais-cohorts/{esc(d["id"])}.html">{esc(d["name"])}</a> '
+                         f'<span class="na">— {cohort_facts(d, pmap)}</span> {flags_html(d)}</li>')
+        blocks.append(f'<div class="disease"><h3 id="d-{esc(pid)}"><a href="{disease_href(pid, prefix)}">{esc(pth.get("name", pid))}</a> '
+                      f'<span class="badge">{esc(lab(pth.get("class", "")))}</span> <span class="count">{len(ds)} cohort'
+                      f'{"s" if len(ds)!=1 else ""}</span></h3><ul>{"".join(items)}</ul></div>')
+    return "".join(blocks)
+
+
+def build_disease_page(pid, ds, pmap, mmap):
+    pth = pmap.get(pid, {})
+    obs_total = sum(len(d.get("observations", [])) for d in ds)
+    cards = []
+    for d in ds:
+        obs_summary = ", ".join(sorted({mmap["_by_id"].get(o["measure_id"], {}).get("label", o["measure_id"])
+                                        for o in d.get("observations", [])})) or "no observations yet"
+        cards.append(
+            f'<div class="obs"><p><a href="../{esc(d["id"])}.html"><strong>{esc(d["name"])}</strong></a> {flags_html(d)}</p>'
+            f'<p class="meta">{cohort_facts(d, pmap)} · max follow-up '
+            f'{esc(d.get("max_followup_months")) if d.get("max_followup_months") is not None else "n/r"} mo</p>'
+            f'<p class="meta">Measures: {esc(obs_summary)}</p>'
+            + (f'<div class="flagbox">Flags: {flags_html(d)}</div>' if d.get("flags") else "")
+            + (f'<p class="meta">{esc(d.get("notes"))}</p>' if d.get("notes") else "") + '</div>')
+    body = f"""<div class="wrap">
+<p class="back"><a href="../../pais-cohorts.html">← All cohorts</a> · <a href="../../pais-cohorts.html#by-disease">All diseases</a></p>
+<h1>{esc(pth.get("name", pid))}</h1>
+<p class="meta">{lab(pth.get("class",""))} · {esc(pth.get("vector",""))} · {len(ds)} cohort{"s" if len(ds)!=1 else ""} · {obs_total} observations · CC BY 4.0</p>
+<p class="lede">All PAIS cohorts in this database triggered by {esc(pth.get("name", pid))}. Flags mark evidentiary caveats (preprint, grey literature, patient-reported, uncontrolled, etc.).</p>
+{"".join(cards)}
+<footer><p>PAIS Cohort Database v2 · <a href="../../pais-cohorts.html">back to table</a></p></footer>
+</div>"""
+    return html_doc(f"{pth.get('name', pid)} — PAIS cohorts", body)
+
+
 def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
     pclasses = sorted({d["pathogen_class"] for _, d in cohorts})
     designs = [x for x in DESIGN_ORDER if x in {d["design"] for _, d in cohorts}]
@@ -703,7 +788,8 @@ def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
                + facet_select("denom", "Denominator", ["yes", "partial", "no", "unclear"])
                + '<span style="flex:1"></span><button class="btn sec" id="exp-json">Export JSON</button>'
                '<button class="btn sec" id="exp-csv">Cohorts CSV</button><button class="btn sec" id="exp-obs">Observations CSV</button></div>')
-    nav = ('<div class="nav"><a href="#cohort-table">Cohorts</a><a href="#measure-matrix">Measure × cohort</a>'
+    nav = ('<div class="nav"><a href="#cohort-table">Cohorts</a><a href="#by-disease">By disease</a>'
+           '<a href="#measure-matrix">Measure × cohort</a>'
            '<a href="#comparable">Comparable sets</a><a href="#gaps">Gap matrices</a></div>')
     m1 = build_gap_matrix(cohorts, pmap, designs, "design", "Gap matrix — pathogen × study design",
                           "Cell = number of cohorts. Red cells mark pathogen/design combinations with no cohort yet.")
@@ -720,13 +806,16 @@ def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
 <p class="back"><a href="index.html">← Research tracker</a></p>
 <h1>PAIS Cohort Database</h1>
 <p class="lede">A catalogue of post-acute infection syndrome <strong>cohorts</strong>, not patients. v2 stores every reported result — proportions, rates, means, paired tissue measurements, incidence, qualitative findings — as one polymorphic <em>Observation</em> keyed to a Measure registry, so structurally different cohorts sit in one queryable table. Comparability is a property of the data: two observations are directly comparable only if they share a comparability signature.</p>
-<p class="meta">{len(cohorts)} cohorts · {n_obs} observations · schema v2.0.0 · <a href="data/pais-cohort.schema.json">schema</a> · <a href="data/ref/measures.json">measure registry</a> · <a href="pais-cohort-db-v2-heterogeneous-schema.md">spec</a> · <a href="data/v1/">v1 snapshot</a> · CC BY 4.0</p>
+<p class="meta">{len(cohorts)} cohorts · {n_obs} observations · schema v2.0.0 · <a href="data/pais-cohort.schema.json">schema</a> · <a href="data/ref/measures.json">measure registry</a> · <a href="pais-cohort-db-v2-heterogeneous-schema.md">spec</a> · <a href="pais-cohort-db-expansion-guide.md">how to expand</a> · <a href="data/v1/">v1 snapshot</a> · CC BY 4.0</p>
 <div class="warnbox">Seed of {len(cohorts)} design-verified cohorts. Missingness is typed (not measured vs measured-not-reported vs reported-as-zero are different facts). No pooled estimates, no quality score: the comparability signature says comparable or not, and shows why.</div>
 {warn_html}
 {nav}{toolbar}
 <h2 id="cohort-table">Cohort table</h2>
 <p class="count" id="count">{len(cohorts)} cohorts</p>
 {build_table(cohorts, pmap)}
+<h2 id="by-disease">Cohorts by disease</h2>
+<p class="lede">The same cohorts grouped by trigger (pathogen or vaccine), ordered by class. Each disease also has its own page. Flags mark evidentiary caveats.</p>
+{build_by_disease(cohorts, pmap)}
 <h2 id="measure-matrix">Measure × cohort matrix</h2>
 {build_measure_matrix(cohorts, mmap)}
 <h2 id="comparable">Comparable sets (one measure at a time)</h2>
@@ -840,7 +929,14 @@ def main():
     for _, d in cohorts:
         with open(os.path.join(DETAIL_DIR, f"{d['id']}.html"), "w", encoding="utf-8") as f:
             f.write(build_detail(d, pmap, imap, mmap, ext_schemas))
-    print(f"Built: index, cohorts.csv, observations.csv, pais-cohorts.html, {len(cohorts)} detail pages.")
+    disease_dir = os.path.join(DETAIL_DIR, "disease")
+    os.makedirs(disease_dir, exist_ok=True)
+    diseases = cohorts_by_pathogen(cohorts)
+    for pid, ds in diseases:
+        with open(os.path.join(disease_dir, f"{pid}.html"), "w", encoding="utf-8") as f:
+            f.write(build_disease_page(pid, ds, pmap, mmap))
+    print(f"Built: index, cohorts.csv, observations.csv, pais-cohorts.html, "
+          f"{len(cohorts)} detail pages, {len(diseases)} disease pages.")
 
 
 if __name__ == "__main__":
