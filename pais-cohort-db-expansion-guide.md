@@ -5,6 +5,10 @@ breaking it. Assumes the current build: 27 cohorts, one JSON file per cohort und
 `data/cohorts/`, a unified Measure registry, comparability signatures, CI validation, and a
 static build served from GitHub Pages at research.opensourcemed.info.
 
+This is the *how to add a record* manual. For *what to go find* — the prioritised list of
+diseases and candidate cohorts to source (ME/CFS, Lyme, Gulf War Illness, and the rest of the
+infection-associated chronic conditions) — see `pais-cohort-db-sourcing-worklist.md`.
+
 Read this before touching the data. The two hard rules:
 
 1. **Every field is human-verified against the primary source before merge.** Assisted
