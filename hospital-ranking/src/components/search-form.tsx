@@ -1,9 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { matchProcedures, resolveProcedureSlug } from "@/lib/procedure-match";
 import type { Procedure } from "@/lib/types";
+
+function normalizeZip(zip: string) {
+  return zip.replace(/\D/g, "").slice(0, 5);
+}
 
 export function SearchForm({
   procedures,
@@ -26,6 +30,7 @@ export function SearchForm({
   const [zip, setZip] = useState(defaultZip);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [nearMeStatus, setNearMeStatus] = useState<string>("");
 
   const suggestions = matchProcedures(query, procedures).slice(0, 10);
   const showList = open && suggestions.length > 0;
@@ -41,9 +46,34 @@ export function SearchForm({
     const slug = resolveProcedureSlug(query, procedures);
     const params = new URLSearchParams({
       procedure: slug,
-      zip: zip.replace(/\D/g, "").slice(0, 5),
+      zip: normalizeZip(zip),
     });
     router.push(`/search?${params.toString()}`);
+  }
+
+  function useCurrentLocation() {
+    if (!navigator.geolocation) {
+      setNearMeStatus("Geolocation is not supported in this browser.");
+      return;
+    }
+
+    setNearMeStatus("Finding your location…");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const slug = resolveProcedureSlug(query, procedures);
+        const params = new URLSearchParams({
+          procedure: slug,
+          lat: latitude.toString(),
+          lng: longitude.toString(),
+        });
+        setNearMeStatus("Using your current location.");
+        router.push(`/search?${params.toString()}`);
+      },
+      () => {
+        setNearMeStatus("We could not access your location. Try entering a ZIP code instead.");
+      },
+    );
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -70,9 +100,11 @@ export function SearchForm({
     }
   }
 
-  useEffect(() => {
+  const handleQueryChange = useCallback((value: string) => {
+    setQuery(value);
     setActiveIndex(-1);
-  }, [query]);
+    setOpen(true);
+  }, []);
 
   return (
     <form onSubmit={submit} className="space-y-4" role="search" aria-label="Find hospitals">
@@ -97,10 +129,7 @@ export function SearchForm({
             required
             placeholder="Start typing: knee, mammogram, C-section, 27447…"
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setOpen(true);
-            }}
+            onChange={(e) => handleQueryChange(e.target.value)}
             onFocus={() => setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 150)}
             onKeyDown={onKeyDown}
@@ -159,12 +188,22 @@ export function SearchForm({
           />
         </div>
       </div>
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-teal-600 px-6 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 sm:w-auto"
-      >
-        Compare hospitals near me
-      </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          className="w-full rounded-lg bg-teal-600 px-6 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 sm:w-auto"
+        >
+          Compare hospitals near me
+        </button>
+        <button
+          type="button"
+          onClick={useCurrentLocation}
+          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-teal-300 hover:text-teal-700 sm:w-auto"
+        >
+          Use my location
+        </button>
+      </div>
+      {nearMeStatus ? <p className="text-sm text-slate-600">{nearMeStatus}</p> : null}
     </form>
   );
 }

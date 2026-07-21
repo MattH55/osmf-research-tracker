@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Disclaimer } from "@/components/disclaimer";
 import { HospitalResultCard } from "@/components/hospital-result-card";
 import { MedicalTourismPanel } from "@/components/medical-tourism-panel";
+import { ProcedureInsights } from "@/components/procedure-insights";
 import { SearchFilters } from "@/components/search-filters";
 import { SearchPagination } from "@/components/search-pagination";
 import { SearchForm } from "@/components/search-form";
@@ -31,6 +32,8 @@ function parseSearchParams(
   return {
     procedure: get("procedure") ?? "",
     zip: get("zip") ?? "",
+    lat: get("lat") ? Number(get("lat")) : undefined,
+    lng: get("lng") ? Number(get("lng")) : undefined,
     radiusMiles: Number(get("radius")) || 50,
     minStars: Number(get("minStars")) || 0,
     maxPrice: get("maxPrice") ? Number(get("maxPrice")) : undefined,
@@ -70,10 +73,10 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
       )
     : undefined;
 
-  if (!params.procedure || !params.zip) {
+  if (!params.procedure || (!params.zip && (params.lat == null || params.lng == null))) {
     return (
       <p className="text-slate-600">
-        Enter a procedure and ZIP code above to see hospitals near you.
+        Enter a procedure and ZIP code above to see hospitals near you, or use your current location.
       </p>
     );
   }
@@ -85,8 +88,10 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
           <p className="text-sm text-teal-900">
             <span className="font-semibold">{procedure.plainName}</span>
             {origin
-              ? ` near ${origin.city}, ${origin.state} (${zip})`
-              : ` · ZIP ${zip}`}
+              ? ` near ${origin.city}${origin.state ? `, ${origin.state}` : ""}${zip ? ` (${zip})` : ""}`
+              : zip
+                ? ` · ZIP ${zip}`
+                : " near your current location"}
             {" · "}
             {total} {total === 1 ? "facility" : "facilities"} found
             {total > results.length && (
@@ -107,7 +112,10 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
       ))}
 
       {procedure && (
-        <MedicalTourismPanel procedure={procedure} usBaseline={localUsMedian} />
+        <>
+          <ProcedureInsights procedure={procedure} />
+          <MedicalTourismPanel procedure={procedure} usBaseline={localUsMedian} />
+        </>
       )}
 
       <h2 className="text-lg font-semibold text-slate-900">U.S. hospitals near you</h2>

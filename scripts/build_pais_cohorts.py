@@ -31,6 +31,7 @@ EXT_SCHEMA_GLOB = os.path.join(ROOT, "schema", "ext", "*.schema.json")
 INDEX_OUT = os.path.join(ROOT, "data", "pais-cohorts-index.json")
 CSV_OUT = os.path.join(ROOT, "data", "pais-cohorts.csv")
 OBS_CSV_OUT = os.path.join(ROOT, "data", "pais-observations.csv")
+ESTIMATE_BUILD = os.path.join(ROOT, "scripts", "build_estimates.py")
 HTML_OUT = os.path.join(ROOT, "pais-cohorts.html")
 DETAIL_DIR = os.path.join(ROOT, "pais-cohorts")
 
@@ -690,6 +691,7 @@ def build_detail(d, pmap, imap, mmap, ext_schemas):
 <h2>Design</h2>{design}
 <h2>Size &amp; attrition</h2>{size}
 <h2>Biospecimens</h2>{spec}
+<h2>Harmonized estimate layer</h2><p class="meta">Curation status: <strong>{esc(d.get('estimates_status', 'none'))}</strong> · {len(d.get('estimates', []))} estimate(s). <a href="../data/pais-estimates.csv">Download core estimates</a></p>
 <h2>Observations ({len(obs)})</h2>{obs_html}
 {ext_html}
 <h2>Publications</h2><ul>{"".join(pubs)}</ul>
@@ -779,6 +781,25 @@ def build_disease_page(pid, ds, pmap, mmap):
     return html_doc(f"{pth.get('name', pid)} — PAIS cohorts", body)
 
 
+def build_estimate_matrix(cohorts):
+    """Triangular estimate-layer joinability matrix; empty cells are evidence gaps."""
+    ds = [d for _, d in sorted(cohorts, key=lambda x: x[1]["name"].lower())]
+    def grade(a, b):
+        for x in a.get("estimates", []):
+            for y in b.get("estimates", []):
+                if (x["construct"], x["instrument"], x["scoring"], x.get("threshold"), x["t_bin"], x["t_anchor"]) == (y["construct"], y["instrument"], y["scoring"], y.get("threshold"), y["t_bin"], y["t_anchor"]): return "exact"
+                if (x["construct"], x["instrument"], x["t_bin"], x["t_anchor"]) == (y["construct"], y["instrument"], y["t_bin"], y["t_anchor"]): return "instrument match"
+                if (x["construct"], x["t_bin"], x["t_anchor"]) == (y["construct"], y["t_bin"], y["t_anchor"]): return "construct match"
+        return ""
+    head="<tr><th>cohort</th>"+"".join(f"<th title='{esc(d['name'])}'>{esc(d['id'])}</th>" for d in ds)+"</tr>"
+    rows=[]
+    for i,a in enumerate(ds):
+        cells=[f"<th>{esc(a['id'])}</th>"]
+        for j,b in enumerate(ds): cells.append("<td>—</td>" if j>=i else f"<td>{esc(grade(a,b))}</td>")
+        rows.append("<tr>"+"".join(cells)+"</tr>")
+    return "<div style='overflow:auto'><table class='matrix'><thead>"+head+"</thead><tbody>"+"".join(rows)+"</tbody></table></div>"
+
+
 def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
     pclasses = sorted({d["pathogen_class"] for _, d in cohorts})
     designs = [x for x in DESIGN_ORDER if x in {d["design"] for _, d in cohorts}]
@@ -822,6 +843,9 @@ def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
 <h2 id="comparable">Comparable sets (one measure at a time)</h2>
 <p class="lede">Every cohort that measured a given thing, grouped by comparability signature. Within a set the estimates are directly comparable; different sets are shown but never pooled, and the signature diff is the reason why.</p>
 {build_comparable_views(cohorts, pmap, mmap)}
+<h2 id="estimate-comparability">Estimate-layer comparability</h2>
+<p class="lede">Triangular matrix of joinable harmonized estimates: exact, instrument match, construct match, or an empty cell for no joinable evidence.</p>
+{build_estimate_matrix(cohorts)}
 <h2 id="gaps">Gap matrices</h2>
 {m1}{m2}{m3}{m4}
 <footer>
@@ -900,8 +924,12 @@ def main():
           f"{sum(len(d['publications']) for _, d in cohorts)} publications. {len(warnings)} extension note(s).")
     for w in warnings:
         print("  note: " + w)
+    # The additive estimate layer has its own schema and vocabulary resolution gate.
+    subprocess.run([sys.executable, ESTIMATE_BUILD, "--check"], check=True)
     if check_only:
         return
+
+    subprocess.run([sys.executable, ESTIMATE_BUILD], check=True)
 
     pmap = {p["id"]: p for p in pathogens["pathogens"]}
     imap = {i["id"]: i for i in instruments["instruments"]}

@@ -67,6 +67,8 @@ export interface SearchResult {
 export interface SearchParams {
   procedure: string;
   zip: string;
+  lat?: number;
+  lng?: number;
   radiusMiles?: number;
   minStars?: number;
   maxPrice?: number;

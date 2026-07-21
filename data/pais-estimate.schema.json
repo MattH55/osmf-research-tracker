@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research.opensourcemed.info/data/pais-estimate.schema.json",
+  "title": "PAIS harmonized estimate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["estimate_id", "construct", "verbatim", "instrument", "scoring", "threshold", "t_months", "t_bin", "t_anchor", "numerator", "denominator", "denom_type", "subgroup", "derivation", "harmonization_distance", "source"],
+  "properties": {
+    "estimate_id": {"type": "string", "pattern": "^[a-f0-9]{12}$"},
+    "construct": {"type": "string", "pattern": "^(HP|OSMF):[A-Za-z0-9]+$"},
+    "verbatim": {"type": "string", "minLength": 1},
+    "instrument": {"type": ["string", "null"]},
+    "scoring": {"type": ["string", "null"]},
+    "threshold": {"type": ["object", "null"], "additionalProperties": false, "properties": {"op": {"enum": [">=", ">", "<=", "<", "=", "range"]}, "value": {"type": ["number", "string", "array"]}, "scoring": {"type": "string"}}},
+    "t_months": {"type": ["number", "null"], "minimum": 0},
+    "t_bin": {"enum": ["0-3", "3-6", "6-12", "12-24", "24+", "unclear"]},
+    "t_anchor": {"enum": ["symptom_onset", "confirmation", "hospital_discharge", "outbreak_date", "enrolment", "unclear"]},
+    "numerator": {"type": "integer", "minimum": 0},
+    "denominator": {"type": "integer", "minimum": 0},
+    "denom_type": {"enum": ["enrolled", "eligible", "analyzed", "responders", "unknown"]},
+    "subgroup": {"type": ["object", "null"], "additionalProperties": false, "required": ["axis", "level"], "properties": {"axis": {"type": "string"}, "level": {"type": "string"}}},
+    "derivation": {"enum": ["as_reported", "recomputed_from_table", "digitized_from_figure", "author_supplied", "investigator_defined_unspecified"]},
+    "harmonization_distance": {"type": "integer", "minimum": 0, "maximum": 3},
+    "source": {"type": "object", "additionalProperties": false, "required": ["locator"], "properties": {"doi": {"type": "string"}, "pmid": {"type": "string"}, "locator": {"type": "string", "minLength": 1}}, "anyOf": [{"required": ["doi"]}, {"required": ["pmid"]}]}
+  },
+  "allOf": [
+    {"if": {"properties": {"t_months": {"type": "null"}}}, "then": {"properties": {"t_bin": {"const": "unclear"}}}},
+    {"if": {"properties": {"derivation": {"const": "investigator_defined_unspecified"}}}, "then": {}, "else": {"properties": {"instrument": {"type": "string"}, "scoring": {"type": "string"}}}}
+  ]
+}

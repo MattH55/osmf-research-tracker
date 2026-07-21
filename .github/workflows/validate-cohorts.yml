@@ -11,8 +11,16 @@ on:
       - "data/cohorts/**"
       - "data/ref/**"
       - "data/pais-cohort.schema.json"
+      - "data/pais-estimate.schema.json"
+      - "data/pais-contrast.schema.json"
+      - "data/pais-specimen.schema.json"
+      - "data/vocab/**"
+      - "data/optional/**"
       - "schema/ext/**"
       - "scripts/build_pais_cohorts.py"
+      - "scripts/build_estimates.py"
+      - "scripts/vocab_sync.py"
+      - "scripts/validate.py"
       - ".github/workflows/validate-cohorts.yml"
   push:
     branches: [main]
@@ -20,8 +28,16 @@ on:
       - "data/cohorts/**"
       - "data/ref/**"
       - "data/pais-cohort.schema.json"
+      - "data/pais-estimate.schema.json"
+      - "data/pais-contrast.schema.json"
+      - "data/pais-specimen.schema.json"
+      - "data/vocab/**"
+      - "data/optional/**"
       - "schema/ext/**"
       - "scripts/build_pais_cohorts.py"
+      - "scripts/build_estimates.py"
+      - "scripts/vocab_sync.py"
+      - "scripts/validate.py"
   workflow_dispatch:
 
 # v2 replaces Finding + SymptomFinding with one polymorphic Observation (discriminated-union
@@ -42,7 +58,30 @@ jobs:
         run: pip install "jsonschema>=4.18"
 
       - name: Validate cohorts against v2 schema + cross-references + extensions
-        run: python scripts/build_pais_cohorts.py --check
+        run: python scripts/validate.py
+
+      - name: Confirm estimate build determinism and crosswalk isolation
+        run: |
+          python scripts/build_estimates.py
+          cp data/pais-estimates.csv /tmp/pais-estimates.csv
+          cp data/pais-estimates.json /tmp/pais-estimates.json
+          cp data/pais-contrasts.csv /tmp/pais-contrasts.csv
+          cp data/pais-specimens.csv /tmp/pais-specimens.csv
+          cp data/pais-comparability.json /tmp/pais-comparability.json
+          python scripts/build_estimates.py
+          diff -u /tmp/pais-estimates.csv data/pais-estimates.csv
+          diff -u /tmp/pais-estimates.json data/pais-estimates.json
+          diff -u /tmp/pais-contrasts.csv data/pais-contrasts.csv
+          diff -u /tmp/pais-specimens.csv data/pais-specimens.csv
+          diff -u /tmp/pais-comparability.json data/pais-comparability.json
+          mv data/optional /tmp/pais-optional
+          python scripts/build_estimates.py
+          diff -u /tmp/pais-estimates.csv data/pais-estimates.csv
+          diff -u /tmp/pais-estimates.json data/pais-estimates.json
+          diff -u /tmp/pais-contrasts.csv data/pais-contrasts.csv
+          diff -u /tmp/pais-specimens.csv data/pais-specimens.csv
+          diff -u /tmp/pais-comparability.json data/pais-comparability.json
+          mv /tmp/pais-optional data/optional
 
       - name: Confirm frozen v1 snapshot still parses (both releases live one cycle)
         run: |
@@ -56,8 +95,8 @@ jobs:
       - name: Rebuild and confirm committed artifacts are in sync
         run: |
           python scripts/build_pais_cohorts.py
-          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv pais-cohorts.html pais-cohorts/; then
+          if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv data/pais-estimates.csv data/pais-estimates.json data/pais-contrasts.csv data/pais-specimens.csv data/pais-comparability.json pais-cohorts.html pais-cohorts/ vocab.html; then
             echo "::error::Built artifacts are out of date. Run 'python scripts/build_pais_cohorts.py' and commit the result."
-            git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv pais-cohorts.html pais-cohorts/
+            git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv data/pais-estimates.csv data/pais-estimates.json data/pais-contrasts.csv data/pais-specimens.csv data/pais-comparability.json pais-cohorts.html pais-cohorts/ vocab.html
             exit 1
           fi

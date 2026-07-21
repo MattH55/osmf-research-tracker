@@ -102,6 +102,24 @@ def _links_html(links: list[dict]) -> str:
     )
 
 
+def _price_cell(d: dict) -> str:
+    prices = d.get("prices") or {}
+    uk = prices.get("uk") or d.get("price_uk")
+    us = prices.get("us") or d.get("price_us")
+    note = d.get("price_note")
+    if uk or us:
+        parts = []
+        if uk:
+            parts.append(f'<span title="NHS / openprescribing.net">UK {_esc(uk)}</span>')
+        if us:
+            parts.append(f'<span title="Cost Plus Drugs / GoodRx">US {_esc(us)}</span>')
+        return " · ".join(parts)
+    if note:
+        return f'<span class="muted" style="font-size:0.72rem">{_esc(note)}</span>'
+    # Fallback for everything else
+    return '<span class="muted" style="font-size:0.72rem">Varies — <a href="https://openprescribing.net/" target="_blank" rel="noopener">openprescribing.net</a> (UK) / <a href="https://www.costplusdrugs.com/" target="_blank" rel="noopener">costplusdrugs.com</a> or GoodRx (US)</span>'
+
+
 def _short_pub_title(title: str, *, max_len: int = 72) -> str:
     text = re.sub(r"\s+", " ", (title or "").strip())
     if len(text) <= max_len:
@@ -315,17 +333,19 @@ def _therapeutics_table(
           <td>{_esc(d['phase_label'])}</td>
           <td>{_tier_badge(d['evidence_tier'], d['evidence_tier_label'])}</td>
           <td><span class="score">{d.get('score', 0)}</span></td>
+          <td class="price-cell">{_price_cell(d)}</td>
           {f"<td>{ev_cell}</td>" if has_evidence else ""}
           <td class="muted">{', '.join(_esc(s) for s in _filter_gmi_sources(d.get('sources', []))[:3])}</td>
           <td class="links-cell">{_links_html(d.get('external_links', []))}</td>
         </tr>""")
     ev_th = "<th>Trials &amp; literature</th>" if has_evidence else ""
+    price_th = "<th>Price (UK / US)</th>"
     return f"""
     <div class="table-wrap">
       <table class="data-table">
         <thead><tr>
           <th>Drug</th><th>Type</th><th>Phase</th><th>Evidence</th>
-          <th>Score</th>{ev_th}<th>Sources</th><th>Links</th>
+          <th>Score</th>{price_th}{ev_th}<th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>{''.join(rows)}</tbody>
       </table>
@@ -632,6 +652,7 @@ def build_html(data: dict) -> str:
     .data-table th{{text-align:left;padding:.6rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}}
     .data-table td{{padding:.55rem 1rem;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:top}}
     .data-table tr:hover{{background:rgba(74,158,255,.04)}}
+    .price-cell{{font-size:.72rem;color:var(--muted)}}
     .name-cell strong{{color:var(--text)}} .sub{{font-size:.78rem;color:var(--muted);margin-top:.2rem}}
     .tier-badge{{display:inline-block;color:#fff;border-radius:4px;padding:2px 8px;font-size:.72rem;font-weight:700}}
     .type-badge{{display:inline-block;color:#fff;border-radius:4px;padding:2px 7px;font-size:.7rem;font-weight:600}}

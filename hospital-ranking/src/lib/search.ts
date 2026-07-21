@@ -74,7 +74,11 @@ export function searchHospitals(
   }
 
   const zip = normalizeZip(raw.zip);
-  const origin = lookupZip(zip);
+  const origin =
+    Number.isFinite(raw.lat) && Number.isFinite(raw.lng)
+      ? { lat: raw.lat!, lng: raw.lng!, city: "your location", state: "" }
+      : lookupZip(zip);
+
   if (!origin) {
     warnings.push(
       `ZIP ${zip} was not found in our geocoder. Try a valid 5-digit U.S. ZIP code.`,
