@@ -26,11 +26,20 @@ COHORT_GLOB = os.path.join(ROOT, "data", "cohorts", "*.json")
 PATHOGENS = os.path.join(ROOT, "data", "ref", "pathogens.json")
 INSTRUMENTS = os.path.join(ROOT, "data", "ref", "instruments.json")
 MEASURES = os.path.join(ROOT, "data", "ref", "measures.json")
+FACTORS = os.path.join(ROOT, "data", "ref", "factors.json")
 EXT_SCHEMA_GLOB = os.path.join(ROOT, "schema", "ext", "*.schema.json")
+SEVERITY_RULESET = "pais-severity-harmony-v1"
 
 INDEX_OUT = os.path.join(ROOT, "data", "pais-cohorts-index.json")
 CSV_OUT = os.path.join(ROOT, "data", "pais-cohorts.csv")
 OBS_CSV_OUT = os.path.join(ROOT, "data", "pais-observations.csv")
+PRED_CSV_OUT = os.path.join(ROOT, "data", "pais-predictors.csv")
+
+# a predictor is temporality-valid only when the window precedes/coincides with infection
+# AND the cohort design supports prospective attribution (spec v2.1 sec 1)
+TEMPORAL_WINDOWS_OK = {"pre_infection", "acute_phase", "genetic_fixed"}
+TEMPORAL_DESIGNS_OK = {"prospective_inception", "registry_linkage"}
+QUESTION_ORDER = ["conversion", "persistence", "susceptibility_acute_severity", "susceptibility_infection"]
 ESTIMATE_BUILD = os.path.join(ROOT, "scripts", "build_estimates.py")
 HTML_OUT = os.path.join(ROOT, "pais-cohorts.html")
 DETAIL_DIR = os.path.join(ROOT, "pais-cohorts")
@@ -86,6 +95,25 @@ LABELS = {
     "parent": "Parent", "child": "Child",
     "rr": "RR", "or": "OR", "hr": "HR", "pr": "PR", "rd": "RD", "smd": "SMD", "beta": "β",
     "manual": "Manual", "assisted_verified": "Assisted (verified)",
+    # predictor question types
+    "conversion": "Conversion (given infection → syndrome)", "persistence": "Persistence (non-recovery)",
+    "susceptibility_acute_severity": "Susceptibility to severe acute disease",
+    "susceptibility_infection": "Susceptibility to infection",
+    # measurement windows
+    "pre_infection": "Pre-infection", "acute_phase": "Acute phase",
+    "early_convalescent": "Early convalescent (≤3mo)", "post_outcome": "Post-outcome",
+    "genetic_fixed": "Genetic / fixed",
+    # estimate direction
+    "increases_risk": "↑ increases risk", "decreases_risk": "↓ decreases risk",
+    "null_result": "null result", "not_reported": "not reported",
+    # factor domains
+    "host_demographic": "Host demographic", "host_genetic": "Host genetic",
+    "host_prior_health": "Host prior health", "acute_clinical": "Acute clinical",
+    "acute_laboratory": "Acute laboratory", "acute_pathogen": "Acute pathogen",
+    "acute_treatment": "Acute treatment", "acute_immune": "Acute immune",
+    "psychosocial": "Psychosocial", "healthcare_access": "Healthcare access",
+    # harmonised constructs
+    "acute_severity": "Acute severity", "viral_burden": "Viral burden", "inflammatory_burden": "Inflammatory burden",
     "preprint": "preprint", "grey_literature": "grey literature", "patient_reported": "patient-reported",
     "not_peer_reviewed": "not peer-reviewed", "self_selected": "self-selected", "small_sample": "small sample",
     "author_conflict": "author conflict", "unverified_source": "unverified source",
@@ -129,13 +157,14 @@ def load_ext_schemas():
     return out
 
 
-def validate(cohorts, pathogens, instruments, measures, ext_schemas):
+def validate(cohorts, pathogens, instruments, measures, ext_schemas, factors):
     from jsonschema import Draft202012Validator
     v = Draft202012Validator(load_json(SCHEMA))
     errors, warnings = [], []
     pathogen_ids = {p["id"] for p in pathogens["pathogens"]}
     instrument_ids = {i["id"] for i in instruments["instruments"]}
     measure_ids = {m["id"] for m in measures["measures"]}
+    factor_ids = {f["id"] for f in factors["factors"]}
     all_ids = {d["id"] for _, d in cohorts}
     seen = set()
     for path, d in cohorts:
@@ -170,6 +199,24 @@ def validate(cohorts, pathogens, instruments, measures, ext_schemas):
             iid = o["method"].get("instrument_id")
             if iid and iid not in instrument_ids:
                 errors.append(f"{name}: observation '{oid}' instrument_id '{iid}' not in instruments.json")
+        # Predictors (v2.1 susceptibility/conversion layer): cross-reference checks.
+        pred_ids = set()
+        for p in d.get("predictors", []):
+            pid_ = p["id"]
+            if pid_ in pred_ids:
+                errors.append(f"{name}: duplicate predictor id '{pid_}'")
+            pred_ids.add(pid_)
+            if p["cohort_id"] != cid:
+                errors.append(f"{name}: predictor '{pid_}' cohort_id '{p['cohort_id']}' != '{cid}'")
+            if p["publication_id"] not in pub_ids:
+                errors.append(f"{name}: predictor '{pid_}' publication_id '{p['publication_id']}' unknown")
+            if p["factor_id"] not in factor_ids:
+                errors.append(f"{name}: predictor '{pid_}' factor_id '{p['factor_id']}' not in factors.json")
+            if p["outcome_measure_id"] not in measure_ids:
+                errors.append(f"{name}: predictor '{pid_}' outcome_measure_id '{p['outcome_measure_id']}' not in measures.json")
+            h = p.get("harmonised")
+            if h and h.get("ruleset") != SEVERITY_RULESET:
+                warnings.append(f"{name}: predictor '{pid_}' harmonised.ruleset '{h.get('ruleset')}' is not the current {SEVERITY_RULESET}")
         # Layer-3 extensions: validate namespaces with a schema; flag the rest (never reject)
         for scope_obj, where in [(d.get("extensions", {}), "cohort")] + \
                 [(o.get("extensions", {}), f"obs {o['id']}") for o in d.get("observations", [])]:
@@ -294,6 +341,14 @@ tbody tr:hover{background:var(--card)}
 .okbox{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--good);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.86rem}
 footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted)}
 .pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line)}.pill.good{color:var(--good)}.pill.no{color:var(--muted)}
+.pred-up{color:var(--warn);font-weight:600}.pred-down{color:var(--good);font-weight:600}
+.pred-null{color:var(--muted)}.pred-nr{color:var(--muted);font-style:italic}
+.cell-sig{background:rgba(178,106,0,.28);font-weight:700;text-align:center}
+.cell-null{background:var(--chip);text-align:center}
+.cell-conflict{background:rgba(163,51,51,.30);font-weight:700;text-align:center}
+.cell-never{color:var(--muted);opacity:.4;text-align:center}
+.legend i.cell-sig{background:rgba(178,106,0,.28)}.legend i.cell-null{background:var(--chip)}
+.legend i.cell-conflict{background:rgba(163,51,51,.30)}.legend i.cell-never{background:transparent}
 .flag{display:inline-block;font-size:.66rem;padding:0 6px;border-radius:4px;border:1px solid var(--warn);color:var(--warn);background:transparent;margin:1px 3px 1px 0;white-space:nowrap}
 .flagbox{background:var(--zero);border:1px solid var(--line);border-left:3px solid var(--warn);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.85rem}
 .disease h3{margin-top:1.2em}
@@ -717,7 +772,7 @@ PAGE_JS = r"""
   var body=tb.tBodies[0];vis.forEach(function(r){body.appendChild(r);});});});
  function dl(n,t,ty){var b=new Blob([t],{type:ty}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);}
  function wire(id,url,ty){var el=document.getElementById(id);if(el)el.addEventListener('click',function(){fetch(url).then(function(r){return r.text();}).then(function(t){dl(url.split('/').pop(),t,ty);});});}
- wire('exp-json','data/pais-cohorts-index.json','application/json');wire('exp-csv','data/pais-cohorts.csv','text/csv');wire('exp-obs','data/pais-observations.csv','text/csv');
+ wire('exp-json','data/pais-cohorts-index.json','application/json');wire('exp-csv','data/pais-cohorts.csv','text/csv');wire('exp-obs','data/pais-observations.csv','text/csv');wire('exp-pred','data/pais-predictors.csv','text/csv');
  apply();
 })();
 </script>"""
@@ -756,7 +811,217 @@ def build_by_disease(cohorts, pmap, prefix=""):
     return "".join(blocks)
 
 
-def build_disease_page(pid, ds, pmap, mmap):
+# ------------------------------------------------ predictors (v2.1 susceptibility)
+ACUTE_DOMAINS = ["acute_clinical", "acute_laboratory", "acute_pathogen", "acute_treatment", "acute_immune"]
+FACTOR_DOMAIN_ORDER = ["host_demographic", "host_genetic", "host_prior_health", "acute_clinical",
+                       "acute_laboratory", "acute_pathogen", "acute_treatment", "acute_immune",
+                       "psychosocial", "healthcare_access", "environmental"]
+
+
+def all_predictors(cohorts):
+    return [(d, p) for _, d in cohorts for p in d.get("predictors", [])]
+
+
+def temporality_valid(cohort, pred):
+    return pred["measurement_window"] in TEMPORAL_WINDOWS_OK and cohort["design"] in TEMPORAL_DESIGNS_OK
+
+
+def _construct_key(pred, fmap):
+    f = fmap.get(pred["factor_id"], {})
+    return f.get("harmonised_construct") or pred["factor_id"]
+
+
+def _construct_label(key, fmap):
+    if key in ("acute_severity", "viral_burden", "inflammatory_burden"):
+        return lab(key) + " (harmonised)"
+    return fmap.get(key, {}).get("label", key)
+
+
+def _dir_html(pred):
+    d = pred["estimate"]["direction"]
+    cls = {"increases_risk": "pred-up", "decreases_risk": "pred-down",
+           "null_result": "pred-null", "not_reported": "pred-nr"}.get(d, "")
+    return f'<span class="{cls}">{lab(d)}</span>'
+
+
+def _sig(pred):
+    return pred["estimate"]["direction"] in ("increases_risk", "decreases_risk") and pred["estimate"].get("significant") is True
+
+
+def _median(xs):
+    xs = sorted(x for x in xs if isinstance(x, (int, float)))
+    if not xs:
+        return None
+    n = len(xs)
+    return xs[n // 2] if n % 2 else (xs[n // 2 - 1] + xs[n // 2]) / 2
+
+
+def build_replication_table(cohorts, pmap, fmap, mmap):
+    groups = {}
+    for d, p in all_predictors(cohorts):
+        key = (_construct_key(p, fmap), p["outcome_measure_id"], p["question_type"])
+        groups.setdefault(key, []).append((d, p))
+    rows = []
+    for (ckey, outcome, qtype), recs in groups.items():
+        cohorts_tested = {d["id"] for d, _ in recs}
+        pathogens_tested = {d["pathogen_id"] for d, _ in recs}
+        sigs = [(d, p) for d, p in recs if _sig(p)]
+        nnull = sum(1 for _, p in recs if p["estimate"]["direction"] == "null_result")
+        dirs = [p["estimate"]["direction"] for _, p in sigs]
+        concordance = "—"
+        if dirs:
+            top = max(set(dirs), key=dirs.count)
+            concordance = f"{dirs.count(top)}/{len(dirs)}"
+        tvalid = sum(1 for d, p in recs if temporality_valid(d, p))
+        med = _median([p["model"].get("n_predictors_tested") for _, p in recs])
+        rows.append({
+            "label": _construct_label(ckey, fmap), "outcome": mmap["_by_id"].get(outcome, {}).get("label", outcome),
+            "qtype": qtype, "n_cohorts": len(cohorts_tested), "n_pathogens": len(pathogens_tested),
+            "n_sig": len(sigs), "n_null": nnull, "concord": concordance,
+            "tvalid": f"{tvalid}/{len(recs)}", "median_tested": med if med is not None else "n/r",
+            "sort": (len(cohorts_tested), len(sigs)),
+        })
+    rows.sort(key=lambda r: r["sort"], reverse=True)
+    head = "".join(f"<th>{esc(h)}</th>" for h in
+                   ["Factor / construct", "Outcome", "Question", "Cohorts", "Pathogens",
+                    "Significant", "Null", "Sign concordance", "Temporality-valid", "Median predictors tested"])
+    body = "".join(
+        f'<tr><td>{esc(r["label"])}</td><td>{esc(r["outcome"])}</td><td><span class="badge">{esc(lab(r["qtype"]))}</span></td>'
+        f'<td class="cellN">{r["n_cohorts"]}</td><td>{r["n_pathogens"]}</td>'
+        f'<td class="pred-up">{r["n_sig"]}</td><td class="pred-null">{r["n_null"]}</td>'
+        f'<td>{esc(r["concord"])}</td><td>{esc(r["tvalid"])}</td><td>{esc(r["median_tested"])}</td></tr>'
+        for r in rows)
+    return (f'<p class="meta">One row per (factor/harmonised-construct × outcome × question). '
+            f'Sorted by replication (cohorts tested), showing null results alongside significant ones. '
+            f'No pooled effect is computed — different contrasts and adjustment sets are not poolable.</p>'
+            f'<div class="tablewrap"><table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+
+
+def build_factor_pathogen_matrix(cohorts, pmap, fmap):
+    # rows = factors (by domain), cols = pathogens with cohorts; temporality-valid predictors only
+    used_pathogens = []
+    for _, d in cohorts:
+        if d["pathogen_id"] not in used_pathogens:
+            used_pathogens.append(d["pathogen_id"])
+    cell = {}
+    for d, p in all_predictors(cohorts):
+        if not temporality_valid(d, p):
+            continue
+        cell.setdefault((p["factor_id"], d["pathogen_id"]), []).append(p)
+    tested_factor_ids = {fid for (fid, _) in cell}
+    head = '<th class="row">Factor</th>' + "".join(f'<th>{esc(pmap.get(pid,{}).get("name",pid))}</th>' for pid in used_pathogens)
+    body = []
+    for dom in FACTOR_DOMAIN_ORDER:
+        dfactors = [f for f in fmap["_ordered"] if f["domain"] == dom]
+        # only show domains that have at least one tested factor, to keep the matrix legible
+        if not any(f["id"] in tested_factor_ids for f in dfactors):
+            continue
+        body.append(f'<tr><td class="dom" colspan="{len(used_pathogens)+1}">{esc(lab(dom))}</td></tr>')
+        for f in dfactors:
+            cells = [f'<td class="row" title="{esc(f["id"])}">{esc(f["label"])}</td>']
+            for pid in used_pathogens:
+                preds = cell.get((f["id"], pid))
+                if not preds:
+                    cells.append('<td class="cell-never" title="never tested (temporality-valid)">·</td>')
+                    continue
+                sigs = [x for x in preds if _sig(x)]
+                nulls = [x for x in preds if x["estimate"]["direction"] == "null_result"]
+                if sigs and nulls:
+                    st, txt = "cell-conflict", "conflict"
+                elif sigs and len({x["estimate"]["direction"] for x in sigs}) > 1:
+                    st, txt = "cell-conflict", "conflict"
+                elif sigs:
+                    st, txt = "cell-sig", "sig"
+                else:
+                    st, txt = "cell-null", "null"
+                cells.append(f'<td class="{st}" title="{len(preds)} estimate(s)">{txt}</td>')
+            body.append("<tr>" + "".join(cells) + "</tr>")
+    legend = ('<div class="legend">'
+              '<span><i class="cell-sig"></i> tested, significant</span>'
+              '<span><i class="cell-null"></i> tested, null</span>'
+              '<span><i class="cell-conflict"></i> tested, conflicting</span>'
+              '<span><i class="cell-never"></i> <span class="cell-never">·</span> never tested</span></div>')
+    return (f'<p class="meta">Temporality-valid predictors only (pre-infection / acute-phase / genetic, in prospective-inception '
+            f'or registry cohorts). Only domains with at least one tested factor are shown; the empty cells within them are '
+            f'the point — most acute-laboratory factors are never tested against the chronic outcome.</p>{legend}'
+            f'<div class="tablewrap"><table class="matrix"><thead><tr>{head}</tr></thead><tbody>{"".join(body)}</tbody></table></div>')
+
+
+def build_acute_coverage_matrix(cohorts, fmap):
+    cov = {}
+    for d, p in all_predictors(cohorts):
+        dom = fmap["_by_id"].get(p["factor_id"], {}).get("domain")
+        if dom in ACUTE_DOMAINS:
+            prev = cov.get((d["id"], dom))
+            status = "collected_not_analysed" if p.get("analysis_status") == "collected_not_analysed" else "analysed"
+            if prev != "analysed":
+                cov[(d["id"], dom)] = status
+    rowcohorts = [d for _, d in sorted(cohorts, key=lambda c: c[1]["name"].lower()) if any((d["id"], dm) in cov for dm in ACUTE_DOMAINS)]
+    if not rowcohorts:
+        return ""
+    head = '<th class="row">Cohort</th>' + "".join(f'<th>{esc(lab(dm))}</th>' for dm in ACUTE_DOMAINS)
+    body = []
+    for d in rowcohorts:
+        cells = [f'<td class="row">{esc(short(d["name"]))}</td>']
+        for dm in ACUTE_DOMAINS:
+            s = cov.get((d["id"], dm))
+            if s == "analysed":
+                cells.append('<td class="cell-sig" title="analysed against the chronic outcome">✓</td>')
+            elif s == "collected_not_analysed":
+                cells.append('<td class="cell-null" title="collected but not analysed against the chronic outcome">c</td>')
+            else:
+                cells.append('<td class="cell-never">·</td>')
+        body.append("<tr>" + "".join(cells) + "</tr>")
+    return (f'<p class="meta">Which cohorts analysed any acute-phase factor against the chronic outcome (✓), '
+            f'collected but did not analyse it (c), or neither (·). The "c" cells are recoverable through collaboration.</p>'
+            f'<div class="tablewrap"><table class="matrix"><thead><tr>{head}</tr></thead><tbody>{"".join(body)}</tbody></table></div>')
+
+
+def build_single_factor_detail(cohorts, pmap, fmap, mmap):
+    by_factor = {}
+    for d, p in all_predictors(cohorts):
+        by_factor.setdefault(p["factor_id"], []).append((d, p))
+    blocks = []
+    for f in fmap["_ordered"]:
+        recs = by_factor.get(f["id"])
+        if not recs:
+            continue
+        rows = "".join(
+            f'<tr><td><a href="pais-cohorts/{esc(d["id"])}.html">{esc(short(d["name"]))}</a></td>'
+            f'<td>{esc(pmap.get(d["pathogen_id"],{}).get("name",d["pathogen_id"]))}</td>'
+            f'<td>{esc(p["contrast"])}</td><td>{esc(lab(p["measurement_window"]))}</td>'
+            f'<td>{_dir_html(p)}</td><td>{esc(lab(p["model"]["type"]))}</td>'
+            f'<td>{esc(", ".join(p["model"].get("adjusted_for", [])) or "—")}</td>'
+            f'<td>{"valid" if temporality_valid(d, p) else "<span class=pred-nr>invalid</span>"}</td></tr>'
+            for d, p in recs)
+        blocks.append(f'<h4 id="f-{esc(f["id"].replace(":","-"))}">{esc(f["label"])} '
+                      f'<span class="badge">{esc(lab(f["domain"]))}</span>'
+                      + (f' <span class="badge">→ {esc(lab(f["harmonised_construct"]))}</span>' if f.get("harmonised_construct") else "")
+                      + '</h4><div class="tablewrap"><table><thead><tr>'
+                      + "".join(f"<th>{esc(h)}</th>" for h in ["Cohort", "Pathogen", "Contrast", "Window", "Direction", "Model", "Adjusted for", "Temporality"])
+                      + f'</tr></thead><tbody>{rows}</tbody></table></div>')
+    return "".join(blocks)
+
+
+def build_disease_predictors(ds, pmap, fmap, mmap):
+    recs = [(d, p) for d in ds for p in d.get("predictors", [])]
+    if not recs:
+        return ""
+    rows = "".join(
+        f'<tr><td>{esc(fmap["_by_id"].get(p["factor_id"],{}).get("label",p["factor_id"]))}</td>'
+        f'<td>{esc(p["contrast"])}</td><td>{esc(lab(p["measurement_window"]))}</td>'
+        f'<td>{esc(mmap["_by_id"].get(p["outcome_measure_id"],{}).get("label",p["outcome_measure_id"]))}</td>'
+        f'<td>{_dir_html(p)}</td><td>{esc(lab(p["question_type"]))}</td>'
+        f'<td>{"valid" if temporality_valid(d, p) else "<span class=pred-nr>invalid</span>"}</td>'
+        f'<td><a href="../{esc(d["id"])}.html">{esc(short(d["name"]))}</a></td></tr>'
+        for d, p in recs)
+    return ('<h2>Susceptibility &amp; conversion predictors</h2>'
+            '<div class="tablewrap"><table><thead><tr>'
+            + "".join(f"<th>{esc(h)}</th>" for h in ["Factor", "Contrast", "Window", "Outcome", "Direction", "Question", "Temporality", "Cohort"])
+            + f'</tr></thead><tbody>{rows}</tbody></table></div>')
+
+
+def build_disease_page(pid, ds, pmap, mmap, fmap):
     pth = pmap.get(pid, {})
     obs_total = sum(len(d.get("observations", [])) for d in ds)
     cards = []
@@ -776,6 +1041,7 @@ def build_disease_page(pid, ds, pmap, mmap):
 <p class="meta">{lab(pth.get("class",""))} · {esc(pth.get("vector",""))} · {len(ds)} cohort{"s" if len(ds)!=1 else ""} · {obs_total} observations · CC BY 4.0</p>
 <p class="lede">All PAIS cohorts in this database triggered by {esc(pth.get("name", pid))}. Flags mark evidentiary caveats (preprint, grey literature, patient-reported, uncontrolled, etc.).</p>
 {"".join(cards)}
+{build_disease_predictors(ds, pmap, fmap, mmap)}
 <footer><p>PAIS Cohort Database v2 · <a href="../../pais-cohorts.html">back to table</a></p></footer>
 </div>"""
     return html_doc(f"{pth.get('name', pid)} — PAIS cohorts", body)
@@ -800,7 +1066,8 @@ def build_estimate_matrix(cohorts):
     return "<div style='overflow:auto'><table class='matrix'><thead>"+head+"</thead><tbody>"+"".join(rows)+"</tbody></table></div>"
 
 
-def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
+def build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings):
+    n_pred = sum(len(d.get("predictors", [])) for _, d in cohorts)
     pclasses = sorted({d["pathogen_class"] for _, d in cohorts})
     designs = [x for x in DESIGN_ORDER if x in {d["design"] for _, d in cohorts}]
     controls = sorted({d["control_group"] for _, d in cohorts})
@@ -809,10 +1076,11 @@ def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
                + facet_select("control", "Control group", controls)
                + facet_select("denom", "Denominator", ["yes", "partial", "no", "unclear"])
                + '<span style="flex:1"></span><button class="btn sec" id="exp-json">Export JSON</button>'
-               '<button class="btn sec" id="exp-csv">Cohorts CSV</button><button class="btn sec" id="exp-obs">Observations CSV</button></div>')
+               '<button class="btn sec" id="exp-csv">Cohorts CSV</button><button class="btn sec" id="exp-obs">Observations CSV</button>'
+               '<button class="btn sec" id="exp-pred">Predictors CSV</button></div>')
     nav = ('<div class="nav"><a href="#cohort-table">Cohorts</a><a href="#by-disease">By disease</a>'
            '<a href="#measure-matrix">Measure × cohort</a>'
-           '<a href="#comparable">Comparable sets</a><a href="#gaps">Gap matrices</a></div>')
+           '<a href="#comparable">Comparable sets</a><a href="#predictors">Predictors</a><a href="#gaps">Gap matrices</a></div>')
     m1 = build_gap_matrix(cohorts, pmap, designs, "design", "Gap matrix — pathogen × study design",
                           "Cell = number of cohorts. Red cells mark pathogen/design combinations with no cohort yet.")
     m2 = build_gap_matrix(cohorts, pmap, ACUTE_ORDER, "acute_phase_specimens", "Gap matrix — pathogen × acute-phase specimens",
@@ -843,6 +1111,16 @@ def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
 <h2 id="comparable">Comparable sets (one measure at a time)</h2>
 <p class="lede">Every cohort that measured a given thing, grouped by comparability signature. Within a set the estimates are directly comparable; different sets are shown but never pooled, and the signature diff is the reason why.</p>
 {build_comparable_views(cohorts, pmap, mmap)}
+<h2 id="predictors">Susceptibility &amp; conversion predictors</h2>
+<p class="lede">What predicts <em>who develops the chronic syndrome given infection</em> (conversion), with emphasis on variables measured during the acute phase. Four causal questions are kept separate and never aggregated; a predictor measured after the outcome began is not counted as temporality-valid. No effect is pooled across pathogens — different contrasts and adjustment sets are not comparable numbers. {n_pred} predictors across the cohorts; harmonisation ruleset <a href="pais-severity-harmony-v1.md">{SEVERITY_RULESET}</a>; <a href="data/ref/factors.json">factor registry</a>.</p>
+<h3>Replication table</h3>
+{build_replication_table(cohorts, pmap, fmap, mmap)}
+<h3>Factor × pathogen matrix</h3>
+{build_factor_pathogen_matrix(cohorts, pmap, fmap)}
+<h3>Acute-phase coverage</h3>
+{build_acute_coverage_matrix(cohorts, fmap)}
+<h3>Every estimate, by factor</h3>
+{build_single_factor_detail(cohorts, pmap, fmap, mmap)}
 <h2 id="estimate-comparability">Estimate-layer comparability</h2>
 <p class="lede">Triangular matrix of joinable harmonized estimates: exact, instrument match, construct match, or an empty cell for no joinable evidence.</p>
 {build_estimate_matrix(cohorts)}
@@ -850,7 +1128,7 @@ def build_main_page(cohorts, pmap, mmap, n_obs, warnings):
 {m1}{m2}{m3}{m4}
 <footer>
 <p>Build {BUILD_VERSION}, compiled by <code>scripts/build_pais_cohorts.py</code>. All tables pre-rendered; work with JavaScript disabled. No analytics, no third-party assets.</p>
-<p>Export: cohorts <a href="data/pais-cohorts-index.json">JSON</a> · <a href="data/pais-cohorts.csv">CSV</a> · observations <a href="data/pais-observations.csv">CSV</a>. v1.x preserved under <a href="data/v1/">/data/v1/</a>.</p>
+<p>Export: cohorts <a href="data/pais-cohorts-index.json">JSON</a> · <a href="data/pais-cohorts.csv">CSV</a> · observations <a href="data/pais-observations.csv">CSV</a> · predictors <a href="data/pais-predictors.csv">CSV</a>. v1.x preserved under <a href="data/v1/">/data/v1/</a>.</p>
 </footer>
 </div>{PAGE_JS}"""
     return html_doc("PAIS Cohort Database", body)
@@ -905,22 +1183,47 @@ def obs_csv_rows(cohorts, pmap, mmap):
     return rows
 
 
+def pred_csv_rows(cohorts, pmap, fmap, mmap):
+    header = ["cohort_id", "pathogen", "predictor_id", "question_type", "factor_id", "factor_domain",
+              "harmonised_construct", "factor_verbatim", "measurement_window", "temporality_valid",
+              "factor_value_type", "contrast", "outcome_measure_id", "outcome_timepoint_months",
+              "estimate_type", "estimate_value", "ci_low", "ci_high", "p_value", "direction", "significant",
+              "model_type", "adjusted_for", "n_predictors_tested", "multiplicity_correction", "n_analysed",
+              "analysis_status", "publication_id", "source_locator", "verified_on"]
+    rows = [header]
+    for d, p in all_predictors(cohorts):
+        f = fmap["_by_id"].get(p["factor_id"], {})
+        e = p["estimate"]
+        rows.append([d["id"], pmap.get(d["pathogen_id"], {}).get("name", d["pathogen_id"]), p["id"],
+                     p["question_type"], p["factor_id"], f.get("domain"), f.get("harmonised_construct"),
+                     p["factor_verbatim"], p["measurement_window"], temporality_valid(d, p),
+                     p["factor_value_type"], p["contrast"], p["outcome_measure_id"], p.get("outcome_timepoint_months"),
+                     e["type"], e.get("value"), e.get("ci_low"), e.get("ci_high"), e.get("p_value"),
+                     e["direction"], e.get("significant"), p["model"]["type"],
+                     "; ".join(p["model"].get("adjusted_for", [])), p["model"].get("n_predictors_tested"),
+                     p["model"].get("multiplicity_correction"), p.get("n_analysed"), p.get("analysis_status"),
+                     p["publication_id"], p["provenance"]["source_locator"], p["provenance"].get("verified_on")])
+    return rows
+
+
 def main():
     check_only = "--check" in sys.argv
     pathogens, instruments, measures = load_json(PATHOGENS), load_json(INSTRUMENTS), load_json(MEASURES)
+    factors = load_json(FACTORS)
     ext_schemas = load_ext_schemas()
     cohorts = [(p, load_json(p)) for p in sorted(glob.glob(COHORT_GLOB))]
     if not cohorts:
         print("No cohort files found.", file=sys.stderr); sys.exit(1)
 
-    errors, warnings = validate(cohorts, pathogens, instruments, measures, ext_schemas)
+    errors, warnings = validate(cohorts, pathogens, instruments, measures, ext_schemas, factors)
     if errors:
         print(f"VALIDATION FAILED ({len(errors)} error(s)):", file=sys.stderr)
         for e in errors:
             print("  - " + e, file=sys.stderr)
         sys.exit(1)
     n_obs = sum(len(d.get("observations", [])) for _, d in cohorts)
-    print(f"Validation OK: {len(cohorts)} cohorts, {n_obs} observations, "
+    n_pred = sum(len(d.get("predictors", [])) for _, d in cohorts)
+    print(f"Validation OK: {len(cohorts)} cohorts, {n_obs} observations, {n_pred} predictors, "
           f"{sum(len(d['publications']) for _, d in cohorts)} publications. {len(warnings)} extension note(s).")
     for w in warnings:
         print("  note: " + w)
@@ -934,11 +1237,12 @@ def main():
     pmap = {p["id"]: p for p in pathogens["pathogens"]}
     imap = {i["id"]: i for i in instruments["instruments"]}
     mmap = {"_by_id": {m["id"]: m for m in measures["measures"]}, "_ordered": measures["measures"]}
+    fmap = {"_by_id": {f["id"]: f for f in factors["factors"]}, "_ordered": factors["factors"]}
 
     index = {"schema_version": "2.0.0", "generated": BUILD_VERSION, "license": "CC BY 4.0",
-             "harmonisation_ruleset": "pais-harmony-v1",
+             "harmonisation_ruleset": "pais-harmony-v1", "severity_ruleset": SEVERITY_RULESET,
              "pathogens": pathogens["pathogens"], "instruments": instruments["instruments"],
-             "measures": measures["measures"],
+             "measures": measures["measures"], "factors": factors["factors"],
              "cohorts": [d for _, d in sorted(cohorts, key=lambda c: c[1]["name"].lower())]}
     with open(INDEX_OUT, "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False, indent=2)
@@ -951,9 +1255,10 @@ def main():
             f.write(buf.getvalue())
     write_csv(CSV_OUT, cohort_csv_rows(cohorts, pmap))
     write_csv(OBS_CSV_OUT, obs_csv_rows(cohorts, pmap, mmap))
+    write_csv(PRED_CSV_OUT, pred_csv_rows(cohorts, pmap, fmap, mmap))
 
     with open(HTML_OUT, "w", encoding="utf-8") as f:
-        f.write(build_main_page(cohorts, pmap, mmap, n_obs, warnings))
+        f.write(build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings))
     os.makedirs(DETAIL_DIR, exist_ok=True)
     for _, d in cohorts:
         with open(os.path.join(DETAIL_DIR, f"{d['id']}.html"), "w", encoding="utf-8") as f:
@@ -963,8 +1268,8 @@ def main():
     diseases = cohorts_by_pathogen(cohorts)
     for pid, ds in diseases:
         with open(os.path.join(disease_dir, f"{pid}.html"), "w", encoding="utf-8") as f:
-            f.write(build_disease_page(pid, ds, pmap, mmap))
-    print(f"Built: index, cohorts.csv, observations.csv, pais-cohorts.html, "
+            f.write(build_disease_page(pid, ds, pmap, mmap, fmap))
+    print(f"Built: index, cohorts.csv, observations.csv, predictors.csv, pais-cohorts.html, "
           f"{len(cohorts)} detail pages, {len(diseases)} disease pages.")
     # The renderer writes complete HTML documents, so refresh the shared metadata
     # and sitemap only after every PAIS page has been emitted.
