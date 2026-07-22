@@ -371,10 +371,37 @@ footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-si
 """
 
 
-def html_doc(title, body):
+def html_doc(title, body, extra_head=""):
     return (f"<!doctype html><html lang=en><head><meta charset=utf-8>"
             f"<meta name=viewport content=\"width=device-width,initial-scale=1\">"
-            f"<title>{esc(title)}</title><style>{CSS}</style></head><body>{body}</body></html>")
+            f"<title>{esc(title)}</title>"
+            f"<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">"
+            f"<link rel=stylesheet href=\"tracker.css\">"
+            f"<style>{CSS}</style>{extra_head}</head>"
+            f"<body>"
+            f"<nav><div class=nav-container>"
+            f"<a href=https://opensourcemed.info class=nav-brand>Open Source <span>Medicine</span><span class=nav-brand-sub>Research Tracker</span></a>"
+            f"<ul class=nav-links>"
+            f"<li><a href=index.html>All Conditions</a></li>"
+            f"<li><a href=pais-cohorts.html class=nav-active>PAIS Cohorts</a></li>"
+            f"<li><a href=biomarker-atlas.html>Biomarkers</a></li>"
+            f"<li><a href=therapeutics-atlas.html>Therapeutics</a></li>"
+            f"<li><a href=clinical_trials.html>Clinical Trials</a></li>"
+            f"</ul></div></nav>"
+            f"{body}"
+            f"<footer class=osmf-network-footer><div class=osmf-network-inner>"
+            f"<div class=footer-brand>Open Source Medicine Foundation</div>"
+            f"<div class=footer-links>"
+            f"<a href=https://opensourcemed.info>OSMF</a>"
+            f"<a href=https://research.opensourcemed.info/>Research Platform</a>"
+            f"<a href=https://spikeprotein.site>SpikeProtein.site</a>"
+            f"<a href=https://vaccinedatanavigator.org>Vaccine Data Navigator</a>"
+            f"<a href=https://pacvssummit.org>PACVS Research Summit</a>"
+            f"</div><div class=footer-note>Automated daily via GitHub Actions. Data from PubMed (NLM). Not medical advice.</div>"
+            f"</div></footer>"
+            f"<button class=back-to-top aria-label=\"Back to top\">↑</button>"
+            f"<script src=\"js/site-universal.js\" defer></script>"
+            f"</body></html>")
 
 
 def dl_list(items):
