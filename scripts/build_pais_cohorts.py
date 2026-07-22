@@ -1066,6 +1066,107 @@ def build_estimate_matrix(cohorts):
     return "<div style='overflow:auto'><table class='matrix'><thead>"+head+"</thead><tbody>"+"".join(rows)+"</tbody></table></div>"
 
 
+def _predictor_table(recs, pmap, fmap, mmap, cohort_href):
+    head = "".join(f"<th>{esc(h)}</th>" for h in
+                   ["Factor", "Contrast", "Window", "Outcome", "Direction", "Question", "Model", "Temporality", "Cohort"])
+    rows = "".join(
+        f'<tr><td>{esc(fmap["_by_id"].get(p["factor_id"],{}).get("label",p["factor_id"]))}'
+        + (f' <span class="badge">→ {esc(lab(fmap["_by_id"][p["factor_id"]]["harmonised_construct"]))}</span>'
+           if fmap["_by_id"].get(p["factor_id"], {}).get("harmonised_construct") else "")
+        + f'</td><td>{esc(p["contrast"])}</td><td>{esc(lab(p["measurement_window"]))}</td>'
+        f'<td>{esc(mmap["_by_id"].get(p["outcome_measure_id"],{}).get("label",p["outcome_measure_id"]))}'
+        + (f' @ {p["outcome_timepoint_months"]}mo' if p.get("outcome_timepoint_months") is not None else "") + '</td>'
+        f'<td>{_dir_html(p)}</td><td>{esc(lab(p["question_type"]))}</td>'
+        f'<td>{esc(lab(p["model"]["type"]))}</td>'
+        f'<td>{"valid" if temporality_valid(d, p) else "<span class=pred-nr>invalid</span>"}</td>'
+        f'<td><a href="{cohort_href(d)}">{esc(short(d["name"]))}</a></td></tr>'
+        for d, p in recs)
+    return f'<div class="tablewrap"><table><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
+
+
+def build_susceptibility_by_disease(cohorts, pmap, fmap, mmap):
+    """One subsection per disease/trigger, listing that disease's predictors."""
+    groups = [(pid, ds) for pid, ds in cohorts_by_pathogen(cohorts)
+              if any(d.get("predictors") for d in ds)]
+    if not groups:
+        return ""
+    toc = " · ".join(f'<a href="#s-{esc(pid)}">{esc(pmap.get(pid,{}).get("name",pid))}</a>' for pid, _ in groups)
+    blocks = []
+    for pid, ds in groups:
+        pth = pmap.get(pid, {})
+        recs = [(d, p) for d in ds for p in d.get("predictors", [])]
+        nsig = sum(1 for _, p in recs if _sig(p))
+        nnull = sum(1 for _, p in recs if p["estimate"]["direction"] == "null_result")
+        nvalid = sum(1 for d, p in recs if temporality_valid(d, p))
+        ncohorts = len({d["id"] for d, _ in recs})
+        blocks.append(
+            f'<h3 id="s-{esc(pid)}"><a href="pais-cohorts/disease/{esc(pid)}.html">{esc(pth.get("name", pid))}</a> '
+            f'<span class="badge">{esc(lab(pth.get("class","")))}</span> '
+            f'<span class="count">{len(recs)} predictor{"s" if len(recs)!=1 else ""}</span></h3>'
+            f'<p class="meta">{nsig} significant · {nnull} null · {nvalid} temporality-valid · '
+            f'from {ncohorts} cohort{"s" if ncohorts!=1 else ""}</p>'
+            + _predictor_table(recs, pmap, fmap, mmap, lambda d: f'pais-cohorts/{esc(d["id"])}.html'))
+    return f'<p class="meta">Jump to disease: {toc}</p>' + "".join(blocks)
+
+
+def build_susceptibility_page(cohorts, pmap, mmap, fmap):
+    """Standalone susceptibility/conversion-predictor analysis page (spec v2.1)."""
+    n_pred = sum(len(d.get("predictors", [])) for _, d in cohorts)
+    n_null = sum(1 for _, p in all_predictors(cohorts) if p["estimate"]["direction"] == "null_result")
+    n_valid = sum(1 for d, p in all_predictors(cohorts) if temporality_valid(d, p))
+    npct = round(100 * n_null / n_pred) if n_pred else 0
+    body = f"""<div class="wrap">
+<p class="back"><a href="pais-cohorts.html">← PAIS Cohort Database</a></p>
+<h1>Susceptibility &amp; conversion predictors</h1>
+<p class="lede">What predicts <em>who develops the chronic syndrome given infection</em> (conversion), with
+emphasis on variables measured during the acute phase. Four causal questions — susceptibility to
+infection, to severe acute disease, to conversion, and to non-recovery — are kept strictly separate
+and never aggregated. A predictor measured after the outcome began is not counted as temporality-valid,
+which excludes most of what the literature calls a "risk factor". No effect is pooled across pathogens:
+different contrasts and adjustment sets are not comparable numbers.</p>
+<p class="meta">{n_pred} predictors · {n_null} null results ({npct}%) · {n_valid} temporality-valid ·
+harmonisation ruleset <a href="pais-severity-harmony-v1.md">{SEVERITY_RULESET}</a> ·
+<a href="data/ref/factors.json">factor registry</a> · <a href="data/pais-predictors.csv">predictors CSV</a> ·
+<a href="pais-susceptibility-factors-spec.md">spec</a> · CC BY 4.0</p>
+<div class="warnbox">Null results are recorded, not dropped — they are {npct}% of this table and the reason to build
+this rather than read a review. Factors are ranked by replication and temporality validity, never by
+effect size.</div>
+<div class="nav"><a href="#replication">Replication table</a><a href="#by-disease">By disease</a>
+<a href="#factor-matrix">Factor × pathogen</a><a href="#acute-coverage">Acute-phase coverage</a>
+<a href="#by-factor">By factor</a></div>
+
+<h2 id="replication">Replication table</h2>
+<p class="meta">One row per (factor or harmonised construct × outcome × question), sorted by how many
+cohorts tested it. The two rows that stand out — acute severity (replicated) and the long tail tested
+exactly once — are the finding.</p>
+{build_replication_table(cohorts, pmap, fmap, mmap)}
+
+<h2 id="by-disease">Predictors by disease</h2>
+<p class="lede">A separate subsection for each disease/trigger — everything tested in that syndrome's cohorts,
+significant and null, with contrast, measurement window and temporality per row.</p>
+{build_susceptibility_by_disease(cohorts, pmap, fmap, mmap)}
+
+<h2 id="factor-matrix">Factor × pathogen matrix</h2>
+{build_factor_pathogen_matrix(cohorts, pmap, fmap)}
+
+<h2 id="acute-coverage">Acute-phase coverage</h2>
+{build_acute_coverage_matrix(cohorts, fmap)}
+
+<h2 id="by-factor">Every estimate, by factor</h2>
+<p class="meta">All estimates for each factor across cohorts, with contrast, measurement window, adjustment
+set and temporality shown per row.</p>
+{build_single_factor_detail(cohorts, pmap, fmap, mmap)}
+
+<footer>
+<p>Build {BUILD_VERSION}. Pre-rendered; works with JavaScript disabled. No pooled effect estimate appears
+anywhere on this page or in the export, by design.</p>
+<p><a href="pais-cohorts.html">← back to the cohort database</a> · per-syndrome predictors also appear on
+each disease page.</p>
+</footer>
+</div>"""
+    return html_doc("Susceptibility & conversion predictors — PAIS", body)
+
+
 def build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings):
     n_pred = sum(len(d.get("predictors", [])) for _, d in cohorts)
     pclasses = sorted({d["pathogen_class"] for _, d in cohorts})
@@ -1080,7 +1181,7 @@ def build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings):
                '<button class="btn sec" id="exp-pred">Predictors CSV</button></div>')
     nav = ('<div class="nav"><a href="#cohort-table">Cohorts</a><a href="#by-disease">By disease</a>'
            '<a href="#measure-matrix">Measure × cohort</a>'
-           '<a href="#comparable">Comparable sets</a><a href="#predictors">Predictors</a><a href="#gaps">Gap matrices</a></div>')
+           '<a href="#comparable">Comparable sets</a><a href="pais-susceptibility.html">Predictors</a><a href="#gaps">Gap matrices</a></div>')
     m1 = build_gap_matrix(cohorts, pmap, designs, "design", "Gap matrix — pathogen × study design",
                           "Cell = number of cohorts. Red cells mark pathogen/design combinations with no cohort yet.")
     m2 = build_gap_matrix(cohorts, pmap, ACUTE_ORDER, "acute_phase_specimens", "Gap matrix — pathogen × acute-phase specimens",
@@ -1112,15 +1213,10 @@ def build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings):
 <p class="lede">Every cohort that measured a given thing, grouped by comparability signature. Within a set the estimates are directly comparable; different sets are shown but never pooled, and the signature diff is the reason why.</p>
 {build_comparable_views(cohorts, pmap, mmap)}
 <h2 id="predictors">Susceptibility &amp; conversion predictors</h2>
-<p class="lede">What predicts <em>who develops the chronic syndrome given infection</em> (conversion), with emphasis on variables measured during the acute phase. Four causal questions are kept separate and never aggregated; a predictor measured after the outcome began is not counted as temporality-valid. No effect is pooled across pathogens — different contrasts and adjustment sets are not comparable numbers. {n_pred} predictors across the cohorts; harmonisation ruleset <a href="pais-severity-harmony-v1.md">{SEVERITY_RULESET}</a>; <a href="data/ref/factors.json">factor registry</a>.</p>
-<h3>Replication table</h3>
-{build_replication_table(cohorts, pmap, fmap, mmap)}
-<h3>Factor × pathogen matrix</h3>
-{build_factor_pathogen_matrix(cohorts, pmap, fmap)}
-<h3>Acute-phase coverage</h3>
-{build_acute_coverage_matrix(cohorts, fmap)}
-<h3>Every estimate, by factor</h3>
-{build_single_factor_detail(cohorts, pmap, fmap, mmap)}
+<p class="lede">What predicts <em>who develops the chronic syndrome given infection</em> — with the acute-phase
+emphasis, temporality rules, replication table and factor × pathogen matrix — is now a dedicated page.</p>
+<p><a class="btn" href="pais-susceptibility.html">Open the susceptibility &amp; conversion analysis →</a>
+<span class="meta">{n_pred} predictors · acute severity replicates across pathogens; sex and age conflict.</span></p>
 <h2 id="estimate-comparability">Estimate-layer comparability</h2>
 <p class="lede">Triangular matrix of joinable harmonized estimates: exact, instrument match, construct match, or an empty cell for no joinable evidence.</p>
 {build_estimate_matrix(cohorts)}
@@ -1259,6 +1355,8 @@ def main():
 
     with open(HTML_OUT, "w", encoding="utf-8") as f:
         f.write(build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings))
+    with open(os.path.join(ROOT, "pais-susceptibility.html"), "w", encoding="utf-8") as f:
+        f.write(build_susceptibility_page(cohorts, pmap, mmap, fmap))
     os.makedirs(DETAIL_DIR, exist_ok=True)
     for _, d in cohorts:
         with open(os.path.join(DETAIL_DIR, f"{d['id']}.html"), "w", encoding="utf-8") as f:
