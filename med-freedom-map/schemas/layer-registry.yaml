@@ -1,0 +1,172 @@
+# Controlled vocabulary for Medical Freedom Maps
+# Every layer, dimension, and allowed value is pinned here.
+# CI validates all cell data against this registry.
+# See §1 of jurisdictional-access-maps-spec.
+
+layers:
+  - id: scope_of_practice
+    label: "Scope of practice"
+    review_cadence_days: 365
+    dimensions:
+      - id: np_practice_authority
+        type: enum
+        values: [full, reduced, restricted]
+      - id: pa_collaboration_required
+        type: bool
+      - id: naturopath_licensed
+        type: bool
+      - id: naturopath_prescriptive_authority
+        type: enum
+        values: [none, limited, full]
+      - id: cpm_midwife_licensed
+        type: bool
+      - id: pharmacist_prescribing
+        type: enum
+        values: [none, protocol, independent]
+
+  - id: licensure_compacts
+    label: "Licensure compacts"
+    review_cadence_days: 180
+    dimensions:
+      - id: imlc_status
+        type: enum
+        values: [participating, enacted_not_implemented, pending, none]
+      - id: nlc_status
+        type: enum
+        values: [participating, pending, none]
+      - id: psypact_status
+        type: enum
+        values: [participating, pending, none]
+      - id: compact_effective_date
+        type: date
+
+  - id: certificate_of_need
+    label: "Certificate of need"
+    review_cadence_days: 365
+    dimensions:
+      - id: con_program_exists
+        type: bool
+      - id: services_regulated_count
+        type: int
+      - id: hospital_beds_regulated
+        type: bool
+      - id: imaging_regulated
+        type: bool
+      - id: asc_regulated
+        type: bool
+
+  - id: right_to_try
+    label: "Right to try"
+    review_cadence_days: 365
+    dimensions:
+      - id: rtt_enacted
+        type: bool
+      - id: rtt_year
+        type: int
+      - id: individualized_rtt
+        type: bool
+      - id: manufacturer_liability_shield
+        type: bool
+      - id: insurer_coverage_required
+        type: bool
+
+  - id: regenerative_medicine
+    label: "Regenerative medicine"
+    review_cadence_days: 365
+    dimensions:
+      - id: unapproved_cell_therapy_permitted
+        type: bool
+      - id: disclosure_requirement
+        type: bool
+      - id: practitioner_scope_limit
+        type: text
+      - id: statute_ref
+        type: text
+
+  - id: off_label_prescribing
+    label: "Off-label prescribing"
+    review_cadence_days: 270
+    dimensions:
+      - id: board_discipline_protection
+        type: bool
+      - id: pharmacist_refusal_to_fill_protection
+        type: bool
+      - id: pharmacist_refusal_prohibited
+        type: bool
+      - id: statute_era
+        type: enum
+        values: [pre_2020, "2020_2023", post_2023, none]
+
+  - id: direct_primary_care
+    label: "Direct primary care"
+    review_cadence_days: 365
+    dimensions:
+      - id: dpc_statute_exists
+        type: bool
+      - id: declared_not_insurance
+        type: bool
+
+  - id: vaccine_exemption
+    label: "Vaccine exemption"
+    review_cadence_days: 270
+    dimensions:
+      - id: medical_exemption
+        type: bool
+      - id: religious_exemption
+        type: bool
+      - id: philosophical_exemption
+        type: bool
+      - id: exemption_process
+        type: enum
+        values: [form, notarized, provider_signature, education_module, none]
+
+  - id: telehealth
+    label: "Telehealth"
+    review_cadence_days: 120
+    dimensions:
+      - id: modality_neutral
+        type: bool
+      - id: audio_only_permitted
+        type: bool
+      - id: relationship_established_via_telehealth
+        type: bool
+      - id: out_of_state_registration_pathway
+        type: bool
+      - id: controlled_substance_posture
+        type: enum
+        values: [federal_baseline, stricter]
+
+  - id: compounding
+    label: "Compounding"
+    review_cadence_days: 180
+    dimensions:
+      - id: office_use_permitted
+        type: bool
+      - id: out_of_state_pharmacy_license_required
+        type: bool
+      - id: state_503b_registration_required
+        type: bool
+      - id: anticipatory_compounding_limit
+        type: text
+
+  - id: price_transparency
+    label: "Price transparency"
+    review_cadence_days: 180
+    dimensions:
+      - id: state_law_beyond_federal
+        type: bool
+      - id: enforcement_mechanism
+        type: text
+
+  - id: international_access
+    label: "International access"
+    review_cadence_days: 365
+    dimensions:
+      - id: treatment_availability
+        type: text
+      - id: practitioner_licensure_recognition
+        type: text
+      - id: import_rules
+        type: text
+      - id: malpractice_regime
+        type: text

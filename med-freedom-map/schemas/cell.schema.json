@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensourcemed.info/schemas/maps/cell.schema.json",
+  "title": "Medical Freedom Maps — Access Cell",
+  "description": "One record per (jurisdiction, layer, dimension). CI-validated, PR-based contribution. See jurisdictional-access-maps-spec §1.",
+  "type": "object",
+  "required": ["jurisdiction", "layer", "dimensions"],
+  "properties": {
+    "jurisdiction": {
+      "type": "string",
+      "description": "ISO 3166-2 code for subnational (e.g. US-MT) or ISO 3166-1 for national tier",
+      "pattern": "^[A-Z]{2}(-[A-Z0-9]+)?$"
+    },
+    "layer": {
+      "type": "string",
+      "description": "Layer slug from layer-registry.yaml",
+      "enum": [
+        "scope_of_practice",
+        "licensure_compacts",
+        "certificate_of_need",
+        "right_to_try",
+        "regenerative_medicine",
+        "off_label_prescribing",
+        "direct_primary_care",
+        "vaccine_exemption",
+        "telehealth",
+        "compounding",
+        "price_transparency"
+      ]
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "value", "citation", "source_id", "source_url", "source_type", "verified_on", "verified_by"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Dimension slug from layer-registry.yaml"
+          },
+          "value": {
+            "description": "Dimension value — type must match layer-registry dimension definition"
+          },
+          "citation": {
+            "type": "string",
+            "description": "Legal citation or source reference (statute, regulation, agency guidance)",
+            "minLength": 1
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Must resolve to an entry in data/sources.yaml",
+            "minLength": 1
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "minLength": 1
+          },
+          "source_type": {
+            "type": "string",
+            "enum": ["primary_statute", "secondary_tracker", "agency_guidance"],
+            "description": "Provenance classification. primary_statute only if statute was read directly."
+          },
+          "verified_on": {
+            "type": "string",
+            "format": "date",
+            "description": "Date this value was last verified against its source"
+          },
+          "verified_by": {
+            "type": "string",
+            "description": "GitHub handle or identity of verifier",
+            "minLength": 1
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "derived"],
+            "default": "high",
+            "description": "high = primary source read directly; medium = secondary tracker trusted; derived = inferred from related data"
+          },
+          "note": {
+            "type": "string",
+            "description": "Optional context about this dimension value"
+          }
+        }
+      }
+    }
+  }
+}

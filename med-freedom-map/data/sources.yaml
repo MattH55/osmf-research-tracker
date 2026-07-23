@@ -1,0 +1,168 @@
+# Source registry for Medical Freedom Maps
+# Nothing gets ingested without an entry here.
+# CI fails on PENDING terms_reviewed or redistribution_permitted.
+# See §2 of jurisdictional-access-maps-spec.
+
+sources:
+  - id: ncsl
+    name: National Conference of State Legislatures
+    url: https://www.ncsl.org/
+    covers: [vaccine_exemption, certificate_of_need, right_to_try]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: true
+    note: "Public government-policy aggregator. Store derived values + link only; do not mirror datasets. NCSL content is public but republication may require attribution. Review terms at https://www.ncsl.org/legal."
+
+  - id: cchp
+    name: Center for Connected Health Policy — State Telehealth Laws
+    url: https://www.cchpca.org/
+    covers: [telehealth]
+    format: pdf_biannual
+    ingest: manual
+    cadence: biannual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "Authoritative but goes stale between editions. Do not treat edition date as verification date. CCHP reports are copyrighted; store derived values + link only. Do not mirror reports or tables."
+
+  - id: fsmb
+    name: Federation of State Medical Boards
+    url: https://www.fsmb.org/
+    covers: [telehealth, off_label_prescribing]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "FSMB content is copyrighted. Store derived values + link only. Do not mirror page content."
+
+  - id: aanp_state_practice
+    name: AANP State Practice Environment
+    url: https://www.aanp.org/advocacy/state/state-practice-environment
+    covers: [scope_of_practice]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "AANP content is copyrighted. Store derived values + link only. Do not mirror interactive map data."
+
+  - id: aapa_state_law
+    name: AAPA State Law Charts
+    url: https://www.aapa.org/advocacy-central/state-advocacy/state-law-charts/
+    covers: [scope_of_practice]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "AAPA content is copyrighted. Store derived values + link only. Do not mirror charts."
+
+  - id: dpc_frontier
+    name: DPC Frontier — State DPC Laws
+    url: https://www.dpcfrontier.com/
+    covers: [direct_primary_care]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "Store derived values + link only. Do not mirror DPC Frontier's compiled state law data."
+
+  - id: mercatus_con
+    name: Mercatus Center — Certificate of Need Regimes
+    url: https://www.mercatus.org/
+    covers: [certificate_of_need]
+    format: csv
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: true
+    note: "Mercatus CON data is publicly available research. Store derived values + link. Verify CSV terms if bulk ingesting."
+
+  - id: alliance_pharmacy_compounding
+    name: Alliance for Pharmacy Compounding
+    url: https://a4pc.org/
+    covers: [compounding]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "Store derived values + link only. Do not mirror compiled state data."
+
+  - id: nabp_state_boards
+    name: NABP State Boards of Pharmacy
+    url: https://nabp.pharmacy/
+    covers: [compounding, scope_of_practice]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "NABP content is copyrighted. Store derived values + link only."
+
+  - id: imlc_official
+    name: Interstate Medical Licensure Compact — Official
+    url: https://www.imlcc.org/
+    covers: [licensure_compacts]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: true
+    note: "Official compact member lists are primary. Prefer over aggregators. IMLCC official website — public government compact data."
+
+  - id: nlc_ncsbn
+    name: Nurse Licensure Compact — NCSBN Official
+    url: https://www.ncsbn.org/nurse-licensure-compact.htm
+    covers: [licensure_compacts]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: true
+    note: "Official compact member lists are primary. Prefer over aggregators. NCSBN public data."
+
+  - id: psypact_official
+    name: PSYPACT — Official
+    url: https://psypact.org/
+    covers: [licensure_compacts]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: true
+    note: "Official compact member lists are primary. Prefer over aggregators. PSYPACT official site with public participating state list."
+
+  - id: immunize_org
+    name: Immunize.org — State Vaccine Exemption Info
+    url: https://www.immunize.org/
+    covers: [vaccine_exemption]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "Store derived values + link only. Do not mirror compiled exemption data."
+
+  - id: goldwater_rtt
+    name: Goldwater Institute — Right to Try
+    url: https://www.goldwaterinstitute.org/
+    covers: [right_to_try]
+    format: html
+    ingest: manual
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "Store derived values + link only. Do not mirror Goldwater's compiled RTT tracker data."
+
+  - id: legiscan
+    name: LegiScan
+    url: https://legiscan.com/
+    covers: [ALL]
+    format: api
+    ingest: automated
+    role: change_detection_only
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: false
+    note: "Never a value source. Change detection only. LegiScan API requires license for data access; review terms before enabling automated watcher. API key-based access only."
+
+  - id: cms_hospital_transparency
+    name: CMS Hospital Price Transparency
+    url: https://www.cms.gov/hospital-price-transparency
+    covers: [price_transparency]
+    format: html
+    ingest: manual
+    role: joins to hospital price tracker
+    terms_reviewed: 2026-07-22
+    redistribution_permitted: true
+    note: "CMS is a US government agency. Content is generally public domain. Links to CMS data are unrestricted."

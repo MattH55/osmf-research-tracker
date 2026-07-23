@@ -1,0 +1,40 @@
+name: Validate Cell Data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/cells/**"
+      - "data/sources.yaml"
+      - "schemas/layer-registry.yaml"
+      - "scripts/validate_cells.py"
+  pull_request:
+    branches: [main]
+    paths:
+      - "data/cells/**"
+      - "data/sources.yaml"
+      - "schemas/layer-registry.yaml"
+      - "scripts/validate_cells.py"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate cells + source registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run cell validation
+        run: python scripts/validate_cells.py
+
+      - name: Run strict staleness check (schedule only)
+        if: github.event_name == 'schedule'
+        run: python scripts/validate_cells.py --strict --warnings
