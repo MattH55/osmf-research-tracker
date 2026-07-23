@@ -21,6 +21,14 @@ import json, glob, os, sys, html, csv, io, hashlib, subprocess
 
 BUILD_VERSION = "2.0.0-seed"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Ticket 3 integration: JSON-LD + thin-content gate
+sys.path.insert(0, ROOT)
+from scripts.lib.dataset_jsonld import build_dataset_jsonld, to_jsonld_script, build_corpus_jsonld
+try:
+    from scripts.lib.thin_content_gate import gate as thin_content_gate
+except ImportError:
+    thin_content_gate = None
 SCHEMA = os.path.join(ROOT, "data", "pais-cohort.schema.json")
 COHORT_GLOB = os.path.join(ROOT, "data", "cohorts", "*.json")
 PATHOGENS = os.path.join(ROOT, "data", "ref", "pathogens.json")

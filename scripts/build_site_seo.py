@@ -57,6 +57,11 @@ def is_redirect(markup: str) -> bool:
     return has(markup, r"<meta\b[^>]*http-equiv\s*=\s*['\"]?refresh")
 
 
+def is_noindex(markup: str) -> bool:
+    """Check if page has a robots meta with noindex directive."""
+    return has(markup, r'<meta\s+name\s*=\s*[\'"]robots[\'"][^>]*content\s*=\s*[\'"][^\'"]*noindex')
+
+
 def page_title(markup: str, page: Path) -> str:
     match = re.search(r"<title\b[^>]*>(.*?)</title\s*>", markup, re.I | re.S)
     if match and text_content(match.group(1)):
@@ -258,7 +263,21 @@ def patch_page(page: Path, check: bool) -> tuple[bool, bool]:
 
 def build_sitemap(pages: list[Path], redirects: set[Path], check: bool) -> bool:
     today = date.today().isoformat()
-    urls = [page for page in pages if page not in redirects]
+    urls = []
+    noindex_count = 0
+    for page in pages:
+        if page in redirects:
+            continue
+        try:
+            markup = page.read_text(encoding="utf-8")
+            if is_noindex(markup):
+                noindex_count += 1
+                continue
+        except Exception:
+            pass
+        urls.append(page)
+    if noindex_count:
+        print(f"  sitemap: excluded {noindex_count} noindex-flagged page(s)")
 
     def priority_for(page: Path) -> float:
         rel = page.relative_to(ROOT).as_posix()
