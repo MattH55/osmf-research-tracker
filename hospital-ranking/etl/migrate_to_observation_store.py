@@ -30,13 +30,25 @@ HOSPITALS_JSON = CMS_DIR / "hospitals.json"
 
 
 def map_price_type_from_legacy(legacy_price: dict) -> str:
-    """Map legacy price fields to canonical price_type."""
-    source = legacy_price.get("priceSource", "")
-    if "cash" in str(legacy_price.get("cashLow", "")).lower() or legacy_price.get("cashMedian"):
+    """Map legacy price fields to canonical price_type.
+    
+    Priority: cash > negotiated (MRF convention).
+    Returns one of the enum values from schema/price_observation.schema.json.
+    """
+    has_cash = legacy_price.get("cashMedian") or legacy_price.get("cashLow")
+    has_negotiated = legacy_price.get("negotiatedMedian")
+    source = str(legacy_price.get("priceSource", ""))
+    
+    # Cash prices take priority when present (most transparent)
+    if has_cash:
         return "discounted_cash"
-    if legacy_price.get("negotiatedMedian"):
+    # Negotiated rates are contractually binding
+    if has_negotiated:
         return "negotiated"
-    return "unknown"
+    # Fallback based on source type
+    if "mrf" in source.lower():
+        return "discounted_cash"
+    return "gross_charge"
 
 
 def legacy_trilliant_to_observation(row: dict, hospitals_lookup: dict, source: str = "trilliant") -> dict:
@@ -57,11 +69,13 @@ def legacy_trilliant_to_observation(row: dict, hospitals_lookup: dict, source: s
     if "T" in str(obs_date):
         obs_date = str(obs_date).split("T")[0]
 
+    price_type = map_price_type_from_legacy(row)
+    
     return {
         "observation_id": str(uuid.uuid4()),
         "facility_id": facility_id,
         "procedure_slug": map_procedure_id_to_slug(row.get("procedureId", "")),
-        "price_type": "discounted_cash",
+        "price_type": price_type,
         "amount_native": float(row.get("cashMedian") or 0),
         "currency": "USD",
         "fx_rate_to_usd": 1.0,

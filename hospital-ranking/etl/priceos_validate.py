@@ -146,8 +146,8 @@ def validate_observation(obs: dict, file_path: str, line_num: int, result: Valid
     result.facilities[obs.get("facility_id")] = {"id": obs.get("facility_id")}
     result.procedures.add(obs.get("procedure_slug", "unknown"))
 
-    # Update stats
-    source = obs.get("priceSource", "unknown")
+    # Update stats — use canonical provenance.source_type field (not legacy priceSource)
+    source = obs.get("provenance", {}).get("source_type", "unknown")
     result.stats["observations_by_source"][source] = result.stats["observations_by_source"].get(source, 0) + 1
 
     proc = obs.get("procedure_slug", "unknown")

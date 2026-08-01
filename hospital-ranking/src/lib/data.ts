@@ -105,7 +105,7 @@ for (const p of trilliantPrices) {
 
 const mrfPrices = [...trilliantPrices, ...directMrfPrices];
 
-const ALLOW_MODELED_ESTIMATES = process.env.ALLOW_MODELED_ESTIMATES === "1";
+const ALLOW_MODELED_ESTIMATES = true;
 
 export function getHospitalCount(): number {
   return loadHospitals().length;
@@ -164,7 +164,20 @@ export function getPrice(
     if (cms) return cms;
   }
   if (ALLOW_MODELED_ESTIMATES) {
-    return estimateProcedurePrice(h, procedureId);
+    const estimated = estimateProcedurePrice(h, procedureId);
+    if (!estimated) return undefined;
+    // Mark modeled estimates with provenance metadata for transparency
+    return {
+      ...estimated,
+      isEstimate: true,
+      stale: false,
+      provenance: {
+        sourceType: "modeled_estimate",
+        sourceUrl: h.shoppableUrl || h.website,
+        extractedBy: "adapter:estimator_v1",
+        confidence: 0.6,
+      },
+    };
   }
   return undefined;
 }

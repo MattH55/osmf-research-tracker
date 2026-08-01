@@ -1,12 +1,12 @@
-import type { Hospital, ProcedurePrice } from "./types";
+/**
+ * Pure pricing logic extracted from pricing.ts for native Node.js testing.
+ * This mirrors the TypeScript implementation exactly but uses plain JS.
+ */
 
 const ESTIMATE_VINTAGE = "2025-09-15";
 
 /** National cash medians derived from published shoppable-service benchmarks. */
-export const NATIONAL_MEDIANS: Record<
-  string,
-  { cashMedian: number; oopPpoRatio: number; oopHdhpRatio: number }
-> = {
+export const NATIONAL_MEDIANS = {
   "proc-knee-replacement": { cashMedian: 28500, oopPpoRatio: 0.15, oopHdhpRatio: 0.22 },
   "proc-hip-replacement": { cashMedian: 35200, oopPpoRatio: 0.14, oopHdhpRatio: 0.21 },
   "proc-shoulder-replacement": { cashMedian: 22400, oopPpoRatio: 0.14, oopHdhpRatio: 0.22 },
@@ -33,7 +33,7 @@ export const NATIONAL_MEDIANS: Record<
   "proc-breast-biopsy": { cashMedian: 2150, oopPpoRatio: 0.17, oopHdhpRatio: 0.3 },
 };
 
-const STATE_COST_INDEX: Record<string, number> = {
+const STATE_COST_INDEX = {
   AK: 1.15, AL: 0.88, AR: 0.86, AZ: 1.02, CA: 1.32, CO: 1.05, CT: 1.18, DC: 1.22,
   DE: 1.08, FL: 1.0, GA: 0.95, HI: 1.28, IA: 0.92, ID: 0.94, IL: 1.08, IN: 0.92,
   KS: 0.93, KY: 0.9, LA: 0.92, MA: 1.25, MD: 1.12, ME: 1.02, MI: 0.98, MN: 1.05,
@@ -43,7 +43,7 @@ const STATE_COST_INDEX: Record<string, number> = {
   WI: 1.0, WV: 0.88, WY: 0.98,
 };
 
-const TYPE_MULTIPLIER: Record<string, number> = {
+const TYPE_MULTIPLIER = {
   "Acute Care Hospitals": 1.0,
   "Critical Access Hospitals": 0.74,
   Childrens: 1.06,
@@ -54,7 +54,7 @@ const TYPE_MULTIPLIER: Record<string, number> = {
   "Acute Care - Department of Defense": 0.9,
 };
 
-const OWNERSHIP_MULTIPLIER: Record<string, number> = {
+const OWNERSHIP_MULTIPLIER = {
   Proprietary: 1.06,
   "Government - Federal": 0.9,
   "Government - State": 0.92,
@@ -66,7 +66,7 @@ const OWNERSHIP_MULTIPLIER: Record<string, number> = {
   "Department of Defense": 0.9,
 };
 
-function starsMultiplier(stars: number | null): number {
+function starsMultiplier(stars) {
   if (stars == null) return 1.0;
   if (stars >= 5) return 1.06;
   if (stars >= 4) return 1.03;
@@ -76,7 +76,7 @@ function starsMultiplier(stars: number | null): number {
 }
 
 /** Stable 0.94–1.06 variation per hospital so estimates don't look identical. */
-function hospitalJitter(hospitalId: string): number {
+export function hospitalJitter(hospitalId) {
   let hash = 0;
   for (let i = 0; i < hospitalId.length; i++) {
     hash = (hash * 31 + hospitalId.charCodeAt(i)) | 0;
@@ -84,16 +84,16 @@ function hospitalJitter(hospitalId: string): number {
   return 0.94 + (Math.abs(hash) % 13) / 100;
 }
 
-function roundPrice(n: number): number {
+function roundPrice(n) {
   return Math.round(n / 10) * 10;
 }
 
-/** U.S. national cash median benchmark for a procedure (medical-tourism comparison baseline). */
-export function getUsReferenceMedian(procedureId: string): number | undefined {
+/** U.S. national cash median benchmark for a procedure. */
+export function getUsReferenceMedian(procedureId) {
   return NATIONAL_MEDIANS[procedureId]?.cashMedian;
 }
 
-export function isReportedPrice(price: ProcedurePrice): boolean {
+export function isReportedPrice(price) {
   return (
     price.priceSource === "hospital_mrf" ||
     price.priceSource === "trilliant_mrf" ||
@@ -101,7 +101,7 @@ export function isReportedPrice(price: ProcedurePrice): boolean {
   );
 }
 
-export function priceSourceLabel(source: string): string {
+export function priceSourceLabel(source) {
   if (source === "hospital_mrf") return "Hospital MRF (published)";
   if (source === "trilliant_mrf") return "Hospital MRF (Trilliant ORIA)";
   if (source === "sample_mrf") return "Hospital MRF (sample)";
@@ -109,7 +109,6 @@ export function priceSourceLabel(source: string): string {
   return source;
 }
 
-/** Documented formula — only used when ALLOW_MODELED_ESTIMATES=1 */
 export const ESTIMATE_METHODOLOGY = {
   summary:
     "National shoppable-service medians × state cost index × hospital-type/ownership/stars × per-hospital jitter. Not from any hospital file.",
@@ -120,10 +119,13 @@ export const ESTIMATE_METHODOLOGY = {
   ],
 };
 
-export function estimateProcedurePrice(
-  hospital: Hospital,
-  procedureId: string,
-): ProcedurePrice | undefined {
+/**
+ * Estimate procedure price for a hospital using documented formula.
+ * @param {{ id: string, cmsProviderId?: string, name?: string, state: string, hospitalType?: string, ownership?: string, cmsOverallStars?: number }} hospital
+ * @param {string} procedureId
+ * @returns {{ hospitalId: string, procedureId: string, cmsProviderId: string|undefined, cashLow: number, cashMedian: number, cashHigh: number, negotiatedMedian: number, negotiatedLow: number, negotiatedHigh: number, oopUninsured: number, oopPpo: number, oopHdhp: number, priceSource: string, priceVintage: string }|undefined}
+ */
+export function estimateProcedurePrice(hospital, procedureId) {
   const bench = NATIONAL_MEDIANS[procedureId];
   if (!bench) return undefined;
 
