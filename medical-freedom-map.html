@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EP8RK1RZ29"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-EP8RK1RZ29');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Freedom Arbitrage Map — Procedure Access by Jurisdiction | Open Source Medicine</title>
+  <meta name="description" content="Compare legal pathways, costs, oversight quality, and eligibility for psychedelics, gene therapy, stem cells, peptides, and other procedures across jurisdictions worldwide. Static, searchable, SEO-indexable.">
+  <meta name="keywords" content="medical freedom, right to try, medical tourism, procedure access, gene therapy access, psilocybin legal status, stem cell clinics, expanded access, compassionate use">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://research.opensourcemed.info/medical-freedom-map.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Open Source Medicine Foundation">
+  <meta property="og:title" content="Medical Freedom Arbitrage Map — Procedure Access by Jurisdiction">
+  <meta property="og:description" content="Compare legal pathways, costs, and oversight for medical procedures across jurisdictions. Open-source research tool.">
+  <meta property="og:url" content="https://research.opensourcemed.info/medical-freedom-map.html">
+  <meta property="og:image" content="https://opensourcemed.info/favicon.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Medical Freedom Arbitrage Map">
+  <meta name="twitter:description" content="Procedure access pathways, costs, and legal status by jurisdiction.">
+  <meta name="twitter:image" content="https://opensourcemed.info/favicon.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tracker.css">
+  <script src="js/site-universal.js" defer></script>
+  <style>
+    :root { --mfm-bg:#fff; --mfm-bg2:#f8fafc; --mfm-fg:#0f172a; --mfm-muted:#475569; --mfm-border:#e2e8f0; --mfm-primary:#2563eb; }
+    [data-theme="dark"] { --mfm-bg:#0f172a; --mfm-bg2:#1e293b; --mfm-fg:#f1f5f9; --mfm-muted:#94a3b8; --mfm-border:#334155; --mfm-primary:#3b82f6; }
+    .mfm-wrap { max-width: 1400px; margin: 0 auto; padding: 0 1rem 3rem; }
+    .mfm-disc { background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:.75rem 1rem; margin:1rem 0; font-size:.875rem; color:#92400e; }
+    .mfm-hero { padding:1.5rem 0 1rem; }
+    .mfm-hero h1 { font-size:clamp(1.5rem,3vw,2rem); margin-bottom:.5rem; }
+    .mfm-hero p { color:var(--mfm-muted); max-width:720px; }
+    .mfm-links { display:flex; flex-wrap:wrap; gap:.75rem; margin:1rem 0 1.5rem; }
+    .mfm-links a { display:inline-block; padding:.45rem .9rem; border-radius:8px; border:1px solid var(--mfm-border); background:var(--mfm-bg2); color:var(--mfm-primary); text-decoration:none; font-size:.875rem; font-weight:600; }
+    .mfm-links a:hover { border-color:var(--mfm-primary); }
+    .mfm-fbar { display:flex; flex-wrap:wrap; gap:.75rem; align-items:flex-end; margin-bottom:1rem; padding:1rem; background:var(--mfm-bg2); border:1px solid var(--mfm-border); border-radius:12px; }
+    .mfm-fg { display:flex; flex-direction:column; gap:.25rem; min-width:140px; }
+    .mfm-fg label { font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--mfm-muted); }
+    .mfm-fg select, .mfm-fg input { padding:.45rem .65rem; border:1px solid var(--mfm-border); border-radius:8px; background:var(--mfm-bg); color:var(--mfm-fg); font-size:.875rem; }
+    .mfm-main { display:grid; grid-template-columns:1fr 1fr; gap:1rem; min-height:480px; }
+    @media (max-width:900px){ .mfm-main { grid-template-columns:1fr; } }
+    .mfm-map-shell { border:1px solid var(--mfm-border); border-radius:12px; overflow:hidden; position:relative; min-height:450px; }
+    #mfm-map { width:100%; height:100%; min-height:450px; }
+    .mfm-table-shell { border:1px solid var(--mfm-border); border-radius:12px; overflow:hidden; background:var(--mfm-bg); display:flex; flex-direction:column; max-height:560px; }
+    .mfm-tt { display:flex; justify-content:space-between; align-items:center; padding:.75rem 1rem; border-bottom:1px solid var(--mfm-border); font-size:.875rem; color:var(--mfm-muted); gap:.5rem; flex-wrap:wrap; }
+    .mfm-tscr { overflow:auto; flex:1; }
+    .mfm-tscr table { width:100%; border-collapse:collapse; font-size:.8125rem; }
+    .mfm-tscr th { text-align:left; padding:.55rem .7rem; background:var(--mfm-bg2); position:sticky; top:0; cursor:pointer; white-space:nowrap; border-bottom:2px solid var(--mfm-border); }
+    .mfm-tscr td { padding:.5rem .7rem; border-bottom:1px solid var(--mfm-border); vertical-align:top; }
+    .mfm-tscr tr:hover { background:var(--mfm-bg2); cursor:pointer; }
+    .badge { display:inline-block; padding:.125rem .5rem; border-radius:999px; font-size:.6875rem; font-weight:600; text-transform:uppercase; background:#e2e8f0; color:#334155; }
+    .bg-ok { background:#d1fae5; color:#065f46; }
+    .bg-warn { background:#fef3c7; color:#92400e; }
+    .bg-bad { background:#fee2e2; color:#991b1b; }
+    .bg-info { background:#dbeafe; color:#1e40af; }
+    .bg-purple { background:#ede9fe; color:#5b21b6; }
+    .mfm-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:3000; padding:1rem; }
+    .mfm-modal-overlay.open { display:flex; }
+    .mfm-modal { background:var(--mfm-bg); color:var(--mfm-fg); border-radius:12px; max-width:760px; width:100%; max-height:90vh; overflow:auto; padding:1.5rem; box-shadow:0 20px 50px rgba(0,0,0,.25); }
+    .mfm-modal h3 { margin-bottom:.75rem; font-size:1.15rem; }
+    .mfm-modal h4 { margin:1rem 0 .4rem; color:var(--mfm-primary); font-size:.95rem; }
+    .mfm-modal .ms { margin-bottom:.6rem; }
+    .mfm-modal .ms strong { display:block; font-size:.7rem; text-transform:uppercase; color:var(--mfm-muted); }
+    .mfm-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+    @media (max-width:600px){ .mfm-grid2 { grid-template-columns:1fr; } }
+    .mfm-close { float:right; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--mfm-muted); }
+    .mfm-seo { margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--mfm-border); }
+    .mfm-seo h2 { font-size:1.15rem; margin-bottom:.75rem; }
+    .mfm-seo p, .mfm-seo li { color:var(--mfm-muted); font-size:.9rem; line-height:1.65; }
+    .mfm-seo ul { margin:.5rem 0 1rem 1.25rem; }
+    .btnsm { padding:.3rem .65rem; font-size:.75rem; border-radius:6px; border:1px solid var(--mfm-border); background:var(--mfm-bg2); cursor:pointer; color:var(--mfm-fg); }
+    .btnsm:hover { border-color:var(--mfm-primary); }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "Medical Freedom Arbitrage Map",
+    "description": "Cross-jurisdiction medical procedure access pathways, legal status, costs, and oversight quality for research and informed comparison.",
+    "url": "https://research.opensourcemed.info/medical-freedom-map.html",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "creator": { "@type": "Organization", "name": "Open Source Medicine Foundation", "url": "https://opensourcemed.info" },
+    "isAccessibleForFree": true,
+    "keywords": ["right to try", "medical tourism", "expanded access", "gene therapy", "psilocybin", "stem cell"]
+  }
+  </script>
+</head>
+<body>
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="maps/">Freedom Maps</a></li>
+      <li><a href="disease-intelligence/right-to-try.html">Right to Try</a></li>
+      <li><a href="disease-intelligence/gene-therapy-mapper.html">Gene Therapy</a></li>
+      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="mfm-wrap">
+  <div class="mfm-disc" id="mfm-disc">
+    <strong>Informational only.</strong> Not medical, legal, or travel advice. Laws and clinic practices change; verify with counsel and official sources before acting.
+    <button class="btnsm" style="margin-left:.5rem" onclick="document.getElementById('mfm-disc').style.display='none'">Dismiss</button>
+  </div>
+
+  <section class="mfm-hero">
+    <p style="font-size:.8rem;font-weight:600;color:var(--mfm-primary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem;">Open Source Medicine Foundation</p>
+    <h1>Medical Freedom Arbitrage Map</h1>
+    <p>Compare legal pathways, costs, oversight quality, and eligibility for high-impact procedures across jurisdictions — psychedelics, gene and cell therapy, peptides, repurposed drugs, reproductive tech, and assisted dying.</p>
+    <div class="mfm-links">
+      <a href="maps/">State Healthcare Law Maps →</a>
+      <a href="maps/right-to-try/">Right-to-Try by State →</a>
+      <a href="disease-intelligence/right-to-try.html">Right-to-Try Disease Compendium →</a>
+      <a href="disease-intelligence/gene-therapy-mapper.html">Gene Therapy Mapper →</a>
+      <a href="data/med-freedom/access-public.json">Download JSON data</a>
+    </div>
+  </section>
+
+  <div class="mfm-fbar">
+    <div class="mfm-fg" style="flex:1;min-width:200px">
+      <label for="mfm-q">Search</label>
+      <input id="mfm-q" type="search" placeholder="Procedure, jurisdiction, disease…" onkeydown="if(event.key==='Enter')mfmFilter()">
+    </div>
+    <div class="mfm-fg">
+      <label for="mfm-mod">Modality</label>
+      <select id="mfm-mod" onchange="mfmFilter()"><option value="">All</option></select>
+    </div>
+    <div class="mfm-fg">
+      <label for="mfm-legal">Legal status</label>
+      <select id="mfm-legal" onchange="mfmFilter()"><option value="">All</option></select>
+    </div>
+    <div class="mfm-fg">
+      <label for="mfm-ov">Oversight</label>
+      <select id="mfm-ov" onchange="mfmFilter()"><option value="">All</option></select>
+    </div>
+    <button class="btnsm" onclick="mfmFilter()">Search</button>
+    <button class="btnsm" onclick="mfmClear()">Clear</button>
+    <button class="btnsm" onclick="mfmExportCSV()">Export CSV</button>
+  </div>
+
+  <div class="mfm-main">
+    <div class="mfm-map-shell"><div id="mfm-map"></div></div>
+    <div class="mfm-table-shell">
+      <div class="mfm-tt">
+        <span id="mfm-count">Loading access records…</span>
+      </div>
+      <div class="mfm-tscr">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="mfmSort('procedure_name')">Procedure</th>
+              <th onclick="mfmSort('jurisdiction_name')">Jurisdiction</th>
+              <th onclick="mfmSort('legal_status')">Legal status</th>
+              <th onclick="mfmSort('oversight_quality')">Oversight</th>
+              <th onclick="mfmSort('estimated_cost_range_usd')">Cost</th>
+            </tr>
+          </thead>
+          <tbody id="mfm-tbody"><tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--mfm-muted)">Loading static dataset…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <section class="mfm-seo">
+    <h2>What this map covers</h2>
+    <p>
+      The Medical Freedom Arbitrage Map is a static, open dataset of procedure–jurisdiction access records.
+      It is designed for researchers, clinicians exploring market entry, and patients comparing legal pathways —
+      including right-to-try / expanded access, regulated therapy programs, clinical-trial-only regimes, and prohibitions.
+    </p>
+    <ul>
+      <li><strong>State law layers:</strong> scope of practice, licensure compacts, certificate of need, right to try, regenerative medicine, telehealth, compounding, and more — see the <a href="maps/">Medical Freedom Maps</a>.</li>
+      <li><strong>Unmet need diseases:</strong> conditions without approved disease-modifying therapy in the <a href="disease-intelligence/right-to-try.html">Right-to-Try Compendium</a>.</li>
+      <li><strong>Monogenic therapies:</strong> approved and pipeline gene therapies in the <a href="disease-intelligence/gene-therapy-mapper.html">Gene Therapy Mapper</a>.</li>
+    </ul>
+    <p>Hosted as static HTML/JSON on GitHub Pages (research.opensourcemed.info) so search engines can index every page. Data last exported for static hosting: August 2026.</p>
+  </section>
+</main>
+
+<div class="mfm-modal-overlay" id="mfm-modal" role="dialog" aria-modal="true" onclick="if(event.target===this)mfmClose()">
+  <div class="mfm-modal">
+    <button class="mfm-close" onclick="mfmClose()" aria-label="Close">×</button>
+    <div id="mfm-modal-body"></div>
+  </div>
+</div>
+
+<footer class="osmf-network-footer">
+  <div class="osmf-network-inner">
+    <div class="footer-brand">Open Source Medicine Foundation</div>
+    <div class="footer-links">
+      <a href="https://opensourcemed.info">OSMF</a>
+      <a href="https://research.opensourcemed.info/">Research Platform</a>
+      <a href="maps/">Medical Freedom Maps</a>
+      <a href="disease-intelligence/right-to-try.html">Right to Try</a>
+    </div>
+    <p style="margin-top:1rem;font-size:.8rem;color:var(--mfm-muted)">Not legal or medical advice. Verify with official sources.</p>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  const DATA_URL = 'data/med-freedom/access-public.json';
+  let all = [];
+  let view = [];
+  let sortField = 'procedure_name';
+  let sortAsc = true;
+  let map, markers = {};
+
+  function esc(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function label(s) {
+    if (!s) return '—';
+    return String(s).replace(/_/g, ' ');
+  }
+  function badgeClass(kind, val) {
+    const v = String(val || '').toUpperCase();
+    if (kind === 'legal') {
+      if (/APPROVED|FULLY|REGULATED|UNREGULATED_PERMITTED|PERMITTED/.test(v)) return 'bg-ok';
+      if (/RIGHT_TO_TRY|RTT|EXPANDED|OFF_LABEL|DISCRETION|DECRIM/.test(v)) return 'bg-warn';
+      if (/TRIAL/.test(v)) return 'bg-info';
+      if (/PROHIBIT/.test(v)) return 'bg-bad';
+      return '';
+    }
+    if (kind === 'ov') {
+      if (/HIGH|REGULATED_HIGH/.test(v)) return 'bg-ok';
+      if (/MEDIUM|MODERATE|VARIABLE|SELF/.test(v)) return 'bg-warn';
+      if (/LOW/.test(v)) return 'bg-bad';
+      return '';
+    }
+    return 'bg-purple';
+  }
+
+  function fillSelect(id, items) {
+    const el = document.getElementById(id);
+    items.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = label(v);
+      el.appendChild(o);
+    });
+  }
+
+  function initMap() {
+    map = L.map('mfm-map').setView([25, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap | OSMF',
+      maxZoom: 18
+    }).addTo(map);
+  }
+
+  function ovColor(q) {
+    const v = String(q || '').toUpperCase();
+    if (/HIGH|REGULATED_HIGH/.test(v)) return '#059669';
+    if (/MEDIUM|MODERATE/.test(v)) return '#d97706';
+    if (/LOW/.test(v)) return '#dc2626';
+    if (/VARIABLE|SELF/.test(v)) return '#7c3aed';
+    return '#64748b';
+  }
+
+  function updateMap(rows) {
+    Object.values(markers).forEach(m => map.removeLayer(m));
+    markers = {};
+    const groups = {};
+    rows.forEach(r => {
+      const key = r.jurisdiction_name || r.id;
+      if (!groups[key]) {
+        groups[key] = {
+          name: r.jurisdiction_name,
+          la: r.jurisdiction_latitude,
+          lo: r.jurisdiction_longitude,
+          recs: [],
+          os: new Set()
+        };
+      }
+      groups[key].recs.push(r);
+      if (r.oversight_quality) groups[key].os.add(r.oversight_quality);
+    });
+    Object.entries(groups).forEach(([key, g]) => {
+      if (g.la == null || g.lo == null) return;
+      const os = [...g.os];
+      const c = os.length === 1 ? ovColor(os[0]) : '#64748b';
+      const m = L.circleMarker([g.la, g.lo], {
+        radius: 9, fillColor: c, color: '#fff', weight: 1.5, fillOpacity: 0.85
+      }).addTo(map).bindTooltip('<b>' + esc(g.name) + '</b><br>' + g.recs.length + ' record(s)');
+      m.on('click', () => {
+        view = g.recs;
+        renderTable();
+        map.setView([g.la, g.lo], 5);
+      });
+      markers[key] = m;
+    });
+  }
+
+  function renderTable() {
+    const sorted = [...view].sort((a, b) => {
+      const va = (a[sortField] || '').toString().toLowerCase();
+      const vb = (b[sortField] || '').toString().toLowerCase();
+      return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+    document.getElementById('mfm-count').textContent =
+      sorted.length.toLocaleString() + ' access record' + (sorted.length === 1 ? '' : 's');
+    const tbody = document.getElementById('mfm-tbody');
+    if (!sorted.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--mfm-muted)">No results match your filters.</td></tr>';
+      return;
+    }
+    // Cap DOM rows for performance; full export still available
+    const show = sorted.slice(0, 500);
+    tbody.innerHTML = show.map(r =>
+      '<tr data-id="' + esc(r.id) + '">' +
+      '<td>' + esc(r.procedure_name) + '</td>' +
+      '<td>' + esc(r.jurisdiction_name) + '</td>' +
+      '<td><span class="badge ' + badgeClass('legal', r.legal_status) + '">' + esc(label(r.legal_status)) + '</span></td>' +
+      '<td><span class="badge ' + badgeClass('ov', r.oversight_quality) + '">' + esc(label(r.oversight_quality || '—')) + '</span></td>' +
+      '<td>' + esc(r.estimated_cost_range_usd || '—') + '</td>' +
+      '</tr>'
+    ).join('') + (sorted.length > 500
+      ? '<tr><td colspan="5" style="padding:1rem;color:var(--mfm-muted);text-align:center">Showing first 500 of ' + sorted.length.toLocaleString() + '. Refine filters or export CSV for the full set.</td></tr>'
+      : '');
+    tbody.querySelectorAll('tr[data-id]').forEach(tr => {
+      tr.addEventListener('click', () => mfmDetail(tr.getAttribute('data-id')));
+    });
+  }
+
+  window.mfmSort = function (f) {
+    if (sortField === f) sortAsc = !sortAsc;
+    else { sortField = f; sortAsc = true; }
+    renderTable();
+  };
+
+  window.mfmFilter = function () {
+    const q = (document.getElementById('mfm-q').value || '').trim().toLowerCase();
+    const mod = document.getElementById('mfm-mod').value;
+    const legal = document.getElementById('mfm-legal').value;
+    const ov = document.getElementById('mfm-ov').value;
+    view = all.filter(r => {
+      if (mod && r.modality !== mod) return false;
+      if (legal && r.legal_status !== legal) return false;
+      if (ov && r.oversight_quality !== ov) return false;
+      if (q) {
+        const hay = [
+          r.procedure_name, r.jurisdiction_name, r.legal_status, r.modality,
+          r.arbitrage_summary, r.access_pathway_details,
+          ...(r.diseases || []), ...(r.therapeutic_areas || [])
+        ].join(' ').toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    renderTable();
+    updateMap(view);
+  };
+
+  window.mfmClear = function () {
+    document.getElementById('mfm-q').value = '';
+    document.getElementById('mfm-mod').value = '';
+    document.getElementById('mfm-legal').value = '';
+    document.getElementById('mfm-ov').value = '';
+    view = all;
+    renderTable();
+    updateMap(view);
+    map.setView([25, 0], 2);
+  };
+
+  window.mfmDetail = function (id) {
+    const r = all.find(x => x.id === id);
+    if (!r) return;
+    const section = (title, val) => val
+      ? '<h4>' + esc(title) + '</h4><p style="font-size:.875rem;line-height:1.55">' + esc(val) + '</p>'
+      : '';
+    let sources = '';
+    if (r.sources) {
+      const arr = Array.isArray(r.sources) ? r.sources : [];
+      if (arr.length) {
+        sources = '<h4>Sources</h4><ul style="margin-left:1.1rem;font-size:.85rem">' +
+          arr.map(s => {
+            if (typeof s === 'string') return '<li>' + esc(s) + '</li>';
+            const t = s.title || s.name || s.url || 'Source';
+            return s.url
+              ? '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(t) + '</a></li>'
+              : '<li>' + esc(t) + '</li>';
+          }).join('') + '</ul>';
+      }
+    }
+    document.getElementById('mfm-modal-body').innerHTML =
+      '<h3>' + esc(r.procedure_name) + '<br><small style="font-weight:500;color:var(--mfm-muted)">' +
+      esc(r.jurisdiction_name) + '</small></h3>' +
+      '<div class="mfm-grid2">' +
+      '<div class="ms"><strong>Legal status</strong><p><span class="badge ' + badgeClass('legal', r.legal_status) + '">' + esc(label(r.legal_status)) + '</span></p></div>' +
+      '<div class="ms"><strong>Oversight</strong><p><span class="badge ' + badgeClass('ov', r.oversight_quality) + '">' + esc(label(r.oversight_quality || '—')) + '</span></p></div>' +
+      '<div class="ms"><strong>Modality</strong><p><span class="badge">' + esc(label(r.modality)) + '</span></p></div>' +
+      '<div class="ms"><strong>Cost (USD)</strong><p>' + esc(r.estimated_cost_range_usd || '—') + '</p></div>' +
+      '<div class="ms"><strong>Access pathway</strong><p>' + esc(label(r.access_pathway || '—')) + '</p></div>' +
+      '<div class="ms"><strong>Authority</strong><p>' + esc(r.regulatory_authority || '—') + '</p></div>' +
+      '</div>' +
+      section('Access pathway details', r.access_pathway_details) +
+      section('Legal basis', r.legal_basis) +
+      section('Eligibility', r.eligibility_requirements) +
+      section('Provider requirements', r.provider_requirements) +
+      section('Residency / travel', r.residency_travel_notes) +
+      section('Risk notes', r.risk_notes) +
+      section('Arbitrage summary', r.arbitrage_summary) +
+      section('Oversight notes', r.oversight_notes) +
+      section('Cost notes', r.cost_notes) +
+      (r.last_verified ? '<div class="ms" style="margin-top:1rem"><strong>Last verified</strong><p>' + esc(r.last_verified) + '</p></div>' : '') +
+      sources;
+    document.getElementById('mfm-modal').classList.add('open');
+  };
+
+  window.mfmClose = function () {
+    document.getElementById('mfm-modal').classList.remove('open');
+  };
+
+  window.mfmExportCSV = function () {
+    const cols = ['procedure_name','jurisdiction_name','legal_status','oversight_quality','modality','estimated_cost_range_usd','access_pathway','arbitrage_summary'];
+    const lines = [cols.join(',')];
+    view.forEach(r => {
+      lines.push(cols.map(c => {
+        let v = r[c] == null ? '' : String(r[c]);
+        if (/[",\n]/.test(v)) v = '"' + v.replace(/"/g, '""') + '"';
+        return v;
+      }).join(','));
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'medical-freedom-access-records.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') mfmClose(); });
+
+  initMap();
+  fetch(DATA_URL)
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(data => {
+      all = data.access_records || [];
+      view = all;
+      const fo = data.filter_options || {};
+      fillSelect('mfm-mod', fo.modalities || []);
+      fillSelect('mfm-legal', fo.legal_statuses || []);
+      fillSelect('mfm-ov', fo.oversight_qualities || []);
+      renderTable();
+      updateMap(view);
+      document.getElementById('mfm-count').textContent =
+        all.length.toLocaleString() + ' access records loaded';
+    })
+    .catch(err => {
+      document.getElementById('mfm-tbody').innerHTML =
+        '<tr><td colspan="5" style="padding:2rem;text-align:center;color:#b91c1c">Failed to load data: ' +
+        esc(err.message) + '. Ensure data/med-freedom/access-public.json is published.</td></tr>';
+    });
+})();
+</script>
+</body>
+</html>

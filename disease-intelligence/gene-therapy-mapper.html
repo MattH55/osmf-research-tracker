@@ -3,384 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gene Therapy Mapper — RepurpOS | OpenSourceMedicine</title>
-  <meta name="description" content="Gene therapy mapper: monogenic diseases and single-gene therapy opportunities.">
+  <title>Gene Therapy Mapper — Monogenic Diseases &amp; Approved Therapies | Open Source Medicine</title>
+  <meta name="description" content="Static gene therapy mapper: 14 monogenic diseases with causal genes, genetic tests, disease burden estimates, approved products (Zolgensma, Luxturna, Casgevy, and more), and live ClinicalTrials.gov links.">
+  <meta name="keywords" content="gene therapy, monogenic disease, Zolgensma, Luxturna, Casgevy, CRISPR, AAV, right to try, expanded access">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html">
   <link rel="icon" href="https://opensourcemed.info/favicon.png" type="image/png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Gene Therapy Mapper — Monogenic Diseases">
+  <meta property="og:description" content="14 monogenic diseases with approved or advanced gene therapies, burden estimates, and trial links.">
+  <meta property="og:url" content="https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html">
+  <meta property="og:image" content="https://opensourcemed.info/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;
-      --text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}
-    body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}
+    :root{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;--text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
     a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
-    code{background:#2a3050;padding:2px 6px;border-radius:4px;font-size:.85em}
-
     nav{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-    .nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px;flex-wrap:wrap}
     .nav-brand{font-weight:700;font-size:.95rem;color:var(--text)} .nav-brand span{color:var(--accent)}
-    .nav-links{list-style:none;display:flex;gap:.5rem} .nav-links a{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}
-    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--card);text-decoration:none}
-
+    .nav-links{list-style:none;display:flex;gap:.5rem;flex-wrap:wrap} .nav-links a{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}
+    .nav-links a:hover{color:var(--text);background:var(--card);text-decoration:none}
     .page-hero{background:linear-gradient(135deg,#0d1230,#1a1f45);border-bottom:1px solid var(--border);padding:3rem 1.5rem 2.5rem;text-align:center}
     .hero-eyebrow{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
     .page-hero h1{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}
     .page-hero p{color:var(--muted);max-width:720px;margin:0 auto;font-size:.95rem}
-
     main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}
-    .breadcrumb{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}
-    .explanation-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem}
-    .explanation-card h2{font-size:1.1rem;color:var(--accent);margin-bottom:1rem}
-    .explanation-card p{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:1rem}
-    .explanation-card ul{margin:0 0 1rem 1.5rem;font-size:.9rem;color:var(--muted)}
-    .explanation-card li{margin-bottom:.5rem}
-
-    .filter-section{display:flex;flex-wrap:wrap;gap:.75rem;margin:2rem 0 1.5rem;align-items:center}
-    .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.5rem 1.25rem;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;transition:all .2s}
-    .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
-    .filter-btn.active{color:#000;background:var(--accent);border-color:var(--accent)}
-
+    .breadcrumb{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;flex-wrap:wrap}
+    .explanation-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+    .explanation-card h2{font-size:1.05rem;color:var(--accent);margin-bottom:.75rem}
+    .explanation-card p,.explanation-card li{font-size:.9rem;color:var(--muted)}
+    .explanation-card ul{margin:.5rem 0 0 1.25rem}
+    .filter-bar{display:flex;flex-wrap:wrap;gap:.75rem;margin:1rem 0 1.25rem;align-items:center}
+    .filter-bar input{flex:1;min-width:220px;padding:.55rem .85rem;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+    .filter-bar label{font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:.35rem}
     .results-count{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
-
-    .disease-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.5rem;margin-top:2rem}
-    .disease-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .2s}
-    .disease-card:hover{box-shadow:0 8px 24px rgba(74,158,255,.15);border-color:var(--accent);transform:translateY(-2px)}
-
-    .disease-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:1rem}
-
-    .info-row{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(42,48,80,.3);font-size:.85rem}
-    .info-row:last-child{border-bottom:none}
-    .info-label{color:var(--muted)}
-    .info-value{color:var(--text);font-weight:600}
-    .info-value.highlight{color:var(--green)}
-
-    .gene-list{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin:1rem 0;font-size:.85rem}
-    .gene-list-title{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;font-weight:600}
-    .gene-tags{display:flex;flex-wrap:wrap;gap:.5rem}
-    .gene-tag{background:rgba(74,158,255,.15);color:var(--accent);padding:3px 8px;border-radius:4px;font-size:.8rem;font-weight:500}
-
-    .section-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin:1rem 0;font-size:.85rem}
-    .section-box-title{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem;font-weight:600}
-    .section-box-item{margin-bottom:.6rem;font-size:.85rem}
-    .section-box-item strong{color:var(--text)}
-    .section-box-item .detail{color:var(--muted);font-size:.8rem;margin-top:.2rem}
-
-    .therapy-section{margin-top:1rem}
-    .therapy-title{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:.5rem}
-    .therapy-item{background:rgba(34,197,94,.1);color:var(--green);padding:.4rem .7rem;border-radius:4px;font-size:.8rem;margin-bottom:.3rem;display:inline-block;margin-right:.5rem}
-    .therapy-item.rna{background:rgba(245,158,11,.1);color:var(--amber)}
-    .therapy-item.crispr{background:rgba(124,106,247,.1);color:#7c6af7}
-    .therapy-item.approved{background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.3)}
-
-    .cta-button{display:inline-block;margin-top:1rem;padding:.6rem 1.25rem;background:var(--accent);color:var(--bg);text-decoration:none;border-radius:6px;font-size:.85rem;font-weight:600;transition:all .2s;border:none;cursor:pointer}
-    .cta-button:hover{opacity:.9;transform:translateY(-1px)}
-
+    .disease-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem}
+    .disease-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.35rem}
+    .disease-card.hidden{display:none}
+    .disease-title{font-size:1.05rem;font-weight:700;margin-bottom:.75rem}
+    .info-row{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid rgba(42,48,80,.35);font-size:.85rem}
+    .info-label{color:var(--muted)} .info-value{font-weight:600;text-align:right} .info-value.highlight{color:var(--green)}
+    .section-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.85rem;margin:.85rem 0;font-size:.85rem}
+    .section-box-title{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;font-weight:600}
+    .section-box-item{margin-bottom:.35rem;color:var(--muted)} .section-box-item strong{color:var(--text)}
+    .therapy-title{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:.5rem}
+    .therapy-item{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:var(--green);padding:.55rem .7rem;border-radius:6px;font-size:.82rem;margin-bottom:.4rem}
+    .therapy-item .detail{color:var(--muted);font-size:.78rem;margin-top:.15rem}
+    .empty-note{color:var(--amber);font-size:.85rem}
+    .muted-note{color:var(--muted);font-size:.82rem;margin-top:.6rem}
+    .cta-button{display:inline-block;padding:.55rem 1rem;background:var(--accent);color:#0a0e1a;border-radius:6px;font-size:.82rem;font-weight:600;text-decoration:none}
+    .cta-button.secondary{background:transparent;color:var(--accent);border:1px solid rgba(74,158,255,.4)}
+    .src-list{margin-top:.85rem;padding-left:1.1rem;font-size:.8rem;color:var(--muted)}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+    .related{margin-top:2rem;padding:1.25rem;background:var(--card);border-radius:12px;border:1px solid var(--border)}
+    .related a{margin-right:1rem}
   </style>
-
-  <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Open Source Medicine Research">
-  <meta property="og:title" content="Gene Therapy Mapper — RepurpOS | OpenSourceMedicine">
-  <meta property="og:description" content="Monogenic diseases and single-gene therapy opportunities. Identifies candidates for gene replacement, RNA interference, and CRISPR-based approaches.">
-  <meta property="og:url" content="https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html">
-  <meta name="twitter:card" content="summary">
-  
-
-  <meta property="og:image" content="https://opensourcemed.info/favicon.png">
-  <meta property="og:image:width" content="">
-  <meta property="og:image:height" content="">
-
-  <meta name="twitter:title" content="Gene Therapy Mapper — RepurpOS | OpenSourceMedicine">
-  <meta name="twitter:description" content="Gene therapy mapper: monogenic diseases and single-gene therapy opportunities.">
-  <meta name="twitter:image" content="https://opensourcemed.info/favicon.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": "https://research.opensourcemed.info/#website",
-      "url": "https://research.opensourcemed.info/",
-      "name": "Open Source Medicine — Research Tracker",
-      "publisher": {
-        "@id": "https://opensourcemed.info/#org"
-      },
-      "inLanguage": "en"
-    },
-    {
-      "@type": "WebPage",
-      "@id": "https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html#webpage",
-      "url": "https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html",
-      "name": "Gene Therapy Mapper — RepurpOS | OpenSourceMedicine",
-      "description": "Gene therapy mapper: monogenic diseases and single-gene therapy opportunities.",
-      "inLanguage": "en",
-      "isPartOf": {
-        "@id": "https://research.opensourcemed.info/#website"
-      },
-      "publisher": {
-        "@id": "https://opensourcemed.info/#org"
-      },
-      "about": [
-        {
-          "@type": "MedicalCondition",
-          "name": "Lyme Disease"
-        }
-      ]
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://research.opensourcemed.info/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Disease Intelligence",
-          "item": "https://research.opensourcemed.info/disease-intelligence/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "Gene Therapy Mapper — RepurpOS | OpenSourceMedicine",
-          "item": "https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html"
-        }
-      ]
-    }
-  ]
-}
-</script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Dataset","name":"Gene Therapy Mapper","description":"Monogenic diseases with approved or clinically advanced gene therapies.","url":"https://research.opensourcemed.info/disease-intelligence/gene-therapy-mapper.html","creator":{"@type":"Organization","name":"Open Source Medicine Foundation"},"dateModified":"2026-07","isAccessibleForFree":true}
+  </script>
 </head>
 <body>
-
   <nav>
     <div class="nav-container">
       <a href="../index.html" class="nav-brand">Open Source Medicine <span>Foundation</span></a>
-      <ul class="nav-links"><li><a href="../index.html">Research Tracker</a></li><li><a href="index.html" class="active">RepurpOS</a></li><li><a href="../clinical_trials.html">Clinical Trials</a></li></ul>
+      <ul class="nav-links">
+        <li><a href="../index.html">Research Tracker</a></li>
+        <li><a href="index.html">RepurpOS</a></li>
+        <li><a href="right-to-try.html">Right to Try</a></li>
+        <li><a href="../medical-freedom-map.html">Freedom Map</a></li>
+        <li><a href="../maps/">State Law Maps</a></li>
+      </ul>
     </div>
   </nav>
-
   <header class="page-hero">
-    <div class="hero-eyebrow">RepurpOS</div>
+    <div class="hero-eyebrow">RepurpOS · Gene Therapy</div>
     <h1>Gene Therapy Mapper</h1>
-    <p>Monogenic diseases and single-gene therapy opportunities. Identifies candidates for gene replacement, RNA interference, and CRISPR-based approaches.</p>
+    <p>14 monogenic (or single-gene-addressable) diseases with approved or clinically advanced gene/cell-gene therapies. Burden figures are rough planning estimates — not epidemiology of record. Data as of 2026-07.</p>
   </header>
-
   <main>
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="../index.html">Home</a><span>/</span>
       <a href="index.html">RepurpOS</a><span>/</span>
       <span>Gene Therapy Mapper</span>
     </nav>
-
     <div class="explanation-card">
-      <h2>Monogenic Diseases & Gene Therapy Approaches</h2>
-      <p>This mapper identifies diseases caused by single-gene mutations and their corresponding gene therapy strategies:</p>
+      <h2>What this page is</h2>
+      <p>A fully static, search-engine-indexable reference (no backend API). Each card lists causal gene, inheritance, genetic test/biomarker, rough disease burden, approved products with sponsors and list prices, other treatments, and a live ClinicalTrials.gov search.</p>
       <ul>
-        <li><strong>Gene Replacement:</strong> Deliver functional copies via viral vectors (AAV, lentiviral, adenoviral) to restore protein function</li>
-        <li><strong>RNA Interference:</strong> Silence disease-causing alleles using antisense oligonucleotides or siRNA (e.g., nusinersen for SMA)</li>
-        <li><strong>CRISPR/Base Editing:</strong> Correct mutations in-situ using genome editing (e.g., exagamglogene autotemcel for RPE65-LCA)</li>
-        <li><strong>Protein Replacement:</strong> Enzyme replacement therapy (ERT) for lysosomal storage diseases</li>
+        <li><strong>12</strong> diseases with at least one approved therapy in this snapshot</li>
+        <li>Prices are US list (WAC) where known and change over time</li>
+        <li>For jurisdictional access pathways, see the <a href="../medical-freedom-map.html">Medical Freedom Arbitrage Map</a> and <a href="../maps/right-to-try/">state Right-to-Try maps</a></li>
       </ul>
-      <p style="margin-top: 1rem; font-size: .9rem; color: var(--muted);">Clinical trials count reflects active and completed studies from ClinicalTrials.gov.</p>
     </div>
-
-    <section>
-      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: .5rem;">Monogenic Diseases & Therapy Candidates</h2>
-      <p style="font-size: .9rem; color: var(--muted); margin-bottom: 1.5rem;">Sorted by clinical trial activity (most advanced first)</p>
-
-      <div class="results-count" id="results-count">Showing 5 diseases</div>
-
-      <div class="disease-grid" id="disease-grid">
-
-        <div class="disease-card">
-          <div class="disease-title">Hemophilia</div>
-
-          <div style="margin-bottom: 1rem;">
-            <div class="info-row">
-              <span class="info-label">Inheritance Pattern:</span>
-              <span class="info-value">X-Linked Recessive</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Clinical Trials:</span>
-              <span class="info-value highlight">15</span>
-            </div>
-          </div>
-
-          <div class="gene-list">
-            <div class="gene-list-title">Primary Genes</div>
-            <div class="gene-tags"><span class="gene-tag">F8</span> <span class="gene-tag">F9</span></div>
-          </div>
-
-          <div class="section-box"><div class="section-box-title">Genetic Testing / Biomarkers</div><div class="section-box-item">• Factor VIII/IX activity assay</div><div class="section-box-item">• FVIII/FIX gene sequencing</div><div class="section-box-item">• aPTT (activated partial thromboplastin time)</div></div>
-
-          <div style="margin-top: 1rem;"><div class="therapy-title">FDA/EMA Approved Therapies</div><div class="therapy-item approved"><strong>Valoctocogene roxaparvovec (Roctavian)</strong><div class="detail">AAV5-mediated F8 gene therapy (Hemophilia A) (2024)</div><div class="detail">Mutations: All F8 mutations</div></div><div class="therapy-item approved"><strong>Eteplirsen (Exondys51)</strong><div class="detail">Antisense oligonucleotide for F8 exon-51 (2016)</div><div class="detail">Mutations: F8 exon-51 deletable</div></div></div>
-
-          <div class="section-box"><div class="section-box-title">Mutation Stratification</div><div class="section-box-item">• F8 mutations (>1800 known)</div><div class="section-box-item">• F9 mutations (>1000 known)</div></div>
-
-          
-          
-          
-
-          <div style="display: flex; gap: .5rem; margin-top: 1rem;">
-            <a href="hemophilia.html" class="cta-button">View Disease Profile</a>
-            <a href="https://clinicaltrials.gov/search?cond=Hemophilia&type=gene+therapy" target="_blank" style="display:inline-block;margin-top:.5rem;padding:.4rem .9rem;background:rgba(74,158,255,.1);color:var(--accent);border:1px solid rgba(74,158,255,.3);text-decoration:none;border-radius:6px;font-size:.8rem;font-weight:600;">View Clinical Trials →</a>
-          </div>
-        </div>
-
-        <div class="disease-card">
-          <div class="disease-title">Sickle Cell Disease</div>
-
-          <div style="margin-bottom: 1rem;">
-            <div class="info-row">
-              <span class="info-label">Inheritance Pattern:</span>
-              <span class="info-value">Autosomal Recessive</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Clinical Trials:</span>
-              <span class="info-value highlight">12</span>
-            </div>
-          </div>
-
-          <div class="gene-list">
-            <div class="gene-list-title">Primary Genes</div>
-            <div class="gene-tags"><span class="gene-tag">HBB</span></div>
-          </div>
-
-          <div class="section-box"><div class="section-box-title">Genetic Testing / Biomarkers</div><div class="section-box-item">• HBB gene sequencing</div><div class="section-box-item">• Hemoglobin electrophoresis</div><div class="section-box-item">• Solubility test</div></div>
-
-          <div style="margin-top: 1rem;"><div class="therapy-title">FDA/EMA Approved Therapies</div><div class="therapy-item approved"><strong>Exagamglogene autotemcel (Casgevy)</strong><div class="detail">CRISPR base-editing ex vivo (2023)</div><div class="detail">Mutations: All SCD mutations</div></div><div class="therapy-item approved"><strong>Frangakis—Bluebird Bio LentiGlobin</strong><div class="detail">Lentiviral gene therapy (pending) (2023)</div><div class="detail">Mutations: βS/βS or βS/βC</div></div><div class="therapy-item approved"><strong>Voxelotor (Oxbryta)</strong><div class="detail">Hemoglobin S polymerization inhibitor (2019)</div><div class="detail">Mutations: All SCD mutations</div></div></div>
-
-          <div class="section-box"><div class="section-box-title">Mutation Stratification</div><div class="section-box-item">• βS/βS (homozygous)</div><div class="section-box-item">• βS/βC (HbSC disease)</div><div class="section-box-item">• βS/βThal (thalassemia variant)</div></div>
-
-          
-          
-          
-
-          <div style="display: flex; gap: .5rem; margin-top: 1rem;">
-            <a href="sickle-cell-disease.html" class="cta-button">View Disease Profile</a>
-            <a href="https://clinicaltrials.gov/search?cond=Sickle+Cell+Disease&type=gene+therapy" target="_blank" style="display:inline-block;margin-top:.5rem;padding:.4rem .9rem;background:rgba(74,158,255,.1);color:var(--accent);border:1px solid rgba(74,158,255,.3);text-decoration:none;border-radius:6px;font-size:.8rem;font-weight:600;">View Clinical Trials →</a>
-          </div>
-        </div>
-
-        <div class="disease-card">
-          <div class="disease-title">Cystic Fibrosis</div>
-
-          <div style="margin-bottom: 1rem;">
-            <div class="info-row">
-              <span class="info-label">Inheritance Pattern:</span>
-              <span class="info-value">Autosomal Recessive</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Clinical Trials:</span>
-              <span class="info-value highlight">8</span>
-            </div>
-          </div>
-
-          <div class="gene-list">
-            <div class="gene-list-title">Primary Genes</div>
-            <div class="gene-tags"><span class="gene-tag">CFTR</span></div>
-          </div>
-
-          <div class="section-box"><div class="section-box-title">Genetic Testing / Biomarkers</div><div class="section-box-item">• CFTR sequencing</div><div class="section-box-item">• Sweat chloride test</div><div class="section-box-item">• Immunoreactive trypsinogen (IRT)</div></div>
-
-          <div style="margin-top: 1rem;"><div class="therapy-title">FDA/EMA Approved Therapies</div><div class="therapy-item approved"><strong>Lumacaftor/Ivacaftor (Orkambi)</strong><div class="detail">CFTR potentiator (2015)</div><div class="detail">Mutations: F508del/F508del</div></div><div class="therapy-item approved"><strong>Elexacaftor/Tezacaftor/Ivacaftor (Trikafta)</strong><div class="detail">CFTR corrector + potentiator (2019)</div><div class="detail">Mutations: Any with F508del</div></div></div>
-
-          <div class="section-box"><div class="section-box-title">Mutation Stratification</div><div class="section-box-item">• F508del (70% prevalence)</div><div class="section-box-item">• G551D</div><div class="section-box-item">• N1303K</div><div class="section-box-item">• Other loss-of-function</div></div>
-
-          
-          
-          
-
-          <div style="display: flex; gap: .5rem; margin-top: 1rem;">
-            <a href="cystic-fibrosis.html" class="cta-button">View Disease Profile</a>
-            <a href="https://clinicaltrials.gov/search?cond=Cystic+Fibrosis&type=gene+therapy" target="_blank" style="display:inline-block;margin-top:.5rem;padding:.4rem .9rem;background:rgba(74,158,255,.1);color:var(--accent);border:1px solid rgba(74,158,255,.3);text-decoration:none;border-radius:6px;font-size:.8rem;font-weight:600;">View Clinical Trials →</a>
-          </div>
-        </div>
-
-        <div class="disease-card">
-          <div class="disease-title">Alpha-1 Antitrypsin Deficiency</div>
-
-          <div style="margin-bottom: 1rem;">
-            <div class="info-row">
-              <span class="info-label">Inheritance Pattern:</span>
-              <span class="info-value">Autosomal Recessive</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Clinical Trials:</span>
-              <span class="info-value highlight">4</span>
-            </div>
-          </div>
-
-          <div class="gene-list">
-            <div class="gene-list-title">Primary Genes</div>
-            <div class="gene-tags"><span class="gene-tag">SERPINA1</span></div>
-          </div>
-
-          <div class="section-box"><div class="section-box-title">Genetic Testing / Biomarkers</div><div class="section-box-item">• AAT serum level (<57 µM indicates deficiency)</div><div class="section-box-item">• AAT phenotyping (PiZZ, PiMZ, etc.)</div><div class="section-box-item">• SERPINA1 gene sequencing</div></div>
-
-          <div style="margin-top: 1rem;"><div class="therapy-title">FDA/EMA Approved Therapies</div><div class="therapy-item approved"><strong>AAT augmentation therapy (IV infusion)</strong><div class="detail">Protein replacement (purified human AAT) (1987)</div><div class="detail">Mutations: PiZZ, PiSZ</div></div></div>
-
-          <div class="section-box"><div class="section-box-title">Mutation Stratification</div><div class="section-box-item">• PiZZ (severe deficiency, ~55% normal levels)</div><div class="section-box-item">• PiMZ (intermediate)</div><div class="section-box-item">• PiSZ (intermediate)</div></div>
-
-          
-          
-          
-
-          <div style="display: flex; gap: .5rem; margin-top: 1rem;">
-            <a href="alpha-1-antitrypsin-deficiency.html" class="cta-button">View Disease Profile</a>
-            <a href="https://clinicaltrials.gov/search?cond=Alpha-1+Antitrypsin+Deficiency&type=gene+therapy" target="_blank" style="display:inline-block;margin-top:.5rem;padding:.4rem .9rem;background:rgba(74,158,255,.1);color:var(--accent);border:1px solid rgba(74,158,255,.3);text-decoration:none;border-radius:6px;font-size:.8rem;font-weight:600;">View Clinical Trials →</a>
-          </div>
-        </div>
-
-        <div class="disease-card">
-          <div class="disease-title">Huntington Disease</div>
-
-          <div style="margin-bottom: 1rem;">
-            <div class="info-row">
-              <span class="info-label">Inheritance Pattern:</span>
-              <span class="info-value">Autosomal Dominant</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Clinical Trials:</span>
-              <span class="info-value highlight">4</span>
-            </div>
-          </div>
-
-          <div class="gene-list">
-            <div class="gene-list-title">Primary Genes</div>
-            <div class="gene-tags"><span class="gene-tag">HTT</span></div>
-          </div>
-
-          <div class="section-box"><div class="section-box-title">Genetic Testing / Biomarkers</div><div class="section-box-item">• HTT CAG repeat length (>39 repeats diagnostic)</div><div class="section-box-item">• MRI for basal ganglia atrophy</div><div class="section-box-item">• HTT huntingtin protein levels</div></div>
-
-          <div style="margin-top: 1rem;"><div class="therapy-title">FDA/EMA Approved Therapies</div><div class="therapy-item approved"><strong>Tominersen (IONIS-HTT-Rx)</strong><div class="detail">Antisense oligonucleotide (HTT lowering) (Phase 3)</div><div class="detail">Mutations: All HTT mutations</div></div><div class="therapy-item approved"><strong>Valbenazine (Ingrezza)</strong><div class="detail">Symptomatic (VMAT2 inhibitor for chorea) (2016)</div><div class="detail">Mutations: All HTT mutations</div></div></div>
-
-          <div class="section-box"><div class="section-box-title">Mutation Stratification</div><div class="section-box-item">• CAG repeat: 40-49 (incomplete penetrance)</div><div class="section-box-item">• CAG repeat: ≥50 (full penetrance)</div><div class="section-box-item">• CAG repeat: >60 (juvenile onset)</div></div>
-
-          
-          
-          
-
-          <div style="display: flex; gap: .5rem; margin-top: 1rem;">
-            <a href="huntington-disease.html" class="cta-button">View Disease Profile</a>
-            <a href="https://clinicaltrials.gov/search?cond=Huntington+Disease&type=gene+therapy" target="_blank" style="display:inline-block;margin-top:.5rem;padding:.4rem .9rem;background:rgba(74,158,255,.1);color:var(--accent);border:1px solid rgba(74,158,255,.3);text-decoration:none;border-radius:6px;font-size:.8rem;font-weight:600;">View Clinical Trials →</a>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
+    <div class="filter-bar">
+      <input type="search" id="gt-q" placeholder="Filter by disease or gene (e.g. SMN1, sickle, DMD)…" oninput="filterGT()">
+      <label><input type="checkbox" id="gt-approved" onchange="filterGT()"> Approved only</label>
+    </div>
+    <div class="results-count" id="gt-count">Showing 14 diseases</div>
+    <div class="disease-grid" id="gt-grid">
+<article class="disease-card" id="sma" data-gene="SMN1" data-approved="1"><h2 class="disease-title">Spinal Muscular Atrophy (SMA)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">SMN1</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">253300</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 10,000 live births</span></div><div class="info-row"><span class="info-label">Carrier frequency</span><span class="info-value">~1 in 40-50</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~10,000-25,000 living</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">hundreds of thousands</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Historically the leading genetic cause of infant mortality.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">AAV9 delivery of a functional SMN1 gene copy (SMN2 copy number modifies severity).</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Homozygous SMN1 exon 7 deletion/mutation; SMN2 copy number for prognosis.</div><div class="section-box-item">SMN1 deletion testing (MLPA/qPCR); included in newborn screening in most US states and a growing number of countries.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Zolgensma (onasemnogene abeparvovec)</strong><div class="detail">AAV9-SMN1, one-time IV</div><div class="detail">Sponsor: Novartis · Approved: US 2019; EU 2020; Japan 2020</div><div class="detail">List price: ~2,100,000 (one-time)</div><div class="detail">Eligibility: Typically &lt;2 years; weight-based dosing</div></div></div><p class="muted-note"><strong>Other treatments:</strong> Nusinersen (Spinraza, antisense, intrathecal) and risdiplam (Evrysdi, oral) are non-gene-therapy disease-modifying drugs.</p><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Spinal+Muscular+Atrophy&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/zolgensma" target="_blank" rel="noopener">FDA — Zolgensma</a></li><li><a href="https://www.curesma.org/about-sma/" target="_blank" rel="noopener">Cure SMA — About SMA</a></li></ul></article>
+<article class="disease-card" id="rpe65-lca" data-gene="RPE65" data-approved="1"><h2 class="disease-title">RPE65-mediated inherited retinal dystrophy (Leber congenital amaurosis type 2 / retinitis pigmentosa)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">RPE65</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">204100</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">RPE65 disease affects ~1 in 200,000</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~1,000-3,000</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">tens of thousands</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">First FDA-approved directly administered gene therapy for an inherited disease.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Subretinal AAV2 delivery of RPE65 to retinal pigment epithelium.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Biallelic RPE65 pathogenic variants with viable retinal cells.</div><div class="section-box-item">Inherited retinal disease gene panel / confirmatory RPE65 sequencing; requires documented biallelic variants.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Luxturna (voretigene neparvovec)</strong><div class="detail">AAV2-RPE65, subretinal, per-eye</div><div class="detail">Sponsor: Spark Therapeutics (Roche) · Approved: US 2017; EU 2018</div><div class="detail">List price: ~425,000 per eye (~850,000 bilateral)</div><div class="detail">Eligibility: Confirmed biallelic RPE65, viable retinal cells</div></div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=RPE65-mediated+inherited+retinal+dystrophy&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/luxturna" target="_blank" rel="noopener">FDA — Luxturna</a></li></ul></article>
+<article class="disease-card" id="scd" data-gene="HBB" data-approved="1"><h2 class="disease-title">Sickle Cell Disease (SCD)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">HBB</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">603903</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 365 US Black newborns; ~300,000+ affected births/year globally</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~100,000</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~7-8 million</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Major global burden concentrated in sub-Saharan Africa and India.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Autologous CD34+ HSC editing — CRISPR of BCL11A enhancer to raise fetal hemoglobin (Casgevy), or lentiviral anti-sickling β-globin (Lyfgenia).</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Homozygous HbS (βS/βS) or compound heterozygous genotypes; hemoglobin electrophoresis.</div><div class="section-box-item">Hemoglobin electrophoresis / HBB sequencing; newborn screening universal in the US.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Casgevy (exagamglogene autotemcel, exa-cel)</strong><div class="detail">CRISPR-edited autologous HSCs (ex vivo)</div><div class="detail">Sponsor: Vertex / CRISPR Therapeutics · Approved: US 2023; UK/EU 2023-2024</div><div class="detail">List price: ~2,200,000</div><div class="detail">Eligibility: Age ≥12 with recurrent vaso-occlusive crises</div></div><div class="therapy-item approved"><strong>Lyfgenia (lovotibeglogene autotemcel)</strong><div class="detail">Lentiviral β-globin gene addition (ex vivo)</div><div class="detail">Sponsor: bluebird bio · Approved: US 2023</div><div class="detail">List price: ~3,100,000</div><div class="detail">Eligibility: Age ≥12 with vaso-occlusive events</div></div></div><div class="section-box"><div class="section-box-title">Management / repurposing candidates</div><div class="section-box-item"><strong>Sirolimus</strong> — </div><div class="section-box-item"><strong>Tacrolimus Anhydrous</strong> — </div><div class="section-box-item"><strong>Abatacept</strong> — </div><div class="section-box-item"><strong>Acalabrutinib</strong> — </div><div class="section-box-item"><strong>Acalabrutinib Maleate</strong> — </div><div class="section-box-item"><strong>Acebutolol</strong> — </div><div class="section-box-item"><strong>Acebutolol Hydrochloride</strong> — </div><div class="section-box-item"><strong>Aceclidine</strong> — </div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a href="sickle-cell-disease.html" class="cta-button">View Disease Profile</a><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Sickle+Cell+Disease&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/news-events/press-announcements/fda-approves-first-gene-therapies-treat-patients-sickle-cell-disease" target="_blank" rel="noopener">FDA — Casgevy / Lyfgenia approvals</a></li><li><a href="https://www.cdc.gov/sickle-cell/data/" target="_blank" rel="noopener">CDC — Sickle Cell Data</a></li></ul></article>
+<article class="disease-card" id="beta-thal" data-gene="HBB" data-approved="1"><h2 class="disease-title">Transfusion-dependent β-thalassemia</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">HBB</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">613985</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 100,000 globally (much higher in Mediterranean, Middle East, South/SE Asia)</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~1,000 transfusion-dependent</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~hundreds of thousands transfusion-dependent</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Carrier frequency very high in endemic regions.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Autologous HSC gene addition of functional β-globin (Zynteglo) or BCL11A editing to raise HbF (Casgevy).</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">HBB pathogenic variants with transfusion dependence.</div><div class="section-box-item">HBB sequencing; hemoglobin studies; transfusion history.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Zynteglo (betibeglogene autotemcel)</strong><div class="detail">Lentiviral β-globin gene addition (ex vivo)</div><div class="detail">Sponsor: bluebird bio · Approved: US 2022; (EU approval later withdrawn commercially)</div><div class="detail">List price: ~2,800,000</div><div class="detail">Eligibility: Transfusion-dependent, all genotypes</div></div><div class="therapy-item approved"><strong>Casgevy (exa-cel)</strong><div class="detail">CRISPR-edited autologous HSCs (ex vivo)</div><div class="detail">Sponsor: Vertex / CRISPR Therapeutics · Approved: US/UK/EU 2023-2024</div><div class="detail">List price: ~2,200,000</div><div class="detail">Eligibility: Age ≥12, transfusion-dependent</div></div></div><div class="section-box"><div class="section-box-title">Management / repurposing candidates</div><div class="section-box-item"><strong>Sirolimus</strong> — </div><div class="section-box-item"><strong>Acetazolamide</strong> — </div><div class="section-box-item"><strong>Amitriptyline Hydrochloride</strong> — </div><div class="section-box-item"><strong>Amphetamine</strong> — </div><div class="section-box-item"><strong>Bicalutamide</strong> — </div><div class="section-box-item"><strong>Carbachol</strong> — </div><div class="section-box-item"><strong>Ciprofloxacin</strong> — </div><div class="section-box-item"><strong>Cladribine</strong> — </div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a href="beta-thalassemia.html" class="cta-button">View Disease Profile</a><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Transfusion-dependent+%CE%B2-thalassemia&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/zynteglo" target="_blank" rel="noopener">FDA — Zynteglo</a></li></ul></article>
+<article class="disease-card" id="hemophilia-b" data-gene="F9" data-approved="1"><h2 class="disease-title">Hemophilia B (Factor IX deficiency)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">F9</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">X-linked recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">306900</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 30,000 male births</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~5,000-7,000</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~35,000-40,000 (diagnosed)</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">About 1/4 as common as hemophilia A.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">AAV-delivered F9 (often the hyperactive Padua variant) to hepatocytes for endogenous Factor IX.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Low Factor IX activity; F9 pathogenic variant.</div><div class="section-box-item">Factor IX activity assay + F9 sequencing; AAV neutralizing-antibody screen for eligibility.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Hemgenix (etranacogene dezaparvovec)</strong><div class="detail">AAV5-F9 Padua, one-time IV</div><div class="detail">Sponsor: CSL Behring / uniQure · Approved: US 2022; EU 2023</div><div class="detail">List price: ~3,500,000 (one-time)</div><div class="detail">Eligibility: Adults, low AAV5 neutralizing antibodies</div></div></div><div class="section-box"><div class="section-box-title">Management / repurposing candidates</div><div class="section-box-item"><strong>Abciximab</strong> — </div><div class="section-box-item"><strong>Acetazolamide</strong> — </div><div class="section-box-item"><strong>Adalimumab</strong> — </div><div class="section-box-item"><strong>Albutrepenonacog Alfa</strong> — </div><div class="section-box-item"><strong>Alteplase</strong> — </div><div class="section-box-item"><strong>Amphetamine</strong> — </div><div class="section-box-item"><strong>Andexanet Alfa</strong> — </div><div class="section-box-item"><strong>Anifrolumab</strong> — </div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a href="hemophilia.html" class="cta-button">View Disease Profile</a><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Hemophilia+B&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/hemgenix" target="_blank" rel="noopener">FDA — Hemgenix</a></li></ul></article>
+<article class="disease-card" id="hemophilia-a" data-gene="F8" data-approved="1"><h2 class="disease-title">Hemophilia A (Factor VIII deficiency)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">F8</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">X-linked recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">306700</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 5,000 male births</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~20,000-25,000</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~150,000+ (diagnosed)</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Most common severe inherited bleeding disorder.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">AAV-delivered B-domain-deleted F8 to hepatocytes for endogenous Factor VIII.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Low Factor VIII activity; F8 pathogenic variant.</div><div class="section-box-item">Factor VIII activity assay + F8 sequencing; AAV5 neutralizing-antibody screen.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Roctavian (valoctocogene roxaparvovec)</strong><div class="detail">AAV5-F8 (BDD), one-time IV</div><div class="detail">Sponsor: BioMarin · Approved: US 2023; EU 2022</div><div class="detail">List price: ~2,900,000 (one-time)</div><div class="detail">Eligibility: Adults with severe HemA, low AAV5 antibodies</div></div></div><div class="section-box"><div class="section-box-title">Management / repurposing candidates</div><div class="section-box-item"><strong>Abciximab</strong> — </div><div class="section-box-item"><strong>Acetazolamide</strong> — </div><div class="section-box-item"><strong>Adalimumab</strong> — </div><div class="section-box-item"><strong>Albutrepenonacog Alfa</strong> — </div><div class="section-box-item"><strong>Alteplase</strong> — </div><div class="section-box-item"><strong>Amphetamine</strong> — </div><div class="section-box-item"><strong>Andexanet Alfa</strong> — </div><div class="section-box-item"><strong>Anifrolumab</strong> — </div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a href="hemophilia.html" class="cta-button">View Disease Profile</a><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Hemophilia+A&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/roctavian" target="_blank" rel="noopener">FDA — Roctavian</a></li></ul></article>
+<article class="disease-card" id="dmd" data-gene="DMD (dystrophin)" data-approved="1"><h2 class="disease-title">Duchenne Muscular Dystrophy (DMD)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">DMD (dystrophin)</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">X-linked recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">310200</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 3,500-5,000 male births</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~10,000-15,000</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~300,000 males</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Micro-dystrophin restores a partial protein, not full-length dystrophin.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">AAV delivery of a shortened engineered &#x27;micro-dystrophin&#x27; gene to muscle.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">DMD pathogenic variant; absent/near-absent dystrophin.</div><div class="section-box-item">DMD deletion/duplication (MLPA) + sequencing; needed to confirm mutation type/amenability.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Elevidys (delandistrogene moxeparvovec)</strong><div class="detail">AAVrh74 micro-dystrophin, one-time IV</div><div class="detail">Sponsor: Sarepta / Roche · Approved: US 2023 (accelerated; label later expanded)</div><div class="detail">List price: ~3,200,000 (one-time)</div><div class="detail">Eligibility: Ambulatory/non-ambulatory per evolving label; confirmed DMD mutation</div></div></div><p class="muted-note"><strong>Other treatments:</strong> Exon-skipping antisense drugs (eteplirsen, golodirsen, viltolarsen, casimersen) are mutation-specific, non-gene-therapy options.</p><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Duchenne+Muscular+Dystrophy&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/elevidys" target="_blank" rel="noopener">FDA — Elevidys</a></li></ul></article>
+<article class="disease-card" id="mld" data-gene="ARSA" data-approved="1"><h2 class="disease-title">Metachromatic Leukodystrophy (MLD)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">ARSA</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">250100</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 40,000-160,000</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~low thousands</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">tens of thousands</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Benefit depends on treating before major neurologic decline.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Ex vivo lentiviral ARSA gene addition to autologous HSCs (pre-symptomatic/early).</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Low arylsulfatase A activity; ARSA variants; elevated urinary sulfatides.</div><div class="section-box-item">ARSA enzyme activity + gene sequencing; early/pre-symptomatic detection is critical.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Lenmeldy (atidarsagene autotemcel) / Libmeldy (EU)</strong><div class="detail">Lentiviral ARSA autologous HSCs (ex vivo)</div><div class="detail">Sponsor: Orchard Therapeutics · Approved: EU 2020 (Libmeldy); US 2024 (Lenmeldy)</div><div class="detail">List price: ~4,250,000 (among the highest listed)</div><div class="detail">Eligibility: Pre-/early-symptomatic late-infantile or early-juvenile</div></div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Metachromatic+Leukodystrophy&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/lenmeldy" target="_blank" rel="noopener">FDA — Lenmeldy</a></li></ul></article>
+<article class="disease-card" id="cald" data-gene="ABCD1" data-approved="1"><h2 class="disease-title">Cerebral Adrenoleukodystrophy (CALD)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">ABCD1</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">X-linked recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">300100</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">X-ALD ~1 in 15,000-17,000 (all forms); a subset develop cerebral form</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~thousands (X-ALD overall)</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">tens of thousands (X-ALD overall)</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Skysona carries a boxed warning for hematologic malignancy risk.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Ex vivo lentiviral ABCD1 gene addition to autologous HSCs.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Elevated very-long-chain fatty acids (VLCFA); ABCD1 variant; MRI lesion (Loes score).</div><div class="section-box-item">Plasma VLCFA + ABCD1 sequencing; MRI surveillance for cerebral progression.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Skysona (elivaldogene autotemcel)</strong><div class="detail">Lentiviral ABCD1 autologous HSCs (ex vivo)</div><div class="detail">Sponsor: bluebird bio · Approved: US 2022; EU 2021</div><div class="detail">List price: ~3,000,000</div><div class="detail">Eligibility: Early active CALD, boys 4-17, when no matched donor</div></div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Cerebral+Adrenoleukodystrophy&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/skysona" target="_blank" rel="noopener">FDA — Skysona</a></li></ul></article>
+<article class="disease-card" id="aadc" data-gene="DDC" data-approved="1"><h2 class="disease-title">Aromatic L-amino Acid Decarboxylase (AADC) Deficiency</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">DDC</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">608643</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">Ultra-rare; hundreds reported worldwide (higher in Taiwan/Japan)</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">&lt;100 known</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">hundreds</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">First approved gene therapy delivered directly into the brain.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Stereotactic AAV2-hAADC delivered directly to the putamen.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Low AADC activity; DDC variants; low CSF neurotransmitter metabolites.</div><div class="section-box-item">DDC sequencing + CSF neurotransmitter metabolites + plasma AADC activity.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Kebilidi (eladocagene exuparvovec) / Upstaza (EU)</strong><div class="detail">AAV2-hAADC, intraputaminal</div><div class="detail">Sponsor: PTC Therapeutics · Approved: EU 2022 (Upstaza); US 2024 (Kebilidi)</div><div class="detail">List price: ~3,000,000 (region-dependent)</div><div class="detail">Eligibility: Confirmed AADC deficiency, ≥18 months</div></div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Aromatic+L-amino+Acid+Decarboxylase&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.fda.gov/vaccines-blood-biologics/kebilidi" target="_blank" rel="noopener">FDA — Kebilidi</a></li></ul></article>
+<article class="disease-card" id="ada-scid" data-gene="ADA" data-approved="1"><h2 class="disease-title">ADA-SCID (severe combined immunodeficiency due to adenosine deaminase deficiency)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">ADA</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">102700</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">ADA-SCID ~1 in 200,000-1,000,000</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">&lt;100 (very rare)</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">hundreds</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Strimvelis is delivered at a single center in Milan, Italy.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Ex vivo gammaretroviral/lentiviral ADA gene addition to autologous HSCs.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Absent ADA enzyme activity; ADA variants; very low T/B/NK cells.</div><div class="section-box-item">ADA enzyme activity + gene sequencing; SCID picked up on TREC newborn screening.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Strimvelis</strong><div class="detail">Gammaretroviral ADA autologous CD34+ cells (ex vivo)</div><div class="detail">Sponsor: Orchard Therapeutics · Approved: EU 2016</div><div class="detail">List price: ~700,000 (EU, single-center)</div><div class="detail">Eligibility: ADA-SCID with no matched related donor</div></div></div><p class="muted-note"><strong>Other treatments:</strong> Enzyme replacement (PEG-ADA) and allogeneic HSCT are alternatives.</p><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=ADA-SCID&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.ema.europa.eu/en/medicines/human/EPAR/strimvelis" target="_blank" rel="noopener">EMA — Strimvelis</a></li></ul></article>
+<article class="disease-card" id="lpld" data-gene="LPL" data-approved="1"><h2 class="disease-title">Lipoprotein Lipase Deficiency (LPLD)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">LPL</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">238600</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 1,000,000</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">&lt;500</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~thousands</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Glybera was the first gene therapy approved in the West (EU 2012) but was withdrawn commercially in 2017 — a landmark cautionary tale on ultra-rare pricing.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">AAV1-LPL(S447X) intramuscular injection (historical).</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Severe hypertriglyceridemia; absent LPL activity; LPL variants.</div><div class="section-box-item">LPL sequencing + post-heparin lipase activity.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="therapy-item approved"><strong>Glybera (alipogene tiparvovec) — WITHDRAWN</strong><div class="detail">AAV1-LPL(S447X), intramuscular</div><div class="detail">Sponsor: uniQure · Approved: EU 2012 (withdrawn 2017)</div><div class="detail">List price: ~1,000,000 (historical; treated ~1 commercial patient)</div><div class="detail">Eligibility: Historical</div></div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Lipoprotein+Lipase+Deficiency&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.ema.europa.eu/en/medicines/human/EPAR/glybera" target="_blank" rel="noopener">EMA — Glybera (withdrawn)</a></li></ul></article>
+<article class="disease-card" id="cf" data-gene="CFTR" data-approved="0"><h2 class="disease-title">Cystic Fibrosis (CF)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">CFTR</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Autosomal recessive</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">219700</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 2,500-3,500 in populations of European descent</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~40,000</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">~100,000+</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">CFTR modulators (e.g., Trikafta) transformed care but do not help all genotypes — the gap gene therapy targets.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">No gene therapy approved. Active inhaled gene/mRNA and editing programs aim to address mutations not covered by modulators.</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">CFTR variants (e.g., F508del); sweat chloride; included in newborn screening.</div><div class="section-box-item">CFTR variant panel / full-gene sequencing + sweat chloride test.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="empty-note">Inhaled lentiviral, AAV, and LNP/mRNA CFTR programs are in clinical/preclinical development.</div></div><p class="muted-note"><strong>Other treatments:</strong> CFTR modulators (ivacaftor, lumacaftor, tezacaftor, elexacaftor/Trikafta) are approved small molecules, not gene therapy.</p><div class="section-box"><div class="section-box-title">Management / repurposing candidates</div><div class="section-box-item"><strong>Ciprofloxacin</strong> — </div><div class="section-box-item"><strong>Acetazolamide</strong> — </div><div class="section-box-item"><strong>Adalimumab</strong> — </div><div class="section-box-item"><strong>Alclometasone</strong> — </div><div class="section-box-item"><strong>Alclometasone Dipropionate</strong> — </div><div class="section-box-item"><strong>Amcinonide</strong> — </div><div class="section-box-item"><strong>Amphetamine</strong> — </div><div class="section-box-item"><strong>Apigenin</strong> — </div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a href="cystic-fibrosis.html" class="cta-button">View Disease Profile</a><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Cystic+Fibrosis&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://www.cff.org/" target="_blank" rel="noopener">Cystic Fibrosis Foundation</a></li></ul></article>
+<article class="disease-card" id="lhon" data-gene="MT-ND4 (mitochondrial)" data-approved="0"><h2 class="disease-title">Leber Hereditary Optic Neuropathy (LHON)</h2><div class="info-row"><span class="info-label">Gene</span><span class="info-value highlight">MT-ND4 (mitochondrial)</span></div><div class="info-row"><span class="info-label">Inheritance</span><span class="info-value">Mitochondrial (maternal)</span></div><div class="info-row"><span class="info-label">OMIM</span><span class="info-value">535000</span></div><div class="info-row"><span class="info-label">Incidence</span><span class="info-value">~1 in 30,000-50,000</span></div><div class="info-row"><span class="info-label">US patients</span><span class="info-value">~thousands</span></div><div class="info-row"><span class="info-label">Global patients</span><span class="info-value">tens of thousands</span></div><div class="info-row"><span class="info-label">Notes</span><span class="info-value">Late-stage trials (e.g., lenadogene nolparvovec) reported bilateral improvement; regulatory status still evolving.</span></div><div class="section-box"><div class="section-box-title">Mechanism</div><div class="section-box-item">Intravitreal AAV2 allotopic expression of ND4 (investigational; not yet approved).</div></div><div class="section-box"><div class="section-box-title">Biomarker / genetic test</div><div class="section-box-item">Primary mtDNA variants (m.11778G&gt;A most common).</div><div class="section-box-item">Mitochondrial DNA testing for the three primary LHON variants.</div></div><div class="therapy-section"><div class="therapy-title">Approved gene / cell-gene therapies</div><div class="empty-note">Lenadogene nolparvovec (GS010) and related AAV2-ND4 programs are in late-stage development; no full approval as of the AS_OF date.</div></div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem"><a class="cta-button secondary" href="https://clinicaltrials.gov/search?cond=Leber+Hereditary+Optic+Neuropathy&amp;term=gene+therapy&amp;aggFilters=status:rec" target="_blank" rel="noopener">ClinicalTrials.gov →</a></div><ul class="src-list"><li><a href="https://clinicaltrials.gov/search?cond=Leber%20Hereditary%20Optic%20Neuropathy&amp;term=gene%20therapy" target="_blank" rel="noopener">ClinicalTrials.gov — LHON gene therapy</a></li></ul></article>
+    </div>
+    <div class="related">
+      <strong>Related:</strong>
+      <a href="right-to-try.html">Right-to-Try Compendium</a>
+      <a href="../medical-freedom-map.html">Medical Freedom Arbitrage Map</a>
+      <a href="../maps/">State Healthcare Law Maps</a>
+      <a href="../data/med-freedom/gene-therapies.json">JSON data</a>
+    </div>
   </main>
-
   <footer>
-    <p>Gene Therapy Mapper. Data: Open Targets, ClinicalTrials.gov, FDA/EMA approvals. Not medical or legal advice.</p>
+    <p><strong>Not medical advice.</strong> Verify product labels, eligibility, and regulatory status with official sources.</p>
+    <p>Open Source Medicine Foundation · research.opensourcemed.info · Data as of 2026-07</p>
   </footer>
-
+  <script>
+  function filterGT(){
+    const q = (document.getElementById('gt-q').value||'').toLowerCase().trim();
+    const ao = document.getElementById('gt-approved').checked;
+    let n = 0;
+    document.querySelectorAll('#gt-grid .disease-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const okQ = !q || text.includes(q) || (card.dataset.gene||'').toLowerCase().includes(q);
+      const okA = !ao || card.dataset.approved === '1';
+      const show = okQ && okA;
+      card.classList.toggle('hidden', !show);
+      if (show) n++;
+    });
+    document.getElementById('gt-count').textContent = 'Showing ' + n + ' disease' + (n===1?'':'s');
+  }
+  </script>
 </body>
 </html>
