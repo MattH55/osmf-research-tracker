@@ -21,7 +21,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="border-b border-slate-200 bg-gradient-to-b from-teal-50 to-white px-4 py-16 sm:py-20">
+      <section className="border-b border-slate-200 bg-gradient-to-b from-teal-50 to-white px-4 py-12 sm:py-20">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-teal-700">
             Free · Public · Patient-first
@@ -43,7 +43,7 @@ export default function HomePage() {
             — all in plain language.
           </p>
         </div>
-        <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+        <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-slate-200 bg-white p-4 shadow-lg sm:mt-10 sm:p-8">
           <SearchForm procedures={procedures} />
         </div>
         <div className="mx-auto mt-6 max-w-2xl">

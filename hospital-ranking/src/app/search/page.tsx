@@ -84,7 +84,7 @@ function SearchResults({ sp }: { sp: Record<string, string | string[] | undefine
   return (
     <div className="space-y-6">
       {procedure && (
-        <div className="rounded-xl border border-teal-100 bg-teal-50/50 px-4 py-3">
+        <div className="rounded-xl border border-teal-100 bg-teal-50/50 px-4 py-3 [overflow-wrap:anywhere]">
           <p className="text-sm text-teal-900">
             <span className="font-semibold">{procedure.plainName}</span>
             {origin
@@ -146,7 +146,7 @@ export default async function SearchPage({
   const zip = Array.isArray(sp.zip) ? sp.zip[0] : sp.zip;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
       <h1 className="text-2xl font-bold text-slate-900">Search results</h1>
       <p className="mt-1 text-slate-600">
         Hospitals ranked by your sort preference with quality and price side by side.

@@ -36,7 +36,7 @@ export default async function HospitalPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <nav className="text-sm text-slate-500" aria-label="Breadcrumb">
+      <nav className="text-sm text-slate-500 break-words" aria-label="Breadcrumb">
         <Link href="/" className="hover:text-teal-700">
           Home
         </Link>
@@ -56,7 +56,7 @@ export default async function HospitalPage({
       </nav>
 
       <header className="mt-4">
-        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">{hospital.name}</h1>
+        <h1 className="text-2xl font-bold break-words text-slate-900 sm:text-3xl">{hospital.name}</h1>
         <p className="mt-2 text-slate-600">
           {hospital.address}, {hospital.city}, {hospital.state} {hospital.zip}
         </p>
@@ -194,8 +194,8 @@ export default async function HospitalPage({
 
       <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">All procedures</h2>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-left text-sm">
+        <div className="mt-4 overflow-x-auto [-webkit-overflow-scrolling:touch]">
+          <table className="w-full min-w-[520px] text-left text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-xs uppercase text-slate-500">
                 <th className="py-2 pr-4">Procedure</th>

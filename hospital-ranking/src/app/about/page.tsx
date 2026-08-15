@@ -21,8 +21,8 @@ export default function AboutPage() {
   const mrfMeta = getMrfPriceMeta();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="text-3xl font-bold text-slate-900">About HospitalCompare</h1>
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 [overflow-wrap:anywhere]">
+      <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">About HospitalCompare</h1>
       <p className="mt-4 text-lg text-slate-600">
         A free, public tool to help U.S. patients compare hospital quality and shoppable
         procedure prices before scheduling elective care.
@@ -53,7 +53,7 @@ export default function AboutPage() {
               Hospital General Information.
             </li>
             <li>
-              <strong>Prices:</strong> Hospital-reported charges from CMS-required{" "}
+              <strong>Prices:</strong> Reported charges from CMS-required{" "}
               <a
                 href="https://www.cms.gov/priorities/key-initiatives/hospital-price-transparency"
                 className="text-teal-700 hover:underline"

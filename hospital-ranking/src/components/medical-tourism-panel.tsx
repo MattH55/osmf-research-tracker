@@ -44,7 +44,40 @@ export function MedicalTourismPanel({
         </span>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
+      <ul className="mt-4 space-y-3 sm:hidden">
+        {estimates.map((est) => (
+          <li
+            key={est.destinationId}
+            className="rounded-lg border border-indigo-100 bg-white px-3 py-3 text-sm text-slate-800"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium">
+                  <span className="mr-1.5" aria-hidden>
+                    {est.destination.flagEmoji}
+                  </span>
+                  {est.destination.country}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  {est.destination.hubCities.slice(0, 2).join(", ")}
+                  {est.destination.hubCities.length > 2 ? "…" : ""}
+                </p>
+              </div>
+              <span className="shrink-0 rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+                ~{est.savingsPercent}% less
+              </span>
+            </div>
+            <p className="mt-2 font-semibold text-indigo-800">
+              {formatCurrency(est.cashMedian)}
+            </p>
+            <p className="text-xs text-slate-600">
+              Range {formatPriceRange(est.cashLow, est.cashHigh)}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-4 hidden overflow-x-auto sm:block">
         <table className="w-full min-w-[520px] text-left text-sm">
           <thead>
             <tr className="border-b border-indigo-100 text-xs uppercase tracking-wide text-slate-500">

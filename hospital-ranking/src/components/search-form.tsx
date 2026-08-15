@@ -157,7 +157,7 @@ export function SearchForm({
                     onMouseEnter={() => setActiveIndex(i)}
                   >
                     <span className="font-medium text-slate-900">{p.plainName}</span>
-                    <span className="ml-2 text-slate-500">{p.category}</span>
+                    <span className="mt-0.5 block text-slate-500 sm:ml-2 sm:mt-0 sm:inline">{p.category}</span>
                     {p.cptCodes.length > 0 && (
                       <span className="mt-0.5 block text-xs text-slate-400">
                         CPT {p.cptCodes.join(", ")}

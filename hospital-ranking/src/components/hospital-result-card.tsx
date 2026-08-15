@@ -14,7 +14,7 @@ export function HospitalResultCard({ result }: { result: SearchResult }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-lg font-semibold text-slate-900">
+            <h2 className="text-lg font-semibold break-words text-slate-900">
               <Link href={detailHref} className="hover:text-teal-700">
                 {hospital.name}
               </Link>

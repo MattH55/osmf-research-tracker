@@ -62,8 +62,8 @@ export function ProcedureInsights({ procedure }: { procedure: Procedure }) {
               {histogram.bins.map((bin) => {
                 const height = histogram.maxCount > 0 ? (bin.count / histogram.maxCount) * 100 : 0;
                 return (
-                  <div key={bin.label} className="flex items-center gap-3">
-                    <div className="w-20 text-sm font-medium text-slate-600">{bin.label}</div>
+                  <div key={bin.label} className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-16 shrink-0 text-xs font-medium text-slate-600 sm:w-20 sm:text-sm">{bin.label}</div>
                     <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-200">
                       <div
                         className="h-full rounded-full bg-teal-600"
