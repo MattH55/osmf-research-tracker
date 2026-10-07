@@ -78,12 +78,30 @@ def render_nav(
 
 
 def related_links(slug: str) -> str:
+    """Cross-atlas / cross-site links for a disease page.
+
+    ``landscape_html`` is the registered deep link into the Physiological
+    Fitness Landscape (landscape.opensourcemed.info). That site ingests this
+    repo's ``disease-intelligence/*.html`` pages through its
+    ``backend/disease_intelligence_etl.py`` and keys diseases on the same
+    slug, so the deep link opens the matching disease modal.
+
+    Like the two atlas links it is an explicit registry entry in
+    ``seeds/site_links.json`` — it is never derived from the slug at render
+    time (see SPEC_PHASE6_INCIDENCE_ASSOCIATIONS.md §5: joins must key on
+    registered identifiers, not on slugs).
+    """
     links = load_site_links().get(slug, {})
     bits = []
     if links.get("biomarker_html"):
         bits.append(f'<a href="{_esc(links["biomarker_html"])}">Biomarker atlas</a>')
     if links.get("interventions_html"):
         bits.append(f'<a href="{_esc(links["interventions_html"])}">Intervention atlas</a>')
+    if links.get("landscape_html"):
+        bits.append(
+            f'<a href="{_esc(links["landscape_html"])}" target="_blank"'
+            f' rel="noopener">Fitness landscape</a>'
+        )
     if not bits:
         return ""
     return f'<p class="related-links">Related: {" · ".join(bits)}</p>'
