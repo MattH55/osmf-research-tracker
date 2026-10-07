@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write   # needed to commit the updated JSON files
+      actions: write    # needed to trigger the Pages deploy after the bot commit
 
     steps:
       - name: Checkout repository
@@ -104,4 +105,14 @@ jobs:
             git commit -m "chore: daily research + clinical trials + therapeutic agents update [$(date +%Y-%m-%d)]"
             git push
             echo "Committed updated JSON files and reports."
+            echo "committed=true" >> "$GITHUB_OUTPUT"
           fi
+        id: commit
+
+      # Pushes made with GITHUB_TOKEN never trigger other workflows, so the
+      # Pages deploy has to be dispatched explicitly or the live site stays stale.
+      - name: Trigger GitHub Pages deploy
+        if: steps.commit.outputs.committed == 'true'
+        run: gh workflow run deploy-pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
