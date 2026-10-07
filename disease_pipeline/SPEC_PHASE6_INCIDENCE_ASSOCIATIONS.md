@@ -4,7 +4,8 @@
 module is implemented yet.
 **Audience:** a coding agent with shell + git access, building on Phases 1–5.
 **Reuses:** the Phase 1–5 QA framework — the numbered acceptance-check table (this module
-continues it with checks 13–19), fixture-based unit tests, and one CI job.
+continues it with checks 13–19 and the coverage checks 20–23), fixture-based unit tests, and
+one CI job.
 
 ---
 
@@ -30,7 +31,7 @@ Phase 6 lands in **`disease_pipeline/`** — the generator behind `disease-intel
 |---|---|
 | `incidence_associations` collection, per disease | New top-level array in `data/disease-intelligence/<slug>.json` |
 | Schema migration + validation | `disease_intelligence.schema.json` — the top level today requires `schema_version, slug, id, condition, identifiers, page, summary, categories, filters, alterations, therapeutics`. Add the array to `properties` and `required`; bump `schema_version` (currently `1.1.0`) |
-| Trait-map seed key | `identifiers.mondo_id` — present in 100 of the 107 built disease JSONs; the seven exceptions are listed under "Human pass required" below. Key the `MONDO → EFO → GWAS traits` table on `mondo_id` |
+| Trait-map seed key | `identifiers.mondo_id` — present in **100 of the 107** built disease JSONs; the seven exceptions, three OLS4-verified replacements and one duplicate-key collision are in *Coverage contract* below. Key the `MONDO → EFO → GWAS traits` table on `mondo_id` |
 | Three rendered sections + new stat cards | `disease_pipeline/output/generate_html.py` — already emits `overview-card` / `stat-grid` / `stat-cell` stat cells and `<table class="data-table" id="alterations-table">` |
 | Direction rendering (text-first, non-colour cue) | Reuse `DIRECTION_LABELS` / `direction_label` from `disease_pipeline/output/web_export.py` so sign wording matches the alterations table |
 | CSV / JSON export | `disease_pipeline/output/web_export.py`, `disease_pipeline/export_web.py`; published by `disease_pipeline/publish_site.py` |
@@ -61,6 +62,60 @@ be wired to `--phase 6` or to `summary.pipeline_phase` — either renumber this 
 gates and `summary.pipeline_phase` untouched. If new work is ever placed behind a phase gate,
 say which table above is being extended.
 
+## Coverage contract — every disease, not every HTML file
+
+Phase 6's scope is **the publishable disease set**, defined in code as
+`disease_pipeline/published_conditions.is_publishable()` over `data/disease-intelligence/*.json`.
+Audited 2026-10-06 against this repository:
+
+| Set | Count | Source |
+|---|---|---|
+| Publishable disease JSONs — **the covered set** | **107** | `data/disease-intelligence/*.json`; all 107 pass `is_publishable()` (no duplicate slug, `alteration_count > 0`) |
+| …of which are DB-100 manifest slugs | 100 | `disease_pipeline/seeds/disease_db_100_manifest.json` (102 rows, 100 unique slugs) — every manifest slug already has both a JSON and a page |
+| …of which are extras beyond the manifest | 7 | `autoimmune-gastritis`, `beta-thalassemia`, `cancer`, `mast-cell-activation-syndrome`, `mastocytosis-with-kit-d816v-mutation`, `measles`, `sarcopenia` |
+| HTML pages in `disease-intelligence/` (non-index) | 115 | 107 data-backed + 6 redirect stubs + 2 non-disease pages |
+
+Three consequences for the implementation:
+
+1. **Iterate the data set, never the directory.** `disease-intelligence/` holds 8 pages with no
+   JSON behind them. `gene-therapy-mapper` and `right-to-try` are site pages, not disease
+   profiles. `kidney-stones`, `long-covid`, `obstructive-sleep-apnea`,
+   `post-acute-covid-vaccination-syndrome`, `postural-orthostatic-tachycardia-syndrome` and
+   `primary-sclerosing-cholangitis` are `<meta http-equiv="refresh">` stubs redirecting to
+   data-backed profiles (`nephrolithiasis`, `post-acute-covidvaccination-syndrome`,
+   `obstructive-sleep-apnea-syndrome`, `pots`, `sclerosing-cholangitis` — all targets resolve).
+   A coverage loop that walks `*.html` would double-count five diseases and try to render two
+   non-disease pages.
+2. **Every covered disease gets the sections, including the empty case.** A disease with no
+   incidence evidence renders the three sections with the "None identified" empty state — not
+   omitted sections. Absence of evidence is a result (§6.4); a missing section is a bug.
+3. **The MONDO key is not universal, and the gap is not uniform.** The identifier ledger below
+   applies; check 21 requires every covered disease to be either keyed or explicitly ledgered,
+   never silently skipped.
+
+### Identifier ledger for the covered set (audited 2026-10-06)
+
+| Identifier | Coverage | Consequence |
+|---|---|---|
+| `mondo_id` | **100 / 107** | 7 diseases cannot key a `MONDO → EFO → GWAS traits` map |
+| `efo_id` | **14 / 107** | the `MONDO → EFO` hop needs explicit EFO or trait ids in the per-disease seed for the other 93 |
+| `efo_id` holding a non-EFO value | **4 / 107** | `low-back-pain` = `HP_0003419`, `obesity` = `HP_0001513`, `sepsis` = `HP_0100806`, `tinnitus` = `HP_0000360` — HPO terms stored in the EFO slot |
+| One `mondo_id` on two covered diseases | **1 pair** | `MONDO:0800103` on **both** `mast-cell-activation-syndrome` and `mcas` (49 alterations each, near-identical page names); the pair is **not** in `published_conditions.DUPLICATE_SLUGS`, so a MONDO-keyed trait map would double-count one disease |
+
+`efo_id` matters beyond the join: `adapters/ot_ids.ot_disease_id()` falls back to it
+(`identifiers.mondo_id or identifiers.efo_id`), so for those four diseases the Open Targets
+lookup is handed `HP_0003419`-style values that are not disease ids. Phase 6 must not inherit
+that fallback — resolve from `mondo_id` only, or from the ledgered alternate below.
+
+Re-audit with **`python -m disease_pipeline.audit_conditions`**. It prints the per-disease
+alteration counts used above and the duplicate `MONDO` / `EFO` / `MESH` id groups; the
+missing-id ledger is a direct scan of `identifiers` in the 107 JSONs. Note both facts for
+whoever runs this next: the script **fails as `python disease_pipeline/audit_conditions.py`**
+(`ModuleNotFoundError: disease_pipeline` — it imports the package it lives in), and it also
+reports 84 of the 107 diseases as having **no biomarker-atlas cross-link** in
+`seeds/site_links.json` (23 of 107 do). That last gap belongs to the site-links layer, not to
+Phase 6 — do not "fix" it from this module.
+
 ## Prerequisite gaps to close before §6.4 can be satisfied
 
 1. **Phase 3 table stack.** §6.4 gives every new table "the Phase 3 table stack
@@ -89,6 +144,11 @@ say which table above is being extended.
 ### Goal
 
 Every disease page gains three evidence-typed sections linking entities to **disease incidence** (not progression, not treatment response), each row carrying an explicit **direction** (risk ↑ / protective ↓) and effect estimate. Negative associations are first-class citizens: they are never dropped, sign-flipped, or merged away.
+
+"Every disease page" means the **107 publishable disease JSONs** — the covered set defined in
+*Coverage contract* above. The 6 redirect stubs and the 2 non-disease pages in
+`disease-intelligence/` are not in scope, and a disease with no evidence still renders the three
+sections with the "None identified" empty state.
 
 ### 6.1 Data model
 
@@ -175,13 +235,19 @@ New stat cards in the overview: `Genetic associations (risk/protective counts)`,
 | 17 | Quarantine | `_unsigned_associations.json` exists and every entry has a source ref |
 | 18 | Exposure tiering | MR-derived and observational exposures are distinguishable in rendered output |
 | 19 | Context vs association | Baseline-expression (GTEx/HPA) data appears only as context, never as a directioned association row |
+| 20 | Covered-set parity | All 107 publishable disease JSONs carry `incidence_associations` — populated, or an explicit empty array with a reason — and the expected count is computed from `published_conditions.is_publishable()`, **not** by walking `disease-intelligence/*.html` (115 non-index pages = 107 data-backed + 6 redirect stubs + 2 non-disease pages) |
+| 21 | Trait-map key coverage | Every covered disease is keyed (`mondo_id`, or the ledgered alternate for the seven in *Coverage contract*) or named in the `TODO(curator)` ledger — no disease both unkeyed and unlisted. Today: fails with exactly 7 |
+| 22 | Ontology-key uniqueness | No `mondo_id` appears on two covered diseases. Today: fails once — `MONDO:0800103` on `mast-cell-activation-syndrome` and `mcas`; fix by listing the pair in `DUPLICATE_SLUGS` or merging the two pages, then re-run `python -m disease_pipeline.audit_conditions` |
+| 23 | Page-set reconciliation | Every `disease-intelligence/*.html` is data-backed, a redirect stub whose target exists, or on the documented non-disease list (`gene-therapy-mapper`, `right-to-try`); and every covered disease has a page (107/107 today) |
 
 ### 6.6 Deliverables
 
 - Three ingest connectors (genetics, expression, exposures) + the `MONDO→EFO` trait-map seed files per disease.
 - Schema migration: `incidence_associations` collection with validation.
 - Rendered sections + updated stat cards + exported CSV/JSON endpoints.
-- Fixture-based unit tests for checks 13–19, wired into the Phase 5 CI job.
+- Fixture-based unit tests for checks 13–19, plus the coverage checks 20–23 (20 and 23 run against
+  the built data set; 21 and 22 fail today and are the gate on shipping), wired into the Phase 5
+  CI job.
 
 One scope note: the agent can build all connectors, transforms, and rendering automatically, but the `MONDO → EFO` trait maps and the per-disease exposure umbrella-review seed files need a human pass — same pattern as before, `TODO(curator)` markers rather than model-generated facts.
 
@@ -197,6 +263,26 @@ Per §6.6, two artifacts are curator work and carry `TODO(curator)` markers:
    key on one and the ingest must either fail loudly (§6.2) or quarantine the disease until
    the id is filled: `low-back-pain`, `mastocytosis-with-kit-d816v-mutation`, `obesity`,
    `psoriasis-vulgaris`, `sepsis`, `sjögrens-syndrome`, `tinnitus`.
+
+   A first pass against EBI OLS4 (`/api/search`, `ontology=mondo`, retrieved 2026-10-06)
+   resolved three of the seven and showed the other four have **no unambiguous MONDO class** —
+   the curator picks the parent term, the agent must not:
+
+   | Disease | Identifiers today | OLS4 result | Curator action |
+   |---|---|---|---|
+   | `sjögrens-syndrome` | *(none)* | `MONDO:0010030` *Sjogren syndrome* | fill |
+   | `tinnitus` | `efo_id` = `HP_0000360`, `ORPHA:79135` | `MONDO:0700322` *tinnitus* | fill; move the HPO term out of `efo_id` |
+   | `mastocytosis-with-kit-d816v-mutation` | *(none)* | `MONDO:0007950` *mastocytosis*; also `MONDO:0016586` *systemic mastocytosis*, `MONDO:0020331` *indolent systemic mastocytosis* | fill with the subtype term, not the parent |
+   | `obesity` | `efo_id` = `HP_0001513`, `ORPHA:293987` | no *obesity* class; `MONDO:0011122` *obesity disorder* returned | choose parent vs. disorder term |
+   | `sepsis` | `efo_id` = `HP_0100806`, `ORPHA:101351` | no *sepsis* class; `MONDO:0005229` *bacterial infectious disease with sepsis*, `MONDO:1040015` *infectious disease with sepsis* returned | choose; sepsis is a syndrome, not a MONDO disease class |
+   | `low-back-pain` | `efo_id` = `HP_0003419`, `ORPHA:171445` | no match (exact search returns only an unrelated term) | symptom, not a disease class — key on the ORPHA / HP alternate, or exclude with a written reason |
+   | `psoriasis-vulgaris` | `efo_id` = `EFO_1001494` | no exact *psoriasis vulgaris* label in MONDO (0 hits) | key on the EFO id, or pick the psoriasis MONDO class |
+
+   Fill ids through the ID seed of record the pipeline already reads — `config.SEEDS_PATH`
+   (`disease_pipeline/seeds/disease_ids.json`, maintained by `seeds/build_seeds.py` and
+   `seeds/expand_pilot.py`) — **not** by hand-editing `data/disease-intelligence/*.json`, which
+   are generator output. One of the seven (`mastocytosis-with-kit-d816v-mutation`) is outside
+   the DB-100 manifest, so a manifest-only sweep will not reach it.
 2. **Per-disease exposure umbrella-review seed files** (effect direction + citation per
    exposure). GBD risk factors and umbrella reviews supply the direction; a model must not
    infer it.
