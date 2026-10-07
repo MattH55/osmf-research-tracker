@@ -66,17 +66,36 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
 
       - name: Enhance Therapeutic Agents Clinical Notes (daily)
-        run: python generate_detailed_notes.py
+        run: python scripts/generate_detailed_notes.py
         env:
           PYTHONUNBUFFERED: "1"
           PYTHONPATH: ${{ github.workspace }}
+
+      - name: Build generated SEO pages (marker pages, comparisons, trials, pairs, digest, reports, sitemap)
+        run: |
+          mkdir -p data/clinical_trials
+          cp clinical_trials/data/clinical_trials_current.json data/clinical_trials/clinical_trials_current.json
+          python scripts/build_marker_pages.py
+          python scripts/build_compare_pages.py
+          python scripts/build_trial_pages.py
+          python scripts/build_repurposing_index.py
+          python scripts/build_pair_pages.py
+          python scripts/build_digest.py
+          python scripts/build_reports.py
+          python scripts/apply_osmf_chrome.py
+          python scripts/build_site_seo.py
+        env:
+          PYTHONUNBUFFERED: "1"
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONIOENCODING: utf-8
 
       - name: Commit and push updated data (if any changes)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add data/*.json clinical_trials/data/ clinical_trials/reports/
+          git add data/*.json data/clinical_trials/ clinical_trials/data/ clinical_trials/reports/
+          git add biomarkers/ compare/ trials/ pairs/ digest/ reports/ js/generated/ sitemap.xml index.html *.html disease-intelligence/
 
           # Only commit if something actually changed
           if git diff --cached --quiet; then
