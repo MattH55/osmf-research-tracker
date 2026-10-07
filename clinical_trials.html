@@ -13,7 +13,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clinical Trials: Long COVID, PACVS, ME/CFS &amp; Post-Viral</title>
-  <meta name="description" content="Active and completed clinical trials for post-viral conditions including Long COVID, PACVS, ME/CFS, and Chronic Lyme. Interventional study tracker with..." >>
+  <meta name="description" content="Active and completed clinical trials for post-viral conditions including Long COVID, PACVS, ME/CFS, and Chronic Lyme. Interventional study tracker with...">
   <meta name="keywords" content="long COVID clinical trials, PACVS clinical trials, ME/CFS clinical trials, chronic Lyme clinical trials, post-viral clinical trials, post-acute sequelae clinical trials, interventional studies post-viral, ClinicalTrials.gov post-COVID">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://research.opensourcemed.info/clinical_trials.html">
@@ -44,6 +44,34 @@
     .size-small { background:#fef3c7; color:#92400e; }
     .size-medium { background:#dbeafe; color:#1e40af; }
     .size-large { background:#dcfce7; color:#166534; }
+    /* trial finder */
+    .static-links { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; margin: 0 0 18px; font-size: 0.9rem; }
+    .static-links strong { display: block; margin-bottom: 6px; color: #0e1444; }
+    .static-links a { color: #0068f8; font-weight: 600; text-decoration: none; margin-right: 14px; white-space: nowrap; display: inline-block; margin-bottom: 4px; }
+    .static-links a:hover { text-decoration: underline; }
+    .finder-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 0 0 12px; }
+    .finder-controls .search-wrapper { grid-column: 1 / -1; }
+    .finder-controls label { font-size: 0.72rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 3px; }
+    .finder-controls .filter-select, .finder-controls input[type=text] { width: 100%; }
+    .finder-controls input[type=text] { font-family: inherit; font-size: 0.86rem; padding: 0.55rem 0.8rem; border: 1px solid rgba(14,20,68,0.15); border-radius: 8px; background: #fff; }
+    .finder-controls input[type=text]:focus { outline: none; border-color: #0068f8; box-shadow: 0 0 0 3px rgba(0,104,248,0.12); }
+    .finder-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
+    .finder-actions .btn-clear { margin: 0; }
+    .btn-share { font-size: 0.8rem; font-weight: 600; color: #0068f8; background: #fff; border: 1.5px solid rgba(0,104,248,0.35); border-radius: 8px; padding: 0.4rem 0.9rem; cursor: pointer; font-family: inherit; }
+    .btn-share:hover { background: #eff6ff; }
+    .result-count { font-weight: 600; color: #0e1444; }
+    .status-pill { font-size: 0.68rem; padding: 1px 6px; border-radius: 999px; font-weight: 600; }
+    .st-recruiting { background:#dcfce7; color:#166534; }
+    .st-not_yet_recruiting { background:#dbeafe; color:#1e40af; }
+    .st-enrolling_by_invitation { background:#ede9fe; color:#5b21b6; }
+    .st-active_not_recruiting { background:#ffedd5; color:#9a3412; }
+    .st-completed { background:#f1f5f9; color:#334155; }
+    .st-terminated, .st-withdrawn, .st-suspended { background:#fee2e2; color:#991b1b; }
+    .st-unknown { background:#f3f4f6; color:#4b5563; }
+    .trial-card .agent-link { color: #0068f8; text-decoration: none; }
+    .trial-card .agent-link:hover { text-decoration: underline; }
+    .trial-card .nct-link { color: #0068f8; text-decoration: none; font-weight: 600; }
+    @media (max-width: 600px) { .finder-controls { grid-template-columns: 1fr 1fr; } }
   </style>
 
 
@@ -110,6 +138,9 @@
   ]
 }
 </script>
+<!-- OSMF_DATASET_START -->
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Dataset", "name": "Post-viral clinical trials registry snapshot", "description": "ClinicalTrials.gov records mapped to Long COVID, ME/CFS and overlapping post-viral conditions, refreshed daily.", "url": "https://research.opensourcemed.info/clinical_trials.html", "license": "https://creativecommons.org/licenses/by/4.0/", "isAccessibleForFree": true, "creator": {"@type": "Organization", "name": "Open Source Medicine Foundation", "url": "https://opensourcemed.info"}, "keywords": ["long COVID", "ME/CFS", "PACVS", "post-viral syndrome", "biomarkers", "clinical trials"], "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://research.opensourcemed.info/data/clinical_trials/clinical_trials_current.json"}]}]}</script>
+<!-- OSMF_DATASET_END -->
 </head>
 <body>
 
@@ -127,7 +158,8 @@
       <li><a href="pots.html">POTS</a></li>
       <li><a href="mcas.html">MCAS</a></li>
       <li><a href="biomarker-atlas.html">Biomarkers</a></li>
-      <li><a href="clinical_trials.html">Clinical Trials</a></li>
+      <li><a href="clinical_trials.html" class="nav-active">Clinical Trials</a></li>
+      <li><a href="trials/index.html">Recruiting Trials</a></li>
       <li><a href="agents.html">Agents</a></li>
       <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support Our Work</a></li>
     </ul>
@@ -145,18 +177,62 @@
 
 
 
-    <div class="tracker-controls">
-      <div class="search-wrapper">
-        <span class="search-icon">🔍</span>
-        <input id="search" type="text" class="search-input" placeholder="Search trials..." oninput="filter()">
-      </div>
-      <select id="condition" class="filter-select" onchange="filter()">
-        <option value="">All Conditions</option>
-      </select>
-      <button class="btn-clear" onclick="document.getElementById('search').value=''; document.getElementById('condition').value=''; filter()">Clear</button>
+    <div class="static-links">
+      <strong>Looking for a trial to join? Start with the recruiting lists:</strong>
+      <a href="trials/long-covid-recruiting.html">Recruiting Long COVID trials →</a>
+      <a href="trials/me-cfs-recruiting.html">Recruiting ME/CFS trials →</a>
+      <a href="trials/post-viral-overlap-recruiting.html">Recruiting post-viral overlap trials →</a>
+      <a href="trials/by-agent/index.html">Trials by therapeutic agent →</a>
+      <a href="trials/all-long-covid.html">All Long COVID trials</a>
+      <a href="trials/all-me-cfs.html">All ME/CFS trials</a>
+      <a href="trials/index.html">Trials index</a>
     </div>
 
-    <div class="tracker-meta" id="meta"></div>
+    <div class="finder-controls" id="finder">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="search" type="text" class="search-input" placeholder="Search title, NCT ID, agent, sponsor, summary…" oninput="filter()">
+      </div>
+      <div>
+        <label for="condition">Condition</label>
+        <select id="condition" class="filter-select" onchange="filter()"><option value="">All conditions</option></select>
+      </div>
+      <div>
+        <label for="status">Status</label>
+        <select id="status" class="filter-select" onchange="filter()">
+          <option value="">Any status</option>
+          <option value="OPEN">Open to enrolment (any)</option>
+        </select>
+      </div>
+      <div>
+        <label for="phase">Phase</label>
+        <select id="phase" class="filter-select" onchange="filter()"><option value="">Any phase</option></select>
+      </div>
+      <div>
+        <label for="sponsor_type">Sponsor type</label>
+        <select id="sponsor_type" class="filter-select" onchange="filter()"><option value="">Any sponsor type</option></select>
+      </div>
+      <div>
+        <label for="agent">Agent / intervention</label>
+        <input id="agent" type="text" list="agent-list" placeholder="Type to search agents…" oninput="filter()" autocomplete="off">
+        <datalist id="agent-list"></datalist>
+      </div>
+      <div>
+        <label for="sort">Sort</label>
+        <select id="sort" class="filter-select" onchange="filter()">
+          <option value="updated">Recently updated</option>
+          <option value="start">Start date (newest)</option>
+          <option value="start_asc">Start date (oldest)</option>
+          <option value="enrollment">Enrollment (largest)</option>
+          <option value="title">Title A–Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="finder-actions">
+      <button class="btn-clear" onclick="clearFilters()">Clear filters</button>
+      <button class="btn-share" onclick="copyLink(this)">Copy link to this view</button>
+      <span class="tracker-meta" id="meta" style="margin:0"></span>
+    </div>
 
     <!-- Summary stats + tables for clinical trials (exec summary, per-cond, top agents) -->
     <div id="trials-summary" class="summary-box"></div>
@@ -208,6 +284,24 @@
     </div>
   </div>
 </section>
+<!-- OSMF_CITE_START -->
+<style>.osmf-cite-wrap{max-width:1200px;margin:2.5rem auto 2rem;padding:0 1.5rem;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));font-family:Inter,system-ui,sans-serif}.osmf-cite,.osmf-sub{border:1px solid #e5e7eb;border-radius:12px;padding:1.1rem 1.25rem;background:#f8fafc;color:#1f2937}.osmf-cite h3,.osmf-sub h3{font-size:1rem;margin:0 0 .5rem;color:#0052c7}.osmf-cite p,.osmf-sub p{font-size:.9rem;line-height:1.55;margin:0 0 .6rem}.osmf-cite code{display:block;white-space:normal;font-size:.82rem;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:.6rem .75rem;margin-bottom:.6rem}.osmf-cite button,.osmf-sub a.btn{display:inline-block;background:#0068f8;color:#fff;border:0;border-radius:8px;padding:.5rem .9rem;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:none}.osmf-cite button:hover,.osmf-sub a.btn:hover{background:#0052c7}</style>
+<section class="osmf-cite-wrap" aria-label="Cite and subscribe">
+  <div class="osmf-cite">
+    <h3>Cite this page</h3>
+    <p>Reusing these data? Please cite the tracker so others can find the source.</p>
+    <code id="osmf-cite-text">Open Source Medicine Foundation. (2026). Clinical Trials: Long COVID, PACVS, ME/CFS &amp; Post-Viral. Research Tracker. https://research.opensourcemed.info/clinical_trials.html (accessed <span class="osmf-cite-date"></span>)</code>
+    <button type="button" onclick="(function(b){var t=document.getElementById('osmf-cite-text').innerText;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy citation'},1500)})}})(this)">Copy citation</button>
+    <script>(function(){var d=new Date();var s=document.querySelectorAll('.osmf-cite-date');for(var i=0;i<s.length;i++){s[i].textContent=d.toISOString().slice(0,10)}})();</script>
+  </div>
+  <div class="osmf-sub">
+    <h3>Weekly post-viral research digest</h3>
+    <p>New peer-reviewed studies and trial activity across Long COVID, ME/CFS, PACVS, Lyme and Gulf War Illness, every week. Free, no spam.</p>
+    <a class="btn" href="https://opensourcemed.substack.com/subscribe?utm_source=tracker&amp;utm_medium=cite_box" rel="noopener">Subscribe on Substack</a>
+    &nbsp; <a href="digest/index.html" style="font-size:.85rem;color:#0052c7;">Browse the digest archive</a> · <a href="digest/feed.xml" style="font-size:.85rem;color:#0052c7;">RSS</a>
+  </div>
+</section>
+<!-- OSMF_CITE_END -->
 <footer class="osmf-network-footer">
   <div class="osmf-network-inner">
     <div class="footer-brand">Open Source Medicine Foundation</div>
@@ -228,6 +322,7 @@
 
 <script>
 let allTrials = [];
+let lastRun = null;
 
 function escape(s) {
   return (s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]);
@@ -246,22 +341,15 @@ async function load() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     allTrials = data.trials || [];
+    lastRun = data.last_run || null;
     loadingEl.classList.add('hidden');
 
-    metaEl.innerHTML =
-      `Last updated: ${new Date(data.last_run).toLocaleDateString()} &nbsp;•&nbsp; ${allTrials.length} trials`;
 
     renderTrialsSummary(data);
 
-    const condSet = new Set();
-    allTrials.forEach(t => (t.mapped_conditions || []).forEach(c => condSet.add(c)));
-    const sel = document.getElementById('condition');
-    [...condSet].sort().forEach(c => {
-      const o = document.createElement('option');
-      o.value = c; o.textContent = c;
-      sel.appendChild(o);
-    });
-
+    populateFilters();
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
     filter();
   } catch (err) {
     console.error('Failed to load trials data:', err);
@@ -328,18 +416,152 @@ function renderTrialsSummary(data) {
   `;
 }
 
-function filter() {
-  const term = (document.getElementById('search').value || '').toLowerCase().trim();
-  const cond = document.getElementById('condition').value;
+// ── Trial finder: filters, sorting, shareable URL hash ──
+const STATUS_LABELS = {
+  RECRUITING: 'Recruiting', NOT_YET_RECRUITING: 'Not yet recruiting', ENROLLING_BY_INVITATION: 'Enrolling by invitation',
+  ACTIVE_NOT_RECRUITING: 'Active, not recruiting', COMPLETED: 'Completed', SUSPENDED: 'Suspended',
+  TERMINATED: 'Terminated', WITHDRAWN: 'Withdrawn', UNKNOWN: 'Unknown status'
+};
+const STATUS_ORDER = Object.keys(STATUS_LABELS);
+const OPEN_STATUSES = ['RECRUITING', 'NOT_YET_RECRUITING', 'ENROLLING_BY_INVITATION'];
+const PHASE_LABELS = { EARLY_PHASE1: 'Early Phase 1', PHASE1: 'Phase 1', 'PHASE1/PHASE2': 'Phase 1/2', PHASE2: 'Phase 2', 'PHASE2/PHASE3': 'Phase 2/3', PHASE3: 'Phase 3', PHASE4: 'Phase 4', NA: 'Not applicable (non-drug)' };
+const PHASE_ORDER = ['PHASE4', 'PHASE3', 'PHASE2/PHASE3', 'PHASE2', 'PHASE1/PHASE2', 'PHASE1', 'EARLY_PHASE1', 'NA'];
+const SPONSOR_LABELS = { INDUSTRY: 'Industry', NIH: 'NIH', FED: 'US federal agency', OTHER_GOV: 'Other government', NETWORK: 'Research network', OTHER: 'Academic / non-profit / other', INDIV: 'Individual' };
+const FILTER_IDS = ['search', 'condition', 'status', 'phase', 'sponsor_type', 'agent', 'sort'];
+const SHORT = { search: 'q', condition: 'cond', status: 'status', phase: 'phase', sponsor_type: 'sponsor', agent: 'agent', sort: 'sort' };
+let syncingHash = false;
+
+function addOptions(selId, values, labels) {
+  const sel = document.getElementById(selId);
+  values.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = (labels && labels[v]) || v;
+    sel.appendChild(o);
+  });
+}
+
+function populateFilters() {
+  const conds = new Set(), statuses = new Set(), phases = new Set(), sponsors = new Set();
+  const agentCounts = {};
+  allTrials.forEach(t => {
+    (t.mapped_conditions || []).forEach(c => conds.add(c));
+    if (t.status) statuses.add(t.status);
+    phases.add(t.phase || 'NA');
+    if (t.sponsor_type) sponsors.add(t.sponsor_type);
+    (t.agents || []).forEach(a => { agentCounts[a] = (agentCounts[a] || 0) + 1; });
+  });
+  addOptions('condition', [...conds].sort());
+  addOptions('status', STATUS_ORDER.filter(s => statuses.has(s)).concat([...statuses].filter(s => !STATUS_ORDER.includes(s))), STATUS_LABELS);
+  addOptions('phase', PHASE_ORDER.filter(p => phases.has(p)).concat([...phases].filter(p => !PHASE_ORDER.includes(p))), PHASE_LABELS);
+  addOptions('sponsor_type', [...sponsors].sort(), SPONSOR_LABELS);
+  const dl = document.getElementById('agent-list');
+  Object.entries(agentCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).forEach(([a, n]) => {
+    const o = document.createElement('option');
+    o.value = a; o.label = n + (n === 1 ? ' trial' : ' trials');
+    dl.appendChild(o);
+  });
+}
+
+function readState() {
+  const s = {};
+  FILTER_IDS.forEach(id => { s[id] = (document.getElementById(id).value || '').trim(); });
+  return s;
+}
+
+function writeHash(state) {
+  const p = new URLSearchParams();
+  FILTER_IDS.forEach(id => {
+    const v = state[id];
+    if (v && !(id === 'sort' && v === 'updated')) p.set(SHORT[id], v);
+  });
+  const h = p.toString();
+  if (('#' + h) === location.hash || (!h && !location.hash)) return;
+  syncingHash = true;
+  history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
+  syncingHash = false;
+}
+
+function applyHash() {
+  if (syncingHash) return;
+  const p = new URLSearchParams(location.hash.replace(/^#/, ''));
+  FILTER_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    const v = p.get(SHORT[id]);
+    el.value = v !== null ? v : (id === 'sort' ? 'updated' : '');
+  });
+  if (location.hash) filter(true);
+}
+
+function clearFilters() {
+  FILTER_IDS.forEach(id => { document.getElementById(id).value = id === 'sort' ? 'updated' : ''; });
+  filter();
+}
+
+function copyLink(btn) {
+  const url = location.href;
+  const done = () => { const t = btn.textContent; btn.textContent = 'Link copied'; setTimeout(() => { btn.textContent = t; }, 1600); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => prompt('Copy this link:', url));
+  else prompt('Copy this link:', url);
+}
+
+function haystack(t) {
+  if (!t._hay) {
+    t._hay = [t.title, t.nct_id, (t.agents || []).join(' '), (t.mapped_conditions || []).join(' '),
+      (t.conditions_raw || []).join(' '), t.sponsor, t.brief_summary, (t.relevance_tags || []).join(' ')]
+      .filter(Boolean).join(' \n ').toLowerCase();
+  }
+  return t._hay;
+}
+
+function sortList(list, mode) {
+  const d = v => (v || '').toString();
+  const cmp = {
+    updated: (a, b) => d(b.last_updated).localeCompare(d(a.last_updated)) || d(a.nct_id).localeCompare(d(b.nct_id)),
+    start: (a, b) => d(b.start_date).localeCompare(d(a.start_date)),
+    start_asc: (a, b) => d(a.start_date).localeCompare(d(b.start_date)),
+    enrollment: (a, b) => (b.enrollment || 0) - (a.enrollment || 0),
+    title: (a, b) => d(a.title).localeCompare(d(b.title)),
+  }[mode] || (() => 0);
+  return list.slice().sort(cmp);
+}
+
+function filter(fromHash) {
+  const s = readState();
+  const terms = s.search.toLowerCase().split(/\s+/).filter(Boolean);
+  const agentQ = s.agent.toLowerCase();
 
   let list = allTrials.filter(t => {
-    const hay = (t.title + ' ' + (t.agents||[]).join(' ') + ' ' + (t.mapped_conditions||[]).join(' ')).toLowerCase();
-    const mTerm = !term || hay.includes(term);
-    const mCond = !cond || (t.mapped_conditions || []).includes(cond);
-    return mTerm && mCond;
+    if (s.condition && !(t.mapped_conditions || []).includes(s.condition)) return false;
+    if (s.status === 'OPEN' ? !OPEN_STATUSES.includes(t.status) : (s.status && t.status !== s.status)) return false;
+    if (s.phase && (t.phase || 'NA') !== s.phase) return false;
+    if (s.sponsor_type && t.sponsor_type !== s.sponsor_type) return false;
+    if (agentQ && !(t.agents || []).some(a => a.toLowerCase().includes(agentQ))) return false;
+    if (terms.length) { const h = haystack(t); if (!terms.every(w => h.includes(w))) return false; }
+    return true;
   });
+  list = sortList(list, s.sort || 'updated');
 
+  const active = FILTER_IDS.filter(id => id !== 'sort' && s[id]).length;
+  document.getElementById('meta').innerHTML =
+    '<span class="result-count">' + list.length + '</span> of ' + allTrials.length + ' trials' +
+    (active ? ' &nbsp;•&nbsp; ' + active + (active === 1 ? ' filter active' : ' filters active') : '') +
+    (lastRun ? ' &nbsp;•&nbsp; data updated ' + new Date(lastRun).toLocaleDateString() : '');
+
+  if (fromHash !== true) writeHash(s);
   render(list);
+}
+
+function setAgent(a) {
+  document.getElementById('agent').value = a;
+  filter();
+  document.getElementById('finder').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function fmtDate(v) {
+  if (!v) return '';
+  const m = /^(\d{4})-(\d{2})/.exec(v);
+  if (!m) return v;
+  return new Date(+m[1], +m[2] - 1, 1).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
 function render(list) {
@@ -350,38 +572,56 @@ function render(list) {
   if (!list.length) { empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
 
+  const frag = document.createDocumentFragment();
   list.forEach(t => {
     const div = document.createElement('div');
     div.className = 'trial-card';
+    const link = escape(t.link || ('https://clinicaltrials.gov/study/' + t.nct_id));
 
-    const agents = (t.agents || []).join(', ') || 'No specific agents listed';
+    const agents = (t.agents || []).length
+      ? (t.agents || []).map(a => '<a href="#" class="agent-link" data-agent="' + escape(a) + '">' + escape(a) + '</a>').join(', ')
+      : 'No specific agents listed';
     const conds = (t.mapped_conditions || []).join(', ');
 
-    let phase = t.phase || 'N/A';
-    let phaseHtml = `<span class="phase-pill">${escape(phase)}</span>`;
+    const phase = t.phase || 'NA';
+    const phaseHtml = '<span class="phase-pill">' + escape(PHASE_LABELS[phase] || phase) + '</span>';
+    const st = (t.status || 'UNKNOWN');
+    const statusHtml = '<span class="status-pill st-' + st.toLowerCase() + '">' + escape(STATUS_LABELS[st] || st) + '</span>';
     const size = t.size_category || '';
     let sizeClass = '';
     if (size.includes('Small')) sizeClass = 'size-small';
     else if (size.includes('Medium')) sizeClass = 'size-medium';
     else if (size.includes('Large')) sizeClass = 'size-large';
-    const sizeHtml = size ? ` <span class="phase-pill ${sizeClass}">${escape(size)}</span>` : '';
+    const sizeHtml = size ? ' <span class="phase-pill ' + sizeClass + '">' + escape(size) + '</span>' : '';
+    const sponsor = t.sponsor
+      ? '<div class="trial-meta"><strong>Sponsor:</strong> ' + escape(t.sponsor) + (t.sponsor_type ? ' (' + escape(SPONSOR_LABELS[t.sponsor_type] || t.sponsor_type) + ')' : '') + '</div>'
+      : '';
 
-    let timeline = '';
-    if (t.start_date || t.completion_date || t.primary_completion_date) {
-      timeline = `<div class="trial-meta">Start: ${t.start_date || 'N/A'} &nbsp;|&nbsp; Primary Completion: ${t.primary_completion_date || 'N/A'} &nbsp;|&nbsp; Est. Completion: ${t.completion_date || 'N/A'}</div>`;
-    }
+    const parts = [];
+    if (t.start_date) parts.push('Start: ' + escape(fmtDate(t.start_date)));
+    if (t.primary_completion_date) parts.push('Primary completion: ' + escape(fmtDate(t.primary_completion_date)));
+    if (t.completion_date) parts.push('Est. completion: ' + escape(fmtDate(t.completion_date)));
+    if (t.last_updated) parts.push('Record updated: ' + escape(fmtDate(t.last_updated)));
+    const timeline = parts.length ? '<div class="trial-meta">' + parts.join(' &nbsp;|&nbsp; ') + '</div>' : '';
 
-    div.innerHTML = `
-      <div class="trial-title">${escape(t.title)}</div>
-      <div class="trial-meta">${t.nct_id} &nbsp;•&nbsp; <strong>${t.status}</strong> &nbsp;•&nbsp; ${phaseHtml}${sizeHtml}</div>
-      <div class="trial-meta"><strong>Conditions:</strong> ${escape(conds)}</div>
-      <div class="trial-meta"><strong>Agents:</strong> ${escape(agents)}</div>
-      ${timeline}
-      <a href="${t.link}" target="_blank" rel="noopener" class="btn-trial">View on ClinicalTrials.gov ↗</a>
-    `;
-    el.appendChild(div);
+    div.innerHTML =
+      '<div class="trial-title">' + escape(t.title) + '</div>' +
+      '<div class="trial-meta"><a class="nct-link" href="' + link + '" target="_blank" rel="noopener">' + escape(t.nct_id) + '</a> &nbsp;•&nbsp; ' + statusHtml + ' &nbsp;•&nbsp; ' + phaseHtml + sizeHtml + '</div>' +
+      '<div class="trial-meta"><strong>Conditions:</strong> ' + escape(conds) + '</div>' +
+      '<div class="trial-meta"><strong>Agents:</strong> ' + agents + '</div>' +
+      sponsor + timeline +
+      '<a href="' + link + '" target="_blank" rel="noopener" class="btn-trial">View on ClinicalTrials.gov ↗</a>';
+    frag.appendChild(div);
   });
+  el.appendChild(frag);
 }
+
+document.getElementById('list').addEventListener('click', e => {
+  const a = e.target.closest('a.agent-link');
+  if (!a) return;
+  e.preventDefault();
+  setAgent(a.getAttribute('data-agent'));
+});
 
 load();
 </script>

@@ -21,8 +21,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ORIGIN = "https://research.opensourcemed.info"
 SITE_NAME = "Open Source Medicine — Research Tracker"
-PUBLIC_DIRS = ("pais-cohorts", "chronic-disease-interventions", "disease-intelligence", "ntd")
-EXCLUDED_DIRS = {"hospital-ranking", "med-freedom-map", "tools", "data", "config", "files"}
+PUBLIC_DIRS = (
+    "pais-cohorts", "chronic-disease-interventions", "disease-intelligence", "ntd",
+    "biomarkers", "compare", "trials", "pairs", "digest", "reports", "tools", "embed",
+)
+EXCLUDED_DIRS = {"hospital-ranking", "med-freedom-map", "data", "config", "files"}
 EXCLUDED_NAMES = {"agents-local.html", "clinical_trials-local.html"}
 
 
@@ -34,7 +37,7 @@ def public_pages() -> list[Path]:
     for name in PUBLIC_DIRS:
         directory = ROOT / name
         if directory.exists():
-            pages.extend(directory.rglob("*.html"))
+            pages.extend(p for p in directory.rglob("*.html") if "ntd-pipeline" not in p.parts and "__pycache__" not in p.parts)
     return sorted(set(pages))
 
 

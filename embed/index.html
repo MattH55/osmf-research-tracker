@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-202S9N21TE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-202S9N21TE');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed the latest long COVID, ME/CFS and post-viral research on your site | OSMF widget</title>
+    <meta name="description" content="Free embeddable widget: paste one script tag or iframe to show the newest PubMed studies on long COVID, ME/CFS, PACVS, POTS, MCAS, Lyme, Gulf War Illness or other post-viral illness. Updated daily, no dependencies, light or dark theme.">
+    <meta name="keywords" content="long COVID research widget, embed research feed, ME/CFS latest studies embed, PubMed feed widget, post-viral research embed, PACVS research feed">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://research.opensourcemed.info/embed/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Open Source Medicine Foundation">
+    <meta property="og:title" content="Embed the latest post-viral research on your site">
+    <meta property="og:description" content="One script tag or iframe. Newest PubMed studies for long COVID, ME/CFS, PACVS, POTS, MCAS, Lyme, GWI. Updated daily.">
+    <meta property="og:url" content="https://research.opensourcemed.info/embed/">
+    <meta name="twitter:card" content="summary">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Latest research embed widget",
+          "url": "https://research.opensourcemed.info/embed/",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Any",
+          "isAccessibleForFree": true,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "softwareVersion": "1.0.0",
+          "description": "Self-contained JavaScript widget and iframe that list the newest PubMed studies for long COVID, ME/CFS, PACVS, POTS, MCAS, Lyme disease, Gulf War Illness and other post-viral illness, from the Open Source Medicine Research Tracker.",
+          "publisher": { "@type": "Organization", "name": "Open Source Medicine Foundation", "url": "https://opensourcemed.info" },
+          "installUrl": "https://research.opensourcemed.info/embed/widget.js"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Research Tracker", "item": "https://research.opensourcemed.info/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://research.opensourcemed.info/tools/" },
+            { "@type": "ListItem", "position": 3, "name": "Embed widget", "item": "https://research.opensourcemed.info/embed/" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            { "@type": "Question", "name": "Does the widget add CSS to my page?", "acceptedAnswer": { "@type": "Answer", "text": "No. All styling lives inside a shadow root on the widget element, so it neither leaks styles into your page nor inherits yours. The iframe version is fully isolated." } },
+            { "@type": "Question", "name": "How often is the data updated?", "acceptedAnswer": { "@type": "Answer", "text": "The underlying JSON feeds are rebuilt daily from PubMed by a GitHub Actions workflow. The widget fetches the feed each time it loads and shows the feed's last-updated date." } },
+            { "@type": "Question", "name": "What happens if the feed is unreachable?", "acceptedAnswer": { "@type": "Answer", "text": "The widget fails silently and shows a single plain link to the research tracker instead of an error." } }
+          ]
+        }
+      ]
+    }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../tools/biomarker-lookup.css">
+    <style>
+        .cfg { display: grid; gap: 0.9rem; }
+        .cfg label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.25rem; }
+        .cfg select, .cfg input[type=number] { font: inherit; font-size: 0.95rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: 8px; width: 100%; background: #fff; }
+        .chk { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; font-size: 0.9rem; font-weight: 400; }
+        .chk label { font-weight: 500; display: inline-flex; align-items: center; gap: 0.3rem; margin: 0; }
+        .code-block { position: relative; margin-top: 0.5rem; }
+        pre { background: #0b1220; color: #e5e7eb; padding: 0.9rem 1rem; border-radius: 10px; font-size: 0.78rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.5; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+        .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; }
+        .preview-wrap { background: var(--bg-light); border: 1px dashed var(--border); border-radius: 12px; padding: 1rem; min-height: 200px; }
+        .preview-wrap.dark { background: #1f2937; }
+        .steps { font-size: 0.92rem; color: #374151; display: grid; gap: 0.5rem; padding-left: 1.2rem; }
+        .attr-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.75rem; }
+        .attr-table th, .attr-table td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .attr-table code { background: var(--bg-light); padding: 0.05rem 0.3rem; border-radius: 4px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <nav class="nav-minimal" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">Open Source Medicine <span>Research Tracker</span></a>
+            <div class="nav-links">
+                <a href="../index.html">All Conditions</a>
+                <a href="../biomarker-atlas.html">Biomarker Atlases</a>
+                <a href="../clinical_trials.html">Clinical Trials</a>
+                <a href="../agents.html">Agents</a>
+                <a href="../tools/index.html" class="active">Tools</a>
+                <a href="https://opensourcemed.info" rel="noopener">OSMF</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+    <header class="hero">
+        <div class="hero-container">
+            <div class="hero-badge">Free · no dependencies · updated daily from PubMed</div>
+            <h1>Embed the latest research on your site</h1>
+            <p>One script tag or one iframe shows the newest peer-reviewed studies for long COVID, ME/CFS, PACVS, POTS, MCAS, Lyme disease, Gulf War Illness or other post-viral illness, with PubMed links and attribution.</p>
+        </div>
+    </header>
+
+    <section>
+        <div class="container grid-2">
+            <div class="card">
+                <h2><span class="step">1</span>Configure</h2>
+                <div class="cfg">
+                    <div>
+                        <label>Conditions (pick one or more)</label>
+                        <div class="chk" id="condPicker"></div>
+                    </div>
+                    <div>
+                        <label for="limitInput">Number of studies</label>
+                        <input type="number" id="limitInput" min="1" max="25" value="5">
+                    </div>
+                    <div>
+                        <label for="themeSelect">Theme</label>
+                        <select id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option></select>
+                    </div>
+                </div>
+                <h2 style="margin-top:1.5rem"><span class="step">2</span>Copy the code</h2>
+                <p class="help">Script embed (recommended; sizes itself to the container, max height 480px with its own scrollbar):</p>
+                <div class="code-block"><pre id="scriptSnippet"></pre><button type="button" class="btn copy-btn" data-copy="scriptSnippet">Copy</button></div>
+                <p class="help" style="margin-top:1rem">Iframe embed (for platforms that strip scripts, e.g. Substack, Squarespace, most CMS editors):</p>
+                <div class="code-block"><pre id="iframeSnippet"></pre><button type="button" class="btn copy-btn" data-copy="iframeSnippet">Copy</button></div>
+                <p class="help" style="margin-top:1rem">Raw data, if you would rather render it yourself (CORS-enabled plain JSON):</p>
+                <div class="code-block"><pre id="jsonSnippet"></pre><button type="button" class="btn copy-btn" data-copy="jsonSnippet">Copy</button></div>
+            </div>
+            <div class="card">
+                <h2><span class="step">3</span>Live preview</h2>
+                <p class="help">Exactly what visitors will see. The feed is fetched live from research.opensourcemed.info.</p>
+                <div class="preview-wrap" id="previewWrap"><div id="preview"></div></div>
+                <h3 style="font-size:1rem;margin-top:1.5rem">Script tag attributes</h3>
+                <table class="attr-table">
+                    <thead><tr><th>Attribute</th><th>Values</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>data-condition</code></td><td>One key or a comma list: <code>long-covid</code>, <code>me-cfs</code>, <code>pacvs</code>, <code>lyme</code>, <code>gulf-war-illness</code>, <code>pots</code>, <code>mcas</code>, <code>other-post-viral</code></td></tr>
+                        <tr><td><code>data-limit</code></td><td>1 to 25 (default 5). With several conditions the newest across all are merged.</td></tr>
+                        <tr><td><code>data-theme</code></td><td><code>light</code> (default) or <code>dark</code></td></tr>
+                        <tr><td><code>data-title</code></td><td>Optional heading override</td></tr>
+                    </tbody>
+                </table>
+                <h3 style="font-size:1rem;margin-top:1.5rem">Good to know</h3>
+                <ul class="steps">
+                    <li>No global CSS: styling is isolated in a shadow root, so it will not change your page and your page will not change it.</li>
+                    <li>Fails silently: if the feed cannot be reached, visitors see a single plain link rather than an error.</li>
+                    <li>Attribution link ("via Open Source Medicine Research Tracker") is part of the licence for using the widget; please keep it.</li>
+                    <li>Programmatic use: <code>OSMResearchWidget.render(element, {condition, limit, theme})</code> after loading the script with <code>data-manual</code>.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <div id="flash" role="status" hidden></div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="../index.html">Research Tracker</a>
+            <a href="../biomarker-atlas.html">Biomarker Atlases</a>
+            <a href="../tools/index.html">Tools</a>
+            <a href="../clinical_trials.html">Clinical Trials</a>
+            <a href="https://opensourcemed.info" rel="noopener">Open Source Medicine Foundation</a>
+        </div>
+        <p>Data from PubMed (NLM), refreshed daily. Educational use. Not medical advice.</p>
+    </footer>
+
+    <script src="widget.js" data-manual></script>
+    <script>
+    (function () {
+        var W = window.OSMResearchWidget;
+        var SITE = 'https://research.opensourcemed.info/';
+        var picker = document.getElementById('condPicker');
+        var limitInput = document.getElementById('limitInput');
+        var themeSelect = document.getElementById('themeSelect');
+        var isLocal = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+        var localBase = isLocal ? location.origin + '/' : undefined;
+
+        W.conditions.forEach(function (k) {
+            var id = 'c-' + k;
+            var l = document.createElement('label');
+            l.innerHTML = '<input type="checkbox" value="' + k + '" id="' + id + '"' + (k === 'long-covid' ? ' checked' : '') + '> ' + W.labels[k];
+            picker.appendChild(l);
+        });
+
+        function selected() {
+            var out = [];
+            picker.querySelectorAll('input:checked').forEach(function (i) { out.push(i.value); });
+            return out.length ? out : ['long-covid'];
+        }
+        function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function update() {
+            var conds = selected().join(',');
+            var limit = Math.max(1, Math.min(25, parseInt(limitInput.value, 10) || 5));
+            var theme = themeSelect.value;
+            var script = '<script src="' + SITE + 'embed/widget.js" data-condition="' + conds + '" data-limit="' + limit + '" data-theme="' + theme + '" async><\/script>';
+            var iframe = '<iframe src="' + SITE + 'embed/latest-research.html?condition=' + encodeURIComponent(conds) + '&limit=' + limit + '&theme=' + theme + '" title="Latest research from Open Source Medicine" width="100%" height="' + Math.min(480, 120 + limit * 64) + '" style="border:1px solid #e5e7eb;border-radius:12px" loading="lazy"></iframe>';
+            var json = selected().map(function (k) { return SITE + 'data/' + k + '.json'; }).join('\n');
+            document.getElementById('scriptSnippet').textContent = script;
+            document.getElementById('iframeSnippet').textContent = iframe;
+            document.getElementById('jsonSnippet').textContent = json;
+            var wrap = document.getElementById('previewWrap');
+            wrap.className = 'preview-wrap' + (theme === 'dark' ? ' dark' : '');
+            var old = document.getElementById('preview');
+            var host = document.createElement('div');
+            host.id = 'preview';
+            old.parentNode.replaceChild(host, old);
+            W.render(host, { condition: conds, limit: limit, theme: theme, base: localBase });
+        }
+        picker.addEventListener('change', update);
+        limitInput.addEventListener('input', update);
+        themeSelect.addEventListener('change', update);
+
+        function flash(msg) {
+            var el = document.getElementById('flash');
+            el.textContent = msg; el.hidden = false;
+            clearTimeout(flash.t); flash.t = setTimeout(function () { el.hidden = true; }, 2000);
+        }
+        document.querySelectorAll('[data-copy]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var text = document.getElementById(btn.getAttribute('data-copy')).textContent;
+                function ok() { flash('Copied to clipboard.'); }
+                function fb() {
+                    var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.top = '-1000px';
+                    document.body.appendChild(ta); ta.select();
+                    try { document.execCommand('copy'); ok(); } catch (e) { flash('Copy failed; select the text manually.'); }
+                    document.body.removeChild(ta);
+                }
+                if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(ok, fb); } else { fb(); }
+            });
+        });
+        update();
+    })();
+    </script>
+</body>
+</html>

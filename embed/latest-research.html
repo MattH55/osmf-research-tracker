@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest research feed (embed)</title>
+    <meta name="description" content="Iframe-able latest PubMed research feed from the Open Source Medicine Research Tracker. Use ?condition=long-covid&limit=5&theme=light.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://research.opensourcemed.info/embed/">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; padding: 0; background: transparent; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        #widget { display: block; }
+        .fallback { font-family: inherit; font-size: 14px; padding: 12px; }
+        .fallback a { color: #0068f8; }
+    </style>
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Open Source Medicine Research">
+  <meta property="og:title" content="Latest research feed (embed)">
+  <meta property="og:description" content="Iframe-able latest PubMed research feed from the Open Source Medicine Research Tracker. Use ?condition=long-covid&amp;limit=5&amp;theme=light.">
+  <meta property="og:url" content="https://research.opensourcemed.info/embed/latest-research.html">
+  <meta property="og:image" content="https://opensourcemed.info/favicon.png">
+  <meta property="og:image:width" content="256">
+  <meta property="og:image:height" content="256">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Latest research feed (embed)">
+  <meta name="twitter:description" content="Iframe-able latest PubMed research feed from the Open Source Medicine Research Tracker. Use ?condition=long-covid&amp;limit=5&amp;theme=light.">
+  <meta name="twitter:image" content="https://opensourcemed.info/favicon.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://research.opensourcemed.info/#website","url":"https://research.opensourcemed.info/","name":"Open Source Medicine — Research Tracker","description":"Open-access research tracker for post-viral and chronic complex conditions — Long COVID, PACVS, ME/CFS, Lyme, Gulf War Illness, and more. Daily PubMed feeds, cohort database, biomarker atlases, and therapeutic-agent evidence synthesis.","publisher":{"@id":"https://opensourcemed.info/#org"},"inLanguage":"en"},{"@type":"MedicalWebPage","@id":"https://research.opensourcemed.info/embed/latest-research.html#webpage","url":"https://research.opensourcemed.info/embed/latest-research.html","name":"Latest research feed (embed)","description":"Iframe-able latest PubMed research feed from the Open Source Medicine Research Tracker. Use ?condition=long-covid&limit=5&theme=light.","inLanguage":"en","isPartOf":{"@id":"https://research.opensourcemed.info/#website"},"publisher":{"@id":"https://opensourcemed.info/#org"},"about":[{"@type":"MedicalCondition","name":"Long COVID"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://research.opensourcemed.info/"},{"@type":"ListItem","position":2,"name":"Embed","item":"https://research.opensourcemed.info/embed"},{"@type":"ListItem","position":3,"name":"Latest Research","item":"https://research.opensourcemed.info/embed/latest-research.html"}]}]}</script>
+</head>
+<body>
+    <div id="widget"></div>
+    <noscript><div class="fallback">Latest research: <a href="https://research.opensourcemed.info/?utm_source=embed&utm_medium=iframe" target="_top">Open Source Medicine Research Tracker</a></div></noscript>
+    <script src="widget.js" data-manual></script>
+    <script>
+    (function () {
+        var q = {};
+        location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
+            if (!kv) { return; }
+            var i = kv.indexOf('=');
+            var k = decodeURIComponent(i < 0 ? kv : kv.slice(0, i));
+            var v = decodeURIComponent(i < 0 ? '' : kv.slice(i + 1).replace(/\+/g, ' '));
+            q[k] = v;
+        });
+        var host = document.getElementById('widget');
+        if (window.OSMResearchWidget) {
+            if (q.theme === 'dark') { document.body.style.background = '#111827'; }
+            window.OSMResearchWidget.render(host, {
+                condition: q.condition || 'long-covid',
+                limit: q.limit || 5,
+                theme: q.theme || 'light',
+                title: q.title || '',
+                base: q.base && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/$/.test(q.base) ? q.base : undefined
+            });
+        } else {
+            host.innerHTML = '<div class="fallback">Latest research: <a href="https://research.opensourcemed.info/?utm_source=embed&utm_medium=iframe" target="_top">Open Source Medicine Research Tracker</a></div>';
+        }
+        /* Let the widget fill the iframe height. */
+        var w = host.shadowRoot ? host.shadowRoot.querySelector('.w') : host.querySelector('.w');
+        if (w) { w.style.maxHeight = '100vh'; w.style.height = '100vh'; w.style.borderRadius = '0'; w.style.border = '0'; }
+        var mo = new MutationObserver(function () {
+            var el = host.shadowRoot ? host.shadowRoot.querySelector('.w') : host.querySelector('.w');
+            if (el) { el.style.maxHeight = '100vh'; el.style.height = '100vh'; el.style.borderRadius = '0'; el.style.border = '0'; }
+        });
+        mo.observe(host.shadowRoot || host, { childList: true, subtree: true });
+    })();
+    </script>
+</body>
+</html>

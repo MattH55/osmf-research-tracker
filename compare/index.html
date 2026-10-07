@@ -1,84 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-202S9N21TE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-202S9N21TE');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compare State Healthcare Laws | Medical Freedom Maps</title>
-<meta name="description" content="Compare healthcare access laws side-by-side across US states.">
-<meta name="robots" content="noindex,follow">
-<link rel="canonical" href="/compare/">
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<title>Compare post-viral and chronic illness conditions: Long COVID, ME/CFS, PACVS, Lyme, GWI, POTS, MCAS</title>
+<meta name="description" content="20 side-by-side comparisons of post-infectious and chronic multisymptom conditions built from OSMF biomarker atlases, PubMed feeds, the clinical-trial registry and the PAIS cohort database.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://research.opensourcemed.info/compare/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Open Source Medicine Foundation">
+<meta property="og:title" content="Compare post-viral and chronic illness conditions: Long COVID, ME/CFS, PACVS, Lyme, GWI, POTS, MCAS">
+<meta property="og:description" content="20 side-by-side comparisons of post-infectious and chronic multisymptom conditions built from OSMF biomarker atlases, PubMed feeds, the clinical-trial registry and the PAIS cohort database.">
+<meta property="og:url" content="https://research.opensourcemed.info/compare/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Compare post-viral and chronic illness conditions: Long COVID, ME/CFS, PACVS, Lyme, GWI, POTS, MCAS">
+<meta name="twitter:description" content="20 side-by-side comparisons of post-infectious and chronic multisymptom conditions built from OSMF biomarker atlases, PubMed feeds, the clinical-trial registry and the PAIS cohort database.">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff;--fg:#1a1a2e;--fg2:#555;--ac:#2563eb;--ac2:#1d4ed8;--brd:#e2e8f0;--bg2:#f8fafc;--green:#059669;--red:#dc2626;--amber:#d97706;--grey:#94a3b8;font-family:system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.5;color:var(--fg);background:var(--bg)}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{max-width:1200px;margin:0 auto;padding:0 1rem}
-.disc{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:.75rem 1rem;margin-top:.5rem;font-size:.875rem}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:2px solid var(--brd);flex-wrap:wrap;gap:.5rem}
-.hdr h1{font-size:1.5rem}
-.hdr a{color:var(--ac);text-decoration:none;font-size:.875rem}
-.hdr a:hover{text-decoration:underline}
-.bc{font-size:.8125rem;color:var(--fg2);padding:.5rem 0}
-.bc a{color:var(--ac);text-decoration:none}
-.bc a:hover{text-decoration:underline}
-.hero{padding:2rem 0}
-.hero h2{font-size:1.75rem;margin-bottom:.5rem}
-.hero p{color:var(--fg2);font-size:1.125rem;max-width:700px}
-.stats{display:flex;gap:1.5rem;flex-wrap:wrap;margin:1rem 0}
-.stat{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:1rem;min-width:140px;text-align:center}
-.stat .num{font-size:1.75rem;font-weight:700;color:var(--ac)}
-.stat .lbl{font-size:.8125rem;color:var(--fg2);margin-top:.25rem}
-.tbl{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.875rem}
-.tbl th,.tbl td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--brd)}
-.tbl th{background:var(--bg2);font-weight:600;position:sticky;top:0;cursor:pointer}
-.tbl tr:hover{background:var(--bg2)}
-.tbl a{color:var(--ac);text-decoration:none}
-.tbl a:hover{text-decoration:underline}
-.badge{display:inline-block;padding:.125rem .5rem;border-radius:999px;font-size:.75rem;font-weight:600}
-.badge-true,.badge-full,.badge-participating{background:#dcfce7;color:#166534}
-.badge-false,.badge-none,.badge-restricted{background:#fee2e2;color:#991b1b}
-.badge-reduced,.badge-limited{background:#fef3c7;color:#92400e}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}
-.card{border:1px solid var(--brd);border-radius:8px;padding:1rem;transition:box-shadow .15s}
-.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.card h3{font-size:1.1rem;margin-bottom:.25rem}
-.card h3 a{color:var(--ac);text-decoration:none}
-.card p{font-size:.875rem;color:var(--fg2)}
-.meta{font-size:.8125rem;color:var(--grey);margin-top:1.5rem}
-.cta{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:1rem;margin:1.5rem 0;text-align:center}
-.cta textarea{width:100%;font-family:monospace;font-size:.8125rem;padding:.5rem;border:1px solid var(--brd);border-radius:4px;resize:none;height:80px}
-.cta button{margin-top:.5rem;background:var(--ac);color:#fff;border:none;padding:.5rem 1rem;border-radius:4px;cursor:pointer;font-size:.875rem}
-.cta button:hover{background:var(--ac2)}
-.map-preview{height:300px;margin:1rem 0;border-radius:8px;overflow:hidden;border:1px solid var(--brd)}
-footer{border-top:2px solid var(--brd);padding:1.5rem 0;margin-top:3rem;font-size:.8125rem;color:var(--fg2);text-align:center}
-footer a{color:var(--ac)}
-html{overflow-x:clip}
-body{overflow-x:clip;padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right));padding-bottom:env(safe-area-inset-bottom)}
-img,svg,video,iframe,canvas{max-width:100%}
-.tbl{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.badge{max-width:100%;white-space:normal;overflow-wrap:anywhere}
-.bc{overflow-wrap:anywhere}
-@media(max-width:720px){
-.hdr{align-items:flex-start}
-.hdr h1{font-size:1.2rem}
-.hero{padding:1.15rem 0}
-.hero h2{font-size:1.35rem}
-.hero p{font-size:1rem}
-.card-grid{grid-template-columns:1fr}
-.stat{min-width:0;flex:1 1 140px}
-.map-preview{height:220px}
-.tbl th,.tbl td{padding:.45rem .55rem;font-size:.8125rem}
-footer{padding:1.25rem 0;margin-top:2rem}
-}
+:root{--blue:#0068f8;--blue-dark:#0052c7;--ink:#111827;--muted:#4b5563;--line:#e5e7eb;--bg2:#f8fafc;--bg:#ffffff;--amber-bg:#fff7ed;--amber:#c2410c;--green:#15803d;--red:#b91c1c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#f3f4f6;--muted:#9ca3af;--line:#1f2937;--bg2:#111827;--bg:#0b1220;--amber-bg:#2a1a0a;--amber:#fdba74;--green:#4ade80;--red:#fca5a5}}
+:root[data-theme="dark"]{--ink:#f3f4f6;--muted:#9ca3af;--line:#1f2937;--bg2:#111827;--bg:#0b1220;--amber-bg:#2a1a0a;--amber:#fdba74;--green:#4ade80;--red:#fca5a5}
+*{box-sizing:border-box}html{overflow-x:clip}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg)}
+a{color:var(--blue)}a:hover{color:var(--blue-dark)}
+.nav{border-bottom:1px solid var(--line);background:var(--bg)}
+.nav .in{max-width:1100px;margin:0 auto;padding:.75rem 16px;display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;align-items:center}
+.nav .brand{font-weight:700;text-decoration:none;color:var(--ink)}.nav a.l{text-decoration:none;color:var(--muted);font-size:.9rem}.nav a.l:hover{color:var(--blue)}
+main{max-width:1100px;margin:0 auto;padding:0 16px 3rem}
+.bc{font-size:.85rem;color:var(--muted);margin:1rem 0}.bc a{text-decoration:none}.bc ol{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.35rem}.bc li+li::before{content:"\203A";margin-right:.35rem}
+h1{font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.2;margin:.5rem 0 .75rem}
+h2{font-size:1.45rem;margin:2.5rem 0 .75rem;padding-top:.5rem;border-top:1px solid var(--line)}
+h3{font-size:1.1rem;margin:1.5rem 0 .5rem}
+.lede{font-size:1.1rem;color:var(--muted);max-width:60rem}
+.pill{display:inline-block;font-size:.75rem;font-weight:600;padding:.15rem .6rem;border-radius:999px;background:var(--amber-bg);color:var(--amber);margin-left:.5rem;vertical-align:middle}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem}
+.card{border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;background:var(--bg2)}
+.card h3{margin-top:0}.card .alt{font-size:.85rem;color:var(--muted)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg2);font-weight:600}
+thead th{position:sticky;top:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.dir{display:inline-block;font-size:.78rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;white-space:nowrap}
+.dir-up{background:#fee2e2;color:#991b1b}.dir-down{background:#dbeafe;color:#1e40af}.dir-mixed{background:#fef3c7;color:#92400e}.dir-na{background:var(--line);color:var(--muted)}
+.flag{color:var(--red);font-weight:600;font-size:.8rem}
+ul.compact{columns:1;padding-left:1.2rem}@media(min-width:720px){ul.compact{columns:2;column-gap:2rem}}
+ul.compact li{break-inside:avoid;margin:.15rem 0}
+.muted{color:var(--muted)}.small{font-size:.85rem}
+.faq details{border:1px solid var(--line);border-radius:8px;padding:.6rem 1rem;margin:.5rem 0;background:var(--bg2)}
+.faq summary{font-weight:600;cursor:pointer}
+.cite{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:1rem 1.25rem;background:var(--bg2);font-size:.92rem}
+.cite code{display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem;margin-top:.5rem}
+.disc{background:var(--amber-bg);border:1px solid var(--amber);border-radius:8px;padding:.75rem 1rem;font-size:.88rem;margin:1.5rem 0}
+.cta{text-align:center;margin:2rem 0;padding:1.25rem;border:1px solid var(--line);border-radius:10px}
+.cta a.btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;padding:.6rem 1.2rem;border-radius:6px;font-weight:600}
+.study{margin:.6rem 0}.study .t{font-weight:500}.study .m{font-size:.85rem;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:1.5rem 16px;font-size:.85rem;color:var(--muted);text-align:center}
+footer a{color:var(--muted)}
+.related{display:flex;flex-wrap:wrap;gap:.5rem}.related a{font-size:.85rem;border:1px solid var(--line);border-radius:999px;padding:.25rem .75rem;text-decoration:none}
 </style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Research Tracker", "item": "https://research.opensourcemed.info/index.html"}, {"@type": "ListItem", "position": 2, "name": "Compare conditions", "item": "https://research.opensourcemed.info/compare/"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Compare post-viral and chronic illness conditions: Long COVID, ME/CFS, PACVS, Lyme, GWI, POTS, MCAS", "url": "https://research.opensourcemed.info/compare/", "description": "20 side-by-side comparisons of post-infectious and chronic multisymptom conditions built from OSMF biomarker atlases, PubMed feeds, the clinical-trial registry and the PAIS cohort database.", "hasPart": [{"@type": "WebPage", "name": "Long COVID vs ME/CFS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/long-covid-vs-me-cfs.html"}, {"@type": "WebPage", "name": "Long COVID vs PACVS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/long-covid-vs-pacvs.html"}, {"@type": "WebPage", "name": "Long COVID vs Lyme disease: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/long-covid-vs-lyme.html"}, {"@type": "WebPage", "name": "Long COVID vs Gulf War Illness: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/long-covid-vs-gulf-war-illness.html"}, {"@type": "WebPage", "name": "ME/CFS vs PACVS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/me-cfs-vs-pacvs.html"}, {"@type": "WebPage", "name": "ME/CFS vs Lyme disease: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/me-cfs-vs-lyme.html"}, {"@type": "WebPage", "name": "ME/CFS vs Gulf War Illness: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/me-cfs-vs-gulf-war-illness.html"}, {"@type": "WebPage", "name": "PACVS vs Lyme disease: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/pacvs-vs-lyme.html"}, {"@type": "WebPage", "name": "PACVS vs Gulf War Illness: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/pacvs-vs-gulf-war-illness.html"}, {"@type": "WebPage", "name": "Lyme disease vs Gulf War Illness: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/lyme-vs-gulf-war-illness.html"}, {"@type": "WebPage", "name": "Long COVID vs POTS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/long-covid-vs-pots.html"}, {"@type": "WebPage", "name": "Long COVID vs MCAS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/long-covid-vs-mcas.html"}, {"@type": "WebPage", "name": "ME/CFS vs POTS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/me-cfs-vs-pots.html"}, {"@type": "WebPage", "name": "ME/CFS vs MCAS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/me-cfs-vs-mcas.html"}, {"@type": "WebPage", "name": "PACVS vs POTS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/pacvs-vs-pots.html"}, {"@type": "WebPage", "name": "PACVS vs MCAS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/pacvs-vs-mcas.html"}, {"@type": "WebPage", "name": "Lyme disease vs POTS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/lyme-vs-pots.html"}, {"@type": "WebPage", "name": "Lyme disease vs MCAS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/lyme-vs-mcas.html"}, {"@type": "WebPage", "name": "Gulf War Illness vs POTS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/gulf-war-illness-vs-pots.html"}, {"@type": "WebPage", "name": "Gulf War Illness vs MCAS: symptoms, biomarkers, trials and research compared", "url": "https://research.opensourcemed.info/compare/gulf-war-illness-vs-mcas.html"}]}</script>
 </head>
 <body>
-<div class="disc" id="db">
-<p><strong>INFORMATIONAL PURPOSES ONLY.</strong> Not medical, legal, or travel advice. Verify with official sources before acting. See <a href="/corrections/">corrections log</a>.</p>
-</div>
-<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">Medical Freedom Maps</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header><section class="hero"><h2>Compare State Healthcare Laws</h2><p>Select states and layers to compare side-by-side. This tool is under development.</p></section><p class="meta">Compare tool coming soon. In the meantime, browse <a href="/maps/">layer maps</a> or <a href="/maps/states/">state profiles</a>.</p><footer>
-<p><strong>DISCLAIMER:</strong> Informational aggregation, not legal or medical advice. Verify with counsel before acting.</p>
-<p>Data updated: July 2026 | <a href="https://github.com/MattH55/osmf-research-tracker">Source Code</a> | <a href="/corrections/">Corrections</a></p>
+<nav class="nav" aria-label="Main navigation"><div class="in">
+<a class="brand" href="/index.html">OSMF Research Tracker</a>
+<a class="l" href="/biomarker-atlas.html">Biomarker Atlases</a>
+<a class="l" href="/clinical_trials.html">Clinical Trials</a>
+<a class="l" href="/agents.html">Therapeutic Agents</a>
+<a class="l" href="/compare/">Compare</a>
+<a class="l" href="https://opensourcemed.info" rel="noopener">opensourcemed.info</a>
+</div></nav>
+<main>
+
+<nav class="bc" aria-label="Breadcrumb"><ol><li><a href="/index.html">Research Tracker</a></li><li aria-current="page">Compare conditions</li></ol></nav>
+<h1>Compare conditions</h1>
+<p class="lede">Each comparison page places two conditions side by side: what they are, how many biomarkers OSMF has catalogued and which are shared, how many trials are registered and in what status, which therapeutic agents are under investigation for both, the named research cohorts, and the latest PubMed studies.</p>
+<h2 id="post-viral">Post-infectious and multisymptom conditions</h2><p>Full biomarker-level comparisons between conditions that have an OSMF biomarker atlas.</p><div class="tw"><table><thead><tr><th>Comparison</th><th>Shared biomarkers</th><th>Direction conflicts</th><th>Trials (A / B)</th><th>Shared agents</th></tr></thead><tbody>
+<tr><td><a href="/compare/long-covid-vs-me-cfs.html">Long COVID vs ME/CFS</a></td><td class="num">18</td><td class="num">6</td><td class="num">332 / 144</td><td class="num">27</td></tr>
+<tr><td><a href="/compare/long-covid-vs-pacvs.html">Long COVID vs PACVS</a></td><td class="num">5</td><td class="num">1</td><td class="num">332 / 2</td><td class="num">4</td></tr>
+<tr><td><a href="/compare/long-covid-vs-lyme.html">Long COVID vs Lyme disease</a></td><td class="num">3</td><td class="num">2</td><td class="num">332 / 2</td><td class="num">4</td></tr>
+<tr><td><a href="/compare/long-covid-vs-gulf-war-illness.html">Long COVID vs Gulf War Illness</a></td><td class="num">10</td><td class="num">1</td><td class="num">332 / 4</td><td class="num">2</td></tr>
+<tr><td><a href="/compare/me-cfs-vs-pacvs.html">ME/CFS vs PACVS</a></td><td class="num">6</td><td class="num">2</td><td class="num">144 / 2</td><td class="num">1</td></tr>
+<tr><td><a href="/compare/me-cfs-vs-lyme.html">ME/CFS vs Lyme disease</a></td><td class="num">4</td><td class="num">2</td><td class="num">144 / 2</td><td class="num">3</td></tr>
+<tr><td><a href="/compare/me-cfs-vs-gulf-war-illness.html">ME/CFS vs Gulf War Illness</a></td><td class="num">13</td><td class="num">4</td><td class="num">144 / 4</td><td class="num">8</td></tr>
+<tr><td><a href="/compare/pacvs-vs-lyme.html">PACVS vs Lyme disease</a></td><td class="num">2</td><td class="num">0</td><td class="num">2 / 2</td><td class="num">1</td></tr>
+<tr><td><a href="/compare/pacvs-vs-gulf-war-illness.html">PACVS vs Gulf War Illness</a></td><td class="num">4</td><td class="num">0</td><td class="num">2 / 4</td><td class="num">0</td></tr>
+<tr><td><a href="/compare/lyme-vs-gulf-war-illness.html">Lyme disease vs Gulf War Illness</a></td><td class="num">4</td><td class="num">1</td><td class="num">2 / 4</td><td class="num">0</td></tr>
+</tbody></table></div>
+<h2 id="literature-only">Comparisons with POTS and MCAS (literature-only)</h2><p>POTS and MCAS have no OSMF biomarker atlas, so these pages compare literature, trials, therapeutics and cohorts.</p><div class="tw"><table><thead><tr><th>Comparison</th><th>Trials (A / B)</th><th>Trials listing both</th><th>Shared agents</th></tr></thead><tbody>
+<tr><td><a href="/compare/long-covid-vs-pots.html">Long COVID vs POTS</a></td><td class="num">332 / 90</td><td class="num">13</td><td class="num">19</td></tr>
+<tr><td><a href="/compare/long-covid-vs-mcas.html">Long COVID vs MCAS</a></td><td class="num">332 / 5</td><td class="num">1</td><td class="num">3</td></tr>
+<tr><td><a href="/compare/me-cfs-vs-pots.html">ME/CFS vs POTS</a></td><td class="num">144 / 90</td><td class="num">5</td><td class="num">12</td></tr>
+<tr><td><a href="/compare/me-cfs-vs-mcas.html">ME/CFS vs MCAS</a></td><td class="num">144 / 5</td><td class="num">1</td><td class="num">2</td></tr>
+<tr><td><a href="/compare/pacvs-vs-pots.html">PACVS vs POTS</a></td><td class="num">2 / 90</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td><a href="/compare/pacvs-vs-mcas.html">PACVS vs MCAS</a></td><td class="num">2 / 5</td><td class="num">0</td><td class="num">0</td></tr>
+<tr><td><a href="/compare/lyme-vs-pots.html">Lyme disease vs POTS</a></td><td class="num">2 / 90</td><td class="num">0</td><td class="num">1</td></tr>
+<tr><td><a href="/compare/lyme-vs-mcas.html">Lyme disease vs MCAS</a></td><td class="num">2 / 5</td><td class="num">0</td><td class="num">2</td></tr>
+<tr><td><a href="/compare/gulf-war-illness-vs-pots.html">Gulf War Illness vs POTS</a></td><td class="num">4 / 90</td><td class="num">0</td><td class="num">1</td></tr>
+<tr><td><a href="/compare/gulf-war-illness-vs-mcas.html">Gulf War Illness vs MCAS</a></td><td class="num">4 / 5</td><td class="num">0</td><td class="num">0</td></tr>
+</tbody></table></div>
+<h2 id="conditions">Conditions covered</h2><ul class="compact">
+<li><strong>Long COVID</strong> &middot; <a href="/long-covid-biomarkers.html">biomarker atlas</a> &middot; <a href="/long-covid.html">literature</a></li>
+<li><strong>Myalgic Encephalomyelitis / Chronic Fatigue Syndrome (ME/CFS)</strong> &middot; <a href="/me-cfs-biomarkers.html">biomarker atlas</a> &middot; <a href="/me-cfs.html">literature</a></li>
+<li><strong>Post-Acute COVID-19 Vaccination Syndrome (PACVS)</strong> &middot; <a href="/pacvs-biomarkers.html">biomarker atlas</a> &middot; <a href="/pacvs.html">literature</a></li>
+<li><strong>Lyme Disease</strong> &middot; <a href="/lyme-biomarkers.html">biomarker atlas</a> &middot; <a href="/lyme.html">literature</a></li>
+<li><strong>Gulf War Illness</strong> &middot; <a href="/gulf-war-illness-biomarkers.html">biomarker atlas</a> &middot; <a href="/gulf-war-illness.html">literature</a></li>
+<li><strong>Postural Orthostatic Tachycardia Syndrome (POTS)</strong> &middot; <a href="/pots.html">literature</a></li>
+<li><strong>Mast Cell Activation Syndrome (MCAS)</strong> &middot; <a href="/mcas.html">literature</a></li>
+</ul>
+<h2 id="state-laws">State healthcare law comparison</h2><p class="muted">A separate tool for comparing healthcare-access laws across US states is under development. In the meantime, browse the <a href="/maps/">Medical Freedom Maps layer maps</a> or <a href="/maps/states/">state profiles</a>.</p>
+
+<div class="cta"><p><strong>Get OSMF research updates</strong><br><span class="muted small">New biomarker, trial and cohort data, summarised for patients and researchers.</span></p>
+<a class="btn" href="https://opensourcemed.substack.com/subscribe?utm_source=tracker" rel="noopener">Subscribe on Substack</a></div>
+<div class="disc"><strong>Disclaimer.</strong> This page is an automated, informational synthesis of public research data maintained by the Open Source Medicine Foundation. It is not medical advice, does not establish a diagnosis, and does not endorse any test or treatment. Biomarker directions summarise individual studies that often disagree; registered trials have not necessarily reported results. Discuss any testing or treatment decision with a qualified clinician.</div>
+<p class="small muted">Last updated 07 Oct 2026. Generated by scripts/build_compare_pages.py.</p>
+</main>
+<footer>
+<p>&copy; Open Source Medicine Foundation &middot; <a href="/index.html">Research Tracker</a> &middot; <a href="/biomarker-atlas.html">Biomarker Atlases</a> &middot; <a href="/clinical_trials.html">Clinical Trials</a> &middot; <a href="/pais-cohorts.html">PAIS Cohorts</a> &middot; <a href="https://opensourcemed.info" rel="noopener">opensourcemed.info</a></p>
+<p><a href="https://github.com/MattH55/osmf-research-tracker" rel="noopener">Source code</a> &middot; <a href="/corrections/">Corrections</a></p>
 </footer>
 </body>
 </html>
