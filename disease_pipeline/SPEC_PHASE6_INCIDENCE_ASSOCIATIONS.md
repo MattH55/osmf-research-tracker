@@ -40,14 +40,26 @@ Phase 6 lands in **`disease_pipeline/`** — the generator behind `disease-intel
 
 ### Phase-numbering caveat (read before renumbering anything)
 
-The DI pipeline already labels internal stages by phase:
-`disease_pipeline/adapters/clinical_evidence.py` opens with
-`"""Phase 6 — Clinical trial registry + published literature evidence per agent."""`,
-`main.py` documents `--max-evidence-drugs` as "(phase 6)", and built JSONs carry
-`summary.pipeline_phase` values of `6`, `7` and `8`. If this module's "Phase 6" shares that
-numbering it must be renumbered to avoid ambiguity; otherwise keep the agent-spec phase
-numbers separate, name everything after the `incidence_associations` key rather than the
-phase number, and leave `summary.pipeline_phase` coherent.
+The word "phase" is already taken here, in two documented ways:
+
+- **Ingestion gates** — `disease_pipeline/options.py` defines `PipelineOptions.includes()` and
+  `options_for_phase()` over gates **1–8**: `1` seeds + Open Targets genes/drugs, `2` + HPO /
+  ClinicalTrials / LOINC, `3` + via-biomarker drugs, `4` + DisGeNET / PubMed, `5` + UniProt /
+  HMDB, **`6` + clinical trial registry + literature evidence (Cochrane, meta-analyses,
+  trials)**, `7` + natural products, `8` + the full 20-database NP pipeline.
+  `options_for_phase()` sets `skip_evidence = True` for any phase `< 6`, and `main.py` exposes
+  `--phase` with `choices=[1..6]` plus `--max-evidence-drugs` labelled "(phase 6)" and an
+  inverse `--skip-evidence`.
+- **Evidence label in the data** — `summary.pipeline_phase` in the built JSONs carries `6`,
+  `7` or `8` for the same reason, and `adapters/clinical_evidence.py` opens with
+  `"""Phase 6 — Clinical trial registry + published literature evidence per agent."""`
+
+So in this repo **"Phase 6" already means the clinical-trial + literature evidence ingestion
+layer.** This module's Phase 6 (incidence associations) is a *different* numbering and must not
+be wired to `--phase 6` or to `summary.pipeline_phase` — either renumber this module, or
+(preferably) name everything after the `incidence_associations` key and leave the ingestion
+gates and `summary.pipeline_phase` untouched. If new work is ever placed behind a phase gate,
+say which table above is being extended.
 
 ## Prerequisite gaps to close before §6.4 can be satisfied
 
@@ -158,7 +170,7 @@ New stat cards in the overview: `Genetic associations (risk/protective counts)`,
 |---|---|---|
 | 13 | Direction coverage | 100% of rendered incidence rows have non-null direction or the `not_significant` flag |
 | 14 | Sign sanity | Unit test: ingest fixtures with OR 1.2, 0.8, beta +0.3, −0.1, log2FC ±2 → directions render correctly |
-| 15 | Protective survival | Count of protective rows in rendered HTML equals count in source data (nothing dropped/f sign-flipped in transform) |
+| 15 | Protective survival | Count of protective rows in rendered HTML equals count in source data (nothing dropped or sign-flipped in transform) |
 | 16 | Treatment leakage | No ClinicalTrials.gov-sourced entity in the three new sections |
 | 17 | Quarantine | `_unsigned_associations.json` exists and every entry has a source ref |
 | 18 | Exposure tiering | MR-derived and observational exposures are distinguishable in rendered output |

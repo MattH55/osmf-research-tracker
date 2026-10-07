@@ -183,3 +183,13 @@ Visit: [https://opensourcemed.info](https://opensourcemed.info)
 - Location: clinical_trials/
 - Run with: python clinical_trials/clinical_trials_agent.py
 - See clinical_trials/README.md for details
+
+### 3. Disease Intelligence Pages
+- Per-disease evidence pages built from `data/disease-intelligence/*.json` into `disease-intelligence/*.html`
+- Location: disease_pipeline/
+- Rebuild every page + sitemap: python disease_pipeline/publish_site.py (never hand-edit the generated HTML)
+- Pipeline CLI: python -m disease_pipeline.main "<Disease>" --phase N --web --html — here `--phase` is an
+  *ingestion-depth* gate defined in `disease_pipeline/options.py`, unrelated to the Phase numbers in the
+  agent spec below
+- Agent spec for the Phase 6 incidence-associations module (genes / expression / exposures):
+  see `disease_pipeline/SPEC_PHASE6_INCIDENCE_ASSOCIATIONS.md`
