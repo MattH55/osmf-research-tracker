@@ -164,6 +164,29 @@ def _np_publications_html(
     return f'<ul class="np-pubs">{"".join(items)}</ul>'
 
 
+def _alteration_has_value(a: dict) -> bool:
+    """True when the alteration carries a measured value (direction and/or frequency)."""
+    return bool(
+        a.get("direction")
+        or a.get("direction_label")
+        or a.get("frequency_label")
+        or a.get("frequency_pct")
+    )
+
+
+def _alterations_value_toggle_html(alts: list[dict]) -> str:
+    """Checkbox that hides alteration rows missing a direction/frequency value."""
+    no_value = sum(1 for a in alts if not _alteration_has_value(a))
+    if no_value == 0:
+        return ""
+    return f"""
+      <label class="evidence-toggle" for="hide-alterations-without-value">
+        <input type="checkbox" id="hide-alterations-without-value" aria-controls="alterations-table">
+        <span>Hide alterations without a value (no direction or frequency)</span>
+        <span class="hidden-count" data-hidden-for="hide-alterations-without-value" style="display:none"></span>
+      </label>"""
+
+
 def _alterations_table(alts: list[dict]) -> str:
     if not alts:
         return '<p class="no-data">No alterations in this category.</p>'
@@ -172,8 +195,9 @@ def _alterations_table(alts: list[dict]) -> str:
         dir_txt = a.get("direction_label") or "—"
         freq = a.get("frequency_label") or "—"
         defn = (a.get("definition") or "")[:120]
+        row_cls = "" if _alteration_has_value(a) else ' class="alt-no-value"'
         rows.append(f"""
-        <tr data-type="{_esc(a['type'])}">
+        <tr data-type="{_esc(a['type'])}"{row_cls}>
           <td class="name-cell"><strong>{_esc(a['name'])}</strong>
             {f'<div class="sub">{_esc(defn)}</div>' if defn else ''}</td>
           <td>{_type_badge(a['type'], a['type_label'])}</td>
@@ -186,7 +210,7 @@ def _alterations_table(alts: list[dict]) -> str:
         </tr>""")
     return f"""
     <div class="table-wrap">
-      <table class="data-table">
+      <table class="data-table" id="alterations-table">
         <thead><tr>
           <th>Name</th><th>Type</th><th>Subtype</th><th>Direction</th>
           <th>Frequency</th><th>Evidence</th><th>Sources</th><th>Links</th>
@@ -687,6 +711,7 @@ def build_html(data: dict) -> str:
     .hidden-count{{color:var(--amber);font-size:.82rem}}
     .therapeutic-row.no-clinical-evidence{{display:none}}
     section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{{display:table-row}}
+    #alterations.hide-alterations-without-value tbody tr.alt-no-value{{display:none}}
     footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}}
     .related-links{{font-size:.88rem;margin-bottom:1.5rem}}
     html,body{{overflow-x:clip}}
@@ -740,7 +765,9 @@ def build_html(data: dict) -> str:
         <button class="filter-chip active" data-filter="all" type="button">All</button>
         {''.join(type_chips)}
       </div>
+      {_alterations_value_toggle_html(alts)}
       {_alterations_table(alts)}
+      <p class="no-data" id="alterations-no-value-msg" hidden>Every alteration recorded for this condition is missing a direction or frequency value.</p>
     </section>
 
     <section id="therapeutics">
@@ -802,6 +829,29 @@ def build_html(data: dict) -> str:
     }}
     bindEvidenceToggle('show-no-evidence-therapeutics');
     bindEvidenceToggle('show-no-evidence-natural');
+    (function () {{
+      var cb = document.getElementById('hide-alterations-without-value');
+      if (!cb) return;
+      var section = document.getElementById('alterations');
+      if (!section) return;
+      var body = section.querySelector('tbody');
+      var noValueRows = body ? body.querySelectorAll('tr.alt-no-value').length : 0;
+      var totalRows = body ? body.querySelectorAll('tr').length : 0;
+      var hint = section.querySelector('[data-hidden-for="hide-alterations-without-value"]');
+      var emptyMsg = document.getElementById('alterations-no-value-msg');
+      function apply() {{
+        section.classList.toggle('hide-alterations-without-value', cb.checked);
+        if (hint) {{
+          hint.textContent = '(' + noValueRows + ' hidden)';
+          hint.style.display = (cb.checked && noValueRows) ? '' : 'none';
+        }}
+        if (emptyMsg) {{
+          emptyMsg.hidden = !(cb.checked && noValueRows >= totalRows);
+        }}
+      }}
+      cb.addEventListener('change', apply);
+      apply();
+    }})();
   </script>
 </body>
 </html>"""

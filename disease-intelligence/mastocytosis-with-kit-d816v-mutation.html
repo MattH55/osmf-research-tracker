@@ -109,6 +109,7 @@
     .hidden-count{color:var(--amber);font-size:.82rem}
     .therapeutic-row.no-clinical-evidence{display:none}
     section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
+    #alterations.hide-alterations-without-value tbody tr.alt-no-value{display:none}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
     html,body{overflow-x:clip}
@@ -246,14 +247,20 @@
         <button class="filter-chip" data-filter="B" type="button">Lab / Clinical (1)</button>
       </div>
       
+      <label class="evidence-toggle" for="hide-alterations-without-value">
+        <input type="checkbox" id="hide-alterations-without-value" aria-controls="alterations-table">
+        <span>Hide alterations without a value (no direction or frequency)</span>
+        <span class="hidden-count" data-hidden-for="hide-alterations-without-value" style="display:none"></span>
+      </label>
+      
     <div class="table-wrap">
-      <table class="data-table">
+      <table class="data-table" id="alterations-table">
         <thead><tr>
           <th>Name</th><th>Type</th><th>Subtype</th><th>Direction</th>
           <th>Frequency</th><th>Evidence</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr data-type="B">
+        <tr data-type="B" class="alt-no-value">
           <td class="name-cell"><strong>Cumulative response (4R75%)</strong>
             </td>
           <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
@@ -266,6 +273,7 @@
         </tr></tbody>
       </table>
     </div>
+      <p class="no-data" id="alterations-no-value-msg" hidden>Every alteration recorded for this condition is missing a direction or frequency value.</p>
     </section>
 
     <section id="therapeutics">
@@ -332,6 +340,29 @@
     }
     bindEvidenceToggle('show-no-evidence-therapeutics');
     bindEvidenceToggle('show-no-evidence-natural');
+    (function () {
+      var cb = document.getElementById('hide-alterations-without-value');
+      if (!cb) return;
+      var section = document.getElementById('alterations');
+      if (!section) return;
+      var body = section.querySelector('tbody');
+      var noValueRows = body ? body.querySelectorAll('tr.alt-no-value').length : 0;
+      var totalRows = body ? body.querySelectorAll('tr').length : 0;
+      var hint = section.querySelector('[data-hidden-for="hide-alterations-without-value"]');
+      var emptyMsg = document.getElementById('alterations-no-value-msg');
+      function apply() {
+        section.classList.toggle('hide-alterations-without-value', cb.checked);
+        if (hint) {
+          hint.textContent = '(' + noValueRows + ' hidden)';
+          hint.style.display = (cb.checked && noValueRows) ? '' : 'none';
+        }
+        if (emptyMsg) {
+          emptyMsg.hidden = !(cb.checked && noValueRows >= totalRows);
+        }
+      }
+      cb.addEventListener('change', apply);
+      apply();
+    })();
   </script>
 </body>
 </html>

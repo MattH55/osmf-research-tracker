@@ -109,6 +109,7 @@
     .hidden-count{color:var(--amber);font-size:.82rem}
     .therapeutic-row.no-clinical-evidence{display:none}
     section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
+    #alterations.hide-alterations-without-value tbody tr.alt-no-value{display:none}
     footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
     .related-links{font-size:.88rem;margin-bottom:1.5rem}
     html,body{overflow-x:clip}
@@ -285,14 +286,20 @@
         <button class="filter-chip" data-filter="A" type="button">Molecular (100)</button><button class="filter-chip" data-filter="B" type="button">Lab / Clinical (6)</button><button class="filter-chip" data-filter="C" type="button">Scales &amp; PROs (2)</button><button class="filter-chip" data-filter="D" type="button">Pathology (2)</button>
       </div>
       
+      <label class="evidence-toggle" for="hide-alterations-without-value">
+        <input type="checkbox" id="hide-alterations-without-value" aria-controls="alterations-table">
+        <span>Hide alterations without a value (no direction or frequency)</span>
+        <span class="hidden-count" data-hidden-for="hide-alterations-without-value" style="display:none"></span>
+      </label>
+      
     <div class="table-wrap">
-      <table class="data-table">
+      <table class="data-table" id="alterations-table">
         <thead><tr>
           <th>Name</th><th>Type</th><th>Subtype</th><th>Direction</th>
           <th>Frequency</th><th>Evidence</th><th>Sources</th><th>Links</th>
         </tr></thead>
         <tbody>
-        <tr data-type="D">
+        <tr data-type="D" class="alt-no-value">
           <td class="name-cell"><strong>Cervix cancer</strong>
             </td>
           <td><span class="type-badge" style="background:#ef4444">Pathology</span></td>
@@ -303,7 +310,7 @@
           <td class="muted">HPO, Monarch</td>
           <td class="links-cell"><a href="https://hpo.jax.org/app/browse/term/HP:0030079" target="_blank" rel="noopener" class="ext-link">HPO</a></td>
         </tr>
-        <tr data-type="D">
+        <tr data-type="D" class="alt-no-value">
           <td class="name-cell"><strong>Neoplasm</strong>
             </td>
           <td><span class="type-badge" style="background:#ef4444">Pathology</span></td>
@@ -314,7 +321,7 @@
           <td class="muted">HPO, Monarch</td>
           <td class="links-cell"><a href="https://hpo.jax.org/app/browse/term/HP:0002664" target="_blank" rel="noopener" class="ext-link">HPO</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>ALK</strong>
             <div class="sub">ALK receptor tyrosine kinase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -325,7 +332,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9UM73" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000171094" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000171094" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>ARID1A</strong>
             <div class="sub">AT-rich interaction domain 1A</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -336,7 +343,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/O14497" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000117713" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000117713" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>ARID2</strong>
             <div class="sub">AT-rich interaction domain 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -347,7 +354,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q68CP9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000189079" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000189079" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>ATM</strong>
             <div class="sub">ATM serine/threonine kinase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -358,7 +365,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q13315" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000149311" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000149311" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>BAP1</strong>
             <div class="sub">BRCA1 associated deubiquitinase 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -369,7 +376,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q92560" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000163930" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000163930" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>BRAF</strong>
             <div class="sub">B-Raf proto-oncogene, serine/threonine kinase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -380,7 +387,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P15056" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000157764" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000157764" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>BRCA2</strong>
             <div class="sub">BRCA2 DNA repair associated</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -391,7 +398,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P51587" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000139618" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000139618" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CASP8</strong>
             <div class="sub">caspase 8</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -402,7 +409,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q14790" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000064012" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000064012" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CD274</strong>
             <div class="sub">CD274 molecule</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -413,7 +420,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NZQ7" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000120217" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000120217" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CDK12</strong>
             <div class="sub">cyclin dependent kinase 12</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -424,7 +431,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NYV4" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000167258" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000167258" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CFAP54</strong>
             <div class="sub">cilia and flagella associated protein 54</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -435,7 +442,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q96N23" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000188596" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000188596" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CLPTM1L</strong>
             <div class="sub">CLPTM1 like</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -446,7 +453,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q96KA5" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000049656" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000049656" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CRTC1</strong>
             <div class="sub">CREB regulated transcription coactivator 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -457,7 +464,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q6UUV9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000105662" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000105662" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>CTNNB1</strong>
             <div class="sub">catenin beta 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -468,7 +475,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P35222" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000168036" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000168036" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="C">
+        <tr data-type="C" class="alt-no-value">
           <td class="name-cell"><strong>Change in health-related quality of life (EORTC QLQ-C30) from baseline to follow up</strong>
             </td>
           <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
@@ -479,7 +486,7 @@
           <td class="muted">ClinicalTrials.gov</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr data-type="B">
+        <tr data-type="B" class="alt-no-value">
           <td class="name-cell"><strong>Correlation of Overall Tumor Metabolic Response as Assessed by FDG-PET/CT With the Anatomic Tumor Response Rate by RECIST Criteria as Assessed by CT and Clinical Examination</strong>
             </td>
           <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
@@ -490,7 +497,7 @@
           <td class="muted">ClinicalTrials.gov</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>DCC</strong>
             <div class="sub">DCC netrin 1 receptor</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -501,7 +508,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P43146" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000187323" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000187323" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>DICER1</strong>
             <div class="sub">dicer 1, ribonuclease III</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -512,7 +519,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9UPY3" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000100697" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000100697" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>EGFR</strong>
             <div class="sub">epidermal growth factor receptor</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -523,7 +530,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P00533" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000146648" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000146648" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>EP300</strong>
             <div class="sub">EP300 lysine acetyltransferase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -534,7 +541,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0ACI8SSJ7" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000100393" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000100393" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>ERBB2</strong>
             <div class="sub">erb-b2 receptor tyrosine kinase 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -545,7 +552,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P04626" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000141736" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000141736" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>ERBB4</strong>
             <div class="sub">erb-b2 receptor tyrosine kinase 4</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -556,7 +563,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q15303" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000178568" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000178568" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>F3</strong>
             <div class="sub">coagulation factor III, tissue factor</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -567,7 +574,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P13726" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000117525" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000117525" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FAT1</strong>
             <div class="sub">FAT atypical cadherin 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -578,7 +585,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q14517" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000083857" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000083857" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FBXO11</strong>
             <div class="sub">F-box protein 11</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -589,7 +596,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q86XK2" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000138081" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000138081" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FBXW7</strong>
             <div class="sub">F-box and WD repeat domain containing 7</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -600,7 +607,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A994J3V4" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000109670" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000109670" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FGFR2</strong>
             <div class="sub">fibroblast growth factor receptor 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -611,7 +618,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P21802" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000066468" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000066468" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FGFR3</strong>
             <div class="sub">fibroblast growth factor receptor 3</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -622,7 +629,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/F8W9L4" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000068078" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000068078" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FLT3</strong>
             <div class="sub">fms related receptor tyrosine kinase 3</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -633,7 +640,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P36888" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000122025" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000122025" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FLT4</strong>
             <div class="sub">fms related receptor tyrosine kinase 4</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -644,7 +651,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P35916" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000037280" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000037280" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>FMN2</strong>
             <div class="sub">formin 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -655,7 +662,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NZ56" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000155816" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000155816" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>GRIN2A</strong>
             <div class="sub">glutamate ionotropic receptor NMDA type subunit 2A</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -666,7 +673,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q12879" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000183454" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000183454" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>HRAS</strong>
             <div class="sub">HRas proto-oncogene, GTPase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -677,7 +684,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01112" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000174775" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000174775" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>KDM6A</strong>
             <div class="sub">lysine demethylase 6A</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -688,7 +695,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/O15550" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000147050" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000147050" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>KDR</strong>
             <div class="sub">kinase insert domain receptor</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -699,7 +706,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P35968" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000128052" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000128052" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>KIT</strong>
             <div class="sub">KIT proto-oncogene, receptor tyrosine kinase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -710,7 +717,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P10721" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000157404" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000157404" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>KMT2C</strong>
             <div class="sub">lysine methyltransferase 2C</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -721,7 +728,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A7P0T8F0" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000055609" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000055609" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>KMT2D</strong>
             <div class="sub">lysine methyltransferase 2D</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -732,7 +739,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0A8I5KPB7" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000167548" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000167548" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>KRAS</strong>
             <div class="sub">KRas proto-oncogene, GTPase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -743,7 +750,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01116" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000133703" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000133703" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>LATS1</strong>
             <div class="sub">large tumor suppressor kinase 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -754,7 +761,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/O95835" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000131023" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000131023" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>LRP1B</strong>
             <div class="sub">LDL receptor related protein 1B</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -765,7 +772,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NZR2" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000168702" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000168702" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>MAML2</strong>
             <div class="sub">mastermind like transcriptional coactivator 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -776,7 +783,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q8IZL2" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000184384" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000184384" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>MAPK1</strong>
             <div class="sub">mitogen-activated protein kinase 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -787,7 +794,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P28482" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000100030" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000100030" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>MSH2</strong>
             <div class="sub">mutS homolog 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -798,7 +805,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P43246" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000095002" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000095002" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>MTOR</strong>
             <div class="sub">mechanistic target of rapamycin kinase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -809,7 +816,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P42345" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000198793" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000198793" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>MYC</strong>
             <div class="sub">MYC proto-oncogene, bHLH transcription factor</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -820,7 +827,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P01106" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000136997" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000136997" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>NFE2L2</strong>
             <div class="sub">NFE2 like bZIP transcription factor 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -831,7 +838,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q16236" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000116044" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000116044" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>NOS1</strong>
             <div class="sub">nitric oxide synthase 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -842,7 +849,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P29475" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000089250" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000089250" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>NOTCH1</strong>
             <div class="sub">notch receptor 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -853,7 +860,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P46531" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000148400" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000148400" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="B">
+        <tr data-type="B" class="alt-no-value">
           <td class="name-cell"><strong>Overall survival</strong>
             </td>
           <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
@@ -864,7 +871,7 @@
           <td class="muted">ClinicalTrials.gov</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PAX8</strong>
             <div class="sub">paired box 8</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -875,7 +882,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q06710" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000125618" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000125618" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PDCD1</strong>
             <div class="sub">programmed cell death 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -886,7 +893,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q15116" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000188389" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000188389" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PDGFRA</strong>
             <div class="sub">platelet derived growth factor receptor alpha</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -897,7 +904,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P16234" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000134853" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000134853" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PDGFRB</strong>
             <div class="sub">platelet derived growth factor receptor beta</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -908,7 +915,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P09619" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000113721" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000113721" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PIK3CA</strong>
             <div class="sub">phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit alpha</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -919,7 +926,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/A0ACI8UU87" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000121879" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000121879" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PIK3R1</strong>
             <div class="sub">phosphoinositide-3-kinase regulatory subunit 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -930,7 +937,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P27986" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000145675" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000145675" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLA1</strong>
             <div class="sub">DNA polymerase alpha 1, catalytic subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -941,7 +948,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P09884" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000101868" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000101868" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLA2</strong>
             <div class="sub">DNA polymerase alpha 2, accessory subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -952,7 +959,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q14181" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000014138" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000014138" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLD1</strong>
             <div class="sub">DNA polymerase delta 1, catalytic subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -963,7 +970,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P28340" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000062822" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000062822" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLD2</strong>
             <div class="sub">DNA polymerase delta 2, accessory subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -974,7 +981,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P49005" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000106628" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000106628" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLD3</strong>
             <div class="sub">DNA polymerase delta 3, accessory subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -985,7 +992,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q15054" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000077514" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000077514" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLD4</strong>
             <div class="sub">DNA polymerase delta 4, accessory subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -996,7 +1003,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9HCU8" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000175482" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000175482" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLE</strong>
             <div class="sub">DNA polymerase epsilon, catalytic subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1007,7 +1014,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q07864" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000177084" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000177084" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLE2</strong>
             <div class="sub">DNA polymerase epsilon 2, accessory subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1018,7 +1025,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P56282" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000100479" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000100479" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POLE3</strong>
             <div class="sub">DNA polymerase epsilon 3, accessory subunit</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1029,7 +1036,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NRF9" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000148229" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000148229" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POT1</strong>
             <div class="sub">protection of telomeres 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1040,7 +1047,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9NUX5" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000128513" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000128513" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>POU5F1B</strong>
             <div class="sub">POU class 5 homeobox 1B</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1051,7 +1058,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q06416" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000212993" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000212993" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PRIM1</strong>
             <div class="sub">DNA primase subunit 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1062,7 +1069,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P49642" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000198056" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000198056" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PRIM2</strong>
             <div class="sub">DNA primase subunit 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1073,7 +1080,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P49643" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000146143" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000146143" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>PTEN</strong>
             <div class="sub">phosphatase and tensin homolog</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1084,7 +1091,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P60484" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000171862" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000171862" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="B">
+        <tr data-type="B" class="alt-no-value">
           <td class="name-cell"><strong>Progression-free survival</strong>
             </td>
           <td><span class="type-badge" style="background:#4a9eff">Lab / Clinical</span></td>
@@ -1095,7 +1102,7 @@
           <td class="muted">ClinicalTrials.gov</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr data-type="C">
+        <tr data-type="C" class="alt-no-value">
           <td class="name-cell"><strong>Quality of life using European Organisation for Research and Treatment of Cancer (EORTC) questionnaire</strong>
             </td>
           <td><span class="type-badge" style="background:#f59e0b">Scales &amp; PROs</span></td>
@@ -1106,7 +1113,7 @@
           <td class="muted">ClinicalTrials.gov</td>
           <td class="links-cell"><span class="muted">—</span></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>RB1</strong>
             <div class="sub">RB transcriptional corepressor 1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1117,7 +1124,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P06400" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000139687" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000139687" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>RRM1</strong>
             <div class="sub">ribonucleotide reductase catalytic subunit M1</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1128,7 +1135,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P23921" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000167325" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000167325" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>RRM2</strong>
             <div class="sub">ribonucleotide reductase regulatory subunit M2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1139,7 +1146,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/P31350" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000171848" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000171848" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>RRM2B</strong>
             <div class="sub">ribonucleotide reductase regulatory TP53 inducible subunit M2B</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1150,7 +1157,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q7LG56" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000048392" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000048392" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>SETD2</strong>
             <div class="sub">SET domain containing 2, histone lysine methyltransferase</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1161,7 +1168,7 @@
           <td class="muted">Open Targets</td>
           <td class="links-cell"><a href="https://www.uniprot.org/uniprotkb/Q9BYW2" target="_blank" rel="noopener" class="ext-link">UniProt</a> <a href="https://ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000181555" target="_blank" rel="noopener" class="ext-link">Ensembl</a> <a href="https://platform.opentargets.org/target/ENSG00000181555" target="_blank" rel="noopener" class="ext-link">Open Targets</a></td>
         </tr>
-        <tr data-type="A">
+        <tr data-type="A" class="alt-no-value">
           <td class="name-cell"><strong>SMAD2</strong>
             <div class="sub">SMAD family member 2</div></td>
           <td><span class="type-badge" style="background:#7c6af7">Molecular</span></td>
@@ -1174,6 +1181,7 @@
         </tr></tbody>
       </table>
     </div>
+      <p class="no-data" id="alterations-no-value-msg" hidden>Every alteration recorded for this condition is missing a direction or frequency value.</p>
     </section>
 
     <section id="therapeutics">
@@ -3904,6 +3912,29 @@
     }
     bindEvidenceToggle('show-no-evidence-therapeutics');
     bindEvidenceToggle('show-no-evidence-natural');
+    (function () {
+      var cb = document.getElementById('hide-alterations-without-value');
+      if (!cb) return;
+      var section = document.getElementById('alterations');
+      if (!section) return;
+      var body = section.querySelector('tbody');
+      var noValueRows = body ? body.querySelectorAll('tr.alt-no-value').length : 0;
+      var totalRows = body ? body.querySelectorAll('tr').length : 0;
+      var hint = section.querySelector('[data-hidden-for="hide-alterations-without-value"]');
+      var emptyMsg = document.getElementById('alterations-no-value-msg');
+      function apply() {
+        section.classList.toggle('hide-alterations-without-value', cb.checked);
+        if (hint) {
+          hint.textContent = '(' + noValueRows + ' hidden)';
+          hint.style.display = (cb.checked && noValueRows) ? '' : 'none';
+        }
+        if (emptyMsg) {
+          emptyMsg.hidden = !(cb.checked && noValueRows >= totalRows);
+        }
+      }
+      cb.addEventListener('change', apply);
+      apply();
+    })();
   </script>
 </body>
 </html>
