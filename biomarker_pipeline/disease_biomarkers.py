@@ -423,6 +423,8 @@ DISEASE_BIOMARKERS: dict[str, list[str]] = {
         "ABCG2",    # urate efflux transporter
         "NLRP3",    # NLRP3 inflammasome (colchicine mechanism)
         "IL1B",     # IL-1β (canakinumab in gout flares)
+        "SLC2A9",   # GLUT9 urate transporter (strongest urate GWAS locus)
+        "PTGS2",    # COX-2 (NSAIDs for flares)
     ],
 
     # ── Metabolic Syndrome ────────────────────────────────────────────────
@@ -792,6 +794,925 @@ DISEASE_BIOMARKERS: dict[str, list[str]] = {
         "VDR",      # vitamin D receptor
         "CALCR",    # calcitonin receptor
     ],
+
+    # ════════════════════════════════════════════════════════════════════
+    # Panels for disease_db_100.json labels (keys match db100 labels exactly)
+    # ════════════════════════════════════════════════════════════════════
+
+    # ── Psoriasis (Nail / Palmoplantar) ────────────────────────────────
+    # Covers: IL-17/IL-23 axis, TNF, PDE4, TYK2, IL-36 (spesolimab — pustular)
+    "Psoriasis (Nail / Palmoplantar)": [
+        "IL17A",    # secukinumab, ixekizumab
+        "IL17RA",   # brodalumab
+        "IL23A",    # guselkumab, risankizumab
+        "IL12B",    # ustekinumab
+        "TNF",      # adalimumab, infliximab
+        "PDE4D",    # apremilast
+        "TYK2",     # deucravacitinib
+        "IL36RN",   # IL-36 receptor antagonist (pustular psoriasis genetics)
+        "IL1RL2",   # IL-36 receptor (spesolimab target)
+        "JAK1",     # JAK inhibitors
+    ],
+
+    # ── HIV/AIDS ───────────────────────────────────────────────────────
+    # Human host factors: entry co-receptors (CCR5 — maraviroc, CXCR4, CD4),
+    # integration cofactor (PSIP1/LEDGF), restriction factors, exhaustion
+    "HIV/AIDS": [
+        "CCR5",     # maraviroc, leronlimab
+        "CXCR4",    # X4-tropic co-receptor
+        "CD4",      # primary receptor (ibalizumab)
+        "PSIP1",    # LEDGF/p75 — integrase cofactor (LEDGINs)
+        "PDCD1",    # PD-1 — T-cell exhaustion in reservoir
+        "APOBEC3G", # restriction factor (Vif-antagonised)
+        "SAMHD1",   # restriction factor
+        "TRIM5",    # capsid restriction factor
+        "IL7",      # IL-7 (T-cell reconstitution)
+        "HLA-B",    # HLA-B*57 elite control
+    ],
+
+    # ── Stroke (Ischaemic / Cerebrovascular Disease) ───────────────────
+    # Covers: thrombolysis (PLAT), antiplatelet (P2RY12, PTGS1, ITGB3),
+    # anticoagulation (F2, F10), lipid/BP, neuroprotection (DLG4 — nerinetide)
+    "Stroke (Ischaemic / Cerebrovascular Disease)": [
+        "PLAT",     # tissue plasminogen activator (alteplase, tenecteplase)
+        "P2RY12",   # clopidogrel, ticagrelor
+        "PTGS1",    # aspirin
+        "ITGB3",    # GPIIb/IIIa
+        "F2",       # thrombin
+        "F10",      # factor Xa (DOACs)
+        "F11",      # factor XI (milvexian, asundexian)
+        "HMGCR",    # statins
+        "PCSK9",    # PCSK9 inhibitors
+        "ACE",      # ACE inhibitors
+        "DLG4",     # PSD-95 (nerinetide)
+        "GRIN1",    # NMDA excitotoxicity
+    ],
+
+    # ── Lung Cancer ────────────────────────────────────────────────────
+    "Lung Cancer": [
+        "EGFR",     # osimertinib, erlotinib
+        "ALK",      # alectinib, lorlatinib
+        "KRAS",     # sotorasib, adagrasib (G12C)
+        "ROS1",     # crizotinib, entrectinib
+        "BRAF",     # dabrafenib
+        "MET",      # capmatinib, tepotinib
+        "RET",      # selpercatinib
+        "ERBB2",    # trastuzumab deruxtecan
+        "NTRK1",    # larotrectinib
+        "PDCD1",    # pembrolizumab, nivolumab
+        "CD274",    # PD-L1 (atezolizumab, durvalumab)
+        "KDR",      # VEGFR2 (ramucirumab)
+    ],
+
+    # ── Colorectal Cancer ──────────────────────────────────────────────
+    "Colorectal Cancer": [
+        "EGFR",     # cetuximab, panitumumab
+        "KRAS",     # resistance biomarker; G12C inhibitors
+        "BRAF",     # encorafenib (V600E)
+        "VEGFA",    # bevacizumab
+        "KDR",      # ramucirumab, regorafenib
+        "ERBB2",    # tucatinib + trastuzumab
+        "MLH1",     # MMR deficiency / MSI-H (checkpoint response)
+        "MSH2",     # MMR deficiency
+        "TYMS",     # 5-fluorouracil
+        "TOP1",     # irinotecan
+        "PDCD1",    # pembrolizumab (MSI-H)
+        "NTRK1",    # larotrectinib
+    ],
+
+    # ── Breast Cancer ──────────────────────────────────────────────────
+    "Breast Cancer": [
+        "ESR1",     # tamoxifen, aromatase inhibitors, elacestrant
+        "ERBB2",    # trastuzumab, pertuzumab, T-DXd
+        "CDK4",     # palbociclib, ribociclib, abemaciclib
+        "CDK6",     # CDK4/6 inhibitors
+        "PIK3CA",   # alpelisib
+        "BRCA1",    # PARP inhibitor sensitivity
+        "BRCA2",    # PARP inhibitor sensitivity
+        "PARP1",    # olaparib, talazoparib
+        "PGR",      # progesterone receptor
+        "AR",       # androgen receptor (TNBC subset)
+        "TOP2A",    # anthracyclines
+        "AKT1",     # capivasertib
+        "TACSTD2",  # Trop-2 (sacituzumab govitecan)
+    ],
+
+    # ── ADHD ───────────────────────────────────────────────────────────
+    "ADHD": [
+        "SLC6A3",   # dopamine transporter (methylphenidate)
+        "SLC6A2",   # norepinephrine transporter (atomoxetine)
+        "DRD4",     # D4 receptor (genetic risk)
+        "DRD2",     # D2 receptor
+        "ADRA2A",   # alpha-2A agonists (guanfacine, clonidine)
+        "SNAP25",   # synaptic vesicle release (genetic risk)
+        "COMT",     # catechol-O-methyltransferase
+        "MAOA",     # monoamine oxidase A
+        "HTR1B",    # serotonin 1B (genetic risk)
+    ],
+
+    # ── Atopic Dermatitis (Eczema) ─────────────────────────────────────
+    "Atopic Dermatitis (Eczema)": [
+        "IL4R",     # dupilumab
+        "IL13",     # tralokinumab, lebrikizumab
+        "IL4",      # type-2 cytokine
+        "IL31RA",   # nemolizumab (itch)
+        "OSMR",     # IL-31 receptor co-subunit
+        "JAK1",     # upadacitinib, abrocitinib
+        "TSLP",     # tezepelumab context
+        "FLG",      # filaggrin barrier defect
+        "PDE4D",    # crisaborole, roflumilast cream
+        "AHR",      # tapinarof
+        "IL22",     # Th22 axis (fezakinumab)
+    ],
+
+    # ── Insomnia / Sleep Disorders ─────────────────────────────────────
+    "Insomnia / Sleep Disorders": [
+        "HCRTR1",   # orexin receptor 1 (suvorexant, lemborexant)
+        "HCRTR2",   # orexin receptor 2 (daridorexant)
+        "GABRA1",   # GABA-A α1 (zolpidem, benzodiazepines)
+        "GABRA2",   # GABA-A α2
+        "MTNR1A",   # melatonin receptor 1A (ramelteon)
+        "MTNR1B",   # melatonin receptor 1B
+        "HRH1",     # histamine H1 (low-dose doxepin)
+        "HTR2A",    # 5-HT2A (trazodone)
+        "ADORA2A",  # adenosine A2A (caffeine antagonism)
+    ],
+
+    # ── PCOS (Polycystic Ovary Syndrome) ───────────────────────────────
+    "PCOS (Polycystic Ovary Syndrome)": [
+        "INSR",     # insulin resistance
+        "PRKAA1",   # AMPK (metformin)
+        "AR",       # androgen receptor (antiandrogens)
+        "CYP17A1",  # 17α-hydroxylase (androgen synthesis)
+        "CYP19A1",  # aromatase (letrozole ovulation induction)
+        "LHCGR",    # LH receptor
+        "FSHR",     # FSH receptor
+        "SHBG",     # sex hormone-binding globulin
+        "GLP1R",    # GLP-1 agonists
+        "AMH",      # anti-Müllerian hormone
+        "PPARG",    # thiazolidinediones
+    ],
+
+    # ── Peripheral Artery Disease (PAD) ────────────────────────────────
+    "Peripheral Artery Disease (PAD)": [
+        "NOS3",     # endothelial function
+        "EDN1",     # endothelin
+        "LDLR",     # LDL receptor
+        "PCSK9",    # PCSK9 inhibitors
+        "HMGCR",    # statins
+        "F2",       # thrombin
+        "F10",      # rivaroxaban (COMPASS/VOYAGER)
+        "P2RY12",   # clopidogrel
+        "PTGS1",    # aspirin
+        "PDE3A",    # cilostazol
+        "VEGFA",    # therapeutic angiogenesis
+    ],
+
+    # ── Sepsis ─────────────────────────────────────────────────────────
+    "Sepsis": [
+        "TLR4",     # LPS receptor (eritoran)
+        "TNF",      # cytokine storm
+        "IL6",      # cytokine
+        "IL1B",     # IL-1β
+        "PROC",     # activated protein C
+        "F3",       # tissue factor (coagulopathy)
+        "THBD",     # thrombomodulin (ART-123)
+        "NR3C1",    # glucocorticoid receptor (hydrocortisone)
+        "HMGB1",    # late mediator
+        "CD14",     # LPS co-receptor
+        "PDCD1",    # immunoparalysis
+        "ADRB1",    # beta-blockade (esmolol/landiolol)
+    ],
+
+    # ── Coeliac Disease (Refractory / RCD) ─────────────────────────────
+    "Coeliac Disease (Refractory / RCD)": [
+        "TGM2",     # tissue transglutaminase (ZED1227 inhibitor)
+        "HLA-DQA1", # HLA-DQ2/DQ8
+        "HLA-DQB1", # HLA-DQ2/DQ8
+        "IL15",     # IL-15 (AMG 714 / ordesekimab)
+        "IL2RB",    # IL-15 receptor β chain
+        "JAK1",     # tofacitinib in RCD2
+        "JAK3",     # JAK inhibition
+        "IL21",     # Th1/IL-21 axis
+        "IFNG",     # interferon-γ
+        "CTLA4",    # T-cell co-stimulation
+    ],
+
+    # ── Irritable Bowel Syndrome (IBS) ─────────────────────────────────
+    "Irritable Bowel Syndrome (IBS)": [
+        "HTR3A",    # alosetron, ondansetron
+        "HTR4",     # tegaserod, prucalopride
+        "GUCY2C",   # linaclotide, plecanatide
+        "CLCN2",    # lubiprostone
+        "OPRM1",    # eluxadoline
+        "OPRD1",    # eluxadoline (δ antagonism)
+        "SLC6A4",   # serotonin transporter
+        "TPH1",     # tryptophan hydroxylase (serotonin synthesis)
+        "TRPV1",    # visceral hypersensitivity
+        "NR1H4",    # FXR / bile acid diarrhoea
+    ],
+
+    # ── Ankylosing Spondylitis / Axial Spondyloarthropathy ─────────────
+    "Ankylosing Spondylitis / Axial Spondyloarthropathy": [
+        "TNF",      # adalimumab, etanercept
+        "IL17A",    # secukinumab, ixekizumab
+        "IL17F",    # bimekizumab
+        "IL17RA",   # brodalumab
+        "IL23A",    # IL-23
+        "HLA-B",    # HLA-B27
+        "ERAP1",    # genetic risk (peptide trimming)
+        "JAK1",     # upadacitinib
+        "TYK2",     # TYK2 inhibitors
+        "PTGS2",    # NSAIDs
+    ],
+
+    # ── Age-Related Macular Degeneration (AMD) ─────────────────────────
+    "Age-Related Macular Degeneration (AMD)": [
+        "VEGFA",    # ranibizumab, aflibercept, bevacizumab
+        "KDR",      # VEGFR2
+        "FLT1",     # VEGFR1
+        "ANGPT2",   # faricimab
+        "CFH",      # complement factor H (genetic risk)
+        "C3",       # pegcetacoplan (geographic atrophy)
+        "C5",       # avacincaptad pegol
+        "CFD",      # factor D (lampalizumab)
+        "CFI",      # factor I
+        "CFB",      # factor B
+        "HTRA1",    # genetic risk
+        "ARMS2",    # genetic risk
+    ],
+
+    # ── Glaucoma ───────────────────────────────────────────────────────
+    "Glaucoma": [
+        "PTGFR",    # latanoprost, bimatoprost
+        "ADRB2",    # timolol
+        "CA2",      # dorzolamide, acetazolamide
+        "CA4",      # carbonic anhydrase IV
+        "ROCK1",    # netarsudil
+        "ROCK2",    # ripasudil
+        "ADRA2A",   # brimonidine
+        "CHRM3",    # pilocarpine
+        "ADORA1",   # trabodenoson
+        "MYOC",     # myocilin (genetic POAG)
+        "OPTN",     # optineurin (NTG)
+    ],
+
+    # ── Peripheral Neuropathy (Diabetic Peripheral Neuropathy) ─────────
+    "Peripheral Neuropathy (Diabetic Peripheral Neuropathy)": [
+        "CACNA2D1", # pregabalin, gabapentin
+        "SLC6A2",   # duloxetine
+        "SLC6A4",   # duloxetine, TCAs
+        "SCN9A",    # Nav1.7
+        "SCN10A",   # Nav1.8 (suzetrigine class)
+        "TRPV1",    # capsaicin 8% patch
+        "TRPA1",    # nociceptor
+        "AKR1B1",   # aldose reductase (epalrestat)
+        "OPRM1",    # tapentadol
+        "NGF",      # nerve growth factor
+    ],
+
+    # ── Pulmonary Arterial Hypertension (PAH) ──────────────────────────
+    "Pulmonary Arterial Hypertension (PAH)": [
+        "EDNRA",    # ambrisentan, bosentan, macitentan
+        "EDNRB",    # bosentan, macitentan
+        "PDE5A",    # sildenafil, tadalafil
+        "GUCY1A1",  # riociguat (sGC stimulator)
+        "GUCY1B1",  # sGC β subunit
+        "PTGIR",    # selexipag, iloprost, treprostinil
+        "BMPR2",    # major heritable PAH gene
+        "ACVR2A",   # sotatercept (activin trap)
+        "ACVRL1",   # ALK1 (HHT-PAH)
+        "KCNK3",    # TASK-1 channel
+        "PDGFRB",   # imatinib, seralutinib
+    ],
+
+    # ── Lyme Disease / PTLDS ───────────────────────────────────────────
+    # Human host mediators (Borrelia proteins absent from human gene DBs)
+    "Lyme Disease / Post-Treatment Lyme Disease Syndrome (PTLDS)": [
+        "TLR2",     # lipoprotein sensing (OspA)
+        "TLR1",     # TLR1/2 heterodimer
+        "IL6",      # inflammatory cytokine
+        "TNF",      # inflammatory cytokine
+        "IL1B",     # IL-1β
+        "NLRP3",    # inflammasome
+        "CXCL13",   # CSF biomarker of neuroborreliosis
+        "IFNG",     # Th1 response
+        "IL17A",    # Lyme arthritis
+        "PTGS2",    # NSAIDs for arthritis
+    ],
+
+    # ── Hepatitis B ────────────────────────────────────────────────────
+    # Human host genes: entry receptor (SLC10A1/NTCP — bulevirtide), innate
+    # immune agonism (TLR7/8), IFN, PAPD5/7 (TENT4A/B — RG7834), exhaustion
+    "Hepatitis B": [
+        "SLC10A1",  # NTCP entry receptor (bulevirtide)
+        "IFNAR1",   # pegylated interferon
+        "TLR7",     # vesatolimod
+        "TLR8",     # selgantolimod
+        "DDX58",    # RIG-I (inarigivir)
+        "PDCD1",    # PD-1 (envafolimab studies)
+        "CD274",    # PD-L1
+        "TENT4A",   # PAPD7 (RG7834 HBsAg reducer)
+        "TENT4B",   # PAPD5
+        "STAT1",    # IFN signalling
+        "IFNL3",    # IL28B
+    ],
+
+    # ── Obstructive Sleep Apnoea (OSA) ─────────────────────────────────
+    "Obstructive Sleep Apnoea (OSA)": [
+        "SLC6A2",   # atomoxetine (upper airway tone)
+        "CHRM3",    # oxybutynin / aroxybutynin combination
+        "SLC6A3",   # solriamfetol (residual sleepiness)
+        "CA2",      # acetazolamide, sulthiame
+        "GLP1R",    # tirzepatide / semaglutide
+        "GIPR",     # tirzepatide
+        "LEPR",     # leptin (ventilatory drive)
+        "HCRTR2",   # orexin
+        "HTR2A",    # serotonergic airway drive
+    ],
+
+    # ── Endometriosis ──────────────────────────────────────────────────
+    "Endometriosis": [
+        "GNRHR",    # elagolix, relugolix, linzagolix
+        "ESR1",     # estrogen receptor α
+        "ESR2",     # estrogen receptor β
+        "PGR",      # progestins (dienogest)
+        "CYP19A1",  # aromatase inhibitors
+        "HSD17B1",  # local estradiol synthesis
+        "PTGS2",    # NSAIDs
+        "VEGFA",    # lesion angiogenesis
+        "TNF",      # inflammation
+        "IL6",      # inflammation
+        "NGF",      # neurogenic pain
+    ],
+
+    # ── Benign Prostatic Hyperplasia (BPH) ─────────────────────────────
+    "Benign Prostatic Hyperplasia (BPH)": [
+        "ADRA1A",   # tamsulosin, silodosin
+        "ADRA1D",   # alpha-1D
+        "ADRA1B",   # alpha-1B
+        "SRD5A2",   # finasteride, dutasteride
+        "SRD5A1",   # dutasteride
+        "AR",       # androgen receptor
+        "PDE5A",    # tadalafil
+        "KLK3",     # PSA
+        "ESR2",     # estrogen receptor β
+        "IGF1",     # stromal growth
+    ],
+
+    # ── Acne Vulgaris ──────────────────────────────────────────────────
+    "Acne Vulgaris": [
+        "AR",       # clascoterone (topical antiandrogen)
+        "SRD5A1",   # 5α-reductase type 1 (skin)
+        "RARG",     # adapalene, trifarotene
+        "RARB",     # retinoids
+        "RARA",     # isotretinoin
+        "TLR2",     # C. acnes innate sensing
+        "IL1B",     # inflammation
+        "IGF1",     # sebogenesis driver
+        "SREBF1",   # lipogenesis
+        "NLRP3",    # inflammasome
+    ],
+
+    # ── Cystic Fibrosis ────────────────────────────────────────────────
+    "Cystic Fibrosis": [
+        "CFTR",     # elexacaftor/tezacaftor/ivacaftor
+        "SCNN1A",   # ENaC α
+        "SCNN1B",   # ENaC β
+        "SCNN1G",   # ENaC γ
+        "ANO1",     # TMEM16A (alternative chloride channel)
+        "SLC26A9",  # modifier chloride transporter
+        "CTSC",     # DPP1 (brensocatib)
+        "ELANE",    # neutrophil elastase
+        "CXCR2",    # neutrophil chemotaxis
+        "DNASE1",   # dornase alfa
+        "MUC5B",    # mucus
+    ],
+
+    # ── Prostate Cancer ────────────────────────────────────────────────
+    "Prostate Cancer": [
+        "AR",       # enzalutamide, apalutamide, darolutamide
+        "CYP17A1",  # abiraterone
+        "PARP1",    # olaparib, rucaparib
+        "BRCA2",    # HRR deficiency
+        "BRCA1",    # HRR deficiency
+        "FOLH1",    # PSMA (lutetium-177 PSMA-617)
+        "PTEN",     # PI3K/AKT pathway
+        "AKT1",     # capivasertib
+        "KLK3",     # PSA
+        "TMPRSS2",  # TMPRSS2-ERG fusion
+        "SRD5A2",   # 5α-reductase
+    ],
+
+    # ── Non-Hodgkin Lymphoma (NHL) ─────────────────────────────────────
+    "Non-Hodgkin Lymphoma (NHL)": [
+        "MS4A1",    # rituximab, obinutuzumab
+        "CD19",     # CAR-T, tafasitamab, loncastuximab
+        "CD79B",    # polatuzumab vedotin
+        "BTK",      # ibrutinib, zanubrutinib
+        "BCL2",     # venetoclax
+        "EZH2",     # tazemetostat
+        "CD22",     # inotuzumab, moxetumomab
+        "TNFRSF8",  # CD30 (brentuximab vedotin)
+        "PIK3CD",   # idelalisib, copanlisib
+        "XPO1",     # selinexor
+        "CD3E",     # bispecifics (glofitamab, epcoritamab)
+    ],
+
+    # ── Chronic Lymphocytic Leukaemia (CLL) ────────────────────────────
+    "Chronic Lymphocytic Leukaemia (CLL)": [
+        "BTK",      # ibrutinib, acalabrutinib, pirtobrutinib
+        "BCL2",     # venetoclax
+        "MS4A1",    # rituximab, obinutuzumab
+        "CD19",     # CAR-T
+        "PIK3CD",   # idelalisib, duvelisib
+        "CD52",     # alemtuzumab
+        "TP53",     # del(17p) / TP53 mutation
+        "ATM",      # del(11q)
+        "CD38",     # prognostic marker / daratumumab context
+        "NOTCH1",   # recurrent driver
+        "ZAP70",    # prognostic marker
+    ],
+
+    # ── Multiple Myeloma ───────────────────────────────────────────────
+    "Multiple Myeloma": [
+        "TNFRSF17", # BCMA (teclistamab, ide-cel, cilta-cel)
+        "CD38",     # daratumumab, isatuximab
+        "SLAMF7",   # elotuzumab
+        "GPRC5D",   # talquetamab
+        "PSMB5",    # bortezomib, carfilzomib
+        "CRBN",     # lenalidomide, pomalidomide
+        "XPO1",     # selinexor
+        "HDAC6",    # panobinostat context
+        "FGFR3",    # t(4;14)
+        "KRAS",     # RAS pathway
+        "IKZF1",    # IMiD degradation substrate
+        "IKZF3",    # IMiD degradation substrate
+    ],
+
+    # ── Sickle Cell Disease ────────────────────────────────────────────
+    "Sickle Cell Disease": [
+        "HBB",      # β-globin (lovo-cel gene therapy)
+        "HBG1",     # fetal haemoglobin γ
+        "HBG2",     # fetal haemoglobin γ
+        "BCL11A",   # HbF repressor (exa-cel editing target)
+        "SELP",     # P-selectin (crizanlizumab)
+        "PKLR",     # pyruvate kinase (mitapivat, etavopivat)
+        "PDE9A",    # tovinontrine
+        "HMOX1",    # haem oxygenase-1
+        "NOS3",     # endothelial NO
+        "HBA1",     # α-globin
+    ],
+
+    # ── Lupus Nephritis ────────────────────────────────────────────────
+    "Lupus Nephritis": [
+        "TNFSF13B", # belimumab
+        "MS4A1",    # rituximab, obinutuzumab
+        "CD19",     # CAR-T (CD19)
+        "IFNAR1",   # anifrolumab
+        "PPP3CA",   # calcineurin (voclosporin, tacrolimus)
+        "PPP3CB",   # calcineurin catalytic β
+        "TLR7",     # lupus genetics
+        "CD38",     # daratumumab (refractory LN)
+        "C3",       # complement
+        "IL6",      # IL-6
+        "CTLA4",    # abatacept
+    ],
+
+    # ── Sjögren's Syndrome ─────────────────────────────────────────────
+    "Sjögren's Syndrome": [
+        "TNFSF13B", # BAFF (belimumab)
+        "TNFRSF13C",# BAFF-R (ianalumab)
+        "MS4A1",    # rituximab
+        "CD40",     # iscalimab
+        "CD40LG",   # dazodalibep
+        "BTK",      # remibrutinib
+        "IFNAR1",   # type-I IFN signature
+        "TYK2",     # deucravacitinib
+        "CHRM3",    # pilocarpine, cevimeline (sicca)
+        "CD19",     # CD19 depletion
+    ],
+
+    # ── Haemophilia A / B ──────────────────────────────────────────────
+    "Haemophilia A / B": [
+        "F8",       # factor VIII (emicizumab mimics; valoctocogene)
+        "F9",       # factor IX (etranacogene gene therapy)
+        "SERPINC1", # antithrombin (fitusiran)
+        "TFPI",     # concizumab, marstacimab
+        "F7",       # recombinant FVIIa (bypassing)
+        "F10",      # factor Xa (emicizumab bridges IXa/X)
+        "F2",       # thrombin
+        "VWF",      # von Willebrand factor (FVIII carrier)
+    ],
+
+    # ── Chronic Venous Insufficiency / Venous Leg Ulcers ───────────────
+    "Chronic Venous Insufficiency / Venous Leg Ulcers": [
+        "MMP9",     # matrix degradation
+        "MMP2",     # matrix degradation
+        "MMP1",     # collagenase
+        "PDGFB",    # becaplermin
+        "VEGFA",    # wound angiogenesis
+        "TGFB1",    # fibrosis / healing
+        "IL6",      # inflammation
+        "TNF",      # inflammation
+        "ICAM1",    # leukocyte adhesion
+        "SELE",     # E-selectin
+    ],
+
+    # ── Thyroid Cancer (Well-Differentiated) ───────────────────────────
+    "Thyroid Cancer (Well-Differentiated)": [
+        "BRAF",     # dabrafenib + trametinib (V600E)
+        "RET",      # selpercatinib, pralsetinib
+        "NTRK1",    # larotrectinib
+        "NTRK3",    # entrectinib
+        "KDR",      # lenvatinib, sorafenib
+        "FLT1",     # VEGFR1
+        "PDGFRB",   # lenvatinib
+        "TSHR",     # TSH suppression
+        "SLC5A5",   # NIS (radioiodine uptake; redifferentiation)
+        "NRAS",     # RAS-like tumours
+        "TERT",     # promoter mutation (prognosis)
+        "MAP2K1",   # MEK (selumetinib redifferentiation)
+    ],
+
+    # ── Deep Vein Thrombosis / Pulmonary Embolism (VTE) ────────────────
+    "Deep Vein Thrombosis / Pulmonary Embolism (VTE)": [
+        "F10",      # rivaroxaban, apixaban, edoxaban
+        "F2",       # dabigatran, heparin
+        "F11",      # abelacimab, milvexian
+        "F12",      # factor XII
+        "SERPINC1", # antithrombin (heparin cofactor)
+        "F5",       # factor V Leiden
+        "PROC",     # protein C deficiency
+        "PROS1",    # protein S deficiency
+        "PLAT",     # alteplase
+        "VWF",      # von Willebrand factor
+    ],
+
+    # ── Myelodysplastic Syndromes (MDS) ────────────────────────────────
+    "Myelodysplastic Syndromes (MDS)": [
+        "DNMT1",    # azacitidine, decitabine
+        "TERT",     # imetelstat
+        "BCL2",     # venetoclax
+        "CD47",     # magrolimab
+        "CRBN",     # lenalidomide (del5q)
+        "HAVCR2",   # TIM-3 (sabatolimab)
+        "IDH1",     # ivosidenib
+        "IDH2",     # enasidenib
+        "ACVR2B",   # luspatercept (activin receptor ligand trap)
+        "SF3B1",    # spliceosome mutation (ring sideroblasts)
+        "TP53",     # high-risk marker
+        "TET2",     # epigenetic driver
+    ],
+
+    # ── Polycystic Kidney Disease (ADPKD) ──────────────────────────────
+    "Polycystic Kidney Disease (ADPKD)": [
+        "PKD1",     # polycystin-1
+        "PKD2",     # polycystin-2
+        "AVPR2",    # tolvaptan
+        "MTOR",     # everolimus / sirolimus trials
+        "SSTR2",    # octreotide, lanreotide
+        "SSTR5",    # somatostatin receptor
+        "CFTR",     # cyst fluid secretion
+        "SRC",      # bosutinib
+    ],
+
+    # ── Inflammatory Myopathies (DM / PM / IBM) ────────────────────────
+    "Inflammatory Myopathies (Dermatomyositis / PM / IBM)": [
+        "IFNAR1",   # type-I IFN signature (DM)
+        "JAK1",     # tofacitinib, baricitinib
+        "JAK2",     # JAK inhibition
+        "NR3C1",    # glucocorticoids
+        "IMPDH2",   # mycophenolate
+        "DHFR",     # methotrexate
+        "FCGRT",    # FcRn (efgartigimod, nipocalimab)
+        "MS4A1",    # rituximab
+        "C5",       # complement in DM microangiopathy
+        "HMGCR",    # anti-HMGCR necrotising myopathy antigen
+        "CTLA4",    # abatacept
+    ],
+
+    # ── Alopecia Areata ────────────────────────────────────────────────
+    "Alopecia Areata": [
+        "JAK1",     # baricitinib, ritlecitinib
+        "JAK2",     # baricitinib
+        "JAK3",     # ritlecitinib
+        "TYK2",     # deuruxolitinib context
+        "IFNG",     # IFN-γ / CD8 NKG2D+ axis
+        "IL15",     # IL-15
+        "IL2RB",    # IL-15 receptor β
+        "CTLA4",    # genetic risk / abatacept
+        "IL2RA",    # IL-2 pathway (low-dose IL-2)
+        "KLRK1",    # NKG2D (CD8 T-cell effector)
+    ],
+
+    # ── Vitiligo ───────────────────────────────────────────────────────
+    "Vitiligo": [
+        "JAK1",     # ruxolitinib cream, upadacitinib
+        "JAK2",     # ruxolitinib
+        "TYK2",     # TYK2 inhibition
+        "IFNG",     # IFN-γ-CXCL10 axis
+        "CXCL10",   # chemokine driving melanocyte loss
+        "CXCR3",    # CXCL10 receptor
+        "IL15",     # resident memory T cells
+        "IL2RB",    # IL-15 signalling
+        "TYR",      # tyrosinase (autoantigen)
+        "MC1R",     # afamelanotide
+    ],
+
+    # ── Tinnitus ───────────────────────────────────────────────────────
+    "Tinnitus": [
+        "GRIN1",    # NMDA (esketamine/AM-101 intratympanic)
+        "GRIN2B",   # NMDA subunit
+        "GABRA1",   # GABA-A
+        "KCNQ2",    # Kv7.2 (retigabine class)
+        "KCNQ3",    # Kv7.3
+        "KCNQ4",    # Kv7.4 (outer hair cell)
+        "SLC6A4",   # serotonin transporter
+        "GRIA1",    # AMPA receptor
+    ],
+
+    # ── Restless Legs Syndrome (RLS) ───────────────────────────────────
+    "Restless Legs Syndrome (RLS)": [
+        "DRD2",     # ropinirole, rotigotine
+        "DRD3",     # pramipexole
+        "CACNA2D1", # gabapentin enacarbil, pregabalin
+        "OPRM1",    # oxycodone-naloxone
+        "MEIS1",    # strongest genetic risk
+        "BTBD9",    # genetic risk
+        "TF",       # transferrin (brain iron)
+        "TFRC",     # transferrin receptor
+        "TH",       # tyrosine hydroxylase
+        "SLC6A3",   # dopamine transporter
+    ],
+
+    # ── Carpal Tunnel Syndrome ─────────────────────────────────────────
+    "Carpal Tunnel Syndrome": [
+        "NR3C1",    # corticosteroid injection
+        "PTGS2",    # NSAIDs
+        "TTR",      # transthyretin amyloid (ATTR-CTS)
+        "TGFB1",    # subsynovial fibrosis
+        "IL6",      # inflammation
+        "TNF",      # inflammation
+        "SCN9A",    # neuropathic pain
+        "TRPV1",    # nociceptor
+    ],
+
+    # ── Overactive Bladder (OAB) ───────────────────────────────────────
+    "Overactive Bladder (OAB)": [
+        "CHRM3",    # oxybutynin, solifenacin
+        "CHRM2",    # antimuscarinics
+        "ADRB3",    # mirabegron, vibegron
+        "ADRB2",    # detrusor relaxation
+        "TRPV1",    # afferent sensitisation
+        "P2RX3",    # purinergic afferent (gefapixant class)
+        "SNAP25",   # onabotulinumtoxinA cleavage target
+        "TRPA1",    # afferent channel
+    ],
+
+    # ── Kidney Stones (Nephrolithiasis) ────────────────────────────────
+    "Kidney Stones (Nephrolithiasis)": [
+        "SLC12A3",  # thiazides (hypercalciuria)
+        "XDH",      # allopurinol (uric acid stones)
+        "HAO1",     # lumasiran (primary hyperoxaluria 1)
+        "LDHA",     # nedosiran
+        "AGXT",     # PH1 gene
+        "SLC22A12", # URAT1
+        "SLC2A9",   # GLUT9 urate transporter
+        "CASR",     # calcium-sensing receptor
+        "SLC34A1",  # NaPi-IIa (hypophosphataemic stones)
+        "SLC3A1",   # cystinuria
+        "SLC7A9",   # cystinuria
+    ],
+
+    # ── Gastroparesis ──────────────────────────────────────────────────
+    "Gastroparesis": [
+        "DRD2",     # metoclopramide, domperidone
+        "HTR4",     # prucalopride, metoclopramide
+        "HTR3A",    # ondansetron
+        "MLNR",     # motilin receptor (erythromycin)
+        "GHSR",     # relamorelin
+        "TACR1",    # aprepitant, tradipitant
+        "NOS1",     # nNOS loss in enteric neurons
+        "KIT",      # interstitial cells of Cajal
+        "CNR1",     # cannabinoid receptor 1
+    ],
+
+    # ── Interstitial Cystitis / Bladder Pain Syndrome (IC/BPS) ─────────
+    "Interstitial Cystitis / Bladder Pain Syndrome (IC/BPS)": [
+        "TRPV1",    # afferent sensitisation
+        "NGF",      # tanezumab trials
+        "P2RX3",    # purinergic afferent
+        "HRH1",     # hydroxyzine
+        "HRH2",     # cimetidine
+        "TRPA1",    # nociceptor channel
+        "PTGS2",    # NSAIDs
+        "SCN9A",    # Nav1.7
+        "TNF",      # adalimumab / certolizumab trials
+        "IL6",      # inflammation
+    ],
+
+    # ── Myasthenia Gravis (MG) ─────────────────────────────────────────
+    "Myasthenia Gravis (MG)": [
+        "CHRNA1",   # AChR α (primary autoantigen)
+        "MUSK",     # MuSK-MG
+        "LRP4",     # LRP4-MG
+        "ACHE",     # pyridostigmine
+        "C5",       # eculizumab, ravulizumab, zilucoplan
+        "FCGRT",    # efgartigimod, rozanolixizumab
+        "MS4A1",    # rituximab
+        "CD19",     # inebilizumab
+        "IL6R",     # satralizumab
+        "CHRNE",    # AChR ε subunit
+    ],
+
+    # ── Amyotrophic Lateral Sclerosis (ALS) ────────────────────────────
+    "Amyotrophic Lateral Sclerosis (ALS)": [
+        "SOD1",     # tofersen
+        "C9orf72",  # most common familial cause
+        "TARDBP",   # TDP-43
+        "FUS",      # FUS-ALS (jacifusen)
+        "ATXN2",    # ASO target (BIIB105)
+        "SLC1A2",   # EAAT2 glutamate transporter (riluzole context)
+        "KIF5A",    # genetic risk
+        "UNC13A",   # ASO target
+        "CSF1R",    # masitinib (microglia)
+        "KIT",      # masitinib (mast cells)
+    ],
+
+    # ── Huntington's Disease ───────────────────────────────────────────
+    "Huntington's Disease": [
+        "HTT",      # tominersen, AMT-130
+        "SLC18A2",  # VMAT2 (tetrabenazine, deutetrabenazine, valbenazine)
+        "DRD2",     # antipsychotics for chorea
+        "PDE10A",   # PDE10A inhibitors (trialled)
+        "MSH3",     # somatic CAG expansion modifier
+        "FAN1",     # expansion modifier
+        "HDAC4",    # HDAC4 reduction rescues phenotype
+        "GRIN2B",   # extrasynaptic NMDA excitotoxicity
+        "PPARGC1A", # PGC-1α mitochondrial dysfunction
+        "SEMA4D",   # pepinemab
+    ],
+
+    # ── Melanoma ───────────────────────────────────────────────────────
+    "Melanoma": [
+        "BRAF",     # vemurafenib, dabrafenib, encorafenib
+        "MAP2K1",   # trametinib, binimetinib
+        "MAP2K2",   # MEK2
+        "NRAS",     # NRAS-mutant melanoma
+        "KIT",      # imatinib (acral/mucosal)
+        "PDCD1",    # nivolumab, pembrolizumab
+        "CD274",    # PD-L1
+        "CTLA4",    # ipilimumab
+        "LAG3",     # relatlimab
+        "CDK4",     # CDK4/6 inhibitors (NRAS/CDKN2A)
+    ],
+
+    # ── Pancreatic Cancer ──────────────────────────────────────────────
+    "Pancreatic Cancer": [
+        "KRAS",     # adagrasib (G12C), RMC-6236 (pan-RAS)
+        "BRCA2",    # olaparib maintenance
+        "BRCA1",    # HRR deficiency
+        "PARP1",    # olaparib
+        "PALB2",    # HRR deficiency
+        "CDKN2A",   # p16 loss
+        "TP53",     # driver
+        "SMAD4",    # driver
+        "EGFR",     # erlotinib
+        "TYMS",     # 5-FU (FOLFIRINOX)
+        "TOP1",     # irinotecan
+        "NTRK1",    # larotrectinib (fusions)
+        "CLDN18",   # zolbetuximab (CLDN18.2)
+    ],
+
+    # ── Ovarian Cancer ─────────────────────────────────────────────────
+    "Ovarian Cancer": [
+        "BRCA1",    # PARP inhibitor sensitivity
+        "BRCA2",    # PARP inhibitor sensitivity
+        "PARP1",    # olaparib, niraparib, rucaparib
+        "PARP2",    # PARP inhibitors
+        "FOLR1",    # mirvetuximab soravtansine
+        "VEGFA",    # bevacizumab
+        "KDR",      # cediranib
+        "TP53",     # near-universal in HGSOC
+        "PIK3CA",   # clear-cell / endometrioid
+        "CCNE1",    # amplification (WEE1 inhibitor context)
+        "MSLN",     # mesothelin-targeted agents
+        "SLC34A2",  # NaPi2b (upifitamab)
+    ],
+
+    # ── Bladder Cancer ─────────────────────────────────────────────────
+    "Bladder Cancer": [
+        "FGFR3",    # erdafitinib
+        "FGFR2",    # FGFR inhibitors
+        "NECTIN4",  # enfortumab vedotin
+        "TACSTD2",  # sacituzumab govitecan
+        "PDCD1",    # pembrolizumab, nivolumab
+        "CD274",    # PD-L1 (atezolizumab, avelumab)
+        "ERBB2",    # disitamab vedotin
+        "TP53",     # driver
+        "RB1",      # driver
+        "PIK3CA",   # driver
+        "TERT",     # promoter mutation
+    ],
+
+    # ── Cervical Cancer ────────────────────────────────────────────────
+    "Cervical Cancer": [
+        "PDCD1",    # pembrolizumab, cemiplimab
+        "CD274",    # PD-L1
+        "VEGFA",    # bevacizumab
+        "KDR",      # VEGFR2
+        "F3",       # tissue factor (tisotumab vedotin)
+        "PIK3CA",   # most common somatic mutation
+        "TP53",     # HPV E6 target
+        "RB1",      # HPV E7 target
+        "EGFR",     # EGFR overexpression
+        "CDKN2A",   # p16 surrogate marker
+    ],
+
+    # ── Polycythaemia Vera / Myeloproliferative Neoplasms ──────────────
+    "Polycythaemia Vera / Myeloproliferative Neoplasms": [
+        "JAK2",     # ruxolitinib, fedratinib (V617F)
+        "MPL",      # thrombopoietin receptor (MPN driver)
+        "CALR",     # calreticulin (ET/MF driver)
+        "IFNAR1",   # ropeginterferon alfa-2b
+        "HAMP",     # hepcidin (rusfertide mimetic)
+        "BRD4",     # pelabresib (BET)
+        "BCL2L1",   # navitoclax (BCL-XL)
+        "TERT",     # imetelstat
+        "KDM1A",    # bomedemstat (LSD1)
+        "MDM2",     # idasanutlin / navtemadlin
+        "TET2",     # clonal co-mutation
+    ],
+
+    # ── Chronic Pancreatitis ───────────────────────────────────────────
+    "Chronic Pancreatitis": [
+        "PRSS1",    # cationic trypsinogen (hereditary)
+        "SPINK1",   # trypsin inhibitor
+        "CFTR",     # CFTR-related pancreatitis
+        "CTRC",     # chymotrypsin C
+        "CPA1",     # carboxypeptidase A1
+        "TRPV1",    # pancreatic pain
+        "SCN9A",    # neuropathic pain
+        "TGFB1",    # stellate cell fibrosis
+        "PDGFRB",   # stellate activation
+        "OPRM1",    # opioid analgesia
+    ],
+
+    # ── Immune Thrombocytopaenia (ITP) ─────────────────────────────────
+    "Immune Thrombocytopaenia (ITP)": [
+        "MPL",      # eltrombopag, romiplostim, avatrombopag
+        "SYK",      # fostamatinib
+        "BTK",      # rilzabrutinib
+        "FCGRT",    # efgartigimod
+        "MS4A1",    # rituximab
+        "FCGR3A",   # Fcγ receptor phagocytosis
+        "FCGR2B",   # inhibitory Fcγ receptor (IVIG mechanism)
+        "ITGA2B",   # GPIIb autoantigen
+        "GP1BA",    # GPIb autoantigen
+        "NR3C1",    # corticosteroids
+    ],
+
+    # ── Chronic Urticaria (CSU) ────────────────────────────────────────
+    "Chronic Urticaria (CSU)": [
+        "HRH1",     # second-generation antihistamines
+        "HRH2",     # H2 antagonists
+        "HRH4",     # H4 antagonists (trialled)
+        "FCER1A",   # IgE receptor (omalizumab/ligelizumab mechanism)
+        "MS4A2",    # FcεRI β
+        "BTK",      # remibrutinib
+        "KIT",      # barzolvolimab
+        "MRGPRX2",  # mast-cell pseudoallergic receptor
+        "IL4R",     # dupilumab
+        "CYSLTR1",  # montelukast
+    ],
+
+    # ── Alpha-1 Antitrypsin Deficiency (AATD) ──────────────────────────
+    "Alpha-1 Antitrypsin Deficiency (AATD)": [
+        "SERPINA1", # alpha-1 antitrypsin (augmentation; fazirsiran; correctors)
+        "ELANE",    # neutrophil elastase (alvelestat)
+        "PRTN3",    # proteinase 3
+        "CTSG",     # cathepsin G
+        "CTSC",     # DPP1 (brensocatib)
+        "MMP12",    # macrophage elastase
+        "MMP9",     # gelatinase B
+        "CXCR2",    # neutrophil recruitment
+        "TGFB1",    # fibrosis
+    ],
+
+    # ── Primary Sclerosing Cholangitis (PSC) ───────────────────────────
+    "Primary Sclerosing Cholangitis (PSC)": [
+        "NR1H4",    # FXR (obeticholic acid, cilofexor)
+        "FGF19",    # aldafermin (FGF19 analogue)
+        "SLC10A2",  # ASBT / IBAT (maralixibat, odevixibat class)
+        "PPARD",    # seladelpar, elafibranor
+        "PPARA",    # bezafibrate, fenofibrate
+        "AOC3",     # VAP-1 (timolumab)
+        "CCR2",     # cenicriviroc
+        "CCR5",     # cenicriviroc
+        "LOXL2",    # simtuzumab
+        "CYP7A1",   # bile acid synthesis
+    ],
 }
 
 # Normalised aliases so CSV disease strings match the canonical keys above
@@ -883,6 +1804,70 @@ DISEASE_ALIASES: dict[str, str] = {
     "presbycusis": "Age-Related Hearing Loss (Presbycusis)",
     "osteoporosis": "Osteoporosis",
     "type 2 diabetes mellitus": "Type 2 Diabetes",
+    # db100 labels (exact-label aliases)
+    "psoriasis (nail / palmoplantar)": "Psoriasis (Nail / Palmoplantar)",
+    "hiv/aids": "HIV/AIDS",
+    "stroke (ischaemic / cerebrovascular disease)": "Stroke (Ischaemic / Cerebrovascular Disease)",
+    "lung cancer": "Lung Cancer",
+    "colorectal cancer": "Colorectal Cancer",
+    "breast cancer": "Breast Cancer",
+    "adhd": "ADHD",
+    "atopic dermatitis (eczema)": "Atopic Dermatitis (Eczema)",
+    "insomnia / sleep disorders": "Insomnia / Sleep Disorders",
+    "pcos (polycystic ovary syndrome)": "PCOS (Polycystic Ovary Syndrome)",
+    "peripheral artery disease (pad)": "Peripheral Artery Disease (PAD)",
+    "sepsis": "Sepsis",
+    "coeliac disease (refractory / rcd)": "Coeliac Disease (Refractory / RCD)",
+    "irritable bowel syndrome (ibs)": "Irritable Bowel Syndrome (IBS)",
+    "ankylosing spondylitis / axial spondyloarthropathy": "Ankylosing Spondylitis / Axial Spondyloarthropathy",
+    "age-related macular degeneration (amd)": "Age-Related Macular Degeneration (AMD)",
+    "glaucoma": "Glaucoma",
+    "peripheral neuropathy (diabetic peripheral neuropathy)": "Peripheral Neuropathy (Diabetic Peripheral Neuropathy)",
+    "pulmonary arterial hypertension (pah)": "Pulmonary Arterial Hypertension (PAH)",
+    "lyme disease / post-treatment lyme disease syndrome (ptlds)": "Lyme Disease / Post-Treatment Lyme Disease Syndrome (PTLDS)",
+    "hepatitis b": "Hepatitis B",
+    "obstructive sleep apnoea (osa)": "Obstructive Sleep Apnoea (OSA)",
+    "endometriosis": "Endometriosis",
+    "benign prostatic hyperplasia (bph)": "Benign Prostatic Hyperplasia (BPH)",
+    "acne vulgaris": "Acne Vulgaris",
+    "cystic fibrosis": "Cystic Fibrosis",
+    "prostate cancer": "Prostate Cancer",
+    "non-hodgkin lymphoma (nhl)": "Non-Hodgkin Lymphoma (NHL)",
+    "chronic lymphocytic leukaemia (cll)": "Chronic Lymphocytic Leukaemia (CLL)",
+    "multiple myeloma": "Multiple Myeloma",
+    "sickle cell disease": "Sickle Cell Disease",
+    "lupus nephritis": "Lupus Nephritis",
+    "sjögren's syndrome": "Sjögren's Syndrome",
+    "haemophilia a / b": "Haemophilia A / B",
+    "chronic venous insufficiency / venous leg ulcers": "Chronic Venous Insufficiency / Venous Leg Ulcers",
+    "thyroid cancer (well-differentiated)": "Thyroid Cancer (Well-Differentiated)",
+    "deep vein thrombosis / pulmonary embolism (vte)": "Deep Vein Thrombosis / Pulmonary Embolism (VTE)",
+    "myelodysplastic syndromes (mds)": "Myelodysplastic Syndromes (MDS)",
+    "polycystic kidney disease (adpkd)": "Polycystic Kidney Disease (ADPKD)",
+    "inflammatory myopathies (dermatomyositis / pm / ibm)": "Inflammatory Myopathies (Dermatomyositis / PM / IBM)",
+    "alopecia areata": "Alopecia Areata",
+    "vitiligo": "Vitiligo",
+    "tinnitus": "Tinnitus",
+    "restless legs syndrome (rls)": "Restless Legs Syndrome (RLS)",
+    "carpal tunnel syndrome": "Carpal Tunnel Syndrome",
+    "overactive bladder (oab)": "Overactive Bladder (OAB)",
+    "kidney stones (nephrolithiasis)": "Kidney Stones (Nephrolithiasis)",
+    "gastroparesis": "Gastroparesis",
+    "interstitial cystitis / bladder pain syndrome (ic/bps)": "Interstitial Cystitis / Bladder Pain Syndrome (IC/BPS)",
+    "myasthenia gravis (mg)": "Myasthenia Gravis (MG)",
+    "amyotrophic lateral sclerosis (als)": "Amyotrophic Lateral Sclerosis (ALS)",
+    "huntington's disease": "Huntington's Disease",
+    "melanoma": "Melanoma",
+    "pancreatic cancer": "Pancreatic Cancer",
+    "ovarian cancer": "Ovarian Cancer",
+    "bladder cancer": "Bladder Cancer",
+    "cervical cancer": "Cervical Cancer",
+    "polycythaemia vera / myeloproliferative neoplasms": "Polycythaemia Vera / Myeloproliferative Neoplasms",
+    "chronic pancreatitis": "Chronic Pancreatitis",
+    "immune thrombocytopaenia (itp)": "Immune Thrombocytopaenia (ITP)",
+    "chronic urticaria (csu)": "Chronic Urticaria (CSU)",
+    "alpha-1 antitrypsin deficiency (aatd)": "Alpha-1 Antitrypsin Deficiency (AATD)",
+    "primary sclerosing cholangitis (psc)": "Primary Sclerosing Cholangitis (PSC)",
 }
 
 

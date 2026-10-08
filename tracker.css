@@ -1228,3 +1228,248 @@ footer {
   .tracker-hub-card, .reveal-on-scroll { opacity: 1; transform: none; }
   body::before { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* OSMF design alignment 2026-10                                    */
+/* Restyles values only so research.opensourcemed.info matches the  */
+/* apex ../styles.css system. No layout, grid, display or width     */
+/* changes; nothing above is removed. These rules win by cascade.   */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tokens (apex :root) ── */
+:root {
+  --ink: #0e1444;
+  --ink-2: #2b3050;
+  --text-gray: #525a73;
+  --muted: #6b7290;
+  --accent: var(--accent-orange);
+  --accent-2: var(--accent-deep-orange);
+  --light-gray: #f6f7fb;
+  --surface: #f6f7fb;
+  --surface-2: #eef0f6;
+  --border: rgba(14, 20, 68, 0.09);
+  --border-strong: rgba(14, 20, 68, 0.16);
+  --navy-grad: linear-gradient(135deg, #0e1444 0%, #1a2266 100%);
+  --orange-grad: linear-gradient(135deg, #ff9800 0%, #e64a19 100%);
+  --shadow-xs: 0 1px 2px rgba(14, 20, 68, 0.04), 0 1px 1px rgba(14, 20, 68, 0.03);
+  --shadow-sm: 0 2px 6px rgba(14, 20, 68, 0.05), 0 8px 24px rgba(14, 20, 68, 0.05);
+  --shadow-md: 0 6px 16px rgba(14, 20, 68, 0.08), 0 20px 48px rgba(14, 20, 68, 0.09);
+  --shadow-lg: 0 6px 16px rgba(14, 20, 68, 0.08), 0 20px 48px rgba(14, 20, 68, 0.09);
+  --shadow-accent: 0 10px 28px rgba(255, 152, 0, 0.28);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --transition-smooth: 0.2s var(--ease);
+  --transition-bounce: 0.25s var(--ease);
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-border: var(--border);
+  --glass-blur: 14px;
+}
+
+/* ── Base type ── */
+body {
+  line-height: 1.65;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv11", "ss01";
+}
+body::before { background: none; animation: none; }
+h1, h2, h3, h4 { letter-spacing: -0.015em; line-height: 1.2; color: var(--ink); text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: var(--accent-2); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.search-input:focus-visible, .filter-select:focus-visible, .btn-clear:focus-visible, .btn-reload:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+::selection { background: rgba(255, 152, 0, 0.25); }
+
+/* ── Nav: translucent blur bar with hairline ── */
+nav {
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
+  box-shadow: 0 1px 0 var(--border);
+}
+nav.scrolled {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 0 var(--border), 0 8px 24px rgba(14, 20, 68, 0.05);
+}
+.nav-brand { font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+.nav-brand:hover { transform: none; }
+.nav-brand-sub { color: var(--muted); font-weight: 600; letter-spacing: 0.08em; }
+.nav-links a { color: var(--ink-2); }
+.nav-links a:hover { color: var(--ink); transform: none; }
+.nav-links a.nav-active { color: var(--ink); font-weight: 700; }
+.nav-links a::after { background: var(--accent); }
+.nav-support, .nav-links a.nav-support {
+  background: var(--orange-grad);
+  border-radius: var(--radius-sm);
+  font-weight: 700 !important;
+  box-shadow: 0 6px 16px rgba(255, 152, 0, 0.25);
+}
+.nav-support:hover, .nav-links a.nav-support:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(255, 152, 0, 0.32);
+}
+.nav-toggle span { background: var(--ink); height: 2px; border-radius: 1px; }
+
+/* ── Heroes: navy gradient + orange/violet glows + grid texture ── */
+.page-hero, .donate-section {
+  background:
+    radial-gradient(55% 60% at 12% 0%, rgba(255, 152, 0, 0.20) 0%, rgba(255, 152, 0, 0) 60%),
+    radial-gradient(45% 50% at 92% 100%, rgba(101, 31, 255, 0.24) 0%, rgba(101, 31, 255, 0) 60%),
+    var(--navy-grad);
+}
+.page-hero::before, .donate-section::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(70% 80% at 50% 0%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(70% 80% at 50% 0%, #000 30%, transparent 100%);
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+.page-hero::after { background: none; }
+.hero-eyebrow, .donate-eyebrow {
+  background: rgba(255, 152, 0, 0.14);
+  border-color: rgba(255, 152, 0, 0.35);
+  color: #ffb74d;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-radius: 999px;
+}
+.page-hero h1 { letter-spacing: -0.03em; }
+.page-hero h1 span {
+  background: linear-gradient(135deg, #ffb74d 0%, var(--accent) 45%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.page-hero p { color: rgba(255, 255, 255, 0.72); line-height: 1.65; }
+.page-hero-stats { border-top-color: rgba(255, 255, 255, 0.12); }
+.stat-item { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.14); }
+.stat-item:hover { background: rgba(255, 255, 255, 0.13); }
+.stat-num { color: #ffb74d; letter-spacing: -0.03em; }
+.stat-lbl { color: rgba(255, 255, 255, 0.58); }
+.donate-section h2 { letter-spacing: -0.03em; }
+.donate-section p { color: rgba(255, 255, 255, 0.7); }
+
+/* ── Section headings & uppercase labels ── */
+.section-header h2 { letter-spacing: -0.025em; }
+.section-header p { color: var(--text-gray); line-height: 1.7; }
+.hub-card-label, .condition-group-label, .disease-category-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.condition-group-label { color: var(--muted); }
+
+/* ── Cards: hairline border, whisper shadow at rest, lift on hover ── */
+.tracker-hub-card, .disease-card, .study-card, .trial-card, .agent-card, .osmf-network-site {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+.tracker-hub-card:hover, .disease-card:hover, .study-card:hover, .trial-card:hover, .agent-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+.tracker-hub-card::before, .study-card::before, .agent-card::before { background: var(--orange-grad); }
+.tracker-hub-card::after { background: none; }
+.hub-card-icon { background: #fff3e0; box-shadow: none; }
+.tracker-hub-card:hover .hub-card-icon { transform: none; }
+.tracker-hub-card h3, .disease-name, .agent-name { letter-spacing: -0.015em; }
+.tracker-hub-card p, .disease-best, .condition-desc, .study-meta, .trial-meta, .agent-meta, .tracker-meta { color: var(--text-gray); }
+.condition-links li a, .condition-links a { color: var(--ink); }
+.condition-links-muted li a, .condition-links-muted a,
+.condition-links-grouped-muted .condition-links li a, .condition-links-grouped-muted .condition-links a { color: var(--muted); }
+.condition-links-muted li a:hover, .condition-links-muted a:hover,
+.condition-links-grouped-muted .condition-links li a:hover, .condition-links-grouped-muted .condition-links a:hover { color: var(--ink); border-bottom-color: var(--accent); }
+.study-abstract-wrap, .agent-notes { color: var(--ink-2); }
+.state-box-inner { border-color: var(--border-strong); }
+.disclaimer { background: #fff8ee; border-color: rgba(255, 152, 0, 0.3); border-radius: var(--radius-md); color: var(--ink-2); }
+.biomarker-callout { background: var(--surface); border-radius: var(--radius-md); color: var(--text-gray); }
+.biomarker-callout a:hover { color: var(--accent-2); }
+
+/* ── Controls & buttons ── */
+.search-input, .filter-select, .btn-clear, .btn-pubmed, .btn-trial { border-color: var(--border-strong); }
+.search-input::placeholder { color: var(--muted); }
+.search-input:focus, .filter-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.14); }
+.btn-pubmed, .btn-trial, .btn-reload, .btn-clear, .study-count-badge { border-radius: var(--radius-sm); font-weight: 700; }
+.btn-pubmed:hover, .btn-trial:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.btn-donate {
+  background: var(--orange-grad);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-accent);
+}
+.btn-donate:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(255, 152, 0, 0.36); color: var(--white); }
+.btn-ghost {
+  border-radius: var(--radius-sm);
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.04);
+}
+.btn-ghost:hover { border-color: rgba(255, 255, 255, 0.8); background: rgba(255, 255, 255, 0.12); transform: translateY(-2px); }
+.btn-abstract-toggle { color: var(--accent-2); }
+.back-to-top { background: var(--orange-grad); box-shadow: var(--shadow-accent); }
+.back-to-top:hover { background: var(--orange-grad); transform: translateY(-3px); box-shadow: 0 14px 32px rgba(255, 152, 0, 0.36); }
+
+/* Cite / subscribe block: apply_osmf_chrome.py injects an inline <style> with
+   blue #0068f8 buttons; these higher-specificity rules bring it onto the system. */
+.osmf-cite-wrap .osmf-cite, .osmf-cite-wrap .osmf-sub {
+  background: var(--surface);
+  border-color: var(--border);
+  border-radius: var(--radius-md);
+  color: var(--ink-2);
+}
+.osmf-cite-wrap .osmf-cite { border-left: 3px solid var(--accent); }
+.osmf-cite-wrap .osmf-cite h3, .osmf-cite-wrap .osmf-sub h3 {
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.osmf-cite-wrap .osmf-cite code { border-color: var(--border); border-radius: var(--radius-sm); color: var(--ink-2); }
+.osmf-cite-wrap .osmf-cite button, .osmf-cite-wrap .osmf-sub a.btn {
+  background: var(--ink);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  transition: background 0.2s var(--ease);
+}
+.osmf-cite-wrap .osmf-cite button:hover, .osmf-cite-wrap .osmf-sub a.btn:hover { background: var(--accent-2); }
+
+/* ── Network strip + footers (apex: light surface strip, navy footer) ── */
+.osmf-network-banner {
+  background: var(--surface);
+  color: var(--text-gray);
+  border-top-color: var(--border);
+}
+.osmf-network-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.osmf-network-site { background: var(--white); border-color: var(--border); }
+.osmf-network-site:hover { background: var(--white); border-color: var(--border-strong); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.osmf-network-site a { color: var(--ink); font-weight: 700; }
+.osmf-network-site a:hover { color: var(--accent-2); }
+.osmf-network-site span { color: var(--text-gray); }
+footer, .osmf-network-footer { background: var(--ink); color: rgba(255, 255, 255, 0.55); }
+.footer-brand, .osmf-network-footer .footer-brand { font-weight: 800; letter-spacing: -0.02em; color: var(--white); }
+.footer-note, .osmf-network-footer .footer-note { color: rgba(255, 255, 255, 0.45); }
+.footer-links a, .osmf-network-footer .footer-links a { color: rgba(255, 255, 255, 0.78); }
+.footer-links a:hover, .osmf-network-footer .footer-links a:hover { color: #ffb74d; }
+
+/* ── Reduced motion (apex rule) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+  .tracker-hub-card, .reveal-on-scroll { opacity: 1; transform: none; }
+}
+/* end OSMF design alignment 2026-10 */

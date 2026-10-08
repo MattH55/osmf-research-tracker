@@ -129,6 +129,57 @@ def _call_claude(biomarker_name: str, abstracts: list[dict], client) -> list[dic
     return []
 
 
+def _call_nanogpt(biomarker_name: str, abstracts: list[dict], cfg: dict) -> list[dict]:
+    """Same extraction through an OpenAI-compatible endpoint (NanoGPT); the tool
+    schema is sent as the required JSON shape and the reply is parsed."""
+    import httpx
+
+    cache_key = _batch_hash(abstracts)
+    cached = cache_get("stage4", cache_key)
+    if cached is not None:
+        return cached  # type: ignore[return-value]
+
+    abstracts_text = "\n\n".join(
+        f"[PMID:{a['pmid']}] {a.get('title', '')}\n{a.get('abstract', '')}" for a in abstracts
+    )
+    system = (
+        "You are a biomedical literature extractor. STRICT RULES: "
+        "(1) Extract ONLY relationships explicitly stated in the text provided below — "
+        "never infer, hypothesise, or draw on training knowledge. "
+        "(2) Omit any claim not directly supported by the text. "
+        "(3) Include a short verbatim quote for every claim."
+    )
+    user = (
+        f"Biomarker of interest: {biomarker_name}\n\n"
+        f"--- ABSTRACTS ---\n{abstracts_text}\n--- END ABSTRACTS ---\n\n"
+        f"Extract all agent–{biomarker_name} relationships from these abstracts only.\n\n"
+        "Respond with a single JSON object only, no prose, matching this JSON schema exactly: "
+        + json.dumps(EXTRACTION_TOOL["input_schema"])
+        + '\nIf nothing is supported by the text, respond with {"relationships": []}.'
+    )
+    try:
+        r = httpx.post(
+            f"{cfg['base_url']}/chat/completions",
+            headers={"Authorization": f"Bearer {cfg['api_key']}", "Content-Type": "application/json"},
+            json={"model": cfg["model"], "temperature": 0, "max_tokens": 2048,
+                  "response_format": {"type": "json_object"},
+                  "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
+            timeout=120,
+        )
+        r.raise_for_status()
+        text = r.json()["choices"][0]["message"]["content"].strip()
+        data = json.loads(text[text.find("{"): text.rfind("}") + 1])
+        rels = [x for x in data.get("relationships", []) if isinstance(x, dict) and x.get("agent_name")]
+        for x in rels:
+            if x.get("pmid") is not None:
+                x["pmid"] = str(x["pmid"]).replace("PMID:", "").strip()
+        cache_set("stage4", cache_key, rels)
+        return rels
+    except Exception as e:
+        log.warning("[Stage4] NanoGPT call failed for batch: %s", e)
+    return []
+
+
 # ─── Public entry point ───────────────────────────────────────────────────────
 
 async def extract_agents_from_literature(
@@ -136,27 +187,35 @@ async def extract_agents_from_literature(
     abstracts: list[dict],
     anthropic_api_key: str,
 ) -> tuple[list[Agent], list[str]]:
+    from .stage4b_marker_direction import nanogpt_config
+
     notes: list[str] = []
-    if not anthropic_api_key:
-        notes.append("ANTHROPIC_API_KEY not set — Stage 4 LLM extraction skipped.")
+    nano = nanogpt_config()
+    if not anthropic_api_key and not nano:
+        notes.append("Neither NANOGPT_API_KEY nor ANTHROPIC_API_KEY set — Stage 4 LLM extraction skipped.")
         return [], notes
     if not abstracts:
         notes.append("No abstracts available for Stage 4 extraction.")
         return [], notes
 
-    try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=anthropic_api_key)
-    except ImportError:
-        notes.append("'anthropic' package not installed — Stage 4 skipped.  Run: pip install anthropic")
-        return [], notes
+    client = None
+    if not nano:
+        try:
+            import anthropic
+            client = anthropic.Anthropic(api_key=anthropic_api_key)
+        except ImportError:
+            notes.append("'anthropic' package not installed — Stage 4 skipped.  Run: pip install anthropic")
+            return [], notes
 
     biomarker_name = norm.symbol or norm.input_name
     batches = [abstracts[i : i + BATCH_SIZE] for i in range(0, len(abstracts), BATCH_SIZE)]
 
     all_rels: list[dict] = []
     for batch in batches:
-        rels = await asyncio.to_thread(_call_claude, biomarker_name, batch, client)
+        if nano:
+            rels = await asyncio.to_thread(_call_nanogpt, biomarker_name, batch, nano)
+        else:
+            rels = await asyncio.to_thread(_call_claude, biomarker_name, batch, client)
         all_rels.extend(rels)
 
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
