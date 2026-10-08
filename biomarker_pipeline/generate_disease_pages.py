@@ -70,6 +70,22 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+# Manifest slugs that differ from the page file names already indexed by
+# search engines. Both the output file and the canonical URL use the override
+# so a regeneration never creates a competing duplicate.
+PAGE_SLUG_OVERRIDES = {
+    "alzheimers-disease-and-other-dementias": "alzheimer-s-disease-and-other-dementias",
+    "migraine-disorder": "migraine",
+    "psoriasis-vulgaris": "psoriasis",
+    "psoriasis-plaque": "psoriasis",
+    "psoriasis-nail-palmoplantar": "psoriasis",
+}
+
+
+def page_slug(slug: str) -> str:
+    return PAGE_SLUG_OVERRIDES.get(slug, slug)
+
+
 def _load_db100_rows() -> list[dict]:
     """Load remission overview rows from disease_db_100.json."""
     if not DB100_PATH.exists():
@@ -109,7 +125,40 @@ def _esc(text: str) -> str:
     return (text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
+def _query_terms(label: str) -> list[str]:
+    """Search terms to try in order: full label, label without parentheses,
+    first slash-alternative, then each parenthetical (e.g. "PACVS")."""
+    terms = [label]
+    bare = re.sub(r"\s*\([^)]*\)", "", label).strip()
+    terms.append(bare)
+    terms.append(bare.split(" / ")[0].strip())
+    for inner in re.findall(r"\(([^)]*)\)", label):
+        terms.extend(t.strip() for t in inner.split("/"))
+    # British spellings rarely match the registry
+    terms += [t.replace("oe", "e").replace("ae", "e") for t in list(terms) if "oe" in t or "ae" in t]
+    seen, out = set(), []
+    for t in terms:
+        if t and t.lower() not in seen:
+            seen.add(t.lower())
+            out.append(t)
+    return out
+
+
 def _fetch_trials(disease_name: str, max_results: int = 15) -> list[dict]:
+    best: list[dict] = []
+    best_term = disease_name
+    for term in _query_terms(disease_name):
+        studies = _fetch_trials_for_term(term, max_results)
+        if len(studies) > len(best):
+            best, best_term = studies, term
+        if len(best) >= max_results:
+            break
+    if best and best_term != disease_name:
+        log.info("  trials found with search term %r", best_term)
+    return best
+
+
+def _fetch_trials_for_term(disease_name: str, max_results: int = 15) -> list[dict]:
     params = {
         "query.cond": disease_name,
         "filter.overallStatus": "RECRUITING,ACTIVE_NOT_RECRUITING,COMPLETED",
@@ -363,7 +412,7 @@ def build_page(
     trials: list[dict],
     disease_agents: list[dict] | None = None,
 ) -> str:
-    slug     = _slug(disease)
+    slug     = page_slug(_slug(disease))
     title    = _esc(disease)
     page_url = f"https://research.opensourcemed.info/chronic-disease-interventions/{slug}.html"
 
@@ -665,7 +714,7 @@ def main() -> None:
             continue
 
         log.info("Generating page for: %s", disease)
-        slug = row.get("_slug") or _slug(disease)
+        slug = page_slug(row.get("_slug") or _slug(disease))
 
         pipeline_data = _load_pipeline_results(disease)
         log.info("  Pipeline results: %d genes loaded", len(pipeline_data))
@@ -699,7 +748,7 @@ def _build_index(rows: list[dict]) -> None:
     cards = ""
     for row in rows:
         disease = row["disease"].strip()
-        slug    = _slug(disease)
+        slug    = page_slug(_slug(disease))
         best    = _esc(row.get("best_intervention_remission_rate", "") or "")[:80]
         barrier = _esc(row.get("primary_barrier", "") or "")
         gene_dir = RESULTS_DIR / slug

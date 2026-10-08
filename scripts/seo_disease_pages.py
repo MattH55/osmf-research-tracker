@@ -104,6 +104,8 @@ CANONICAL_TWINS = {
     "metabolic-dysfunction-associated-steatohepatitis.html": "nafld-mash-metabolic-associated-steatohepatitis.html",
     "parkinson-disease.html": "parkinson-s-disease.html",
     "systemic-lupus-erythematosus.html": "systemic-lupus-erythematosus-sle.html",
+    # legacy orphan (not in db100, never regenerated) -> the live PACVS page
+    "long-covid-post-acute-sequelae-pacvs.html": "post-acute-covidvaccination-syndrome.html",
 }
 
 

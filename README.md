@@ -159,6 +159,21 @@ All pages include clear attribution: "Data sourced from PubMed / NCBI".
 
 - Code in this repository: Open source (recommend Apache 2.0 or MIT).
 - All study data: Public domain / openly licensed via PubMed (NCBI/NLM). Cite PubMed records when using.
+- Compiled datasets and pages (trial tables, therapeutic-agent evidence, biomarker atlases, PAIS cohorts, chronic-disease interventions): CC BY 4.0.
+
+## How to cite
+
+Every page carries a "Cite this page" box. For the tracker as a whole, or any of its
+datasets, cite the Zenodo DOI of the release you used (minted automatically from each
+GitHub release; metadata in `CITATION.cff` and `.zenodo.json`):
+
+> Halma, M. T. J., Tuszynski, J. A., & Open Source Medicine Foundation. (2026).
+> *OSMF Research Tracker: open evidence on candidate therapeutics, biomarkers and
+> clinical trials for post-viral and chronic conditions* (Version 2026.10) [Data set].
+> Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
+
+GitHub also offers "Cite this repository" (APA/BibTeX) from the sidebar, generated from
+`CITATION.cff`.
 
 ## Support the Work
 
