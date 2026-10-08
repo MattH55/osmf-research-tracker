@@ -72,10 +72,10 @@ function patchFile(key, filename) {
   const canonical = key === 'biomarker-atlas'
     ? canonicalUrl('biomarker-atlas.html')
     : key === 'index-redirect'
-      ? 'https://vitalscan4pacvs.com/recruitment-page-v5.html'
+      ? 'https://vitalscan4pacvs.study/recruitment-page-v5.html'
       : canonicalMatch
         ? canonicalMatch[1]
-        : `https://vitalscan4pacvs.com/${filename === 'index.html' ? '' : filename}`;
+        : `https://vitalscan4pacvs.study/${filename === 'index.html' ? '' : filename}`;
 
   if (key === 'index-redirect') {
     html = patchIndexRedirect(html, seo, canonical);

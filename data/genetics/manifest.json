@@ -1,0 +1,48 @@
+{
+  "build_id": "2026-09-22T00:00:00Z",
+  "schema": "data/genetics/genetic-correlate.schema.json",
+  "sources": [
+    {
+      "source_id": "SRC-GWASCAT",
+      "name": "GWAS Catalog",
+      "access": "REST API v2 (https://www.ebi.ac.uk/gwas/api/v2) for study metadata; legacy REST API (https://www.ebi.ac.uk/gwas/rest/api) for per-study associations, which remains live for curated top hits even though the old bulk summary-statistics API returns HTTP 410 on every path (ToolUniverse #642)",
+      "retrieved_at": "2026-09-22",
+      "records_used": ["GCST90454540", "GCST90095123"]
+    },
+    {
+      "source_id": "SRC-EUROPEPMC",
+      "name": "Europe PMC REST API",
+      "access": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+      "retrieved_at": "2026-09-22",
+      "records_used": ["PACVS literature sweep queries logged in data/genetics/phenotypes.csv"]
+    },
+    {
+      "source_id": "SRC-ENSEMBL",
+      "name": "Ensembl REST API",
+      "access": "https://rest.ensembl.org (GRCh38)",
+      "retrieved_at": "2026-09-22",
+      "records_used": ["FOXP4", "LZTFL1", "SLC6A20"]
+    },
+    {
+      "source_id": "SRC-OLS",
+      "name": "EBI Ontology Lookup Service",
+      "access": "https://www.ebi.ac.uk/ols4/api (EFO, MONDO)",
+      "retrieved_at": "2026-09-22"
+    }
+  ],
+  "connectivity_check": {
+    "gwas_catalog_v2_studies": "200 OK",
+    "gwas_catalog_legacy_associations": "200 OK (per-study endpoint; bulk summary-statistics API confirmed 410 per spec, not used)",
+    "europepmc_search": "200 OK",
+    "ensembl_rest": "200 OK",
+    "ols4_search": "200 OK"
+  },
+  "not_yet_implemented": [
+    "Open Targets Platform bulk Parquet ingestion (module 4 credible sets, L2G scores, colocalisation) — locus-to-gene assignment in this build uses the spec's documented distance-window fallback only",
+    "eQTL Catalogue bulk files (module 4 QTL layer) — no molecular_qtls records in this build",
+    "Reactome/GO pathway membership (module 5) — no pathways records in this build",
+    "IEU OpenGWAS PheWAS-style lookups — requires an API token (see build spec open question)",
+    "HLA allele support (IPD-IMGT/HLA nomenclature) — no HLA-typed associations ingested yet; vaccine-reactogenicity and post-vaccination-myocarditis phenotypes remain not_searched",
+    "Pinned HPO release for phenotypes.hpo_ids — left blank pending the same pinned release used by the PAIS cohort database"
+  ]
+}

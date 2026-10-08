@@ -5418,34 +5418,6 @@ In this study it wi...
 **Extraction Date:** 2026-06-26
 
 ---
-**Effect of Metabolic Modulation on a Post-acute COVID-19 Vaccination Syndrome (PACVS) Cohort**  
-**NCT06967428** | **NOT_YET_RECRUITING** | **PHASE2** | Last Updated: 2025-05-13
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Combined Metabolic Modulator
-- Rice Protein Powder With Vitamin C
-
-**Sponsor:** Independent Medical Alliance (OTHER)
-
-**Key Focus / Interventions:**  
-The goal of this clinical trial is to evaluate whether metabolic modulation with a combined nutraceutical product can improve symptoms and metabolic health in adults diagnosed with post-acute Covid-19 vaccination syndrome (PACVS), a condition characterized by persistent fatigue and exercise intolerance attributed to Covid-19 vaccination and confirmed by laboratory testing.
-
-The main questions it aims to answer are:
-
-Does the combined nutraceutica...
-
-**Timeline:** Start: 2025-09-01 | Primary Completion: 2026-01 | Est. Completion: 2026-01
-**Enrollment:** 100 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06967428
-
-**Relevance Tags:** Metabolic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-06-26
-
----
 **The Long COVID-19 Wearable Device Study**  
 **NCT05741112** | **RECRUITING** | **NA** | Last Updated: 2025-05-11
 

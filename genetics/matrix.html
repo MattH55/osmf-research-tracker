@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EP8RK1RZ29"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-EP8RK1RZ29');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cross-Phenotype Matrix — Genetic Correlates Explorer</title>
+  <meta name="description" content="Locus/gene-level cross-phenotype genetic evidence matrix.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://research.opensourcemed.info/genetics/matrix.html">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tracker.css">
+  <link rel="stylesheet" href="../css/genetics-explorer.css">
+  <script src="../js/site-universal.js" defer></script>
+  <script src="../js/biomarker-data-loader.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html">All Conditions</a></li>
+      <li><a href="../pacvs.html">PACVS</a></li>
+      <li><a href="../long-covid.html">Long COVID</a></li>
+      <li><a href="../biomarker-atlas.html">Biomarkers</a></li>
+      <li><a href="index.html" class="nav-active-genetics">Genetics</a></li>
+      <li><a href="../disease-intelligence/index.html">RepurpOS</a></li>
+      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support Our Work</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="gce-subnav">
+  <div class="gce-subnav-inner">
+    <a href="index.html">Genetics Home</a>
+    <a href="phenotype/pacvs.html">PACVS</a>
+    <a href="matrix.html">Cross-Phenotype Matrix</a>
+    <a href="methods.html">Methods</a>
+  </div>
+</div>
+
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">Cross-phenotype</div>
+  <h1>Evidence Matrix</h1>
+  <p>Distinguishes "not tested" from "tested and null" — the main thing this explorer adds over existing portals.</p>
+</section>
+
+<section class="gce-section">
+  <div class="gce-matrix-controls">
+    <label>Level:
+      <select id="gce-matrix-level">
+        <option value="locus" selected>Locus</option>
+        <option value="gene" >Gene</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="gce-matrix-wrap">
+    <table class="gce-matrix">
+      <thead>
+        <tr><th></th><th>Post-acute COVID-19 vaccination syndrome (PACVS)</th><th>Long COVID / PASC</th><th>ME/CFS</th><th>POTS / dysautonomia</th><th>COVID-19 severity / susceptibility</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>L001</th>
+          <td class="gce-cell gce-cell-significant" title="significant">
+C
+          </td>
+          <td class="gce-cell gce-cell-significant" title="significant">
+A
+          </td>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+        </tr>
+        <tr>
+          <th>L002</th>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+          <td class="gce-cell gce-cell-not_tested" title="not tested">
+?          </td>
+          <td class="gce-cell gce-cell-significant" title="significant">
+A
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ul class="gce-matrix-legend">
+    <li><span class="gce-cell gce-cell-significant">A</span> Significant — filled, with grade letter</li>
+    <li><span class="gce-cell gce-cell-suggestive">◐</span> Suggestive (5×10⁻⁸ &gt; best p ≥ 1×10⁻⁵)</li>
+    <li><span class="gce-cell gce-cell-tested_null">⊖</span> Tested null — summary statistics cover this row, p &gt; 0.05</li>
+    <li><span class="gce-cell gce-cell-not_tested">?</span> Not tested — no summary statistics cover this row</li>
+    <li><span class="gce-cell gce-cell-conflicting">⚠</span> Conflicting — opposite effect direction across studies</li>
+  </ul>
+
+  <a class="gce-download" href="../genetics/data/matrix-locus.json">Download matrix JSON</a>
+</section>
+<script>
+document.getElementById('gce-matrix-level').addEventListener('change', function (e) {
+  window.location.href = e.target.value === 'locus' ? 'matrix.html' : 'matrix-' + e.target.value + '.html';
+});
+</script>
+
+<footer class="osmf-network-footer">
+  <div class="osmf-network-inner">
+    <div class="footer-brand">Open Source Medicine Foundation</div>
+    <div class="footer-note gce-footer-disclaimer">
+      The Genetic Correlates Explorer is a research tool. It reports what published genetic evidence exists,
+      how strong it is, and where it is missing. It does not predict individual risk, compute a polygenic
+      score, or accept personal genotype uploads, and it is not medical advice.
+    </div>
+    <div class="footer-links">
+      <a href="https://opensourcemed.info">Open Source Medicine Foundation</a>
+      <a href="https://research.opensourcemed.info/">Research Platform</a>
+      <a href="../data/genetics/manifest.json">Build manifest</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

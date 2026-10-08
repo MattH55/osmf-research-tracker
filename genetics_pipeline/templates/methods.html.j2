@@ -1,0 +1,66 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">Reference</div>
+  <h1>Methods</h1>
+  <p>Grading rules, overlap thresholds and search queries, versioned with each release. Build {{ build_id }}.</p>
+</section>
+
+<section class="gce-section gce-methods">
+  <h2>Evidence tiers</h2>
+  <table class="gce-table">
+    <thead><tr><th>Tier</th><th>Code</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td>Direct</td><td>T1</td><td>A GWAS, exome or candidate study measured this exact phenotype.</td></tr>
+      <tr><td>Related phenotype</td><td>T2</td><td>The association is for a phenotype linked to the target in the phenotype-relationship table.</td></tr>
+      <tr><td>Mechanistic / functional</td><td>T3</td><td>The variant or gene affects expression, protein level or immune function, with no phenotype association to the target.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Display grade</h2>
+  <p>Computed in code (<code>genetics_pipeline/grading.py</code>), never curated by hand:</p>
+  <ul>
+    <li><strong>A</strong> = T1, genome-wide significant (p &lt; 5×10⁻⁸), replicated in an independent cohort</li>
+    <li><strong>B</strong> = T1, genome-wide significant, unreplicated</li>
+    <li><strong>C</strong> = T1 suggestive (5×10⁻⁸ &gt; p ≥ 1×10⁻⁵), or any T2</li>
+    <li><strong>D</strong> = T3 only</li>
+  </ul>
+  <p>A <code>tested_null</code> result records absence of evidence and carries no letter grade.</p>
+
+  <h2>Overlap definitions</h2>
+  <ul>
+    <li><strong>Shared locus:</strong> credible sets overlap, or colocalisation posterior (H4) ≥ 0.8 where available.
+      Without either, lead variants in LD r² ≥ 0.5 in a matched ancestry panel. Physical proximity alone is
+      labelled "nearby", not "shared". This build uses neither credible sets nor LD — locus rows are ±50kb
+      distance windows around each lead variant pending Open Targets ingestion.</li>
+    <li><strong>Shared gene:</strong> L2G score ≥ 0.5 in both phenotypes, or one L2G ≥ 0.5 plus a QTL for the same
+      gene. This build has no L2G scores yet (distance-window fallback only).</li>
+    <li><strong>Shared pathway:</strong> ≥2 genes from a pathway each implicated at the gene level in both
+      phenotypes; descriptive overlap only. Not populated in this build (module 5).</li>
+  </ul>
+
+  <h2>Search queries logged this build</h2>
+  <div class="gce-table-wrap">
+    <table class="gce-table">
+      <thead><tr><th>Phenotype</th><th>State</th><th>Date</th><th>Queries</th><th>Sources</th></tr></thead>
+      <tbody>
+        {% for p in phenotypes %}
+        {% if p.search_state != 'not_searched' %}
+        <tr><td>{{ p.label }}</td><td>{{ p.search_state|replace('_',' ') }}</td><td>{{ p.last_searched }}</td><td>{{ p.search_queries }}</td><td>{{ p.search_sources }}</td></tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Known gaps in this build</h2>
+  <ul>
+    {% for item in not_yet_implemented %}
+    <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Corrections</h2>
+  <p>Errors are reported through a GitHub issue template; fixes land by PR and appear in the release diff.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">Variant</div>
+  <h1>{{ variant.rsid or variant.variant_id }}</h1>
+  <p>{{ variant.chrom }}:{{ variant.pos }} {{ variant.ref }}&gt;{{ variant.alt }} (GRCh38){% if variant.maf_ancestry %} · {{ variant.maf_ancestry }}{% endif %}</p>
+</section>
+
+<section class="gce-section">
+  <h2>Associations across all phenotypes</h2>
+  <p class="gce-tier-note">Tested-null results are included, not omitted, per the evidence model.</p>
+  <div class="gce-table-wrap">
+    <table class="gce-table">
+      <thead><tr><th>Grade</th><th>Tier</th><th>Phenotype</th><th>Effect</th><th>P</th><th>Result</th></tr></thead>
+      <tbody>
+        {% for a in associations %}
+        <tr class="gce-tier-row gce-tier-{{ a.tier }}">
+          <td><span class="gce-grade gce-grade-{{ a.grade or 'none' }}">{{ a.grade or '—' }}</span></td>
+          <td>{{ a.tier }}</td>
+          <td><a href="../phenotype/{{ a.phenotype_id }}.html">{{ a.phenotype_label }}</a></td>
+          <td>{{ a.effect_measure|upper if a.effect_measure else '' }}={{ a.beta_or_or }}</td>
+          <td>{{ '%.2g'|format(a.p_value) if a.p_value else '' }}</td>
+          <td>{{ a.result|replace('_',' ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Linked genes</h2>
+  <ul class="gce-relationship-list">
+    {% for g in genes %}
+    <li><a href="../gene/{{ g.ensembl_gene_id }}.html">{{ g.symbol }}</a> — {{ g.assignment_method|replace('_',' ') }}{% if g.nearest_gene %} (nearest gene){% endif %}</li>
+    {% endfor %}
+  </ul>
+
+  <p class="gce-tier-note">Locus-to-gene assignment method: distance window (±50kb around the lead variant). Open
+    Targets credible sets and colocalisation are not yet ingested in this build (see the
+    <a href="{{ root_prefix }}data/genetics/manifest.json">build manifest</a>).</p>
+</section>
+{% endblock %}

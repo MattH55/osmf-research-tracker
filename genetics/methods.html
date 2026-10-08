@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EP8RK1RZ29"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-EP8RK1RZ29');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methods — Genetic Correlates Explorer</title>
+  <meta name="description" content="Grading rules, overlap thresholds and search queries for the Genetic Correlates Explorer.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://research.opensourcemed.info/genetics/methods.html">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tracker.css">
+  <link rel="stylesheet" href="../css/genetics-explorer.css">
+  <script src="../js/site-universal.js" defer></script>
+  <script src="../js/biomarker-data-loader.js" defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="https://opensourcemed.info" class="nav-brand">
+      Open Source <span>Medicine</span>
+      <span class="nav-brand-sub">Research Tracker</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html">All Conditions</a></li>
+      <li><a href="../pacvs.html">PACVS</a></li>
+      <li><a href="../long-covid.html">Long COVID</a></li>
+      <li><a href="../biomarker-atlas.html">Biomarkers</a></li>
+      <li><a href="index.html" class="nav-active-genetics">Genetics</a></li>
+      <li><a href="../disease-intelligence/index.html">RepurpOS</a></li>
+      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support Our Work</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="gce-subnav">
+  <div class="gce-subnav-inner">
+    <a href="index.html">Genetics Home</a>
+    <a href="phenotype/pacvs.html">PACVS</a>
+    <a href="matrix.html">Cross-Phenotype Matrix</a>
+    <a href="methods.html">Methods</a>
+  </div>
+</div>
+
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">Reference</div>
+  <h1>Methods</h1>
+  <p>Grading rules, overlap thresholds and search queries, versioned with each release. Build 2026-09-22T00:00:00Z.</p>
+</section>
+
+<section class="gce-section gce-methods">
+  <h2>Evidence tiers</h2>
+  <table class="gce-table">
+    <thead><tr><th>Tier</th><th>Code</th><th>Definition</th></tr></thead>
+    <tbody>
+      <tr><td>Direct</td><td>T1</td><td>A GWAS, exome or candidate study measured this exact phenotype.</td></tr>
+      <tr><td>Related phenotype</td><td>T2</td><td>The association is for a phenotype linked to the target in the phenotype-relationship table.</td></tr>
+      <tr><td>Mechanistic / functional</td><td>T3</td><td>The variant or gene affects expression, protein level or immune function, with no phenotype association to the target.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Display grade</h2>
+  <p>Computed in code (<code>genetics_pipeline/grading.py</code>), never curated by hand:</p>
+  <ul>
+    <li><strong>A</strong> = T1, genome-wide significant (p &lt; 5×10⁻⁸), replicated in an independent cohort</li>
+    <li><strong>B</strong> = T1, genome-wide significant, unreplicated</li>
+    <li><strong>C</strong> = T1 suggestive (5×10⁻⁸ &gt; p ≥ 1×10⁻⁵), or any T2</li>
+    <li><strong>D</strong> = T3 only</li>
+  </ul>
+  <p>A <code>tested_null</code> result records absence of evidence and carries no letter grade.</p>
+
+  <h2>Overlap definitions</h2>
+  <ul>
+    <li><strong>Shared locus:</strong> credible sets overlap, or colocalisation posterior (H4) ≥ 0.8 where available.
+      Without either, lead variants in LD r² ≥ 0.5 in a matched ancestry panel. Physical proximity alone is
+      labelled "nearby", not "shared". This build uses neither credible sets nor LD — locus rows are ±50kb
+      distance windows around each lead variant pending Open Targets ingestion.</li>
+    <li><strong>Shared gene:</strong> L2G score ≥ 0.5 in both phenotypes, or one L2G ≥ 0.5 plus a QTL for the same
+      gene. This build has no L2G scores yet (distance-window fallback only).</li>
+    <li><strong>Shared pathway:</strong> ≥2 genes from a pathway each implicated at the gene level in both
+      phenotypes; descriptive overlap only. Not populated in this build (module 5).</li>
+  </ul>
+
+  <h2>Search queries logged this build</h2>
+  <div class="gce-table-wrap">
+    <table class="gce-table">
+      <thead><tr><th>Phenotype</th><th>State</th><th>Date</th><th>Queries</th><th>Sources</th></tr></thead>
+      <tbody>
+        <tr><td>Post-acute COVID-19 vaccination syndrome (PACVS)</td><td>searched none</td><td>2026-09-22</td><td>&#34;post-acute COVID-19 vaccination syndrome&#34; AND (genetic OR GWAS OR polymorphism OR HLA);PACVS AND vaccine AND genetic</td><td>Europe PMC;EBI Ontology Lookup Service (EFO/MONDO)</td></tr>
+        <tr><td>Long COVID / PASC</td><td>has evidence</td><td>2026-09-22</td><td>GWAS Catalog v2 study search for PMID 40399555</td><td>GWAS Catalog v2 REST API</td></tr>
+        <tr><td>ME/CFS</td><td>searched underpowered</td><td>2026-09-22</td><td>DecodeME GWAS myalgic encephalomyelitis;myalgic encephalomyelitis chronic fatigue genetic</td><td>Europe PMC;EBI Ontology Lookup Service (EFO/MONDO)</td></tr>
+        <tr><td>POTS / dysautonomia</td><td>searched underpowered</td><td>2026-09-22</td><td>postural orthostatic tachycardia GWAS genetic</td><td>Europe PMC;EBI Ontology Lookup Service (EFO/MONDO)</td></tr>
+        <tr><td>COVID-19 severity / susceptibility</td><td>has evidence</td><td>2026-09-22</td><td>GWAS Catalog v2 study search for PMID 34237774</td><td>GWAS Catalog v2 REST API</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Known gaps in this build</h2>
+  <ul>
+    <li>Open Targets Platform bulk Parquet ingestion (module 4 credible sets, L2G scores, colocalisation) — locus-to-gene assignment in this build uses the spec&#39;s documented distance-window fallback only</li>
+    <li>eQTL Catalogue bulk files (module 4 QTL layer) — no molecular_qtls records in this build</li>
+    <li>Reactome/GO pathway membership (module 5) — no pathways records in this build</li>
+    <li>IEU OpenGWAS PheWAS-style lookups — requires an API token (see build spec open question)</li>
+    <li>HLA allele support (IPD-IMGT/HLA nomenclature) — no HLA-typed associations ingested yet; vaccine-reactogenicity and post-vaccination-myocarditis phenotypes remain not_searched</li>
+    <li>Pinned HPO release for phenotypes.hpo_ids — left blank pending the same pinned release used by the PAIS cohort database</li>
+  </ul>
+
+  <h2>Corrections</h2>
+  <p>Errors are reported through a GitHub issue template; fixes land by PR and appear in the release diff.</p>
+</section>
+
+<footer class="osmf-network-footer">
+  <div class="osmf-network-inner">
+    <div class="footer-brand">Open Source Medicine Foundation</div>
+    <div class="footer-note gce-footer-disclaimer">
+      The Genetic Correlates Explorer is a research tool. It reports what published genetic evidence exists,
+      how strong it is, and where it is missing. It does not predict individual risk, compute a polygenic
+      score, or accept personal genotype uploads, and it is not medical advice.
+    </div>
+    <div class="footer-links">
+      <a href="https://opensourcemed.info">Open Source Medicine Foundation</a>
+      <a href="https://research.opensourcemed.info/">Research Platform</a>
+      <a href="../data/genetics/manifest.json">Build manifest</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

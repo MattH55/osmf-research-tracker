@@ -111,7 +111,7 @@ const DATABASE_SECTION = `
                 <div class="database-panel">
                     <div class="database-controls">
                         <div class="search-box">
-                            <input type="search" id="databaseSearch" placeholder="e.g. IL-6, D-dimer, spike protein, NCT06967428…" autocomplete="off">
+                            <input type="search" id="databaseSearch" placeholder="e.g. IL-6, D-dimer, spike protein, NCT05xxxxxx…" autocomplete="off">
                         </div>
                         <select id="databaseCondition" aria-label="Filter by condition">
                             <option value="all">All conditions</option>

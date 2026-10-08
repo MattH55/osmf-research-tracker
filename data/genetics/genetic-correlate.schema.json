@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research.opensourcemed.info/data/genetics/genetic-correlate.schema.json",
+  "title": "GeneticCorrelatesExplorer",
+  "description": "Flat-file data model for the Genetic Correlates Explorer. One JSON Schema validates the CSV row shapes used across data/genetics/*.csv (see build spec section 5). CSV columns map 1:1 onto the property names under each $defs entry.",
+  "$defs": {
+    "phenotype": {
+      "type": "object",
+      "required": ["phenotype_id", "label", "role", "search_state"],
+      "properties": {
+        "phenotype_id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "label": { "type": "string" },
+        "efo_id": { "type": ["string", "null"] },
+        "mondo_id": { "type": ["string", "null"] },
+        "hpo_ids": { "type": "string", "description": "semicolon-separated HPO IDs, may be empty" },
+        "role": { "enum": ["target", "source", "reference"] },
+        "search_state": { "enum": ["searched_none", "searched_underpowered", "has_evidence", "not_searched"] },
+        "last_searched": { "type": ["string", "null"], "format": "date" },
+        "search_queries": { "type": "string", "description": "semicolon-separated query strings used for the literature/catalogue sweep" },
+        "search_sources": { "type": "string", "description": "semicolon-separated source names checked" }
+      }
+    },
+    "phenotype_relationship": {
+      "type": "object",
+      "required": ["from_id", "to_id", "relationship_type", "rationale"],
+      "properties": {
+        "from_id": { "type": "string" },
+        "to_id": { "type": "string" },
+        "relationship_type": { "enum": ["clinical_overlap", "shared_exposure", "symptom_overlap", "mechanistic_hypothesis"] },
+        "rationale": { "type": "string" },
+        "citation_id": { "type": ["string", "null"] }
+      }
+    },
+    "study": {
+      "type": "object",
+      "required": ["study_id", "phenotype_id", "case_n", "control_n", "ancestry", "significance_threshold", "licence"],
+      "properties": {
+        "study_id": { "type": "string" },
+        "phenotype_id": { "type": "string" },
+        "case_definition": { "type": "string" },
+        "case_n": { "type": "integer", "minimum": 0 },
+        "control_n": { "type": "integer", "minimum": 0 },
+        "ancestry": { "type": "string" },
+        "platform": { "type": "string" },
+        "significance_threshold": { "type": "number" },
+        "publication_id": { "type": "string" },
+        "summary_stats_url": { "type": ["string", "null"] },
+        "licence": { "type": "string" }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "required": ["variant_id", "chrom", "pos", "ref", "alt"],
+      "properties": {
+        "variant_id": { "type": "string", "description": "chr_pos_ref_alt, GRCh38, or an HLA allele id when variant_kind = hla_allele" },
+        "rsid": { "type": ["string", "null"] },
+        "chrom": { "type": "string" },
+        "pos": { "type": ["integer", "null"] },
+        "ref": { "type": ["string", "null"] },
+        "alt": { "type": ["string", "null"] },
+        "variant_kind": { "enum": ["snv", "indel", "hla_allele"], "default": "snv" },
+        "maf_ancestry": { "type": "string", "description": "semicolon-separated ancestry:MAF pairs" }
+      }
+    },
+    "association": {
+      "type": "object",
+      "required": ["assoc_id", "study_id", "variant_id", "phenotype_id", "tier", "result", "source_id"],
+      "properties": {
+        "assoc_id": { "type": "string" },
+        "study_id": { "type": "string" },
+        "variant_id": { "type": "string" },
+        "phenotype_id": { "type": "string" },
+        "effect_allele": { "type": ["string", "null"] },
+        "beta_or_or": { "type": ["number", "null"] },
+        "effect_measure": { "enum": ["beta", "or", null] },
+        "ci_lower": { "type": ["number", "null"] },
+        "ci_upper": { "type": ["number", "null"] },
+        "p_value": { "type": ["number", "null"] },
+        "tier": { "enum": ["T1", "T2", "T3"] },
+        "result": { "enum": ["significant", "suggestive", "tested_null"] },
+        "replicated": { "type": "boolean" },
+        "fine_mapped": { "type": "boolean" },
+        "source_id": { "type": "string" },
+        "via_phenotype_id": { "type": ["string", "null"], "description": "set when tier=T2: the phenotype this evidence was actually measured in" }
+      }
+    },
+    "gene": {
+      "type": "object",
+      "required": ["ensembl_gene_id", "symbol", "biotype"],
+      "properties": {
+        "ensembl_gene_id": { "type": "string", "pattern": "^ENSG[0-9]+$" },
+        "symbol": { "type": "string" },
+        "biotype": { "type": "string" },
+        "chrom": { "type": "string" },
+        "start": { "type": "integer" },
+        "end": { "type": "integer" },
+        "assembly": { "type": "string", "const": "GRCh38" }
+      }
+    },
+    "locus": {
+      "type": "object",
+      "required": ["locus_id", "chrom", "start", "end", "lead_variant", "definition_method"],
+      "properties": {
+        "locus_id": { "type": "string" },
+        "chrom": { "type": "string" },
+        "start": { "type": "integer" },
+        "end": { "type": "integer" },
+        "lead_variant": { "type": "string" },
+        "definition_method": { "enum": ["open_targets_credible_set", "distance_window_50kb"] }
+      }
+    },
+    "locus_gene": {
+      "type": "object",
+      "required": ["locus_id", "ensembl_gene_id", "assignment_method"],
+      "properties": {
+        "locus_id": { "type": "string" },
+        "ensembl_gene_id": { "type": "string" },
+        "l2g_score": { "type": ["number", "null"] },
+        "nearest_gene": { "type": "boolean" },
+        "assignment_method": { "enum": ["open_targets_l2g", "distance_window", "coloc"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["source_id", "name", "licence", "retrieved_at"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "name": { "type": "string" },
+        "release": { "type": ["string", "null"] },
+        "url": { "type": ["string", "null"] },
+        "licence": { "type": "string" },
+        "retrieved_at": { "type": "string", "format": "date" }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "required": ["publication_id", "title", "year"],
+      "properties": {
+        "publication_id": { "type": "string", "description": "PMID or DOI" },
+        "title": { "type": "string" },
+        "year": { "type": "integer" },
+        "journal": { "type": ["string", "null"] },
+        "preprint": { "type": "boolean" }
+      }
+    }
+  }
+}

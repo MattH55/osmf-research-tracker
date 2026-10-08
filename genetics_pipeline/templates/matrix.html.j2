@@ -1,0 +1,59 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">Cross-phenotype</div>
+  <h1>Evidence Matrix</h1>
+  <p>Distinguishes "not tested" from "tested and null" — the main thing this explorer adds over existing portals.</p>
+</section>
+
+<section class="gce-section">
+  <div class="gce-matrix-controls">
+    <label>Level:
+      <select id="gce-matrix-level">
+        <option value="locus" {% if level == 'locus' %}selected{% endif %}>Locus</option>
+        <option value="gene" {% if level == 'gene' %}selected{% endif %}>Gene</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="gce-matrix-wrap">
+    <table class="gce-matrix">
+      <thead>
+        <tr><th></th>{% for c in matrix.columns %}<th>{{ column_labels[c] }}</th>{% endfor %}</tr>
+      </thead>
+      <tbody>
+        {% for row in matrix.rows %}
+        <tr>
+          <th>{{ row.label }}</th>
+          {% for c in matrix.columns %}
+          {% set cell = row.cells[c] %}
+          <td class="gce-cell gce-cell-{{ cell.state }}" title="{{ cell.state|replace('_',' ') }}">
+            {% if cell.state == 'significant' %}{{ cell.grade or '●' }}
+            {% elif cell.state == 'suggestive' %}◐
+            {% elif cell.state == 'tested_null' %}⊖
+            {% elif cell.state == 'conflicting' %}⚠
+            {% else %}?{% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <ul class="gce-matrix-legend">
+    <li><span class="gce-cell gce-cell-significant">A</span> Significant — filled, with grade letter</li>
+    <li><span class="gce-cell gce-cell-suggestive">◐</span> Suggestive (5×10⁻⁸ &gt; best p ≥ 1×10⁻⁵)</li>
+    <li><span class="gce-cell gce-cell-tested_null">⊖</span> Tested null — summary statistics cover this row, p &gt; 0.05</li>
+    <li><span class="gce-cell gce-cell-not_tested">?</span> Not tested — no summary statistics cover this row</li>
+    <li><span class="gce-cell gce-cell-conflicting">⚠</span> Conflicting — opposite effect direction across studies</li>
+  </ul>
+
+  <a class="gce-download" href="{{ root_prefix }}genetics/data/matrix-{{ level }}.json">Download matrix JSON</a>
+</section>
+<script>
+document.getElementById('gce-matrix-level').addEventListener('change', function (e) {
+  window.location.href = e.target.value === 'locus' ? 'matrix.html' : 'matrix-' + e.target.value + '.html';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+name: Validate Genetic Correlates Explorer
+
+# Schema + cross-reference validation for the Genetic Correlates Explorer data
+# model (data/genetics/*.csv), and confirms the committed static site
+# (genetics/) is in sync with the source tables.
+
+on:
+  pull_request:
+    paths:
+      - "data/genetics/**"
+      - "genetics_pipeline/**"
+      - "genetics/**"
+      - "scripts/validate_genetics.py"
+      - ".github/workflows/validate-genetics.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/genetics/**"
+      - "genetics_pipeline/**"
+      - "genetics/**"
+      - "scripts/validate_genetics.py"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pipeline dependencies
+        run: pip install -r requirements-genetics-pipeline.txt
+
+      - name: Validate schema + cross-references, rebuild site (no live network calls)
+        run: python scripts/validate_genetics.py
+
+      - name: Confirm committed site artifacts are in sync
+        run: |
+          if ! git diff --quiet -- genetics/; then
+            echo "::error::genetics/ is out of date. Run 'python -m genetics_pipeline.main --skip-live' and commit the result."
+            git --no-pager diff --stat -- genetics/
+            exit 1
+          fi

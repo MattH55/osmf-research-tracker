@@ -48,6 +48,11 @@ CLINICALTRIALS_API_V1 = "https://clinicaltrials.gov/api/query/study_fields"
 MAX_RESULTS = 200  # per query
 
 # Conditions of interest (used for mapping)
+# Lead sponsors whose trials are never listed (lower-cased for comparison).
+EXCLUDED_SPONSORS = {
+    "independent medical alliance",
+}
+
 CONDITION_KEYWORDS = {
     "PACVS": [
         "post-acute covid-19 vaccination syndrome", "pacvs",
@@ -370,6 +375,8 @@ def parse_study(study: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
         sponsor = sponsor_mod.get("leadSponsor", {}).get("name", "Unknown Sponsor")
         sponsor_type = sponsor_mod.get("leadSponsor", {}).get("class") or sponsor_mod.get("leadSponsor", {}).get("type", "Unknown")
+        if sponsor.strip().lower() in EXCLUDED_SPONSORS:
+            return None
 
         primary_purpose = design.get("primaryPurpose", "N/A")
 

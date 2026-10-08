@@ -1,0 +1,96 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">{{ phenotype.role|capitalize }} phenotype</div>
+  <h1>{{ phenotype.label }}</h1>
+</section>
+
+<section class="gce-section">
+  {% if phenotype.search_state == 'searched_none' %}
+  <div class="gce-banner gce-banner-none">
+    <strong>No direct GWAS evidence found as of {{ phenotype.last_searched }}.</strong>
+    <p>Queries: {{ phenotype.search_queries }}</p>
+    <p>Sources checked: {{ phenotype.search_sources }}</p>
+  </div>
+  {% elif phenotype.search_state == 'searched_underpowered' %}
+  <div class="gce-banner gce-banner-underpowered">
+    <strong>Studies exist but none reach genome-wide significance, as of {{ phenotype.last_searched }}.</strong>
+    <p>Queries: {{ phenotype.search_queries }}</p>
+    <p>Sources checked: {{ phenotype.search_sources }}</p>
+  </div>
+  {% endif %}
+
+  {% if associations %}
+  <h2>Associations</h2>
+  <p class="gce-tier-note">Showing T1 (direct) and T2 (related-phenotype) evidence by default. T3 (mechanistic/functional) is opt-in.</p>
+  <div class="gce-table-wrap">
+    <table class="gce-table" id="gce-assoc-table">
+      <thead>
+        <tr><th>Grade</th><th>Tier</th><th>Trait</th><th>Variant</th><th>Gene</th><th>Effect</th><th>P</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        {% for a in associations %}
+        <tr class="gce-tier-row gce-tier-{{ a.tier }}">
+          <td><span class="gce-grade gce-grade-{{ a.grade or 'none' }}">{{ a.grade or '—' }}</span></td>
+          <td>{{ a.tier }}{% if a.via_phenotype_id %} <span class="gce-via">via {{ a.via_phenotype_id }}</span>{% endif %}</td>
+          <td>{{ a.trait_label }}</td>
+          <td><a href="{{ genetics_prefix }}variant/{{ a.variant_id }}.html">{{ a.rsid or a.variant_id }}</a></td>
+          <td>{% for g in a.genes %}<a href="{{ genetics_prefix }}gene/{{ g.ensembl_gene_id }}.html">{{ g.symbol }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</td>
+          <td>{{ a.effect_measure|upper if a.effect_measure else '' }}={{ a.beta_or_or }}{% if a.ci_lower %} (95% CI {{ a.ci_lower }}–{{ a.ci_upper }}){% endif %}</td>
+          <td>{{ '%.2g'|format(a.p_value) if a.p_value else '' }}</td>
+          <td>{{ a.source_id }}</td>
+        </tr>
+        {% if a.tier == 'T2' %}
+        <tr class="gce-t2-note-row"><td></td><td colspan="7" class="gce-t2-note">This finding comes from {{ a.via_phenotype_id }}, not from {{ phenotype.label }} cases.</td></tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a class="gce-download" href="{{ root_prefix }}data/genetics/associations.csv">Download associations CSV</a>
+
+  <h2>Studies</h2>
+  <div class="gce-table-wrap">
+    <table class="gce-table">
+      <thead><tr><th>Study</th><th>Case N</th><th>Control N</th><th>Ancestry</th><th>Case definition</th><th>Licence</th></tr></thead>
+      <tbody>
+        {% for s in studies %}
+        <tr><td>{{ s.study_id }} ({{ s.publication_id }})</td><td>{{ s.case_n }}</td><td>{{ s.control_n }}</td><td>{{ s.ancestry }}</td><td>{{ s.case_definition }}</td><td>{{ s.licence }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% if relationships %}
+  <h2>Related phenotypes</h2>
+  <p class="gce-tier-note">Why evidence from these phenotypes is surfaced here:</p>
+  <ul class="gce-relationship-list">
+    {% for r in relationships %}
+    <li><strong>{{ r.to_label }}</strong> ({{ r.relationship_type|replace('_',' ') }}){% if r.to_state == 'not_searched' %} <span class="gce-gap-tag">gap — not yet searched</span>{% endif %}<br>{{ r.rationale }}{% if r.citation_id %} <span class="gce-cite">[{{ r.citation_id }}]</span>{% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if is_pacvs %}
+  <h2>Evidence map</h2>
+  <p class="gce-tier-note">PACVS → related phenotypes → shared loci → genes. Gap nodes mark related phenotypes with no data yet.</p>
+  <div id="gce-evidence-map" class="gce-evidence-map"></div>
+  <script>window.__gceEvidenceMap = {{ evidence_map_json|safe }};</script>
+  <script src="{{ root_prefix }}js/genetics-explorer.js" defer></script>
+
+  <h2>What would close this gap</h2>
+  <ul class="gce-gap-panel">
+    <li>A GWAS or candidate-gene study using a PACVS-specific case definition (none exists as of {{ phenotype.last_searched }}).</li>
+    <li>HLA typing in PACVS cohorts, given HLA associations already reported for vaccine reactogenicity and myocarditis.</li>
+    <li>Targeted lookups of the Long COVID FOXP4 locus and other T2 loci in any future PACVS cohort with genotype data.</li>
+  </ul>
+
+  <h2>Case-definition compatibility</h2>
+  <p>No source study in this build used a PACVS-specific case definition. T2 evidence is annotated with the
+    originating study's own case definition (see the Studies table above) so a reader can judge compatibility
+    with whichever PACVS definition they are working from — this build does not pick one as reference
+    (see the build's <a href="{{ root_prefix }}data/genetics/manifest.json">open questions</a>).</p>
+  {% endif %}
+</section>
+{% endblock %}

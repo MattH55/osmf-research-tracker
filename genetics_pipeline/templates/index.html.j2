@@ -1,0 +1,42 @@
+{% extends "base.html.j2" %}
+{% block content %}
+<section class="page-hero gce-hero">
+  <div class="hero-eyebrow">Open Source Medicine Foundation</div>
+  <h1>Genetic Correlates <span>Explorer</span></h1>
+  <p>What genetic evidence exists for PACVS and adjacent post-acute phenotypes, how strong it is, and where it
+    is missing. Built on open GWAS and functional-genomics data — no new association studies are run here.</p>
+</section>
+
+<section class="gce-section">
+  <input class="gce-search" type="search" id="gce-search" placeholder="Search phenotype, rsID, or gene (e.g. FOXP4, rs9367106, ME/CFS)…" autocomplete="off">
+
+  <div class="gce-phenotype-grid">
+    {% for p in phenotypes %}
+    <a class="gce-phenotype-card gce-state-{{ p.search_state }}" href="phenotype/{{ p.phenotype_id }}.html" data-search="{{ p.label|lower }} {{ p.phenotype_id }}">
+      <div class="gce-card-top">
+        <span class="gce-role-badge gce-role-{{ p.role }}">{{ p.role }}</span>
+        <span class="gce-state-badge">{{ p.search_state|replace('_', ' ') }}</span>
+      </div>
+      <h3>{{ p.label }}</h3>
+      {% if p.last_searched %}
+      <p class="gce-card-meta">Last searched {{ p.last_searched }}</p>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if pending_count %}
+  <p class="gce-pending-note">{{ pending_count }} additional MVP phenotypes are registered but not yet publicly
+    released (search_state: not_searched — see the <a href="{{ root_prefix }}data/genetics/manifest.json">build manifest</a>).</p>
+  {% endif %}
+</section>
+
+<script>
+document.getElementById('gce-search').addEventListener('input', function (e) {
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.gce-phenotype-card').forEach(function (card) {
+    card.style.display = !q || card.dataset.search.includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}

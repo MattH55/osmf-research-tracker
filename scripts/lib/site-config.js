@@ -12,9 +12,9 @@ const CANONICAL = {
 };
 
 const MIRROR = {
-  origin: 'https://vitalscan4pacvs.com',
+  origin: 'https://vitalscan4pacvs.study',
   publisherName: 'VitalScan4PACVS',
-  publisherUrl: 'https://vitalscan4pacvs.com/',
+  publisherUrl: 'https://vitalscan4pacvs.study/',
   siteName: 'VitalScan4PACVS',
 };
 

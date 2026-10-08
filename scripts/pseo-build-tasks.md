@@ -297,7 +297,7 @@ before this is considered done.
   distance ≤ 3) across all ~135 files as part of Ticket 0 and list any new ones found.
 - `data/vocab/instruments.yaml` and `data/vocab/osmf-ext.yaml` are empty (`[]`) — this looks like
   dead scaffolding, not a bug to fix as part of this project; leave alone.
-- `scripts/apply-site-seo.js` targets a **different domain** (`vitalscan4pacvs.com`) and a fixed
+- `scripts/apply-site-seo.js` targets a **different domain** (`vitalscan4pacvs.study`) and a fixed
   list of 5 unrelated files — do not touch it as part of pSEO work, it's not part of this pipeline.
 - `scripts/build_site_seo.py`'s JSON-LD/meta backfill only fires "if absent" and has **no
   thin-content gating today** — every ticket above that touches sitemap eligibility must do its own
