@@ -109,6 +109,29 @@ CANONICAL_TWINS = {
 }
 
 
+NOTE_START, NOTE_END = "<!-- OSMF_NOTE_LINK_START -->", "<!-- OSMF_NOTE_LINK_END -->"
+MAIN_NOTES = ROOT.parent / "research-notes"
+MAIN_SITE = "https://opensourcemed.info"
+
+
+def load_note_map() -> dict[str, tuple[str, str]] | None:
+    """tracker slug -> (note URL, note question) from the main-site checkout."""
+    if not MAIN_NOTES.is_dir():
+        return None
+    out: dict[str, tuple[str, str]] = {}
+    for note in sorted(MAIN_NOTES.glob("*.html")):
+        markup = note.read_text(encoding="utf-8", errors="replace")
+        m = re.search(r'href="https://research\.opensourcemed\.info/chronic-disease-interventions/([^"/]+)\.html"', markup)
+        t = re.search(r"<title>(.*?)</title>", markup, re.S)
+        if m and t:
+            question = html.unescape(t.group(1)).split(" | ")[0].strip()
+            out.setdefault(m.group(1), (f"{MAIN_SITE}/research-notes/{note.name}", question))
+    return out
+
+
+NOTE_MAP = load_note_map()
+
+
 def esc(s: str) -> str:
     return html.escape(s, quote=True)
 
@@ -126,20 +149,57 @@ def counts(markup: str) -> tuple[int, int, int]:
     return genes, agents, trials
 
 
-def build_title(name: str) -> str:
+def build_title(name: str, agents: int = 0, trials: int = 0) -> str:
+    """Patient-intent first ("<disease> drugs", "new drugs for <disease>"),
+    with the candidate count up front because numbers lift CTR.  Search
+    Console (Oct 2026) showed these pages at positions 4-9 with zero clicks
+    under the researcher-jargon "Drug Targets" titles."""
     short = SHORT_NAMES.get(name, name)
-    for pattern in (
+    patterns = []
+    if agents:
+        patterns += [
+            f"{short}: {agents} Approved & Investigational Drugs",
+            f"{short}: {agents} Approved & Trial Drugs",
+            f"{short}: {agents} Drug Candidates",
+        ]
+    if trials:
+        patterns += [f"{short} Drugs & {trials} Clinical Trials"]
+    for pattern in patterns + [
         f"{short}: Drug Targets, Repurposed Drugs & Trials | OSMF",
         f"{short}: Drug Targets, Repurposed Drugs & Trials",
         f"{short}: Drug Targets & Repurposed Drugs",
         f"{short} Drug Targets & Trials",
-    ):
+    ]:
         if len(pattern) <= MAX_TITLE:
             return pattern
     return f"{short} Drug Targets"[:MAX_TITLE]
 
 
 def build_desc(name: str, genes: int, agents: int, trials: int) -> str:
+    """Question-led snippet that mirrors the searcher's question, then the
+    concrete counts.  Longest variant that fits MAX_DESC wins."""
+    stamp = f"{date.today():%B %Y}"
+    short = SHORT_NAMES.get(name, name)
+    facts = []
+    if agents:
+        facts.append(f"{agents} candidates ranked by evidence")
+    if trials:
+        facts.append(f"{trials} clinical trials")
+    if genes:
+        facts.append(f"{genes} drug targets")
+    if facts:
+        for who in (name, short):
+            for n_facts in range(len(facts), 0, -1):
+                f = facts[:n_facts]
+                joined = ", ".join(f[:-1]) + (" and " if len(f) > 1 else "") + f[-1]
+                for tail in (f", each with sources. Updated {stamp}.", ", each with sources.", "."):
+                    desc = f"Which drugs are approved or being tested for {who}? {joined[0].upper() + joined[1:]}{tail}"
+                    if len(desc) <= MAX_DESC:
+                        return desc
+    return build_desc_legacy(name, genes, agents, trials)
+
+
+def build_desc_legacy(name: str, genes: int, agents: int, trials: int) -> str:
     parts = []
     if genes:
         parts.append(f"{genes} druggable gene targets")
@@ -210,7 +270,7 @@ def process(page: Path, dry: bool) -> list[str]:
         if len(desc) > MAX_DESC:
             desc = f"Gene targets, repurposed drugs and trials for {short} are being compiled. Check back soon."
     else:
-        title = build_title(name)
+        title = build_title(name, agents, trials)
         desc = build_desc(name, genes, agents, trials)
     # one robots tag only: flip the generator's own tag rather than adding a
     # second, conflicting one
@@ -255,6 +315,27 @@ def process(page: Path, dry: bool) -> list[str]:
     if n:
         markup = re.sub(r'<h3 style="font-size:1rem">(.*?)</h3>', r'<p class="agent-name" style="font-size:1rem;font-weight:600;margin:0">\1</p>', markup, flags=re.S)
         notes.append(f"{n} agent h3->p")
+
+    # Link back to the plain-language research note on the main site that
+    # answers the same question, so the two hosts reinforce rather than
+    # cannibalise each other.  Only rebuilt when the main-site checkout is
+    # present (it is not in CI); otherwise the existing block is kept.
+    if NOTE_MAP is not None:
+        note = NOTE_MAP.get(page.stem)
+        block = ""
+        if note and not empty:
+            url, question = note
+            block = (f'{NOTE_START}<p class="note-link" style="margin:.75rem 0 0;font-size:.95rem">'
+                     f'Plain-language summary: <a href="{esc(url)}">{esc(question)}</a></p>{NOTE_END}')
+        if NOTE_START in markup:
+            new_markup = re.sub(re.escape(NOTE_START) + r".*?" + re.escape(NOTE_END), lambda _m: block, markup, count=1, flags=re.S)
+        elif block:
+            new_markup = re.sub(r'(<p class="lede">.*?</p>)', lambda m: m.group(1) + block, markup, count=1, flags=re.S)
+        else:
+            new_markup = markup
+        if new_markup != markup:
+            markup = new_markup
+            notes.append("note link")
 
     twin = CANONICAL_TWINS.get(page.name)
     if twin:

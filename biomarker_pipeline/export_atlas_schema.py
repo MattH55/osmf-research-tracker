@@ -178,11 +178,12 @@ def build_atlas(slug: str, disease_name: str) -> tuple[dict, list[str]]:
             "alternateNames": [],
         },
         "page": {
-            "title": f"{disease_name} Biomarker Atlas | Blood Tests & Molecular Alterations",
+            # search-intent wording; scripts/seo_atlas_titles.py adds the marker count
+            "title": f"{disease_name} Biomarkers: Blood Tests & Lab Markers",
             "breadcrumbName": f"{disease_name} Biomarkers",
             "description": (
-                f"Searchable atlas of {disease_name} biomarkers, from peer-reviewed literature "
-                f"comparing patient levels vs. healthy controls."
+                f"Which blood tests and biomarkers change in {disease_name}? Markers from "
+                f"peer-reviewed studies with direction, comparison group and source for each."
             ),
             "keywords": [f"{disease_name} biomarkers", f"{disease_name} blood tests", "biomarker atlas", "biomarker database"],
             "canonical": f"https://research.opensourcemed.info/{slug}-biomarkers.html",
