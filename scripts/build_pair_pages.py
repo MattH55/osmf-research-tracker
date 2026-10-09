@@ -85,76 +85,86 @@ LIT_HUMAN = {
 # Shared chrome
 # ---------------------------------------------------------------------------
 CSS = """
-:root{--primary:#0068f8;--primary-dark:#0052c7;--secondary:#ff9800;--text-dark:#1f2937;--text-mid:#4b5563;--text-light:#6b7280;--bg-light:#f8fafc;--bg-white:#fff;--border:#e5e7eb;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+/* Template B. Built on css/osmf-ui.css (loaded last by scripts/apply_osmf_ui.py);
+   fallbacks keep the page readable without it. */
+:root{--pp-wrap:1200px;--pp-gutter:clamp(16px,3.2vw,32px);--text-dark:var(--ui-ink,#0e1444);--text-mid:var(--ui-text,#3d4466);--text-light:var(--ui-muted,#6b7194);--border:var(--ui-line,#e6e8f2);--bg-light:var(--ui-bg-soft,#f7f8fc)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.6;color:var(--text-dark);background:var(--bg-white)}
-a{color:var(--primary)}
-.nav-minimal{background:var(--primary);padding:.75rem 0;position:sticky;top:0;z-index:100}
-.nav-container{max-width:1100px;margin:0 auto;padding:0 1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-.nav-brand{color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;white-space:nowrap}
-.nav-brand span{opacity:.8;font-weight:400;font-size:.8rem;margin-left:.4rem}
-.nav-links{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
-.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.85rem;font-weight:500}
-.nav-links a:hover,.nav-links a.active{color:#fff}
-.hero{background:linear-gradient(135deg,#0068f8 0%,#0052c7 100%);color:#fff;padding:2.5rem 1rem 2.75rem}
-.hero-inner{max-width:1100px;margin:0 auto}
-.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);font-size:.72rem;font-weight:600;padding:.25rem .8rem;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.9rem}
-.hero h1{font-size:clamp(1.5rem,3.5vw,2.25rem);font-weight:700;line-height:1.25;letter-spacing:-.01em;margin-bottom:.6rem}
-.hero p{font-size:1rem;color:rgba(255,255,255,.88);max-width:760px}
-.hero-meta{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;margin-top:1rem;font-size:.85rem;color:rgba(255,255,255,.8)}
-.hero-meta strong{color:#fff}
-.crumbs{max-width:1100px;margin:0 auto;padding:.6rem 1rem;font-size:.8rem;color:var(--text-light)}
-.crumbs a{color:var(--text-mid);text-decoration:none}.crumbs a:hover{text-decoration:underline}
-main{max-width:1100px;margin:0 auto;padding:1.5rem 1rem 3rem}
-section.block{margin:1.75rem 0}
-h2{font-size:1.3rem;margin-bottom:.6rem;letter-spacing:-.01em}
-h3{font-size:1.05rem;margin:.9rem 0 .35rem}
-p{margin:.5rem 0}
-.lede{font-size:1.02rem;color:var(--text-mid)}
-.warn{background:#fffbeb;border:1px solid #fde68a;border-left:4px solid var(--warning);border-radius:8px;padding:.8rem 1rem;font-size:.9rem;margin:1rem 0}
-.callout{background:var(--bg-light);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin:1rem 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;margin:.75rem 0}
-.stat{background:var(--bg-light);border:1px solid var(--border);border-radius:10px;padding:.75rem .9rem}
-.stat .v{font-size:1.45rem;font-weight:700;color:var(--primary-dark);line-height:1.2}
-.stat .l{font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.04em}
-.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
-table{width:100%;border-collapse:collapse;font-size:.88rem}
-th,td{padding:.55rem .7rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}
-th{background:var(--bg-light);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-mid)}
-tr:last-child td{border-bottom:none}
-.tag{display:inline-block;font-size:.7rem;font-weight:600;padding:.12rem .5rem;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--text-mid);white-space:nowrap}
-.tag.rec{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
-.tag.act{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
-.tag.done{background:#f8fafc;color:#334155}
-.tag.off{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
-.tag.tier-A{background:#dcfce7;color:#166534;border-color:#86efac}
-.tag.tier-B{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
-.tag.tier-C{background:#fef3c7;color:#92400e;border-color:#fcd34d}
-.tag.tier-D{background:#f3f4f6;color:#4b5563}
-ul.refs{list-style:none;padding:0}
-ul.refs li{padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.9rem}
-ul.refs li:last-child{border-bottom:none}
-.muted{color:var(--text-light);font-size:.82rem}
-details.faq{border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;margin:.5rem 0;background:#fff}
-details.faq summary{font-weight:600;cursor:pointer}
-details.faq p{margin:.5rem 0 .2rem;color:var(--text-mid)}
-.cite{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;background:#f1f5f9;border:1px solid var(--border);border-radius:8px;padding:.75rem .9rem;word-break:break-word}
-.btn{display:inline-block;background:var(--secondary);color:#fff;text-decoration:none;font-weight:600;padding:.5rem .95rem;border-radius:6px;font-size:.88rem}
-.btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--primary)}
-.links{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
-.score-parts{font-size:.85rem;color:var(--text-mid)}
-.score-parts li{margin:.2rem 0 .2rem 1.1rem}
-footer.site{background:#111827;color:#9ca3af;padding:2rem 1rem;font-size:.85rem;margin-top:2rem}
-footer.site .inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between}
-footer.site a{color:#d1d5db;text-decoration:none;margin-right:1rem}
-footer.site a:hover{color:#fff}
-.card-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
-.card{border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;background:#fff;text-decoration:none;color:inherit;display:block}
-.card:hover{border-color:var(--primary)}
-.card h3{margin:0 0 .3rem;font-size:1rem;color:var(--primary-dark)}
-.search{width:100%;padding:.6rem .8rem;border:1px solid var(--border);border-radius:8px;font:inherit;margin:.75rem 0}
-@media (max-width:640px){.hero{padding:1.8rem 1rem 2rem}.nav-links{gap:.7rem}.nav-links a{font-size:.8rem}}
+body{font-family:var(--ui-font,'Inter',-apple-system,BlinkMacSystemFont,sans-serif);line-height:1.6;color:var(--text-mid);background:#fff}
+a{color:var(--ui-link,#2f45c4)}
+.hero-inner,.crumbs-inner{max-width:var(--pp-wrap);margin:0 auto;padding:0 var(--pp-gutter)}
+.hero{padding:56px 0 52px}
+.hero-badge{margin-bottom:18px}
+.hero h1{font-size:clamp(30px,4.6vw,52px);margin:0 0 14px;max-width:24ch;overflow-wrap:anywhere}
+.hero p{font-size:clamp(15.5px,1.6vw,18px);line-height:1.65;max-width:68ch}
+.hero-meta{display:flex;flex-wrap:wrap;gap:18px 44px;margin-top:30px;padding-top:24px;border-top:1px solid rgba(255,255,255,.12)}
+.hero-meta .pp-stat{display:grid;gap:6px}
+.hero-meta .pp-stat b{font-family:var(--ui-display,Georgia,serif);font-weight:500;font-size:clamp(26px,3vw,36px);letter-spacing:-.02em;line-height:1;color:#fff}
+.hero-meta .pp-stat span{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(214,219,245,.75)}
+.crumbs{padding:14px 0;border-bottom:1px solid var(--border);background:#fff}
+.crumbs-inner{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.crumbs .sep{color:var(--ui-faint,#9aa0bd)}
+.crumbs .here{color:var(--ui-ink-2,#2a3160);font-weight:500}
+main{max-width:var(--pp-wrap);margin:0 auto;padding:44px var(--pp-gutter) 8px}
+section.block{margin:0 0 56px}
+section.block > p{max-width:76ch}
+h2{font-size:22px;font-weight:700;color:var(--text-dark);letter-spacing:-.015em;margin-bottom:14px}
+h3{font-size:16px;color:var(--text-dark);margin:14px 0 6px}
+p{margin:0 0 12px}
+.lede{font-size:17px;line-height:1.7;color:var(--ui-ink-2,#2a3160)}
+main > .warn{margin:0 0 40px}
+main > .warn:last-child{margin:8px 0 0}
+.callout{background:var(--bg-light);border:1px solid var(--border);border-radius:var(--ui-radius,14px);padding:16px 18px;margin:16px 0}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);background:#fff;margin:0 0 12px}
+.table-wrap table{width:100%;border-collapse:collapse;font-size:14px}
+.table-wrap thead th{background:var(--bg-light);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.table-wrap td,.table-wrap tbody th{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border);color:var(--ui-ink-2,#2a3160);line-height:1.55}
+.table-wrap tbody th[scope=row]{width:30%;min-width:150px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);background:var(--bg-light);border-right:1px solid var(--border)}
+.table-wrap tr:last-child td,.table-wrap tr:last-child th{border-bottom:0}
+.table-wrap table.pp-trials{min-width:720px}
+.pp-trials td:first-child{white-space:nowrap;font-family:var(--ui-mono,ui-monospace,monospace);font-size:13px;font-weight:600}
+.pp-trials td:nth-child(3),.pp-trials td:nth-child(4){white-space:nowrap}
+.pp-trials td:nth-child(5),.pp-trials th:nth-child(5){text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tag{display:inline-flex;align-items:center;font-size:12px;font-weight:650;padding:3px 10px;border-radius:999px;border:1px solid var(--border);background:var(--bg-light);color:var(--ui-ink-2,#2a3160);white-space:nowrap;line-height:1.4}
+.tag.rec{background:var(--ui-ok-bg,#e7f7f0);color:var(--ui-ok,#047857);border-color:#bfe9d6}
+.tag.act{background:var(--ui-down-bg,#eaf0ff);color:var(--ui-down,#1d4ed8);border-color:#cfdcff}
+.tag.done{background:var(--bg-light);color:var(--ui-ink-2,#2a3160)}
+.tag.off{background:var(--ui-up-bg,#fff1e8);color:var(--ui-up,#c2410c);border-color:#ffd9c2}
+.tag.tier-A{background:var(--ui-ok-bg,#e7f7f0);color:var(--ui-ok,#047857);border-color:#bfe9d6}
+.tag.tier-B{background:var(--ui-down-bg,#eaf0ff);color:var(--ui-down,#1d4ed8);border-color:#cfdcff}
+.tag.tier-C{background:var(--ui-warn-bg,#fff7df);color:var(--ui-warn,#a16207);border-color:#f5e0a3}
+.tag.tier-D{background:var(--bg-light);color:var(--text-light)}
+ul.refs{list-style:none;padding:0;margin:0 0 12px;background:#fff;border:1px solid var(--border);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1)}
+ul.refs li{padding:14px 18px;border-top:1px solid var(--border);font-size:14.5px;line-height:1.55;color:var(--ui-ink-2,#2a3160);overflow-wrap:anywhere}
+ul.refs li:first-child{border-top:0}
+ul.refs li .tag{margin-right:6px;font-size:11px;padding:2px 8px;vertical-align:1px}
+ul.refs li .muted{margin-top:4px}
+.muted{color:var(--text-light);font-size:13px}
+details.faq{border:1px solid var(--border);border-radius:12px;background:#fff;margin:10px 0;padding:0 18px;box-shadow:var(--ui-shadow-1);max-width:880px}
+details.faq summary{cursor:pointer;padding:15px 0;font-weight:600;color:var(--text-dark);list-style:none;display:flex;align-items:center;gap:12px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::before{content:"";width:8px;height:8px;flex:none;border-right:2px solid var(--ui-accent-2,#f2711c);border-bottom:2px solid var(--ui-accent-2,#f2711c);transform:rotate(-45deg);transition:transform .2s}
+details.faq[open] summary::before{transform:rotate(45deg)}
+details.faq p{margin:0 0 16px;color:var(--text-mid);line-height:1.7}
+details.faq .score-parts{margin:0 0 16px;padding-left:20px}
+.cite{font-family:var(--ui-mono,ui-monospace,monospace);font-size:13px;line-height:1.65;background:var(--bg-light);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow-wrap:anywhere;color:var(--ui-ink-2,#2a3160);margin:0 0 12px;max-width:880px}
+.btn{display:inline-flex;align-items:center;background:linear-gradient(180deg,#ffa31a,var(--ui-accent-2,#f2711c));color:#fff;text-decoration:none;font-weight:650;padding:9px 16px;border-radius:999px;font-size:14px;box-shadow:0 6px 16px rgba(242,113,28,.25);border:0}
+.btn:hover{box-shadow:0 10px 22px rgba(242,113,28,.32)}
+.btn.ghost{background:#fff;color:var(--ui-ink,#0e1444);border:1px solid var(--ui-line-2,#d5d9ea);box-shadow:none;font-weight:600}
+.btn.ghost:hover{background:var(--bg-light);border-color:#c4c9e0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 0}
+main > .links{margin:0 0 8px}
+main > .links + section.block{margin-top:44px}
+.score-parts{font-size:14px;color:var(--text-mid)}
+.score-parts li{margin:6px 0;line-height:1.6}
+.card-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:0 0 14px}
+.card{border:1px solid var(--border);border-radius:var(--ui-radius,14px);padding:18px 20px;background:#fff;text-decoration:none;color:inherit;display:block;box-shadow:var(--ui-shadow-1);transition:transform .2s,box-shadow .2s,border-color .2s;min-width:0}
+.card:hover{transform:translateY(-2px);box-shadow:var(--ui-shadow-2);border-color:var(--ui-line-2,#d5d9ea)}
+.card h3{margin:0 0 6px;font-size:16px;font-weight:650;color:var(--text-dark);letter-spacing:-.01em;overflow-wrap:anywhere}
+.card .muted{line-height:1.55}
+.search{width:100%;max-width:520px;font:inherit;font-size:15px;color:var(--text-dark);border:1px solid var(--ui-line-2,#d5d9ea);border-radius:12px;padding:11px 14px 11px 40px;min-height:46px;margin:28px 0 22px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7194' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 14px center;display:block}
+.search:focus{outline:none;border-color:#8090ea;box-shadow:0 0 0 4px rgba(47,69,196,.12)}
+@media (max-width:640px){.hero{padding:40px 0 38px}.hero-meta{gap:16px 28px}section.block{margin-bottom:44px}.table-wrap tbody th[scope=row]{min-width:120px}}
 """
 
 
@@ -193,34 +203,6 @@ def head(title: str, description: str, canonical: str, jsonld: list, noindex: bo
 <style>{CSS}</style>
 {ld}
 </head>"""
-
-
-def nav(active: str = "") -> str:
-    def a(href, label, key):
-        cls = ' class="active"' if key == active else ""
-        return f'<a href="{href}"{cls}>{label}</a>'
-    return f"""<nav class="nav-minimal" aria-label="Main navigation">
-<div class="nav-container">
-<a href="/index.html" class="nav-brand">Open Source Medicine <span>Research Tracker</span></a>
-<div class="nav-links">
-{a('/index.html', 'Conditions', 'index')}
-{a('/biomarker-atlas.html', 'Biomarkers', 'biomarkers')}
-{a('/clinical_trials.html', 'Trials', 'trials')}
-{a('/agents.html', 'Agents', 'agents')}
-{a('/tools/repurposing-explorer.html', 'Repurposing Explorer', 'explorer')}
-<a href="https://opensourcemed.info" rel="noopener">opensourcemed.info</a>
-</div>
-</div>
-</nav>"""
-
-
-def footer() -> str:
-    return f"""<footer class="site">
-<div class="inner">
-<div><strong style="color:#fff">Open Source Medicine Foundation</strong><br>Research map, not treatment advice. Content CC BY 4.0. Data from ClinicalTrials.gov, PubMed, Open Targets, ChEMBL and DGIdb.</div>
-<div><a href="/index.html">Research Tracker</a><a href="/tools/repurposing-explorer.html">Repurposing Explorer</a><a href="/pairs/">All pairs</a><a href="/agents/">Agent pages</a><a href="https://opensourcemed.info" rel="noopener">opensourcemed.info</a><a href="{SUBSTACK}" rel="noopener">Substack</a></div>
-</div>
-</footer>"""
 
 
 # ---------------------------------------------------------------------------
@@ -434,7 +416,7 @@ def build_pair_page(rec: dict, cond: dict, siblings: list) -> str:
                 f'<td>{esc(t["title"]) or "<span class=muted>Untitled</span>"}' + (f'<div class="muted">{meta}</div>' if meta else "") + "</td>"
                 f'<td><span class="tag {grp}">{esc(STATUS_HUMAN.get(t["status"], t["status"].lower()))}</span></td>'
                 f'<td>{esc(PHASE_HUMAN.get(t["phase"], t["phase"]))}</td><td>{enrol}</td></tr>')
-        trials_html = f"""<div class="table-wrap"><table>
+        trials_html = f"""<div class="table-wrap"><table class="pp-trials">
 <thead><tr><th>NCT ID</th><th>Title</th><th>Status</th><th>Phase</th><th>Enrolment</th></tr></thead>
 <tbody>{''.join(trows)}</tbody></table></div>"""
     else:
@@ -523,24 +505,23 @@ def build_pair_page(rec: dict, cond: dict, siblings: list) -> str:
 
     body = f"""
 <body>
-{nav('explorer')}
+<nav class="crumbs osmf-crumbs" aria-label="Breadcrumb"><div class="crumbs-inner"><a href="/index.html">Research Tracker</a><span class="sep" aria-hidden="true">›</span><a href="/pairs/">Pairs</a><span class="sep" aria-hidden="true">›</span><a href="/pairs/{esc(rec['disease_slug'])}/">{esc(disease)}</a><span class="sep" aria-hidden="true">›</span><span class="here" aria-current="page">{esc(agent)}</span></div></nav>
 <header class="hero">
 <div class="hero-inner">
 <div class="hero-badge">Disease × agent evidence record</div>
 <h1>{esc(agent)} for {esc(disease)}: evidence, trials and status</h1>
 <p>{esc(what_evidence_shows(rec))}</p>
 <div class="hero-meta">
-<span><strong>{tb['total']}</strong> registered trials</span>
-<span><strong>{tb['recruiting']}</strong> recruiting</span>
-<span><strong>{n_lit}</strong> publications</span>
-<span>Evidence tier <strong>{esc(rec['tier'])} · {esc(rec['tier_label'])}</strong></span>
-<span>Score <strong>{rec['score']}</strong></span>
+<div class="pp-stat"><b>{tb['total']}</b><span>registered trials</span></div>
+<div class="pp-stat"><b>{tb['recruiting']}</b><span>recruiting</span></div>
+<div class="pp-stat"><b>{n_lit}</b><span>publications</span></div>
+<div class="pp-stat"><b>{esc(rec['tier'])}</b><span>Evidence tier · {esc(rec['tier_label'])}</span></div>
+<div class="pp-stat"><b>{rec['score']}</b><span>Score</span></div>
 </div>
 </div>
 </header>
-<div class="crumbs"><a href="/index.html">Research Tracker</a> › <a href="/pairs/">Pairs</a> › <a href="/pairs/{esc(rec['disease_slug'])}/">{esc(disease)}</a> › {esc(agent)}</div>
 <main>
-<div class="warn"><strong>Research map, not treatment advice.</strong> This page aggregates registry and literature records. It does not evaluate efficacy, dosing or safety for any individual. Discuss any treatment decision with a qualified clinician.</div>
+<div class="warn osmf-callout"><strong>Research map, not treatment advice.</strong> This page aggregates registry and literature records. It does not evaluate efficacy, dosing or safety for any individual. Discuss any treatment decision with a qualified clinician.</div>
 
 <section class="block" id="summary">
 <h2>Summary</h2>
@@ -552,7 +533,7 @@ def build_pair_page(rec: dict, cond: dict, siblings: list) -> str:
 <section class="block" id="evidence">
 <h2>Evidence table</h2>
 <div class="table-wrap"><table><tbody>{ev_table}</tbody></table></div>
-<details class="faq" style="margin-top:.75rem"><summary>How the evidence score is calculated</summary><ul class="score-parts">{score_doc}</ul></details>
+<details class="faq" style="margin-top:14px"><summary>How the evidence score is calculated</summary><ul class="score-parts">{score_doc}</ul></details>
 </section>
 
 <section class="block" id="trials">
@@ -583,9 +564,8 @@ def build_pair_page(rec: dict, cond: dict, siblings: list) -> str:
 <p><a class="btn" href="{SUBSTACK}" rel="noopener">Get OSMF research updates on Substack</a></p>
 </section>
 
-<div class="warn">This is a research map, not treatment advice. Evidence tiers and scores summarise what has been studied, not whether a treatment works or is safe for you.</div>
+<div class="warn osmf-callout">This is a research map, not treatment advice. Evidence tiers and scores summarise what has been studied, not whether a treatment works or is safe for you.</div>
 </main>
-{footer()}
 </body>
 </html>"""
     return head(title, description, url, [crumbs, faq_ld, cond_ld, agent_ld, page_ld]), body
@@ -607,18 +587,16 @@ def build_disease_index(cond: dict, recs: list) -> str:
             "about": {"@type": "MedicalCondition", "name": cond["name"]}}
     return head(title, description, url, [crumbs, coll], og_type="website") + f"""
 <body>
-{nav('explorer')}
+<nav class="crumbs osmf-crumbs" aria-label="Breadcrumb"><div class="crumbs-inner"><a href="/index.html">Research Tracker</a><span class="sep" aria-hidden="true">›</span><a href="/pairs/">Pairs</a><span class="sep" aria-hidden="true">›</span><span class="here" aria-current="page">{esc(disease)}</span></div></nav>
 <header class="hero"><div class="hero-inner"><div class="hero-badge">Disease × agent pairs</div>
 <h1>{esc(disease)}: candidate agents with evidence</h1>
 <p>{len(recs)} agents linked to {esc(cond['name'])} by at least one registered trial or two publications, ranked by the OSMF evidence score. Not treatment advice.</p></div></header>
-<div class="crumbs"><a href="/index.html">Research Tracker</a> › <a href="/pairs/">Pairs</a> › {esc(disease)}</div>
 <main>
 <div class="links"><a class="btn" href="/tools/repurposing-explorer.html#c={esc(cond['slug'])}">Open {esc(disease)} in the Repurposing Explorer</a><a class="btn ghost" href="{esc(cond['url'])}">{esc(disease)} hub</a></div>
 <input class="search" type="search" placeholder="Filter agents…" oninput="var q=this.value.toLowerCase();document.querySelectorAll('.card').forEach(function(c){{c.style.display=c.textContent.toLowerCase().indexOf(q)>-1?'':'none'}})">
 <div class="card-list">{cards}</div>
-<p class="muted" style="margin-top:1.5rem">Research map, not treatment advice. Built {TODAY}.</p>
+<p class="muted" style="margin-top:28px">Research map, not treatment advice. Built {TODAY}.</p>
 </main>
-{footer()}
 </body></html>"""
 
 
@@ -643,18 +621,16 @@ def build_hub(conditions: dict, by_cond: dict, n_pages: int) -> str:
     coll = {"@context": "https://schema.org", "@type": "CollectionPage", "name": title, "url": url, "description": description}
     return head(title, description, url, [crumbs, coll], og_type="website") + f"""
 <body>
-{nav('explorer')}
+<nav class="crumbs osmf-crumbs" aria-label="Breadcrumb"><div class="crumbs-inner"><a href="/index.html">Research Tracker</a><span class="sep" aria-hidden="true">›</span><span class="here" aria-current="page">Pairs</span></div></nav>
 <header class="hero"><div class="hero-inner"><div class="hero-badge">Drug repurposing research map</div>
 <h1>Disease × agent evidence pages</h1>
 <p>{n_pages} pages, one per condition-agent pair with at least one registered trial or two publications, across {len(by_cond)} conditions. Each page lists trials with NCT links, literature with PubMed links, an evidence tier and a transparent score.</p></div></header>
-<div class="crumbs"><a href="/index.html">Research Tracker</a> › Pairs</div>
 <main>
-<div class="warn"><strong>Research map, not treatment advice.</strong> These pages summarise what has been studied, not what works.</div>
+<div class="warn osmf-callout"><strong>Research map, not treatment advice.</strong> These pages summarise what has been studied, not what works.</div>
 <div class="links"><a class="btn" href="/tools/repurposing-explorer.html">Open the interactive Repurposing Explorer</a><a class="btn ghost" href="/agents/">Agent hub pages</a></div>
 {''.join(sections)}
 <p class="muted">Built {TODAY}. Data from ClinicalTrials.gov, PubMed, Open Targets, ChEMBL, DGIdb and the OSMF therapeutic agent database.</p>
 </main>
-{footer()}
 </body></html>"""
 
 

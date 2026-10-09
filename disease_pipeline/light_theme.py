@@ -1,0 +1,429 @@
+"""Light editorial theme for the disease page families.
+
+Covers four templates that used to ship a full dark-mode body:
+  * chronic-disease-interventions/*.html  (biomarker_pipeline/generate_disease_pages.py)
+  * disease-intelligence/*.html           (disease_pipeline/output/generate_html.py)
+  * disease-intelligence/gene-therapy-mapper.html, right-to-try.html
+                                          (scripts/publish_med_freedom_static.py)
+  * ntd/*.html                            (tools/ntd-pipeline/render_html.py)
+
+``restyle_html()`` is the single source of truth. Generators pass their output
+through it before writing, and ``scripts/restyle_disease_pages.py`` applies it
+to pages already on disk (pages are post-processed by SEO scripts, so they are
+restyled in place rather than regenerated). It is idempotent.
+
+It only touches presentation: the template <style> block, inline colour styles
+(mapped to classes), breadcrumb/eyebrow/disclaimer class hooks, and the old
+<footer> colophon (moved inside <main> as a muted line). Text, links, IDs,
+JSON-LD and meta content are preserved. Markup that
+../tools/build_question_notes.py:parse_tracker() relies on is kept intact:
+``<div class="gene-card" id="gene-…">``, ``<p class="agent-name">…</p></div><p>meta</p>``,
+``<div class="trial-card">`` and the trial status ``<span style="background:…">``.
+"""
+from __future__ import annotations
+
+import re
+
+THEME_MARK = "/* osmf-light-theme v1 */"
+
+LIGHT_CSS = THEME_MARK + r"""
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--surface:#f7f8fc;--card:#fff;--border:#e6e8f2;--text:#2a3160;--muted:#6b7194;
+  --accent:#2f45c4;--accent2:#2f45c4;--green:#047857;--amber:#b45309;--red:#c2410c}
+html,body{overflow-x:clip}
+body{background:#fff;color:var(--ui-text,#3d4466);font-family:var(--ui-font,Inter,sans-serif);line-height:1.6;font-size:15px}
+a{color:var(--ui-link,#2f45c4);text-decoration:none}
+a:hover{color:var(--ui-link-hover,#1b2a8f);text-decoration:underline;text-underline-offset:3px}
+img,svg,video,iframe{max-width:100%}
+code{font-family:var(--ui-mono,monospace);font-size:.86em;background:var(--ui-bg-soft,#f7f8fc);border:1px solid var(--ui-line,#e6e8f2);border-radius:6px;padding:.08em .4em;color:var(--ui-ink-2,#2a3160);overflow-wrap:anywhere}
+strong{color:var(--ui-ink-2,#2a3160);font-weight:650}
+
+/* hero (background, grid, H1 face come from osmf-ui.css) */
+.page-hero{padding:64px var(--ui-gutter,24px) 56px;text-align:center;border:0}
+.page-hero h1{font-size:clamp(34px,5.2vw,58px);margin:18px auto 14px;max-width:20ch}
+.page-hero>p,.page-hero p.lede{max-width:760px;margin:0 auto;font-size:clamp(15.5px,1.6vw,17.5px);line-height:1.65}
+.page-hero p.lede strong{color:#fff}
+.page-hero .note-link{max-width:760px;margin:14px auto 0!important;font-size:14.5px!important;text-align:center}
+.page-hero .note-link a{color:#ffd08a;text-decoration:underline;text-decoration-color:rgba(255,208,138,.4);text-underline-offset:3px}
+.hero-eyebrow:not(.osmf-eyebrow){display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#ffcf8a}
+.hero-remission-strip,.hero-burden-strip{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:12px;max-width:1080px;margin:28px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,.12)}
+.hero-burden-strip+.hero-remission-strip{margin-top:14px;padding-top:0;border-top:0}
+.hero-rem-stat,.hero-burden-stat{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:14px 16px;text-align:left;flex:1 1 180px;min-width:160px;max-width:250px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.hero-burden-stat{text-align:center;max-width:250px;flex-basis:170px}
+.hero-rem-primary,.hero-burden-primary{background:rgba(255,255,255,.085);border-color:rgba(255,207,138,.32)}
+.hero-burden-alert{border-color:rgba(255,152,0,.5);background:rgba(255,152,0,.1)}
+.hero-rem-label,.hero-burden-label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ffcf8a;margin-bottom:6px}
+.hero-rem-value{display:block;font-size:13.5px;line-height:1.5;color:rgba(236,238,252,.94)}
+.hero-burden-value{display:block;font-family:var(--ui-display,Georgia,serif);font-weight:500;font-size:24px;line-height:1.15;letter-spacing:-.01em;color:#fff}
+.hero-burden-sub{display:block;font-size:11.5px;color:rgba(201,205,230,.75);margin-top:5px}
+.hero-rem-link{align-self:center;flex:0 0 auto;font-size:13.5px;font-weight:600;color:#ffd08a!important;white-space:nowrap;padding:8px 6px}
+
+/* layout */
+main{max-width:var(--ui-max,1200px);margin:0 auto;padding:28px var(--ui-gutter,24px) 24px}
+.breadcrumb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;position:static;background:none;border:0;margin:0 0 28px;padding:0;font-size:13px;color:var(--ui-muted,#6b7194)}
+.breadcrumb a{color:var(--ui-muted,#6b7194)}
+.breadcrumb>span{color:var(--ui-ink-2,#2a3160)}
+.breadcrumb>span.sep{color:var(--ui-faint,#9aa0bd)}
+section{scroll-margin-top:90px}
+.section-title{display:block;font-size:clamp(21px,2.3vw,26px);font-weight:700;letter-spacing:-.015em;color:var(--ui-ink,#0e1444);margin:56px 0 8px;line-height:1.25}
+.section-sub,.meta-line{color:var(--ui-muted,#6b7194);font-size:14.5px;line-height:1.65;max-width:78ch;margin:0 0 20px}
+.meta-line{font-size:13.5px;margin:10px 0 0}
+.section-divider{border:0;height:1px;background:var(--ui-line,#e6e8f2);margin:56px 0 0}
+.section-divider+.section-title{margin-top:40px}
+.muted{color:var(--ui-muted,#6b7194)}
+.no-data{color:var(--ui-muted,#6b7194);font-size:14px;padding:18px 0}
+.no-data.pending{font-style:italic}
+.colophon{margin:40px 0 0;padding-top:18px;border-top:1px solid var(--ui-line,#e6e8f2);font-size:12.5px;color:var(--ui-faint,#9aa0bd);line-height:1.6}
+.colophon p{margin:0 0 4px}
+.colophon a{color:var(--ui-muted,#6b7194)}
+.disclaimer,.legal-note{margin:40px 0 0;font-size:13.5px}
+.legal-note{margin:18px 0 0}
+.caveat{border-radius:12px;padding:12px 16px;border:1px solid #f5dcb0;background:var(--ui-bg-warm,#fffaf2);color:#6b4a12;font-size:14px;line-height:1.6;margin:0 0 24px}
+.related-links{font-size:14px;color:var(--ui-muted,#6b7194);margin:24px 0 0}
+
+/* cards */
+.overview-card,.gene-card,.explanation-card,.pi-block,.related{background:#fff;border:1px solid var(--ui-line,#e6e8f2);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);margin:0 0 24px}
+.overview-card,.explanation-card,.related{padding:26px 28px}
+.overview-card h2,.explanation-card h2{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ui-accent-ink,#b45309);margin:0 0 18px}
+.explanation-card p,.explanation-card li{font-size:15px;color:var(--ui-text,#3d4466);line-height:1.7;max-width:80ch}
+.explanation-card ul{margin:10px 0 0 20px}
+.explanation-card li{margin:0 0 6px}
+.explanation-card p+p{margin-top:10px}
+
+/* stat + remission tiles */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 24px}
+.stat-cell{background:#fff;border:1px solid var(--ui-line,#e6e8f2);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:16px 18px}
+.overview-card .stat-grid{margin-bottom:6px}
+.overview-card .stat-cell{background:var(--ui-bg-soft,#f7f8fc);border-color:transparent;box-shadow:none}
+.stat-cell .label,.rem-cell .label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ui-muted,#6b7194);line-height:1.35}
+.stat-cell .value{font-family:var(--ui-display,Georgia,serif);font-weight:500;font-size:32px;line-height:1.05;letter-spacing:-.02em;color:var(--ui-ink,#0e1444);margin-top:8px;font-variant-numeric:tabular-nums}
+.stat-cell .value[style]{font-family:var(--ui-font,Inter,sans-serif);font-weight:650;letter-spacing:-.005em;line-height:1.35}
+.stat-cell .sub{font-size:12px;color:var(--ui-muted,#6b7194);margin-top:6px;line-height:1.45}
+.remission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:0 0 6px}
+.rem-cell{background:var(--ui-bg-soft,#f7f8fc);border-radius:12px;padding:16px 18px}
+.rem-cell .value{font-size:14.5px;line-height:1.6;color:var(--ui-ink-2,#2a3160);margin-top:8px}
+.barrier-note{margin-top:14px;border-left:3px solid var(--ui-accent,#ff9800);background:var(--ui-bg-warm,#fffaf2);border-radius:0 12px 12px 0;padding:14px 18px;font-size:14.5px;line-height:1.65;color:var(--ui-text,#3d4466)}
+
+/* pills */
+.tier-badge,.type-badge,.badge,.ev-badge,.repurposing,.natural-agent,.new-badge,.evidence-badge,.concept-label,.concept-count,.chip-count{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:650;line-height:1.5;padding:2px 9px;border-radius:999px;border:1px solid var(--ui-line,#e6e8f2);background:var(--ui-bg-soft,#f7f8fc);color:var(--ui-ink-2,#2a3160);white-space:nowrap;letter-spacing:0;text-transform:none;vertical-align:middle}
+.tb-green,.ev-badge.lit,.natural-agent,.evidence-badge.evidence-published,.badge-phase3{background:var(--ui-ok-bg,#e7f7f0);color:var(--ui-ok,#047857);border-color:#bfe9d6}
+.tb-blue,.ev-badge.trial,.concept-count{background:var(--ui-down-bg,#eaf0ff);color:var(--ui-down,#1d4ed8);border-color:#cfdcff}
+.tb-amber,.ev-badge.assoc,.repurposing,.evidence-badge.evidence-pipeline,.concept-label{background:var(--ui-warn-bg,#fff7df);color:var(--ui-warn,#a16207);border-color:#f5e0a3}
+.tb-red,.badge-unmet,.badge-critical{background:var(--ui-up-bg,#fff1e8);color:var(--ui-up,#c2410c);border-color:#ffd9c2}
+.tb-navy{background:#eef0fb;color:var(--ui-ink,#0e1444);border-color:#d9ddf3}
+.tb-grey,.evidence-badge.evidence-preliminary{background:var(--ui-bg-soft,#f7f8fc);color:var(--ui-muted,#6b7194);border-color:var(--ui-line,#e6e8f2)}
+.new-badge{background:var(--ui-warn-bg,#fff7df);color:var(--ui-warn,#a16207);border-color:#f5e0a3;margin-left:8px;font-size:11px}
+.repurposing,.natural-agent,.evidence-badge{margin-left:6px;font-size:11px}
+.legend-dot{font-weight:600;white-space:nowrap}
+.legend-dot::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px;background:currentColor}
+.legend-dot.tb-green,.legend-dot.tb-blue,.legend-dot.tb-amber{background:none;border:0;padding:0}
+.ext-link{display:inline-flex;align-items:center;font-size:12px;font-weight:600;line-height:1.5;padding:2px 9px;margin:0 4px 4px 0;border-radius:999px;border:1px solid var(--ui-line-2,#d5d9ea);background:#fff;color:var(--ui-ink-2,#2a3160)!important;white-space:nowrap}
+.ext-link:hover{border-color:var(--ui-link,#2f45c4);color:var(--ui-link,#2f45c4)!important;text-decoration:none!important}
+
+/* data tables */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--ui-line,#e6e8f2);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);margin:0 0 28px}
+.agents-table,.data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:#fff}
+.data-table{min-width:720px}
+.agents-table{min-width:600px}
+.agents-table th,.data-table th{text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ui-muted,#6b7194);background:var(--ui-bg-soft,#f7f8fc);padding:11px 14px;border-bottom:1px solid var(--ui-line,#e6e8f2);white-space:nowrap}
+.agents-table td,.data-table td{padding:11px 14px;border-bottom:1px solid var(--ui-line,#e6e8f2);vertical-align:top;color:var(--ui-ink-2,#2a3160);line-height:1.5}
+.agents-table td{vertical-align:middle}
+.agents-table tbody tr:last-child td,.data-table tbody tr:last-child td{border-bottom:0}
+.agents-table tbody tr:hover td,.data-table tbody tr:hover td{background:#fafbff}
+.data-table td.muted{color:var(--ui-muted,#6b7194)}
+td.agent-name,.name-cell strong{font-weight:650;color:var(--ui-ink,#0e1444)}
+.name-cell .sub{font-size:12.5px;color:var(--ui-muted,#6b7194);margin-top:3px;line-height:1.45}
+.direction{white-space:nowrap;color:var(--ui-ink-2,#2a3160)}
+.dir-text{color:var(--ui-muted,#6b7194);font-size:13px}
+.potency{font-family:var(--ui-mono,monospace);font-size:12.5px;color:var(--ui-muted,#6b7194)}
+.source-link a{font-size:13px}
+.price-cell{font-size:12.5px;color:var(--ui-muted,#6b7194)}
+.score{font-weight:700;color:var(--ui-ink,#0e1444);font-variant-numeric:tabular-nums}
+.links-cell{min-width:150px}
+.more-note{font-size:13px;color:var(--ui-muted,#6b7194);padding:12px 22px;border-top:1px solid var(--ui-line,#e6e8f2);background:var(--ui-bg-soft,#f7f8fc)}
+
+/* chronic-disease-interventions: gene index + gene cards */
+.gene-index{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}
+.gene-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 8px 6px 14px;border-radius:999px;background:#fff;border:1px solid var(--ui-line-2,#d5d9ea);font-size:13.5px;font-weight:650;letter-spacing:.01em;color:var(--ui-ink,#0e1444)!important;box-shadow:0 1px 1px rgba(14,20,68,.03);transition:border-color .15s,box-shadow .15s,transform .15s}
+.gene-chip:hover{border-color:var(--ui-link,#2f45c4);box-shadow:var(--ui-shadow-1);transform:translateY(-1px);text-decoration:none!important}
+.chip-count{font-size:11px;padding:0 7px;background:var(--ui-bg-soft,#f7f8fc);color:var(--ui-muted,#6b7194);font-variant-numeric:tabular-nums}
+.gene-card{overflow:hidden;scroll-margin-top:90px}
+.gene-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;padding:16px 22px;border-bottom:1px solid var(--ui-line,#e6e8f2)}
+.gene-header h3{font-size:18px;font-weight:700;letter-spacing:.01em;color:var(--ui-ink,#0e1444)}
+.ext-links{display:flex;flex-wrap:wrap;gap:0}
+.gene-card .table-wrap{border:0;border-radius:0;box-shadow:none;margin:0}
+.gene-card>.no-data{padding:18px 22px}
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px;margin:0 0 8px}
+.agent-card{margin:0;padding:16px 18px;overflow:visible}
+.agent-head{margin:0 0 6px}
+.agent-card .agent-name{font-size:15.5px;font-weight:650;color:var(--ui-ink,#0e1444);line-height:1.4}
+.agent-meta{font-size:13px;line-height:1.7;color:var(--ui-muted,#6b7194)}
+.agent-meta .ext-link{margin-top:6px}
+.trial-list{display:grid;gap:12px;margin:0 0 8px}
+.trial-card{background:#fff;border:1px solid var(--ui-line,#e6e8f2);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:18px 22px}
+.trial-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:0 0 8px}
+.trial-title{flex:1;font-size:15.5px;font-weight:650;line-height:1.45;color:var(--ui-ink,#0e1444)!important}
+.trial-title:hover{color:var(--ui-link,#2f45c4)!important}
+.trial-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ui-muted,#6b7194);margin:0 0 8px}
+.trial-nct{font-family:var(--ui-mono,monospace);font-weight:600;color:var(--ui-ink-2,#2a3160)}
+.trial-summary{font-size:14px;line-height:1.65;color:var(--ui-text,#3d4466);max-width:100ch}
+
+/* disease-intelligence: filters, tabs, evidence */
+.filter-row,.tab-bar,.filter-section{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.filter-chip,.filter-btn{font:inherit;font-size:13px;font-weight:600;color:var(--ui-ink-2,#2a3160);background:#fff;border:1px solid var(--ui-line-2,#d5d9ea);border-radius:999px;padding:6px 14px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.filter-chip:hover,.filter-btn:hover{border-color:#aab2dc;background:var(--ui-bg-soft,#f7f8fc)}
+.filter-chip.active,.filter-btn.active{background:var(--ui-ink,#0e1444);border-color:var(--ui-ink,#0e1444);color:#fff}
+.tab-bar{display:inline-flex;gap:4px;padding:4px;background:var(--ui-bg-soft,#f7f8fc);border:1px solid var(--ui-line,#e6e8f2);border-radius:12px;max-width:100%;overflow-x:auto}
+.tab-btn{font:inherit;font-size:13.5px;font-weight:600;color:var(--ui-muted,#6b7194);background:transparent;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.tab-btn:hover{color:var(--ui-ink,#0e1444)}
+.tab-btn.active{background:#fff;color:var(--ui-ink,#0e1444);box-shadow:0 1px 2px rgba(14,20,68,.08),0 0 0 1px var(--ui-line,#e6e8f2)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.evidence-toggle{display:inline-flex;align-items:flex-start;gap:4px 10px;max-width:100%;font-size:13.5px;line-height:1.45;color:var(--ui-ink-2,#2a3160);margin:0 0 16px;cursor:pointer;user-select:none;padding:9px 14px;border:1px solid var(--ui-line,#e6e8f2);border-radius:12px;background:#fff;box-shadow:var(--ui-shadow-1)}
+.evidence-toggle input{flex:none;accent-color:var(--ui-ink,#0e1444);width:15px;height:15px;margin-top:2px}
+.evidence-toggle br{display:none}
+.evidence-toggle+.tab-bar,.evidence-toggle+.table-wrap{margin-top:0}
+.hidden-count{color:var(--ui-muted,#6b7194);font-size:12.5px}
+.ev-cell{min-width:150px}
+.ev-badge{margin:0 4px 4px 0;font-size:11px}
+.ev-details{margin-top:4px;font-size:13px}
+.ev-details summary{cursor:pointer;color:var(--ui-link,#2f45c4);font-weight:600;font-size:12.5px}
+.ev-details ul{margin:6px 0 8px 18px;color:var(--ui-muted,#6b7194)}
+.ev-details li{margin:0 0 4px}
+.ev-lit-type,.np-pub-type{color:var(--ui-ok,#047857);font-size:11px;font-weight:700;margin-right:4px;text-transform:uppercase;letter-spacing:.04em}
+.ev-search a{font-size:12.5px;margin-right:8px}
+.np-pubs{list-style:none;margin:6px 0 0;padding:0;font-size:12.5px}
+.np-pubs li{margin:3px 0;line-height:1.4}
+.therapeutic-row.no-clinical-evidence{display:none}
+section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{display:table-row}
+#alterations.hide-alterations-without-value tbody tr.alt-no-value{display:none}
+
+/* ntd */
+.pi-block{border-left:4px solid var(--ui-line-2,#d5d9ea);padding:24px 28px}
+.pi-block .big{font-family:var(--ui-display,Georgia,serif);font-weight:500;font-size:44px;line-height:1;letter-spacing:-.02em;color:var(--ui-ink,#0e1444);margin:10px 0 6px}
+.pi-block>div[style*="1.15rem"]{color:var(--ui-ink,#0e1444);font-size:19px!important;letter-spacing:-.01em}
+.pi-kv{display:grid;grid-template-columns:180px 1fr;gap:10px 18px;font-size:14.5px;margin-top:18px;padding-top:16px;border-top:1px solid var(--ui-line,#e6e8f2)}
+.pi-kv .k{color:var(--ui-muted,#6b7194);font-size:13px;font-weight:600}
+.pi-src{font-size:12.5px;color:var(--ui-muted,#6b7194);margin-top:16px}
+.stage-heading{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ui-accent-ink,#b45309);margin:28px 0 10px}
+.source-soc{color:var(--ui-ok,#047857);font-size:13px;font-weight:600}
+.source-ot{color:var(--ui-muted,#6b7194);font-size:13px}
+.agent-row.evidence-pipeline,.agent-row.evidence-preliminary{display:none}
+body.show-unpublished .agent-row.evidence-pipeline,body.show-unpublished .agent-row.evidence-preliminary{display:table-row}
+
+/* disease-intelligence index */
+.page-hero .sub{max-width:760px;margin:0 auto}
+.tool-links{font-size:14px;color:var(--ui-muted,#6b7194);margin:0 0 20px}
+.search-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 24px}
+.search-wrap{flex:1;min-width:220px;position:relative}
+.search-bar .search-wrap input[type=search]{width:100%;font:inherit;font-size:15px;color:var(--ui-ink,#0e1444);background:#fff;border:1px solid var(--ui-line-2,#d5d9ea);border-radius:12px;padding:12px 16px 12px 42px;box-shadow:var(--ui-shadow-1)}
+.search-bar .search-wrap input[type=search]:focus{outline:none;border-color:#8090ea;box-shadow:0 0 0 4px rgba(47,69,196,.12)}
+.search-wrap input::placeholder{color:var(--ui-faint,#9aa0bd)}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ui-muted,#6b7194);pointer-events:none}
+.search-clear{font:inherit;font-size:13.5px;font-weight:600;color:var(--ui-ink-2,#2a3160);background:#fff;border:1px solid var(--ui-line-2,#d5d9ea);border-radius:999px;padding:8px 14px;cursor:pointer}
+.search-meta{color:var(--ui-muted,#6b7194);font-size:13.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px}
+.search-empty{display:none;grid-column:1/-1;text-align:center;padding:40px 16px;color:var(--ui-muted,#6b7194);border:1px dashed var(--ui-line-2,#d5d9ea);border-radius:14px;background:var(--ui-bg-soft,#f7f8fc)}
+.search-empty.visible{display:block}
+
+/* card grids: disease-intelligence index, gene therapy mapper, right to try */
+.disease-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px;margin-top:8px}
+.disease-card{display:block;background:#fff;border:1px solid var(--ui-line,#e6e8f2);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:20px 22px;color:inherit;text-decoration:none!important;transition:transform .2s,box-shadow .2s,border-color .2s}
+a.disease-card:hover{transform:translateY(-2px);box-shadow:var(--ui-shadow-2);border-color:var(--ui-line-2,#d5d9ea)}
+.disease-card.hidden{display:none}
+.disease-card h3,.disease-title{font-size:17px;font-weight:700;line-height:1.35;color:var(--ui-ink,#0e1444);margin:0 0 10px;letter-spacing:-.01em}
+.disease-card .muted{font-size:13.5px;line-height:1.55}
+.disease-card .date{font-size:12px;color:var(--ui-faint,#9aa0bd);margin-top:10px}
+.info-row,.meta-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid var(--ui-line,#e6e8f2);font-size:13.5px}
+.info-row:last-child,.meta-row:last-child{border-bottom:0}
+.info-label,.meta-label{color:var(--ui-muted,#6b7194)}
+.info-value,.meta-value{font-weight:600;color:var(--ui-ink-2,#2a3160);text-align:right}
+.info-value.highlight,.meta-value.highlight{color:var(--ui-ok,#047857)}
+.section-box,.gene-list{background:var(--ui-bg-soft,#f7f8fc);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:13.5px}
+.section-box-title,.gene-list-title,.therapy-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ui-muted,#6b7194);margin:0 0 8px}
+.section-box-item{margin:0 0 6px;color:var(--ui-text,#3d4466);line-height:1.55}
+.section-box-item:last-child{margin-bottom:0}
+.gene-tags{display:flex;flex-wrap:wrap;gap:6px}
+.gene-tag{display:inline-flex;font-size:12px;font-weight:650;padding:2px 9px;border-radius:999px;background:#eef0fb;color:var(--ui-ink,#0e1444);border:1px solid #d9ddf3}
+.therapy-section{margin-top:12px}
+.therapy-item{display:block;background:var(--ui-ok-bg,#e7f7f0);border:1px solid #bfe9d6;color:var(--ui-ok,#047857);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:0 0 8px}
+span.therapy-item{display:inline-flex;margin-right:6px;padding:3px 10px;border-radius:999px;font-size:12.5px}
+.therapy-item.rna{background:var(--ui-warn-bg,#fff7df);border-color:#f5e0a3;color:var(--ui-warn,#a16207)}
+.therapy-item.crispr{background:var(--ui-down-bg,#eaf0ff);border-color:#cfdcff;color:var(--ui-down,#1d4ed8)}
+.therapy-item strong{color:inherit}
+.therapy-item .detail{color:var(--ui-text,#3d4466);font-size:12.5px;margin-top:3px}
+.empty-note{color:var(--ui-warn,#a16207);font-size:13.5px}
+.muted-note{color:var(--ui-muted,#6b7194);font-size:13px;margin-top:10px}
+.src-list{margin:12px 0 0 18px;font-size:12.5px;color:var(--ui-muted,#6b7194)}
+.cta-button{display:inline-flex;align-items:center;margin-top:12px;padding:8px 16px;border-radius:999px;background:var(--ui-ink,#0e1444);color:#fff!important;font-size:13.5px;font-weight:600;text-decoration:none!important;border:1px solid var(--ui-ink,#0e1444);cursor:pointer}
+.cta-button:hover{background:var(--ui-navy-700,#18206a)}
+.cta-button.secondary{background:#fff;color:var(--ui-ink,#0e1444)!important;border-color:var(--ui-line-2,#d5d9ea)}
+.filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:8px 0 14px}
+.filter-bar input[type=search]{flex:1;min-width:0;width:100%;max-width:560px}
+.filter-bar label{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ui-ink-2,#2a3160);cursor:pointer}
+.filter-bar input[type=checkbox]{accent-color:var(--ui-ink,#0e1444);width:15px;height:15px}
+.results-count{font-size:13.5px;color:var(--ui-muted,#6b7194);margin:0 0 12px}
+.related{margin-top:32px;font-size:14px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline}
+.disease-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.disease-meta{font-size:13.5px;color:var(--ui-muted,#6b7194);line-height:1.6}
+.prospectivedrugs{padding:8px 0;margin-top:4px;border-top:1px solid var(--ui-line,#e6e8f2)}
+.prospectivedrugs .meta-label{display:block;margin-bottom:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.prospectivedrugs .drug-names{font-size:13px;line-height:1.55;color:var(--ui-link,#2f45c4);font-weight:500;text-align:left}
+.concept-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 16px}
+.concept-box{background:var(--ui-bg-soft,#f7f8fc);border-left:3px solid var(--ui-link,#2f45c4);border-radius:0 12px 12px 0;padding:18px 20px}
+.concept-box h3{font-size:15.5px;color:var(--ui-ink,#0e1444);margin:0 0 10px;line-height:1.4}
+.concept-box p{font-size:14px;color:var(--ui-text,#3d4466);margin:0 0 8px}
+.concept-box ul{color:var(--ui-text,#3d4466)}
+.concept-label,.concept-count{margin-top:10px;text-transform:uppercase;letter-spacing:.05em;font-size:10.5px}
+.empty-state{text-align:center;padding:40px 16px;color:var(--ui-muted,#6b7194)}
+
+@media(max-width:1024px){.concept-row{grid-template-columns:1fr}}
+@media(max-width:720px){
+  .page-hero{padding:44px 16px 40px}
+  .page-hero h1{font-size:clamp(30px,8.6vw,40px)}
+  .hero-rem-stat,.hero-burden-stat{max-width:none;flex:1 1 100%}
+  .hero-burden-stat{flex:1 1 calc(50% - 6px);min-width:0}
+  .hero-rem-link{text-align:center;width:100%}
+  main{padding:20px 16px 16px}
+  .overview-card,.explanation-card,.pi-block,.related{padding:18px}
+  .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat-cell .value{font-size:26px}
+  .remission-grid{grid-template-columns:1fr}
+  .gene-header{padding:14px 16px}
+  .trial-card{padding:16px}
+  .trial-header{flex-direction:column;gap:8px}
+  .pi-kv{grid-template-columns:1fr;gap:2px}
+  .pi-kv .k{margin-top:8px}
+  .info-row,.meta-row{flex-direction:column;gap:2px}
+  .info-value,.meta-value{text-align:left}
+  .section-title{margin-top:44px}
+}
+"""
+
+# ── inline colour → class maps ───────────────────────────────────────────────
+_TONE = {
+    "#22c55e": "tb-green", "#4a9eff": "tb-blue", "#f59e0b": "tb-amber",
+    "#ef4444": "tb-red", "#7c6af7": "tb-navy", "#8892a4": "tb-grey", "#94a3b8": "tb-grey",
+    # ntd post-acute kinds
+    "#b23a2e": "tb-red", "#b7791f": "tb-amber", "#3a6ea5": "tb-blue",
+}
+# trial status badge must keep a bare style="background:…" span (parse_tracker)
+_STATUS_STYLE = {
+    "tb-green": "background:#e7f7f0;color:#047857;border:1px solid #bfe9d6",
+    "tb-blue": "background:#eaf0ff;color:#1d4ed8;border:1px solid #cfdcff",
+    "tb-red": "background:#fff1e8;color:#c2410c;border:1px solid #ffd9c2",
+    "tb-grey": "background:#f7f8fc;color:#6b7194;border:1px solid #e6e8f2",
+}
+_PILL_TAIL = ";padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:650;white-space:nowrap;flex:none"
+
+
+def _tone(colour: str) -> str:
+    return _TONE.get(colour.lower(), "tb-grey")
+
+
+def _replace_style_block(markup: str) -> str:
+    head_end = markup.find("</head>")
+    if head_end < 0:
+        return markup
+    head = markup[:head_end]
+    for m in re.finditer(r"<style>(.*?)</style>", head, flags=re.S):
+        body = m.group(1)
+        if THEME_MARK in body or "--bg:#0a0e1a" in body.replace(" ", ""):
+            new = f"<style>\n{LIGHT_CSS}</style>"
+            if m.group(0) == new:
+                return markup
+            return markup[: m.start()] + new + markup[m.end():]
+    return markup
+
+
+def _colophon(markup: str) -> str:
+    """Move the bare template <footer> into <main> as a muted colophon line."""
+    m = re.search(r"\s*<footer>\s*(.*?)\s*</footer>", markup, flags=re.S)
+    if not m or "</main>" not in markup:
+        return markup
+    inner = m.group(1).strip()
+    markup = markup[: m.start()] + markup[m.end():]
+    if inner.startswith("<p"):
+        block = f'<div class="colophon">{inner}</div>'
+    else:
+        block = f'<p class="colophon">{inner}</p>'
+    idx = markup.rfind("</main>")
+    return markup[:idx] + f"  {block}\n  " + markup[idx:]
+
+
+def _wrap_runs(markup: str) -> str:
+    # chronic-disease-interventions: trials list and disease-level agent cards
+    if 'class="trial-card"' in markup and 'class="trial-list"' not in markup:
+        markup = re.sub(
+            r'(<div class="trial-card">.*?</div>)(\s*<hr class="section-divider">)',
+            lambda m: f'<div class="trial-list">{m.group(1)}\n  </div>{m.group(2)}',
+            markup, count=1, flags=re.S)
+    if 'class="gene-card agent-card"' in markup and 'class="agent-grid"' not in markup:
+        markup = re.sub(
+            r'(<div class="gene-card agent-card">.*?</div>)(\s*(?:<p class="colophon"|<div class="colophon"|</main>))',
+            lambda m: f'<div class="agent-grid">{m.group(1)}\n  </div>{m.group(2)}',
+            markup, count=1, flags=re.S)
+    return markup
+
+
+def _di_index_hero(markup: str) -> str:
+    """disease-intelligence/index.html has no hero: lift its H1 + intro into one."""
+    if 'class="page-hero"' in markup or 'id="condition-grid"' not in markup:
+        return markup
+    return re.sub(
+        r'<main>\s*<h1>(.*?)</h1>\s*<p class="sub">(.*?)</p>',
+        r'<header class="page-hero">\n  <h1>\1</h1>\n  <p class="sub">\2</p>\n</header>\n<main>',
+        markup, count=1, flags=re.S)
+
+
+def restyle_html(markup: str) -> str:
+    """Return ``markup`` converted to the light theme. Safe to run repeatedly."""
+    markup = _replace_style_block(markup)
+
+    # malformed meta tags from an old generator ( content="…" >> ) render a stray ">"
+    markup = re.sub(r'(<meta [^>]*?")\s*>>', r"\1>", markup)
+
+    # class hooks for shared components
+    markup = markup.replace('class="breadcrumb"', 'class="breadcrumb osmf-crumbs"')
+    markup = re.sub(r'(<(?:nav|div) class="breadcrumb osmf-crumbs".*?</(?:nav|div)>)',
+                    lambda m: m.group(1).replace('<span>/</span>', '<span class="sep" aria-hidden="true">/</span>'),
+                    markup, count=1, flags=re.S)
+    markup = markup.replace('class="hero-eyebrow"', 'class="hero-eyebrow osmf-eyebrow"')
+    markup = markup.replace('class="disclaimer"', 'class="disclaimer osmf-callout"')
+    markup = markup.replace('class="legal-note"', 'class="legal-note osmf-callout"')
+
+    # tier / type / kind badges: inline background → tone class
+    markup = re.sub(
+        r'<span class="(tier-badge|type-badge|badge)" style="background:(#[0-9a-fA-F]{6})">',
+        lambda m: f'<span class="{m.group(1)} {_tone(m.group(2))}">', markup)
+    # trial status badge (chronic-disease-interventions)
+    markup = re.sub(
+        r'<span style="background:(#[0-9a-fA-F]{6});color:#fff;padding:2px 8px;border-radius:4px;font-size:0\.75rem;font-weight:600">',
+        lambda m: f'<span style="{_STATUS_STYLE.get(_tone(m.group(1)), _STATUS_STYLE["tb-grey"])}{_PILL_TAIL}">',
+        markup)
+    markup = markup.replace('<span style="color:#22c55e;font-weight:600">Approved</span>',
+                            '<span class="osmf-pill osmf-pill--ok">Approved</span>')
+    markup = re.sub(
+        r'<span style="background:#f59e0b;color:#1a1200;[^"]*">',
+        '<span class="new-badge">', markup)
+    for colour, tone in (("#22c55e", "tb-green"), ("#4a9eff", "tb-blue"), ("#f59e0b", "tb-amber")):
+        markup = markup.replace(f'<span style="color:{colour}">&#9679; ', f'<span class="legend-dot {tone}">')
+
+    # disease-level agent cards (gene-first gene cards keep class="gene-card" id=…)
+    markup = markup.replace('<div class="gene-card" style="padding:0.9rem 1.2rem">',
+                            '<div class="gene-card agent-card">')
+    markup = markup.replace('<div class="gene-header" style="margin-bottom:0.3rem">', '<div class="agent-head">')
+    markup = re.sub(r'<h3 style="font-size:1rem">(.*?)</h3>', r'<p class="agent-name">\1</p>', markup, flags=re.S)
+    markup = markup.replace('<p class="agent-name" style="font-size:1rem;font-weight:600;margin:0">', '<p class="agent-name">')
+    markup = markup.replace('<p style="font-size:0.82rem;color:#8892a4;margin:0">', '<p class="agent-meta">')
+
+    # ntd: neutral accent stripe on post-acute blocks
+    markup = markup.replace('style="border-left-color:#2a3050"', 'style="border-left-color:#d5d9ea"')
+
+    # disease-intelligence index: tools line
+    markup = markup.replace('<p class="sub" style="margin-top:-1rem">', '<p class="tool-links">')
+    markup = _di_index_hero(markup)
+
+    markup = _colophon(markup)
+    markup = _wrap_runs(markup)
+    return markup

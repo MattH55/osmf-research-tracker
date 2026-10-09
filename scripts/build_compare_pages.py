@@ -364,48 +364,116 @@ def direction_badge(d):
 # HTML building blocks
 # --------------------------------------------------------------------------------------
 CSS = """
-:root{--blue:#0068f8;--blue-dark:#0052c7;--ink:#111827;--muted:#4b5563;--line:#e5e7eb;--bg2:#f8fafc;--bg:#ffffff;--amber-bg:#fff7ed;--amber:#c2410c;--green:#15803d;--red:#b91c1c}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#f3f4f6;--muted:#9ca3af;--line:#1f2937;--bg2:#111827;--bg:#0b1220;--amber-bg:#2a1a0a;--amber:#fdba74;--green:#4ade80;--red:#fca5a5}}
-:root[data-theme="dark"]{--ink:#f3f4f6;--muted:#9ca3af;--line:#1f2937;--bg2:#111827;--bg:#0b1220;--amber-bg:#2a1a0a;--amber:#fdba74;--green:#4ade80;--red:#fca5a5}
+/* compare/ pages: layout on top of css/osmf-ui.css tokens (loaded last) */
 *{box-sizing:border-box}html{overflow-x:clip}
-body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.6;color:var(--ink);background:var(--bg)}
-a{color:var(--blue)}a:hover{color:var(--blue-dark)}
-.nav{border-bottom:1px solid var(--line);background:var(--bg)}
-.nav .in{max-width:1100px;margin:0 auto;padding:.75rem 16px;display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;align-items:center}
-.nav .brand{font-weight:700;text-decoration:none;color:var(--ink)}.nav a.l{text-decoration:none;color:var(--muted);font-size:.9rem}.nav a.l:hover{color:var(--blue)}
-main{max-width:1100px;margin:0 auto;padding:0 16px 3rem}
-.bc{font-size:.85rem;color:var(--muted);margin:1rem 0}.bc a{text-decoration:none}.bc ol{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.35rem}.bc li+li::before{content:"\\203A";margin-right:.35rem}
-h1{font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.2;margin:.5rem 0 .75rem}
-h2{font-size:1.45rem;margin:2.5rem 0 .75rem;padding-top:.5rem;border-top:1px solid var(--line)}
-h3{font-size:1.1rem;margin:1.5rem 0 .5rem}
-.lede{font-size:1.1rem;color:var(--muted);max-width:60rem}
-.pill{display:inline-block;font-size:.75rem;font-weight:600;padding:.15rem .6rem;border-radius:999px;background:var(--amber-bg);color:var(--amber);margin-left:.5rem;vertical-align:middle}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem}
-.card{border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;background:var(--bg2)}
-.card h3{margin-top:0}.card .alt{font-size:.85rem;color:var(--muted)}
-.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1rem 0}
-table{border-collapse:collapse;width:100%;font-size:.92rem}
-th,td{text-align:left;padding:.5rem .65rem;border-bottom:1px solid var(--line);vertical-align:top}
-th{background:var(--bg2);font-weight:600}
-thead th{position:sticky;top:0}
+body{margin:0;font-family:var(--ui-font,Inter,system-ui,sans-serif);font-size:16px;line-height:1.6;color:var(--ui-text,#3d4466);background:#fff}
+a{color:var(--ui-link,#2f45c4)}a:hover{color:var(--ui-link-hover,#1b2a8f)}
+/* hero */
+.cmp-hero{padding:34px 0 0}
+.cmp-hero .osmf-crumbs ol{list-style:none;padding:0;margin:0 0 26px;display:flex;flex-wrap:wrap;gap:6px}
+.cmp-hero .osmf-crumbs li{color:rgba(226,229,248,.62)}
+.cmp-hero .osmf-crumbs li+li::before{content:"\\203A";margin-right:6px;color:rgba(226,229,248,.4)}
+.cmp-hero .osmf-crumbs a{color:rgba(226,229,248,.78)!important}.cmp-hero .osmf-crumbs a:hover{color:#fff!important}
+.cmp-hero h1{font-size:clamp(34px,5.6vw,62px);margin:16px 0 0;max-width:22ch}
+.cmp-hero h1 .cmp-sub{display:block;font-size:clamp(19px,.42em,28px);font-style:normal;letter-spacing:-.005em;color:rgba(226,229,248,.8)!important;-webkit-text-fill-color:rgba(226,229,248,.8)!important;margin-top:12px}
+.cmp-hero h1 .pill{font-family:var(--ui-font);font-size:12px;font-weight:650;letter-spacing:.02em;vertical-align:middle;margin-left:10px;padding:4px 11px;border-radius:999px;background:rgba(255,152,0,.16);border:1px solid rgba(255,152,0,.4);color:#ffcf8a!important;-webkit-text-fill-color:#ffcf8a!important;font-style:normal;display:inline-block}
+.cmp-hero .lede{font-size:clamp(16px,1.6vw,18.5px);line-height:1.65;max-width:68ch;margin:20px 0 0}
+.cmp-hero .cmp-note{font-size:15px;line-height:1.65;max-width:72ch;margin:14px 0 0;color:rgba(226,229,248,.74)!important}
+.cmp-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:38px 0 0;border-top:1px solid rgba(255,255,255,.12)}
+.cmp-stats>div{padding:22px 22px 26px 0}
+.cmp-stats>div+div{padding-left:22px;border-left:1px solid rgba(255,255,255,.1)}
+.cmp-stats b{display:block;font-family:var(--ui-display);font-weight:500;font-size:clamp(28px,3.4vw,40px);line-height:1;color:#fff;letter-spacing:-.02em}
+.cmp-stats b small{font-size:.55em;color:rgba(226,229,248,.5);margin:0 .15em}
+.cmp-stats span{display:block;margin-top:9px;font-size:11.5px;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:rgba(226,229,248,.66)}
+@media(max-width:760px){.cmp-stats{grid-template-columns:1fr 1fr}.cmp-stats>div:nth-child(3){padding-left:0;border-left:0}.cmp-stats>div:nth-child(n+3){border-top:1px solid rgba(255,255,255,.1)}}
+/* contents bar */
+.cmp-toc{position:sticky;top:var(--ui-header-h,68px);z-index:50;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--ui-line)}
+.cmp-toc .osmf-wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-top:10px;padding-bottom:10px}
+.cmp-toc .osmf-wrap::-webkit-scrollbar{display:none}
+.cmp-toc a{flex:none;font-size:13.5px;font-weight:550;color:var(--ui-muted)!important;text-decoration:none!important;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.cmp-toc a:hover{color:var(--ui-ink)!important;background:var(--ui-bg-soft)}
+/* sections */
+main.cmp{max-width:var(--ui-max,1200px);margin:0 auto;padding:0 var(--ui-gutter,24px)}
+.cmp-sec{padding:60px 0;position:relative}
+.cmp-sec:nth-of-type(even){background:var(--ui-bg-soft);box-shadow:0 0 0 100vmax var(--ui-bg-soft);clip-path:inset(0 -100vmax)}
+.cmp-sec>h2{font-size:clamp(23px,2.4vw,29px);line-height:1.2;letter-spacing:-.015em;color:var(--ui-ink);margin:0 0 10px}
+.cmp-sec>p{max-width:76ch;color:var(--ui-text)}
+.cmp-sec h3{font-size:17px;color:var(--ui-ink);margin:0 0 12px;letter-spacing:-.01em}
+.cmp-sec>h3{margin-top:34px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px;margin-top:22px}
+.card{background:#fff;border:1px solid var(--ui-line);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:24px 26px}
+.card>h3{font-size:19px}
+.card p{margin:0 0 12px}.card p:last-child{margin-bottom:0}
+.card .alt{font-size:13px;color:var(--ui-muted);margin-top:-4px}
+.card .res{padding-top:14px;margin-top:16px;border-top:1px solid var(--ui-line)}
+/* tables */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:22px 0 14px;background:#fff;border:1px solid var(--ui-line);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1)}
+div.tw table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px;min-width:560px;margin:0;border:0;box-shadow:none;border-radius:0;overflow:visible}
+.tw table:has(td.num) thead th:not(:first-child){text-align:right}
+.tw th,.tw td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--ui-line);vertical-align:top}
+.tw tbody tr:last-child>*{border-bottom:0}
+.tw thead th{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ui-muted);background:var(--ui-bg-soft);white-space:nowrap}
+.tw tbody th{font-weight:600;color:var(--ui-ink);width:30%;text-transform:none;letter-spacing:0;font-size:14px;background:none}
+.tw td{color:var(--ui-ink-2)}
+.tw tbody tr:hover>*{background:#fafbff}
+.tw tr.sub th{font-weight:500;color:var(--ui-muted);padding-left:34px;font-size:13.5px}
+.tw tr.sub>*{padding-top:8px;padding-bottom:8px}
+.tw tr.sub td{color:var(--ui-text)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
-.dir{display:inline-block;font-size:.78rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;white-space:nowrap}
-.dir-up{background:#fee2e2;color:#991b1b}.dir-down{background:#dbeafe;color:#1e40af}.dir-mixed{background:#fef3c7;color:#92400e}.dir-na{background:var(--line);color:var(--muted)}
-.flag{color:var(--red);font-weight:600;font-size:.8rem}
-ul.compact{columns:1;padding-left:1.2rem}@media(min-width:720px){ul.compact{columns:2;column-gap:2rem}}
-ul.compact li{break-inside:avoid;margin:.15rem 0}
-.muted{color:var(--muted)}.small{font-size:.85rem}
-.faq details{border:1px solid var(--line);border-radius:8px;padding:.6rem 1rem;margin:.5rem 0;background:var(--bg2)}
-.faq summary{font-weight:600;cursor:pointer}
-.cite{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:1rem 1.25rem;background:var(--bg2);font-size:.92rem}
-.cite code{display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem;margin-top:.5rem}
-.disc{background:var(--amber-bg);border:1px solid var(--amber);border-radius:8px;padding:.75rem 1rem;font-size:.88rem;margin:1.5rem 0}
-.cta{text-align:center;margin:2rem 0;padding:1.25rem;border:1px solid var(--line);border-radius:10px}
-.cta a.btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;padding:.6rem 1.2rem;border-radius:6px;font-weight:600}
-.study{margin:.6rem 0}.study .t{font-weight:500}.study .m{font-size:.85rem;color:var(--muted)}
-footer{border-top:1px solid var(--line);padding:1.5rem 16px;font-size:.85rem;color:var(--muted);text-align:center}
-footer a{color:var(--muted)}
-.related{display:flex;flex-wrap:wrap;gap:.5rem}.related a{font-size:.85rem;border:1px solid var(--line);border-radius:999px;padding:.25rem .75rem;text-decoration:none}
+.tw td:nth-child(5){white-space:nowrap}
+.tw td a{font-weight:550}
+/* direction pills */
+.dir{display:inline-flex;align-items:center;font-size:12px;font-weight:650;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid var(--ui-line);background:var(--ui-bg-soft);color:var(--ui-ink-2);line-height:1.5}
+.dir-up{background:var(--ui-up-bg);color:var(--ui-up);border-color:#ffd9c2}
+.dir-down{background:var(--ui-down-bg);color:var(--ui-down);border-color:#cfdcff}
+.dir-mixed{background:var(--ui-warn-bg);color:var(--ui-warn);border-color:#f5e0a3}
+.dir-na{color:var(--ui-muted)}
+.flag{display:inline-flex;margin:3px 0 0 4px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--ui-warn-bg);color:var(--ui-warn);border:1px solid #f5e0a3;white-space:nowrap;vertical-align:1px}
+/* lists */
+ul.compact{list-style:none;margin:6px 0 0;padding:0}
+ul.compact li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:10px 0;border-bottom:1px solid var(--ui-line);line-height:1.4}
+ul.compact li:last-child{border-bottom:0}
+ul.compact li a{font-weight:550;text-decoration:none!important;margin-right:auto}
+ul.compact li a:hover{text-decoration:underline!important}
+ul.compact li .small{min-width:9ch;text-align:right}
+ul.chips{list-style:none;padding:0;margin:20px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+ul.chips li{font-size:14px;font-weight:550;color:var(--ui-ink-2);background:#fff;border:1px solid var(--ui-line);border-radius:999px;padding:6px 14px;box-shadow:var(--ui-shadow-1)}
+ul.chips li a{color:var(--ui-ink)!important;text-decoration:none!important}ul.chips li:hover{border-color:var(--ui-line-2)}
+ul.rows{list-style:none;margin:0;padding:0}
+ul.rows li{padding:11px 0;border-bottom:1px solid var(--ui-line);line-height:1.5}
+ul.rows li:last-child{border-bottom:0}
+ul.rows li a{font-weight:550;text-decoration:none!important}ul.rows li a:hover{text-decoration:underline!important}
+ul.rows .small{display:block;margin-top:2px}
+ul.trials{background:#fff;border:1px solid var(--ui-line);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:4px 22px}
+.muted{color:var(--ui-muted)}.small{font-size:13px}
+.study{padding:13px 0;border-bottom:1px solid var(--ui-line)}
+.study .t{font-weight:600;line-height:1.45}.study .t a{color:var(--ui-ink)!important;text-decoration:none!important}.study .t a:hover{color:var(--ui-link)!important}
+.study .m{font-size:12.5px;color:var(--ui-muted);margin-top:4px}
+.card .more{margin-top:14px;font-size:14px;font-weight:600}.card .more a{text-decoration:none!important}
+/* faq */
+.faq{display:grid;gap:12px;margin-top:22px;max-width:900px}
+.faq details{background:#fff;border:1px solid var(--ui-line);border-radius:12px;box-shadow:var(--ui-shadow-1);padding:0 22px;margin:0}
+.faq summary{cursor:pointer;list-style:none;padding:17px 0;font-weight:650;font-size:16px;color:var(--ui-ink);display:flex;gap:12px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"";width:8px;height:8px;flex:none;border-right:2px solid var(--ui-accent-2);border-bottom:2px solid var(--ui-accent-2);transform:rotate(-45deg);transition:transform .2s}
+.faq details[open] summary::before{transform:rotate(45deg)}
+.faq details p{margin:0 0 18px;padding-left:20px;max-width:75ch}
+main div.faq details{margin:0;padding-bottom:0}main div.faq details[open]{padding-bottom:0}
+/* related, cite, disclaimer */
+.related{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.related a{font-size:14px;font-weight:550;color:var(--ui-ink)!important;background:#fff;border:1px solid var(--ui-line);border-radius:999px;padding:7px 15px;text-decoration:none!important;box-shadow:var(--ui-shadow-1);transition:border-color .15s,transform .15s}
+.related a:hover{border-color:var(--ui-accent);transform:translateY(-1px)}
+.cite{margin-top:20px;background:#fff;border:1px solid var(--ui-line);border-left:3px solid var(--ui-ink);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:22px 24px;font-size:14.5px;line-height:1.65;color:var(--ui-ink-2);max-width:900px;overflow-wrap:anywhere}
+.cite code{display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12.5px;line-height:1.6;margin-top:14px;padding:14px 16px;border-radius:10px;background:var(--ui-bg-soft)}
+.cmp-end{padding:56px 0 8px}
+.cmp-end .osmf-callout{margin:0 0 14px}
+.cmp-end .updated{font-size:12.5px;color:var(--ui-muted);max-width:90ch;margin:0}
+/* index */
+.cmp-conds{list-style:none;padding:0;margin:22px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px}
+.cmp-conds li{background:#fff;border:1px solid var(--ui-line);border-radius:var(--ui-radius,14px);box-shadow:var(--ui-shadow-1);padding:16px 18px;font-size:14px;color:var(--ui-muted);line-height:1.5}
+.cmp-conds li strong{display:block;color:var(--ui-ink);font-size:15px;margin-bottom:6px}
+.cmp-conds li a{font-weight:550}
+@media(max-width:600px){.cmp-sec{padding:44px 0}.card{padding:20px}.cite{padding:18px}.tw th,.tw td{padding:11px 12px}}
 """
 
 
@@ -443,29 +511,38 @@ def head(title, desc, canonical_path, jsonld_blocks, robots="index, follow, max-
 {jl}
 </head>
 <body>
-<nav class="nav" aria-label="Main navigation"><div class="in">
-<a class="brand" href="/index.html">OSMF Research Tracker</a>
-<a class="l" href="/biomarker-atlas.html">Biomarker Atlases</a>
-<a class="l" href="/clinical_trials.html">Clinical Trials</a>
-<a class="l" href="/agents.html">Therapeutic Agents</a>
-<a class="l" href="/compare/">Compare</a>
-<a class="l" href="https://opensourcemed.info" rel="noopener">opensourcemed.info</a>
-</div></nav>
-<main>
 """
+
+
+def hero(crumbs, eyebrow, h1_html, lede_html, stats, note_html=""):
+    """Navy page hero: breadcrumbs, eyebrow, H1, lede and a stat band. Opens <main>."""
+    st = "".join(f"<div><b>{v}</b><span>{esc(k)}</span></div>" for k, v in stats)
+    return (f'<header class="osmf-hero cmp-hero"><div class="osmf-wrap">{breadcrumbs_html(crumbs)}'
+            f'<span class="osmf-eyebrow">{esc(eyebrow)}</span>{h1_html}{lede_html}{note_html}'
+            + (f'<div class="cmp-stats">{st}</div>' if stats else "") + '</div></header>')
+
+
+def toc(items):
+    links = "".join(f'<a href="#{i}">{esc(t)}</a>' for i, t in items)
+    return f'<nav class="cmp-toc" aria-label="Contents"><div class="osmf-wrap">{links}</div></nav>'
+
+
+def sectionize(body):
+    """Wrap each <h2>-led block of the main column in <section class="cmp-sec">."""
+    parts = re.split(r'(?=<h2 id=")', body)
+    out = parts[0]
+    for p in parts[1:]:
+        out += f'<section class="cmp-sec">{p}</section>\n'
+    return '<main class="cmp">\n' + out
 
 
 def footer(updated_text):
     return f"""
-<div class="cta"><p><strong>Get OSMF research updates</strong><br><span class="muted small">New biomarker, trial and cohort data, summarised for patients and researchers.</span></p>
-<a class="btn" href="{SUBSTACK}" rel="noopener">Subscribe on Substack</a></div>
-<div class="disc"><strong>Disclaimer.</strong> This page is an automated, informational synthesis of public research data maintained by the Open Source Medicine Foundation. It is not medical advice, does not establish a diagnosis, and does not endorse any test or treatment. Biomarker directions summarise individual studies that often disagree; registered trials have not necessarily reported results. Discuss any testing or treatment decision with a qualified clinician.</div>
-<p class="small muted">{esc(updated_text)}</p>
+<div class="cmp-end">
+<div class="osmf-callout disc"><strong>Disclaimer.</strong> This page is an automated, informational synthesis of public research data maintained by the Open Source Medicine Foundation. It is not medical advice, does not establish a diagnosis, and does not endorse any test or treatment. Biomarker directions summarise individual studies that often disagree; registered trials have not necessarily reported results. Discuss any testing or treatment decision with a qualified clinician.</div>
+<p class="updated">{esc(updated_text)}</p>
+</div>
 </main>
-<footer>
-<p>&copy; Open Source Medicine Foundation &middot; <a href="/index.html">Research Tracker</a> &middot; <a href="/biomarker-atlas.html">Biomarker Atlases</a> &middot; <a href="/clinical_trials.html">Clinical Trials</a> &middot; <a href="/pais-cohorts.html">PAIS Cohorts</a> &middot; <a href="https://opensourcemed.info" rel="noopener">opensourcemed.info</a></p>
-<p><a href="https://github.com/MattH55/osmf-research-tracker" rel="noopener">Source code</a> &middot; <a href="/corrections/">Corrections</a></p>
-</footer>
 </body>
 </html>
 """
@@ -478,7 +555,7 @@ def breadcrumbs_html(items):
             lis.append(f'<li><a href="{esc(href)}">{esc(label)}</a></li>')
         else:
             lis.append(f'<li aria-current="page">{esc(label)}</li>')
-    return f'<nav class="bc" aria-label="Breadcrumb"><ol>{"".join(lis)}</ol></nav>'
+    return f'<nav class="bc osmf-crumbs" aria-label="Breadcrumb"><ol>{"".join(lis)}</ol></nav>'
 
 
 def breadcrumbs_jsonld(items):
@@ -621,17 +698,27 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
     has_citation = any(s.get("pmid") for s in A["studies"] + B["studies"]) or any(m.get("reference", {}).get("doi") for m in A["markers"] + B["markers"])
     robots = "index, follow, max-image-preview:large" if (A["studies"] and B["studies"] and outbound_links >= 3 and has_citation) else "noindex, follow"
 
-    out = [head(title, desc, path, jsonld, robots)]
-    out.append(breadcrumbs_html(crumbs))
-    out.append(f"<h1>{esc(A['short'])} vs {esc(B['short'])}: symptoms, biomarkers, trials and research{'<span class=\"pill\">literature-only comparison</span>' if lit_only else ''}</h1>")
+    h1 = (f"<h1>{esc(A['short'])} <em>vs</em> {esc(B['short'])}<span class=\"cmp-sub\"><span class=\"osmf-sr\">: </span>symptoms, biomarkers, trials and research"
+          f"{'<span class=\"pill\">literature-only comparison</span>' if lit_only else ''}</span></h1>")
     def full(c):
         return esc(c['name']) + (f" ({esc(c['short'])})" if c['short'].lower() != c['name'].lower() else "")
-    out.append(f"<p class=\"lede\">A data-driven comparison of {full(A)} and {full(B)} built from the Open Source Medicine Foundation biomarker atlases, PubMed literature feeds, ClinicalTrials.gov registry extract and post-acute infection syndrome (PAIS) cohort database.</p>")
-    if note:
-        out.append(f"<p>{esc(note)}</p>")
+    lede = f"<p class=\"lede\">A data-driven comparison of {full(A)} and {full(B)} built from the Open Source Medicine Foundation biomarker atlases, PubMed literature feeds, ClinicalTrials.gov registry extract and post-acute infection syndrome (PAIS) cohort database.</p>"
+    notes = f"<p class=\"cmp-note\">{esc(note)}</p>" if note else ""
     if lit_only:
         lo = A if not A["biomarkers"] else B
-        out.append(f"<p class=\"small muted\">No biomarker atlas exists for {esc(lo['short'])}, so the biomarker sections below are limited to the other condition. This page compares literature, trials, therapeutics and cohorts.</p>")
+        notes += f"<p class=\"cmp-note\">No biomarker atlas exists for {esc(lo['short'])}, so the biomarker sections below are limited to the other condition. This page compares literature, trials, therapeutics and cohorts.</p>"
+    hero_stats = [
+        ("Trials listing both", str(len(both_trials))) if lit_only else ("Shared biomarkers", str(len(shared))),
+        (f"Registered trials, {A['short']} / {B['short']}", f"{len(A['trials']):,}<small>/</small>{len(B['trials']):,}"),
+        ("Agents studied in both", str(len(shared_agents))),
+        ("Studies tracked", f"{len(A['studies']) + len(B['studies']):,}"),
+    ]
+    toc_items = [("overview", "Overview"), ("at-a-glance", "At a glance")]
+    toc_items += [("biomarkers", "Biomarkers")] if lit_only else [("shared-biomarkers", "Shared biomarkers"), ("distinct-biomarkers", "Distinct biomarkers")]
+    toc_items += [("therapeutics", "Therapeutics")] + ([("cohorts", "Cohorts")] if (A["cohorts"] or B["cohorts"]) else [])
+    toc_items += [("recent-research", "Recent research"), ("faq", "FAQ"), ("cite", "Cite")]
+    page_head = head(title, desc, path, jsonld, robots) + hero(crumbs, "Condition comparison", h1, lede, hero_stats, notes) + toc(toc_items)
+    out = []
 
     # ---- Overview ----
     out.append("<h2 id=\"overview\">What each condition is</h2><div class=\"grid2\">")
@@ -644,7 +731,7 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
                    + (f"<p class=\"alt\">Also known as: {esc(alt)}</p>" if alt else "")
                    + f"<p>{esc(c['blurb'])}</p>"
                    + (f"<p class=\"small muted\">Atlas scope: {esc(c['hero'])}</p>" if c["hero"] else "")
-                   + f"<p class=\"small\">OSMF resources: {' &middot; '.join(links)}</p></div>")
+                   + f"<p class=\"small res\">OSMF resources: {' &middot; '.join(links)}</p></div>")
     out.append("</div>")
 
     # ---- Summary table ----
@@ -652,7 +739,8 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
                f"<th>{esc(A['short'])}</th><th>{esc(B['short'])}</th></tr></thead><tbody>")
 
     def row(label, va, vb):
-        out.append(f"<tr><th scope=\"row\">{label}</th><td>{va}</td><td>{vb}</td></tr>")
+        sub = ' class="sub"' if str(label).startswith("&nbsp;") else ""
+        out.append(f"<tr{sub}><th scope=\"row\">{label}</th><td>{va}</td><td>{vb}</td></tr>")
     row("Biomarkers catalogued", f"{nA}" if A["biomarkers"] else "No atlas", f"{nB}" if B["biomarkers"] else "No atlas")
     row("Biomarker categories covered",
         esc(", ".join(f"{k} ({v})" for k, v in catA.most_common())) if catA else "&mdash;",
@@ -725,7 +813,7 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
     # ---- Therapeutics ----
     out.append(f"<h2 id=\"therapeutics\">Overlapping therapeutics under investigation ({len(shared_agents)})</h2>")
     if shared_agents:
-        out.append(f"<p>Agents that appear in registered trials or the OSMF therapeutic-agent database for both {esc(A['short'])} and {esc(B['short'])}. Inclusion means an agent is being studied, not that it works.</p><ul class=\"compact\">")
+        out.append(f"<p>Agents that appear in registered trials or the OSMF therapeutic-agent database for both {esc(A['short'])} and {esc(B['short'])}. Inclusion means an agent is being studied, not that it works.</p><ul class=\"chips\">")
         for ag in shared_agents:
             slug = agent_slug_map.get(ag.lower())
             if slug and os.path.exists(os.path.join(agents_dir, slug + ".html")):
@@ -736,7 +824,7 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
     else:
         out.append(f"<p>No therapeutic agent is currently tracked for both conditions. {esc(A['short'])} has {len(A['agents'])} tracked agents and {esc(B['short'])} has {len(B['agents'])}; see the <a href=\"/agents.html\">therapeutic agents index</a>.</p>")
     if both_trials:
-        out.append(f"<h3>Trials enrolling both conditions ({len(both_trials)})</h3><ul>")
+        out.append(f"<h3>Trials enrolling both conditions ({len(both_trials)})</h3><ul class=\"rows trials\">")
         for t in sorted(both_trials, key=lambda t: t.get("start_date") or "", reverse=True)[:10]:
             out.append(f"<li><a href=\"https://clinicaltrials.gov/study/{esc(t['nct_id'])}\" rel=\"noopener\">{esc(t['nct_id'])}</a> &middot; {esc(t.get('title'))} <span class=\"small muted\">({esc((t.get('status') or '').replace('_', ' ').title())}{', ' + esc(t['phase'].replace('PHASE', 'Phase ')) if t.get('phase') and t['phase'] not in ('NA', 'N/A') else ''})</span></li>")
         out.append("</ul>")
@@ -749,7 +837,7 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
         for c in (A, B):
             out.append(f"<div class=\"card\"><h3>{esc(c['short'])} cohorts ({len(c['cohorts'])})</h3>")
             if c["cohorts"]:
-                out.append("<ul>")
+                out.append("<ul class=\"rows\">")
                 for co in sorted(c["cohorts"], key=lambda x: -(x.get("n_enrolled") or 0)):
                     page = f"/pais-cohorts/{co['id']}.html" if os.path.exists(os.path.join(ROOT, "pais-cohorts", co["id"] + ".html")) else "/pais-cohorts.html"
                     n = co.get("n_enrolled")
@@ -769,7 +857,7 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
                        f"<div class=\"m\">{esc(s.get('journal') or 'Journal n/a')} &middot; {esc(fmt_date(s.get('pub_date')))} &middot; PMID {esc(s['pmid'])}</div></div>")
         if not c["studies"]:
             out.append("<p class=\"muted\">No studies in the current feed.</p>")
-        out.append(f"<p class=\"small\"><a href=\"/{esc(c['feed'])}\">All {len(c['studies'])} tracked {esc(c['short'])} studies</a></p></div>")
+        out.append(f"<p class=\"more\"><a href=\"/{esc(c['feed'])}\">All {len(c['studies'])} tracked {esc(c['short'])} studies</a></p></div>")
     out.append("</div>")
 
     # ---- FAQ ----
@@ -795,8 +883,7 @@ def build_pair(a, b, data, agent_slug_map, all_pairs):
 
     updated = (f"Last updated {fmt_date(TODAY)} (page build). Underlying data: literature feeds {fmt_date(A['lit_updated'])} / {fmt_date(B['lit_updated'])}; "
                f"trial registry {fmt_date(A['trials_updated'])}; atlases {fmt_date(A['atlas_modified'])} / {fmt_date(B['atlas_modified'])}. Generated by scripts/build_compare_pages.py.")
-    out.append(footer(updated))
-    page = "\n".join(out)
+    page = page_head + sectionize("\n".join(out)) + footer(updated)
     stats = dict(file=fname, title=title, lit_only=lit_only, shared=len(shared), disagree=len(disagree), robots=robots,
                  trialsA=len(A["trials"]), trialsB=len(B["trials"]), agents=len(shared_agents), both_trials=len(both_trials))
     return fname, page, stats
@@ -813,11 +900,14 @@ def build_index(data, stats_list):
     jsonld = [breadcrumbs_jsonld(crumbs),
               {"@context": "https://schema.org", "@type": "CollectionPage", "name": title, "url": SITE + "/compare/", "description": desc,
                "hasPart": [{"@type": "WebPage", "name": s["title"], "url": f"{SITE}/compare/{s['file']}"} for s in stats_list]}]
-    out = [head(title, desc, "/compare/", jsonld)]
-    out.append(breadcrumbs_html(crumbs))
-    out.append("<h1>Compare conditions</h1>")
-    out.append("<p class=\"lede\">Each comparison page places two conditions side by side: what they are, how many biomarkers OSMF has catalogued and which are shared, "
-               "how many trials are registered and in what status, which therapeutic agents are under investigation for both, the named research cohorts, and the latest PubMed studies.</p>")
+    n_cond = len(data)
+    n_pv = sum(1 for s in stats_list if not s["lit_only"])
+    n_shared = sum(s["shared"] for s in stats_list)
+    lede = ("<p class=\"lede\">Each comparison page places two conditions side by side: what they are, how many biomarkers OSMF has catalogued and which are shared, "
+            "how many trials are registered and in what status, which therapeutic agents are under investigation for both, the named research cohorts, and the latest PubMed studies.</p>")
+    page_head = head(title, desc, "/compare/", jsonld) + hero(crumbs, "Side-by-side evidence", "<h1>Compare conditions</h1>", lede,
+        [("Comparison pages", str(len(stats_list))), ("Conditions covered", str(n_cond)), ("Biomarker-level comparisons", str(n_pv)), ("Shared-marker matches", f"{n_shared:,}")])
+    out = []
     out.append("<h2 id=\"post-viral\">Post-infectious and multisymptom conditions</h2><p>Full biomarker-level comparisons between conditions that have an OSMF biomarker atlas.</p><div class=\"tw\"><table><thead><tr><th>Comparison</th><th>Shared biomarkers</th><th>Direction conflicts</th><th>Trials (A / B)</th><th>Shared agents</th></tr></thead><tbody>")
     for s in stats_list:
         if s["lit_only"]:
@@ -830,17 +920,16 @@ def build_index(data, stats_list):
             continue
         out.append(f"<tr><td><a href=\"/compare/{s['file']}\">{esc(s['title'].split(':')[0])}</a></td><td class=\"num\">{s['trialsA']} / {s['trialsB']}</td><td class=\"num\">{s['both_trials']}</td><td class=\"num\">{s['agents']}</td></tr>")
     out.append("</tbody></table></div>")
-    out.append("<h2 id=\"conditions\">Conditions covered</h2><ul class=\"compact\">")
+    out.append("<h2 id=\"conditions\">Conditions covered</h2><ul class=\"cmp-conds\">")
     for slug, c in data.items():
         links = [f'<a href="/{c["feed"]}">literature</a>']
         if c["atlas"]:
             links.insert(0, f'<a href="/{c["atlas"]}">biomarker atlas</a>')
         label = esc(c['name']) + (f" ({esc(c['short'])})" if c['short'].lower() != c['name'].lower() else "")
-        out.append(f"<li><strong>{label}</strong> &middot; {' &middot; '.join(links)}</li>")
+        out.append(f"<li><strong>{label}</strong>{' &middot; '.join(links)}</li>")
     out.append("</ul>")
     out.append("<h2 id=\"state-laws\">State healthcare law comparison</h2><p class=\"muted\">A separate tool for comparing healthcare-access laws across US states is under development. In the meantime, browse the <a href=\"/maps/\">Medical Freedom Maps layer maps</a> or <a href=\"/maps/states/\">state profiles</a>.</p>")
-    out.append(footer(f"Last updated {fmt_date(TODAY)}. Generated by scripts/build_compare_pages.py."))
-    return "\n".join(out)
+    return page_head + sectionize("\n".join(out)) + footer(f"Last updated {fmt_date(TODAY)}. Generated by scripts/build_compare_pages.py.")
 
 
 # --------------------------------------------------------------------------------------

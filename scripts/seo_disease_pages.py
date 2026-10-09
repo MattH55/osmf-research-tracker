@@ -337,6 +337,24 @@ def process(page: Path, dry: bool) -> list[str]:
             markup = new_markup
             notes.append("note link")
 
+    # A canonical (or og:url) naming a page that does not exist tells Google
+    # to index a 404 and drop this page.  The generator derives those URLs
+    # from db100 display slugs that often differ from the file name, so any
+    # non-existent target is pointed back at this page itself.
+    self_url = f"{ORIGIN}/chronic-disease-interventions/{page.name}"
+    for pat in (r'(<link rel="canonical" href=")([^"]*)(")', r'(<meta property="og:url" content=")([^"]*)(")'):
+        def fix(m: re.Match) -> str:
+            url = m.group(2)
+            if url.startswith(f"{ORIGIN}/chronic-disease-interventions/"):
+                target = PAGES / url.rsplit("/", 1)[1]
+                if not target.exists():
+                    return m.group(1) + self_url + m.group(3)
+            return m.group(0)
+        new_markup = re.sub(pat, fix, markup, flags=re.I)
+        if new_markup != markup:
+            markup = new_markup
+            notes.append("dead canonical/og:url -> self")
+
     twin = CANONICAL_TWINS.get(page.name)
     if twin:
         canon = f"{ORIGIN}/chronic-disease-interventions/{twin}"

@@ -17,7 +17,7 @@ exists, else preserved and flagged 'unvalidated', never rejected). Non-zero exit
 Usage: python scripts/build_pais_cohorts.py [--check]
 """
 from __future__ import annotations
-import json, glob, os, sys, html, csv, io, hashlib, subprocess
+import json, glob, os, sys, html, csv, io, hashlib, subprocess, re
 
 BUILD_VERSION = "2.0.0-seed"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -312,79 +312,122 @@ def value_ci(v):
 
 
 CSS = """
-:root{--bg:#fff;--fg:#1a1f26;--muted:#6b7480;--line:#e3e7ec;--card:#f7f9fb;--accent:#0b6bcb;
---warn:#b26a00;--good:#1a7f4b;--chip:#eef2f6;--zero:#faeaea;--zerofg:#a33}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1216;--fg:#e6e9ee;--muted:#9aa4b0;--line:#252b33;
---card:#161b21;--accent:#5aa2ea;--warn:#e0a24a;--good:#5cc68d;--chip:#1c232b;--zero:#2a1c1c;--zerofg:#e08a8a}}
+:root{--bg:#fff;--fg:#2a3160;--ink:#0e1444;--muted:#6b7194;--line:#e6e8f2;--card:#f7f8fc;--accent:#2f45c4;
+--warn:#a16207;--good:#047857;--chip:#f1f3f9;--zero:#fff1e8;--zerofg:#c2410c}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
-body{margin:0;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
-.wrap{max-width:1200px;margin:0 auto;padding:24px 18px 80px}
-a{color:var(--accent)}h1{font-size:1.7rem;margin:.2em 0}
-h2{font-size:1.2rem;margin:1.8em 0 .5em;border-bottom:1px solid var(--line);padding-bottom:.3em}
-h3{font-size:1rem;margin:1.4em 0 .3em}
-.lede{color:var(--muted);max-width:74ch}.meta{font-size:.82rem;color:var(--muted);margin:.4em 0}
-.chip{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:.78rem;margin:2px 3px 2px 0;white-space:nowrap}
-.badge{font-size:.66rem;padding:0 5px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+body{margin:0;font:16px/1.6 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+.wrap{max-width:1200px;margin:0 auto;padding:28px var(--ui-gutter,20px) 24px}
+a{color:var(--accent)}h1{font-size:1.9rem;margin:.2em 0;color:var(--ink)}
+h2{font-size:clamp(1.3rem,2vw,1.6rem);font-weight:700;color:var(--ink);letter-spacing:-.012em;margin:56px 0 14px;padding:0;border:0;scroll-margin-top:84px}
+h3{font-size:1.04rem;font-weight:650;color:var(--ink);margin:28px 0 10px}
+h4{color:var(--ink)}
+.lede{color:var(--fg);max-width:74ch;line-height:1.7}.meta{font-size:.85rem;color:var(--muted);margin:.4em 0}
+.chip{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.78rem;margin:2px 3px 2px 0;white-space:nowrap;color:var(--fg)}
+.badge{display:inline-block;font-size:.7rem;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);white-space:nowrap;vertical-align:middle}
 .na{color:var(--muted);font-style:italic;font-size:.92em}
-.nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-.nav a{font-size:.82rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);text-decoration:none}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:14px 0;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:10px}
-.toolbar label{display:flex;flex-direction:column;font-size:.72rem;color:var(--muted);gap:2px}
-.toolbar select,.toolbar input{font-size:.86rem;padding:4px 6px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px}
-.btn{cursor:pointer;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:6px 12px;font-size:.84rem}
-.btn.sec{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
-table{border-collapse:collapse;width:100%;font-size:.86rem}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{background:var(--card);position:sticky;top:0;cursor:pointer;white-space:nowrap}
-tbody tr:hover{background:var(--card)}
-.matrix td,.matrix th{text-align:center;padding:5px 7px}.matrix th.row,.matrix td.row{text-align:left;font-weight:600}
-.matrix .dom{background:var(--card);text-align:left;font-weight:600}
-.cell0{background:var(--zero);color:var(--zerofg)}.cellN{font-weight:700}
-.sv{color:#fff;border-radius:3px;padding:1px 4px;font-size:.76rem;display:inline-block;min-width:34px}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 16px}
+.nav a{font-size:.86rem;font-weight:500;padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);text-decoration:none;color:var(--fg)}
+.nav a:hover{background:#fff;border-color:#d5d9ea;color:var(--ink)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:16px 0 8px;padding:16px 18px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(14,20,68,.05),0 2px 8px rgba(14,20,68,.04)}
+.toolbar label{display:flex;flex-direction:column;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);gap:6px}
+.toolbar select,.toolbar input{font:inherit;font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;min-height:40px;padding:8px 12px;background:#fff;color:var(--ink);border:1px solid #d5d9ea;border-radius:10px}
+.toolbar select{-webkit-appearance:none;appearance:none;padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236b7194' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.toolbar select:focus,.toolbar input:focus{outline:none;border-color:#8090ea;box-shadow:0 0 0 4px rgba(47,69,196,.12)}
+.btn{cursor:pointer;display:inline-flex;align-items:center;background:linear-gradient(180deg,#ffa31a,#f2711c);color:#fff!important;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-size:.86rem;font-weight:650;text-decoration:none!important;box-shadow:0 6px 16px rgba(242,113,28,.25)}
+.btn.sec{background:#fff;color:var(--ink)!important;border:1px solid #d5d9ea;box-shadow:none;font-weight:600;padding:8px 14px}
+.btn.sec:hover{background:var(--card)}
+.tablewrap table{border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important}
+.toolbar>span[style*="flex:1"]{flex:1 0 100%!important;height:0}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:0 1px 2px rgba(14,20,68,.05),0 2px 8px rgba(14,20,68,.04);margin:12px 0 20px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem;background:#fff}
+.wrap>table,.disease>table,.cset>table{border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(14,20,68,.05)}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--fg)}
+tr:last-child td{border-bottom:0}
+th{background:var(--card);position:sticky;top:0;cursor:pointer;white-space:nowrap;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+tbody tr:hover td{background:#fafbff}
+.matrix td,.matrix th{text-align:center;padding:7px 9px}.matrix th.row,.matrix td.row{text-align:left;font-weight:600;color:var(--ink)}
+.matrix th{letter-spacing:.04em}
+.matrix .dom{background:var(--card);text-align:left;font-weight:700;color:var(--ink)}
+.cell0{background:var(--zero);color:var(--zerofg)}.cellN{font-weight:700;color:var(--ink)}
+.sv{color:#fff;border-radius:999px;padding:1px 7px;font-size:.76rem;display:inline-block;min-width:34px}
 .cell-nm{color:var(--muted);opacity:.45}.cell-nr{color:var(--warn)}
-.count{color:var(--muted);font-size:.85rem}.back{font-size:.85rem}
-.grid2{display:grid;grid-template-columns:190px 1fr;gap:2px 14px;font-size:.9rem}.grid2 dt{color:var(--muted)}.grid2 dd{margin:0}
-.warnbox{background:var(--zero);border:1px solid var(--line);border-left:3px solid var(--warn);padding:10px 12px;border-radius:6px;margin:10px 0;font-size:.9rem}
-.okbox{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--good);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.86rem}
-footer{margin-top:40px;border-top:1px solid var(--line);padding-top:14px;font-size:.8rem;color:var(--muted)}
-.pill{font-size:.72rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line)}.pill.good{color:var(--good)}.pill.no{color:var(--muted)}
-.pred-up{color:var(--warn);font-weight:600}.pred-down{color:var(--good);font-weight:600}
+.count{color:var(--muted);font-size:.88rem;font-weight:500}.back{font-size:.85rem}
+.grid2{display:grid;grid-template-columns:220px 1fr;gap:0;font-size:.93rem;margin:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(14,20,68,.05),0 2px 8px rgba(14,20,68,.04)}
+.grid2 dt{color:var(--muted);font-size:.86rem;font-weight:500;padding:11px 16px;background:var(--card);border-bottom:1px solid var(--line)}
+.grid2 dd{margin:0;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.grid2 dt:last-of-type,.grid2 dd:last-of-type{border-bottom:0}
+.obs .grid2{box-shadow:none;margin-top:10px}
+.warnbox{background:#fffaf2;border:1px solid #f5dcb0;border-radius:12px;padding:14px 16px;margin:20px 0;font-size:.93rem;line-height:1.65;color:#6b4a12}
+.warnbox strong{color:#5a3a06}
+.okbox{background:#e7f7f0;border:1px solid #bfe9d6;padding:12px 16px;border-radius:12px;margin:12px 0;font-size:.88rem;color:#065f46}
+.pais-foot{margin-top:56px;border-top:1px solid var(--line);padding-top:18px;font-size:.84rem;color:var(--muted)}
+.pais-foot p{margin:.3em 0}
+.pill{display:inline-block;font-size:.74rem;font-weight:600;padding:2px 9px;border-radius:999px;border:1px solid var(--line);background:#fff}.pill.good{color:var(--good);background:#e7f7f0;border-color:#bfe9d6}.pill.no{color:var(--muted)}
+.pred-up{color:#c2410c;font-weight:600}.pred-down{color:#1d4ed8;font-weight:600}
 .pred-null{color:var(--muted)}.pred-nr{color:var(--muted);font-style:italic}
-.cell-sig{background:rgba(178,106,0,.28);font-weight:700;text-align:center}
+.cell-sig{background:#ffe2cc;color:#9a3412;font-weight:700;text-align:center}
 .cell-null{background:var(--chip);text-align:center}
-.cell-conflict{background:rgba(163,51,51,.30);font-weight:700;text-align:center}
+.cell-conflict{background:#fde2e2;color:#991b1b;font-weight:700;text-align:center}
 .cell-never{color:var(--muted);opacity:.4;text-align:center}
-.legend i.cell-sig{background:rgba(178,106,0,.28)}.legend i.cell-null{background:var(--chip)}
-.legend i.cell-conflict{background:rgba(163,51,51,.30)}.legend i.cell-never{background:transparent}
-.flag{display:inline-block;font-size:.66rem;padding:0 6px;border-radius:4px;border:1px solid var(--warn);color:var(--warn);background:transparent;margin:1px 3px 1px 0;white-space:nowrap}
-.flagbox{background:var(--zero);border:1px solid var(--line);border-left:3px solid var(--warn);padding:8px 12px;border-radius:6px;margin:8px 0;font-size:.85rem}
-.disease h3{margin-top:1.2em}
-.miss{font-size:.78rem;font-style:italic}.miss-not_measured{color:var(--muted);opacity:.6}
+.legend i.cell-sig{background:#ffe2cc}.legend i.cell-null{background:var(--chip)}
+.legend i.cell-conflict{background:#fde2e2}.legend i.cell-never{background:transparent}
+.flag{display:inline-block;font-size:.7rem;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid #f5e0a3;color:var(--warn);background:#fff7df;margin:1px 3px 1px 0;white-space:nowrap}
+.flagbox{background:#fff7df;border:1px solid #f5e0a3;padding:10px 14px;border-radius:12px;margin:10px 0;font-size:.88rem;color:#713f12}
+.disease h3{margin-top:1.4em}
+.miss{font-size:.8rem;font-style:italic}.miss-not_measured{color:var(--muted);opacity:.7}
 .miss-measured_not_reported{color:var(--warn)}.miss-reported_as_zero{color:var(--good)}
 .miss-not_applicable{color:var(--muted)}.miss-unknown{color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.76rem;color:var(--muted);margin:8px 0}
-.legend span{display:inline-flex;align-items:center;gap:5px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
-.obs{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;background:var(--card)}
-.obs .big{font-size:1.05rem;font-weight:700}
-.sig{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem;color:var(--muted)}
-.cset{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
-.cset h4{margin:.2em 0;font-size:.9rem}
-.barrow{display:grid;grid-template-columns:250px 1fr;gap:8px;align-items:center;margin:3px 0;font-size:.82rem}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.8rem;color:var(--muted);margin:10px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.obs{border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:12px 0;background:#fff;box-shadow:0 1px 2px rgba(14,20,68,.05),0 2px 8px rgba(14,20,68,.04)}
+.obs p{margin:.35em 0}
+.obs .big{font-size:1.06rem;font-weight:650;color:var(--ink);line-height:1.5}
+.sig{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.74rem;color:var(--muted);overflow-wrap:anywhere}
+.cset{border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:12px 0;background:#fff}
+.cset h4{margin:.2em 0 .5em;font-size:.95rem}
+.barrow{display:grid;grid-template-columns:250px 1fr;gap:10px;align-items:center;margin:4px 0;font-size:.84rem}
 .barrow .lab{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.barwrap{position:relative;background:var(--chip);border-radius:4px;height:18px}
-.bar{position:absolute;left:0;top:0;height:18px;border-radius:4px;background:var(--accent)}
+.barwrap{position:relative;background:var(--chip);border-radius:999px;height:18px}
+.bar{position:absolute;left:0;top:0;height:18px;border-radius:999px;background:#3346b8}
 .bar.cmp{background:var(--muted);opacity:.55;height:8px;top:5px}
-.barnum{position:relative;font-size:.72rem;padding-left:5px;line-height:18px}
+.barnum{position:relative;font-size:.74rem;padding-left:7px;line-height:18px;color:var(--ink)}
+.wrap ul{padding-left:1.25rem}.wrap li{margin:.35em 0;line-height:1.6}.wrap li::marker{color:#ff9800}
+.pais-hero{padding:clamp(40px,6vw,72px) 0 clamp(40px,5.5vw,64px)}
+.pais-hero .osmf-wrap>*{max-width:72ch}
+.pais-hero .back{margin:0 0 22px;font-size:13px}
+.pais-hero .back a{color:rgba(226,229,248,.78)!important;text-decoration:none!important}.pais-hero .back a:hover{color:#fff!important}
+.pais-hero h1{font-size:clamp(30px,4.6vw,52px);margin:18px 0 0;max-width:24ch}
+.pais-hero .lede{margin:18px 0 0;font-size:clamp(16px,1.5vw,18px)}
+.pais-hero .meta{margin:14px 0 0;font-size:14px;color:rgba(226,229,248,.7)!important}
+.pais-hero .meta a{color:#ffd08a}
+.pais-hero strong{color:#fff}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}.grid2 dt{border-bottom:0;padding-bottom:2px}.grid2 dd{padding-top:2px}
+.barrow{grid-template-columns:1fr;gap:4px}.toolbar label{flex:1 1 140px}.toolbar select,.toolbar input{width:100%}.obs{padding:16px}h2{margin-top:44px}}
 """
 
 
-def html_doc(title, body, extra_head=""):
+HERO_RE = re.compile(r'<div class="wrap">\s*(<p class="back">.*?</p>)\s*(<h1>.*?</h1>)((?:\s*<p class="(?:meta|lede)">.*?</p>)*)', re.S)
+
+
+def heroize(body, eyebrow):
+    """Lift the back link, H1 and lead paragraphs into the shared navy hero; rename the inner
+    page footer so the shared-chrome injector never mistakes it for the site footer."""
+    def rep(m):
+        back = m.group(1).replace('<p class="back">', '<p class="back osmf-crumbs">', 1)
+        return (f'<header class="osmf-hero pais-hero"><div class="osmf-wrap">{back}'
+                f'<span class="osmf-eyebrow">{esc(eyebrow)}</span>{m.group(2)}{m.group(3)}</div></header>\n<div class="wrap">')
+    body = HERO_RE.sub(rep, body, count=1)
+    return body.replace("<footer>", '<div class="pais-foot">').replace("</footer>\n</div>", "</div>\n</div>")
+
+
+def html_doc(title, body, extra_head="", eyebrow=None):
+    if eyebrow:
+        body = heroize(body, eyebrow)
     return (f"<!doctype html><html lang=en><head><meta charset=utf-8>"
             f"<meta name=viewport content=\"width=device-width,initial-scale=1\">"
             f"<title>{esc(title)}</title>"
             f"<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">"
-            f"<link rel=stylesheet href=\"tracker.css\">"
+            f"<link rel=stylesheet href=\"/tracker.css\">"
             f"<style>{CSS}</style>{extra_head}</head>"
             f"<body>"
             f"<nav><div class=nav-container>"
@@ -408,7 +451,7 @@ def html_doc(title, body, extra_head=""):
             f"</div><div class=footer-note>Automated daily via GitHub Actions. Data from PubMed (NLM). Not medical advice.</div>"
             f"</div></footer>"
             f"<button class=back-to-top aria-label=\"Back to top\">↑</button>"
-            f"<script src=\"js/site-universal.js\" defer></script>"
+            f"<script src=\"/js/site-universal.js\" defer></script>"
             f"</body></html>")
 
 
@@ -788,7 +831,7 @@ def build_detail(d, pmap, imap, mmap, ext_schemas):
 <h2>Provenance &amp; verification</h2>{prov}
 <footer><p>PAIS Cohort Database v2 · <a href="../pais-cohorts.html">back to table</a></p></footer>
 </div>"""
-    return html_doc(f"{d['name']} — PAIS Cohort", body)
+    return html_doc(f"{d['name']} — PAIS Cohort", body, eyebrow="Cohort profile")
 
 
 PAGE_JS = r"""
@@ -1079,7 +1122,7 @@ def build_disease_page(pid, ds, pmap, mmap, fmap):
 {build_disease_predictors(ds, pmap, fmap, mmap)}
 <footer><p>PAIS Cohort Database v2 · <a href="../../pais-cohorts.html">back to table</a></p></footer>
 </div>"""
-    return html_doc(f"{pth.get('name', pid)} — PAIS cohorts", body)
+    return html_doc(f"{pth.get('name', pid)} — PAIS cohorts", body, eyebrow="Cohorts by trigger")
 
 
 def build_estimate_matrix(cohorts):
@@ -1199,7 +1242,7 @@ anywhere on this page or in the export, by design.</p>
 each disease page.</p>
 </footer>
 </div>"""
-    return html_doc("Susceptibility & conversion predictors — PAIS", body)
+    return html_doc("Susceptibility & conversion predictors — PAIS", body, eyebrow="Predictor analysis")
 
 
 def build_main_page(cohorts, pmap, mmap, fmap, n_obs, warnings):
@@ -1262,7 +1305,7 @@ emphasis, temporality rules, replication table and factor × pathogen matrix —
 <p>Export: cohorts <a href="data/pais-cohorts-index.json">JSON</a> · <a href="data/pais-cohorts.csv">CSV</a> · observations <a href="data/pais-observations.csv">CSV</a> · predictors <a href="data/pais-predictors.csv">CSV</a>. v1.x preserved under <a href="data/v1/">/data/v1/</a>.</p>
 </footer>
 </div>{PAGE_JS}"""
-    return html_doc("PAIS Cohort Database", body)
+    return html_doc("PAIS Cohort Database", body, eyebrow="Open cohort database")
 
 
 # ---------------------------------------------------------------- CSV

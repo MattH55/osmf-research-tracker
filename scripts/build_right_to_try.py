@@ -176,8 +176,11 @@ const diseases = {diseases_json};"""
         updated
     )
 
-    # Write updated HTML
-    template_path.write_text(updated, encoding="utf-8")
+    # Write updated HTML (light OSMF theme, shared with RepurpOS pages; idempotent)
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from disease_pipeline.light_theme import restyle_html
+    template_path.write_text(restyle_html(updated), encoding="utf-8")
 
     print(f"Built right-to-try.html with {count} unmet medical needs (no Phase 4 agents)")
     if diseases:

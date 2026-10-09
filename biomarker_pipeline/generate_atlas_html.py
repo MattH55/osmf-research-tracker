@@ -165,7 +165,7 @@ def render_atlas_html(atlas: dict) -> str:
         </div>
         <div class="results-count" id="resultsCount" aria-live="polite"></div>
         <div class="table-wrapper">
-          <table><thead><tr><th>Marker / Test</th><th>Direction</th><th>Category</th><th>vs. Comparison</th><th>Clinical Context</th><th>Key Reference</th></tr></thead><tbody id="tableBody"></tbody></table>
+          <table id="biomarkerTable"><thead><tr><th>Marker / Test</th><th>Direction</th><th>Category</th><th>vs. Comparison</th><th>Clinical Context</th><th>Key Reference</th></tr></thead><tbody id="tableBody"></tbody></table>
         </div>
       </div>
     </section>

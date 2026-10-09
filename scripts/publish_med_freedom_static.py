@@ -438,7 +438,9 @@ def build_gene_therapy_html(gt: dict) -> None:
 </html>
 """
     out = ROOT / "disease-intelligence" / "gene-therapy-mapper.html"
-    out.write_text(page, encoding="utf-8")
+    sys.path.insert(0, str(ROOT))
+    from disease_pipeline.light_theme import restyle_html  # light OSMF theme, shared with RepurpOS pages
+    out.write_text(restyle_html(page), encoding="utf-8")
     print(f"Wrote {out} ({out.stat().st_size // 1024} KB, {n} diseases)")
 
 

@@ -366,59 +366,109 @@ def group_markers(records):
 # chrome
 # ----------------------------------------------------------------------------
 CSS = """
-:root{--brand-blue:#0068f8;--brand-blue-dark:#0052c7;--brand-orange:#ff9800;--text-dark:#1f2937;--text-light:#6b7280;--bg-light:#f8fafc;--bg-white:#fff;--border:#e5e7eb;--up-bg:#fef2f2;--up-text:#dc2626;--down-bg:#eff6ff;--down-text:#2563eb;--mixed-bg:#fffbeb;--mixed-text:#d97706}
+:root{--brand-blue:#2f45c4;--brand-blue-dark:#1b2a8f;--brand-orange:#ff9800;--ink:#0e1444;--ink-2:#2a3160;--text-dark:#3d4466;--text-light:#6b7194;--bg-light:#f7f8fc;--bg-white:#fff;--border:#e6e8f2;--border-2:#d5d9ea;--up-bg:#fff1e8;--up-text:#c2410c;--down-bg:#eaf0ff;--down-text:#1d4ed8;--mixed-bg:#fff7df;--mixed-text:#a16207;--shadow-1:0 1px 2px rgba(14,20,68,.05),0 2px 8px rgba(14,20,68,.04)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text-dark);background:var(--bg-light);line-height:1.6;overflow-x:hidden}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text-dark);background:#fff;line-height:1.65;overflow-x:hidden}
 a{color:var(--brand-blue)}
-.nav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.nav{background:#fff;border-bottom:1px solid var(--border)}
 .nav-in{max-width:1100px;margin:0 auto;padding:.6rem 1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
-.nav .brand{font-weight:700;color:var(--brand-blue);text-decoration:none;font-size:1.05rem;white-space:nowrap}
+.nav .brand{font-weight:700;color:var(--ink);text-decoration:none}
 .nav .links{display:flex;gap:.25rem .9rem;flex-wrap:wrap;font-size:.86rem}
-.nav .links a{color:var(--text-light);text-decoration:none;font-weight:500}
-.nav .links a:hover,.nav .links a.active{color:var(--brand-blue)}
-.hero{background:linear-gradient(135deg,#0068f8 0%,#0052c7 100%);color:#fff;padding:2.2rem 1rem 2rem}
-.hero-in{max-width:1100px;margin:0 auto}
-.crumbs{font-size:.8rem;margin-bottom:.8rem;opacity:.92}
-.crumbs a{color:#fff;text-decoration:none}
-.crumbs span{opacity:.7;margin:0 .35rem}
-.hero h1{font-size:1.75rem;line-height:1.25;font-weight:700;margin-bottom:.6rem;overflow-wrap:anywhere}
-.hero p{max-width:760px;opacity:.95;font-size:1rem}
-.pill{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-size:.78rem;font-weight:600;margin-right:.4rem;margin-top:.6rem;background:rgba(255,255,255,.18)}
-main{max-width:1100px;margin:0 auto;padding:1.5rem 1rem 3rem}
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem}
-.card h2{font-size:1.2rem;margin-bottom:.75rem;color:var(--brand-blue-dark)}
-.card h3{font-size:1rem;margin:.9rem 0 .4rem}
-.card p{margin-bottom:.7rem}
+.nav .links a{color:var(--text-light);text-decoration:none}
+.hero{padding:clamp(40px,6vw,72px) var(--ui-gutter,20px) clamp(40px,5.5vw,64px)}
+.hero-in{max-width:1040px;margin:0 auto}
+.crumbs{font-size:13px;margin-bottom:22px;color:rgba(226,229,248,.62)}
+.crumbs a{color:rgba(226,229,248,.8)!important;text-decoration:none}
+.crumbs a:hover{color:#fff!important}
+.crumbs span{opacity:.6;margin:0 .45rem}
+.crumbs strong{font-weight:500;color:rgba(226,229,248,.62)}
+.hero h1{font-size:clamp(30px,4.4vw,50px);margin:0 0 16px;max-width:24ch;overflow-wrap:anywhere}
+.hero p{max-width:70ch;font-size:clamp(15.5px,1.4vw,17.5px);line-height:1.7}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:650;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)}
+.pill.pill-up{background:rgba(255,152,0,.16);border-color:rgba(255,181,71,.5);color:#ffcf8a}
+.pill.pill-down{background:rgba(120,145,255,.18);border-color:rgba(160,180,255,.45);color:#d6deff}
+.pill.pill-mixed{background:rgba(255,215,120,.14);border-color:rgba(255,215,120,.4);color:#ffe3a3}
+.pill.pill-mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:500}
+main{max-width:1040px;margin:0 auto;padding:clamp(28px,4vw,44px) var(--ui-gutter,20px) 24px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:clamp(18px,2.6vw,28px);margin-bottom:20px;box-shadow:var(--shadow-1)}
+.card h2{font-size:clamp(1.15rem,1.8vw,1.35rem);font-weight:700;letter-spacing:-.012em;margin-bottom:14px;color:var(--ink)}
+.card h3{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-light);margin:24px 0 10px}
+.card h2+h3{margin-top:4px}
+.card p{margin-bottom:.8rem;max-width:72ch}
 .card ul{padding-left:1.2rem;margin-bottom:.6rem}
-.card li{margin-bottom:.35rem}
-.tbl{width:100%;border-collapse:collapse;font-size:.93rem}
-.tbl th,.tbl td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
-.tbl th{width:32%;color:var(--text-light);font-weight:600}
-.tbl thead th{width:auto}
-.tbl-wrap{overflow-x:auto}
-.dir{display:inline-block;padding:.1rem .55rem;border-radius:6px;font-weight:600;font-size:.85rem}
-.dir-up{background:var(--up-bg);color:var(--up-text)}
-.dir-down{background:var(--down-bg);color:var(--down-text)}
-.dir-mixed{background:var(--mixed-bg);color:var(--mixed-text)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.5rem .9rem;padding:0 !important;list-style:none}
-.grid li{margin:0}
-.faq details{border-top:1px solid var(--border);padding:.6rem 0}
-.faq summary{cursor:pointer;font-weight:600}
-.faq details p{margin:.5rem 0 0}
-.cite{background:var(--bg-light);border-left:4px solid var(--brand-blue);padding:.8rem 1rem;font-size:.9rem;overflow-wrap:anywhere}
-.muted{color:var(--text-light);font-size:.86rem}
-.cta{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem}
-.cta a.btn{display:inline-block;background:var(--brand-orange);color:#fff;text-decoration:none;font-weight:600;padding:.5rem 1rem;border-radius:8px;margin-top:.4rem}
-.disc{font-size:.85rem;color:var(--text-light);border-top:1px solid var(--border);padding-top:1rem}
-footer{background:#1f2937;color:#9ca3af;padding:1.5rem 1rem;font-size:.85rem}
+.card li{margin-bottom:.4rem}
+.card li::marker{color:var(--brand-orange)}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:14.5px}
+.tbl th,.tbl td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
+.tbl tr:last-child th,.tbl tr:last-child td{border-bottom:0}
+.tbl tbody th{width:30%;color:var(--text-light);font-weight:500;font-size:13.5px;background:var(--bg-light)}
+.tbl td{color:var(--ink-2)}
+.tbl thead th{width:auto;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-light);background:var(--bg-light);white-space:nowrap}
+.tbl tbody tr:hover td{background:#fafbff}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:12px}
+.dir{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-weight:650;font-size:12.5px;border:1px solid transparent;white-space:nowrap}
+.dir-up{background:var(--up-bg);color:var(--up-text);border-color:#ffd9c2}
+.dir-down{background:var(--down-bg);color:var(--down-text);border-color:#cfdcff}
+.dir-mixed{background:var(--mixed-bg);color:var(--mixed-text);border-color:#f5e0a3}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:8px;padding:0!important;list-style:none}
+.grid li{margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;min-width:0}
+main .grid li a{color:var(--ink);text-decoration:none;font-weight:500;min-width:0;overflow-wrap:anywhere}
+main .grid li a:hover{color:var(--brand-blue);text-decoration:underline;text-underline-offset:3px}
+.grid li::marker{content:none}
+.trials{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px;margin:0 0 8px}
+.trial{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--bg-light);display:flex;flex-direction:column;gap:6px}
+.trial-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.nct{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:#fff;border:1px solid var(--border-2);color:var(--ink)!important;text-decoration:none!important}
+.nct:hover{border-color:var(--brand-blue);color:var(--brand-blue)!important}
+.st{font-size:11.5px;font-weight:650;padding:2px 9px;border-radius:999px;background:#fff;border:1px solid var(--border);color:var(--ink-2)}
+.st-recruiting,.st-enrolling-by-invitation,.st-not-yet-recruiting{background:#e7f7f0;color:#047857;border-color:#bfe9d6}
+.st-completed{background:var(--down-bg);color:var(--down-text);border-color:#cfdcff}
+.st-terminated,.st-withdrawn,.st-suspended{background:var(--up-bg);color:var(--up-text);border-color:#ffd9c2}
+.st-active-not-recruiting{background:var(--mixed-bg);color:var(--mixed-text);border-color:#f5e0a3}
+.trial-title{font-size:14px;font-weight:600;color:var(--ink);line-height:1.45}
+.trial-om{font-size:12.5px;color:var(--text-light);line-height:1.5}
+.iv-list{list-style:none;padding:0!important;display:grid;gap:8px}
+.iv-list li{padding:12px 14px;border:1px solid var(--border);border-radius:12px;margin:0}
+.iv-list li strong{color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0!important;margin:6px 0 10px}
+.chips li{margin:0}
+.chips li::marker{content:none}
+.chips a{display:inline-flex;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:500;background:var(--bg-light);border:1px solid var(--border);color:var(--ink-2);text-decoration:none}
+.chips a:hover{background:#fff;border-color:var(--border-2);color:var(--ink)}
+.faq details{border:1px solid var(--border);border-radius:12px;padding:0 16px;margin-bottom:8px;background:#fff}
+.faq summary{cursor:pointer;font-weight:600;color:var(--ink);padding:13px 0;list-style:none;display:flex;gap:10px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"";width:8px;height:8px;flex:none;border-right:2px solid #f2711c;border-bottom:2px solid #f2711c;transform:rotate(-45deg);transition:transform .2s}
+.faq details[open] summary::before{transform:rotate(45deg)}
+.faq details p{margin:0 0 14px;color:var(--text-dark);font-size:15px}
+.cite{background:var(--bg-light);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.65;color:var(--ink-2);overflow-wrap:anywhere}
+.muted{color:var(--text-light);font-size:.88rem}
+.meta-line{color:var(--text-light);font-size:13.5px;margin:28px 0 14px}
+.disc{font-size:13.5px;line-height:1.6;color:#6b4a12;background:#fffaf2;border:1px solid #f5dcb0;border-radius:12px;padding:14px 16px}
+footer{background:var(--ink);color:#c9cde6;padding:1.5rem 1rem;font-size:.85rem}
 footer .in{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;justify-content:space-between}
-footer a{color:#d1d5db}
-.search{width:100%;padding:.7rem .9rem;border:1px solid var(--border);border-radius:8px;font-size:1rem;font-family:inherit}
-.cond-list{list-style:none;padding:0 !important;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem}
-.cond-list li{border:1px solid var(--border);border-radius:10px;padding:.7rem .9rem;background:#fff}
-.cond-list .n{color:var(--text-light);font-size:.82rem}
-@media (max-width:640px){.hero h1{font-size:1.4rem}.tbl th{width:38%}.card{padding:1rem}}
+footer a{color:#e7e9f7}
+.search{width:100%;font:inherit;font-size:16px;color:var(--ink);min-height:48px;padding:12px 16px;border:1px solid var(--border-2);border-radius:12px;background:#fff;margin-top:8px}
+.search:focus{outline:none;border-color:#8090ea;box-shadow:0 0 0 4px rgba(47,69,196,.12)}
+#results{margin-top:14px}
+.cond-list{list-style:none;padding:0!important;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
+.cond-list li{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:#fff;margin:0;transition:border-color .2s,box-shadow .2s}
+.cond-list li:hover{border-color:var(--border-2);box-shadow:var(--shadow-1)}
+.cond-list li::marker{content:none}
+main .cond-list li>a{color:var(--ink);text-decoration:none}
+main .cond-list li>a:hover{color:var(--brand-blue)}
+.cond-list .n{color:var(--text-light);font-size:12.5px;margin-top:4px}
+main .cond-list .n a{color:var(--brand-blue)}
+.hub-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:6px 18px;list-style:none;padding:0!important;max-height:520px;overflow:auto;padding-right:6px!important}
+.hub-list li{margin:0;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.hub-list li::marker{content:none}
+main .hub-list a{color:var(--ink);text-decoration:none;font-weight:500}
+main .hub-list a:hover{color:var(--brand-blue)}
+.hub-list .muted{white-space:nowrap;font-size:12px}
+.card h2 .muted{font-size:.8rem;font-weight:500}
+@media (max-width:640px){.tbl tbody th{width:38%}.card{padding:18px}.tbl th,.tbl td{padding:10px 12px}}
 """
 
 NAV_ITEMS = [
@@ -527,6 +577,9 @@ def faq_html(qas):
 
 
 def cta_box():
+    # The shared site footer (scripts/apply_osmf_ui.py) carries the digest/subscribe CTA,
+    # so marker pages no longer repeat it.
+    return ""
     return f"""<div class="cta"><strong>Get OSMF research updates.</strong> New biomarker, trial and treatment evidence summaries by email.<br>
 <a class="btn" href="{SUBSTACK}" rel="noopener">Subscribe on Substack</a></div>"""
 
@@ -621,15 +674,15 @@ def other_conditions_section(r: M, depth: int) -> str:
     sibs = [m for m in r.hub.members if m is not r]
     if not sibs:
         return ""
-    items = "".join(
-        f'<li><a href="{rel(depth)}{m.url_path}">{esc(m.name)} in {esc(m.cond_short)}</a> — '
-        f'<span class="dir dir-{m.direction}">{DIRECTION_ARROW[m.direction]} {esc(DIRECTION_WORD[m.direction])}</span>'
-        + (f" vs {esc(m.comparison)}" if m.comparison else "") + "</li>"
+    rows = "".join(
+        f'<tr><td><a href="{rel(depth)}{m.url_path}">{esc(m.name)} in {esc(m.cond_short)}</a></td>'
+        f'<td><span class="dir dir-{m.direction}">{DIRECTION_ARROW[m.direction]} {esc(DIRECTION_WORD[m.direction])}</span></td>'
+        f'<td>{("vs " + esc(m.comparison)) if m.comparison else "&mdash;"}</td></tr>'
         for m in sibs
     )
     return f"""<section class="card"><h2>Other conditions where {esc(r.hub.name)} is reported</h2>
-<ul>{items}</ul>
-<p class="muted">See the cross-condition hub: <a href="{rel(depth)}{r.hub.url_path}">{esc(r.hub.name)} across conditions</a>.</p></section>"""
+<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Atlas entry</th><th>Direction</th><th>Compared against</th></tr></thead><tbody>{rows}</tbody></table></div>
+<p class="muted" style="margin-top:12px">See the cross-condition hub: <a href="{rel(depth)}{r.hub.url_path}">{esc(r.hub.name)} across conditions</a>.</p></section>"""
 
 
 def enrichment_sections(r: M) -> str:
@@ -645,12 +698,15 @@ def enrichment_sections(r: M) -> str:
         li = []
         for t in r.trials[:8]:
             om = clean(t.get("outcomeMeasure"))
-            st = clean(t.get("status")).replace("_", " ").title()
-            li.append(f'<li><a href="{esc(t.get("link"))}" rel="noopener">{esc(t.get("nct_id"))}</a>: {esc(t.get("title"))}'
-                      + (f' <span class="muted">({esc(st)})</span>' if st else "")
-                      + (f'<br><span class="muted">Outcome measure: {esc(om)}</span>' if om else "") + "</li>")
+            raw_st = clean(t.get("status"))
+            st = raw_st.replace("_", " ").title()
+            st_cls = re.sub(r"[^a-z]+", "-", raw_st.lower()).strip("-")
+            li.append(f'<article class="trial"><div class="trial-top"><a class="nct" href="{esc(t.get("link"))}" rel="noopener">{esc(t.get("nct_id"))}</a>'
+                      + (f'<span class="st st-{esc(st_cls)}">{esc(st)}</span>' if st else "") + "</div>"
+                      + f'<div class="trial-title">{esc(t.get("title"))}</div>'
+                      + (f'<div class="trial-om">Outcome measure: {esc(om)}</div>' if om else "") + "</article>")
         more = f'<p class="muted">{len(r.trials) - 8} more trials reference this marker.</p>' if len(r.trials) > 8 else ""
-        out.append(f"<h3>Clinical trials using {esc(r.name)} as an outcome</h3><ul>{''.join(li)}</ul>{more}")
+        out.append(f"<h3>Clinical trials using {esc(r.name)} as an outcome</h3><div class=\"trials\">{''.join(li)}</div>{more}")
     if r.interventions:
         li = []
         for iv in r.interventions[:8]:
@@ -667,12 +723,12 @@ def enrichment_sections(r: M) -> str:
                 a = arts[0]
                 art = f'<br><span class="muted">e.g. <a href="{esc(a.get("url"))}" rel="noopener">{esc(truncate(clean(a.get("title")), 110))}</a></span>'
             li.append(f"<li><strong>{esc(iv.get('preferredTerm'))}</strong>" + (f" — {esc(', '.join(bits))}" if bits else "") + art + "</li>")
-        out.append(f'<h3>Interventions studied alongside this marker</h3><p class="muted">Hypothesis-generating links from trial outcome usage and literature co-occurrence. Not treatment recommendations.</p><ul>{"".join(li)}</ul>')
+        out.append(f'<h3>Interventions studied alongside this marker</h3><p class="muted">Hypothesis-generating links from trial outcome usage and literature co-occurrence. Not treatment recommendations.</p><ul class="iv-list">{"".join(li)}</ul>')
     if r.commercial and r.commercial.get("vendors"):
         v = "".join(f'<li><a href="{esc(x.get("url"))}" rel="noopener nofollow">{esc(x.get("vendor"))}</a></li>' for x in r.commercial["vendors"])
         note = clean(r.commercial.get("note"))
         out.append(f"<h3>Commercial test availability</h3><p>{esc(clean(r.commercial.get('testName')) or r.name)} — {esc(clean(r.commercial.get('availability')) or 'available')} laboratory test."
-                   + (f" {esc(note)}" if note else "") + f'</p><ul>{v}</ul><p class="muted">Links are for reference only; availability, specimen requirements and coverage vary by location.</p>')
+                   + (f" {esc(note)}" if note else "") + f'</p><ul class="chips">{v}</ul><p class="muted">Links are for reference only; availability, specimen requirements and coverage vary by location.</p>')
     if r.consumable and r.consumable.get("consumable"):
         c = r.consumable
         ptype = clean(c.get("productType")).replace("_", " ")
@@ -815,18 +871,18 @@ def render_marker_page(r: M, cond_records: list) -> str:
         (p + r.cond_page, r.cond_short),
         (None, r.name),
     ])
-    pills = f'<span class="pill">{DIRECTION_ARROW[r.direction]} {esc(dw.capitalize())}</span>'
+    pills = f'<span class="pill pill-{r.direction}">{DIRECTION_ARROW[r.direction]} {esc(dw.capitalize())}</span>'
     if r.category_label:
         pills += f'<span class="pill">{esc(r.category_label)}</span>'
     if r.loinc:
-        pills += f'<span class="pill">LOINC {esc(r.loinc)}</span>'
+        pills += f'<span class="pill pill-mono">LOINC {esc(r.loinc)}</span>'
     body = f"""<body>
 {nav(depth, "biomarker-atlas.html")}
 <header class="hero"><div class="hero-in">
 {crumb}
 <h1>{esc(r.name)} in {esc(r.cond_short)}</h1>
 <p>{esc(intro_paragraph(r))}</p>
-{pills}
+<div class="pills">{pills}</div>
 </div></header>
 <main>
 <section class="card"><h2>Summary</h2>{summary_table(r, depth)}</section>
@@ -836,7 +892,7 @@ def render_marker_page(r: M, cond_records: list) -> str:
 <section class="card"><h2>Frequently asked questions</h2>{faq_html(qas)}</section>
 {cite_box(f"{r.name} in {r.cond_short}: direction, evidence and what it means", r.url, r.cond_date[:4])}
 {cta_box()}
-<p class="muted">Last reviewed: {esc(r.cond_date)} · Page generated from <a href="{p}data/biomarkers/{esc(r.cond_slug)}.json">{esc(r.cond_slug)}.json</a> · Browse: <a href="{p}{r.cond_page}">{esc(r.cond_short)} atlas</a> · <a href="{p}biomarker-index.html">Biomarker Index</a> · <a href="{p}biomarkers/index.html">All marker pages</a></p>
+<p class="meta-line">Last reviewed: {esc(r.cond_date)} · Page generated from <a href="{p}data/biomarkers/{esc(r.cond_slug)}.json">{esc(r.cond_slug)}.json</a> · Browse: <a href="{p}{r.cond_page}">{esc(r.cond_short)} atlas</a> · <a href="{p}biomarker-index.html">Biomarker Index</a> · <a href="{p}biomarkers/index.html">All marker pages</a></p>
 <p class="disc"><strong>Disclaimer:</strong> This page is an educational synthesis of published, peer-reviewed research and is not medical advice. Biomarker findings vary across studies with case definitions, comparison groups, timing and assay methods. Direction of change reflects the predominant finding in the cited source and does not establish a diagnostic threshold. Discuss any test result with a qualified clinician.</p>
 </main>
 {footer(depth)}"""
@@ -940,7 +996,7 @@ def render_hub_page(hub: M) -> str:
 {crumb}
 <h1>{esc(hub.name)}{" across conditions" if n > 1 else ": biomarker evidence"}</h1>
 <p>{esc(intro)}</p>
-{''.join(f'<span class="pill">{esc(c)}</span>' for c in conds)}
+<div class="pills">{''.join(f'<span class="pill">{esc(c)}</span>' for c in conds)}</div>
 </div></header>
 <main>
 <section class="card"><h2>Where {esc(hub.name)} is reported</h2>{alts}
@@ -948,7 +1004,7 @@ def render_hub_page(hub: M) -> str:
 <section class="card"><h2>Frequently asked questions</h2>{faq_html(qas)}</section>
 {cite_box(f"{hub.name} across conditions: biomarker evidence", hub.url, last[:4])}
 {cta_box()}
-<p class="muted">Last reviewed: {esc(last)} · Browse: <a href="{p}biomarker-index.html">Biomarker Index</a> · <a href="{p}biomarkers/index.html">All marker pages</a> · <a href="{p}biomarker-atlas.html">Biomarker Atlas</a></p>
+<p class="meta-line">Last reviewed: {esc(last)} · Browse: <a href="{p}biomarker-index.html">Biomarker Index</a> · <a href="{p}biomarkers/index.html">All marker pages</a> · <a href="{p}biomarker-atlas.html">Biomarker Atlas</a></p>
 <p class="disc"><strong>Disclaimer:</strong> Educational synthesis of peer-reviewed research; not medical advice. Findings are group-level and vary with study design. Discuss any result with a qualified clinician.</p>
 </main>
 {footer(depth)}"""
@@ -1041,10 +1097,10 @@ def render_index(conds, records, hubs) -> str:
 <div id="results"></div>
 <script>{SEARCH_JS}</script></section>
 <section class="card"><h2>Conditions</h2><ul class="cond-list">{''.join(cond_items)}</ul></section>
-<section class="card"><h2>Cross-condition marker hubs <span class="muted">({len(hubs)})</span></h2><ul class="grid">{hub_li}</ul></section>
+<section class="card"><h2>Cross-condition marker hubs <span class="muted">({len(hubs)})</span></h2><ul class="hub-list">{hub_li}</ul></section>
 {''.join(sections)}
 {cta_box()}
-<p class="muted">Generated {BUILD_DATE} from the atlas JSON files. See also the <a href="{p}biomarker-index.html">cross-condition Biomarker Index</a> and the <a href="{p}biomarker-atlas.html">Biomarker Atlas hub</a>.</p>
+<p class="meta-line">Generated {BUILD_DATE} from the atlas JSON files. See also the <a href="{p}biomarker-index.html">cross-condition Biomarker Index</a> and the <a href="{p}biomarker-atlas.html">Biomarker Atlas hub</a>.</p>
 </main>
 {footer(depth)}"""
     return hd + body
@@ -1068,15 +1124,14 @@ def inject_atlas(d, rs):
         cats[r.category_label or "Other"].append(r)
     short = d["condition"].get("shortName") or d["condition"].get("name")
     parts = [START,
-             '<section class="section" id="marker-pages" style="max-width:1200px;margin:0 auto;padding:2rem 1.5rem;">',
-             f'<h2 style="font-size:1.4rem;margin-bottom:.5rem;">Individual {html.escape(short)} biomarker pages</h2>',
-             f'<p style="color:#6b7280;margin-bottom:1rem;">Each {html.escape(short)} marker has its own page with direction, comparison group, symptoms, test details, citation and FAQ. '
+             '<section class="section mp-block" id="marker-pages"><div class="mp-in">',
+             f'<h2>Individual {html.escape(short)} biomarker pages</h2>',
+             f'<p class="mp-intro">Each {html.escape(short)} marker has its own page with direction, comparison group, symptoms, test details, citation and FAQ. '
              '<a href="biomarkers/index.html">Browse all marker pages</a>.</p>']
     for cat in sorted(cats):
-        li = "".join(f'<li style="margin:.25rem 0;"><a href="{r.url_path}">{html.escape(r.name)}</a> {DIRECTION_ARROW[r.direction]}</li>' for r in cats[cat])
-        parts.append(f'<h3 style="font-size:1rem;margin:.9rem 0 .3rem;">{html.escape(cat)}</h3>'
-                     f'<ul style="list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.1rem 1rem;">{li}</ul>')
-    parts.append("</section>")
+        li = "".join(f'<li><a href="{r.url_path}">{html.escape(r.name)}</a> <span class="mp-dir mp-dir-{r.direction}" title="{DIRECTION_WORD[r.direction]}">{DIRECTION_ARROW[r.direction]}</span></li>' for r in cats[cat])
+        parts.append(f'<h3>{html.escape(cat)}</h3><ul class="mp-list">{li}</ul>')
+    parts.append("</div></section>")
     parts.append(END)
     block = nl.join(parts)
     pat = re.compile(re.escape(START) + r".*?" + re.escape(END), re.S)

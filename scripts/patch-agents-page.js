@@ -43,6 +43,48 @@ const CSS = `
     .literature-item a { color:var(--primary-dark); font-weight:600; text-decoration:none; }
     .literature-item a:hover { color:var(--accent-orange); }
     .summary-table td, .summary-table th { font-size: 0.85rem; padding:0.35rem 0.5rem; border-bottom:1px solid #eef2f7; text-align:left; }
+    /* OSMF design-system layer (navy/orange tokens from css/osmf-ui.css) */
+    .ag-cta { max-width:1200px; margin:32px auto 0; padding:0 var(--ui-gutter, 24px); box-sizing:border-box; }
+    .ag-cta__in { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; padding:18px 22px; background:var(--ui-bg-warm, #fffaf2); border:1px solid #f5dcb0; border-left:4px solid var(--ui-accent, #ff9800); border-radius:14px; font-size:15px; line-height:1.6; color:var(--ui-ink-2, #2a3160); }
+    .ag-cta__in strong { color:var(--ui-ink, #0e1444); }
+    .ag-cta__in span { flex:1 1 420px; min-width:0; }
+    .ag-cta__btn { flex:none; display:inline-flex; align-items:center; gap:6px; background:var(--ui-ink, #0e1444); color:#fff !important; text-decoration:none !important; font-weight:600; font-size:14px; padding:10px 18px; border-radius:999px; white-space:nowrap; }
+    .ag-cta__btn:hover { background:var(--ui-navy-700, #18206a); }
+    body .main-section { padding:56px 0 24px; background:#fff; }
+    body .main-section .section-inner { max-width:1200px; margin:0 auto; padding:0 var(--ui-gutter, 24px); box-sizing:border-box; }
+    .main-section h2 { font-size:clamp(24px, 3vw, 30px); margin:0 0 12px; color:var(--ui-ink, #0e1444); }
+    .main-section h3.ag-h3 { font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--ui-muted, #6b7194); font-weight:700; margin:0 0 10px; }
+    #exec-summary { max-width:72ch; font-size:16.5px; line-height:1.7; color:var(--ui-text, #3d4466); }
+    #exec-summary strong { color:var(--ui-ink, #0e1444); }
+    #stats-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:14px; margin:28px 0 44px; }
+    #stats-row .osmf-stat { padding:18px 20px; }
+    .ag-tables { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.6fr); gap:28px; align-items:start; }
+    .ag-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:14px; }
+    table.summary-table { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border:1px solid var(--ui-line, #e6e8f2); border-radius:14px; overflow:hidden; box-shadow:var(--ui-shadow-1); margin:0; }
+    table.summary-table th { font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--ui-muted, #6b7194); background:var(--ui-bg-soft, #f7f8fc); padding:11px 14px; border-bottom:1px solid var(--ui-line, #e6e8f2); text-align:left; white-space:nowrap; }
+    table.summary-table td { font-size:14px; padding:11px 14px; border-bottom:1px solid var(--ui-line, #e6e8f2); color:var(--ui-ink-2, #2a3160); text-align:left; }
+    table.summary-table tr:last-child td { border-bottom:0; }
+    .ag-note { margin:28px 0 0; max-width:none; }
+    .ag-rule { border:0; height:1px; background:var(--ui-line, #e6e8f2); margin:48px 0 32px; }
+    .ag-filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:16px; background:var(--ui-bg-soft, #f7f8fc); border:1px solid var(--ui-line, #e6e8f2); border-radius:14px; margin:0 0 12px; }
+    .ag-filters input { flex:1 1 240px; min-width:0; }
+    .ag-filters select { flex:0 1 auto; min-width:0; }
+    #meta { font-size:13px; color:var(--ui-muted, #6b7194); margin:0 0 16px; }
+    .agent { border:1px solid var(--ui-line, #e6e8f2); border-radius:14px; padding:20px 22px; margin-bottom:14px; background:#fff; box-shadow:var(--ui-shadow-1); }
+    .agent-name { font-size:18px; letter-spacing:-.01em; color:var(--ui-ink, #0e1444); margin-bottom:4px; }
+    .agent-synonyms { font-size:13px; color:var(--ui-muted, #6b7194); line-height:1.55; }
+    .agent .meta { font-size:13.5px; line-height:1.6; color:var(--ui-text, #3d4466); margin-top:6px; }
+    .agent .meta strong, .literature-layer > strong { color:var(--ui-ink, #0e1444); font-weight:600; }
+    .agent .agent-notes { background:var(--ui-bg-soft, #f7f8fc); border-radius:10px; padding:10px 12px; margin-top:10px; }
+    .agent .agent-foot { font-size:12px; color:var(--ui-muted, #6b7194); }
+    .literature-layer { margin-top:12px; border-top:1px solid var(--ui-line, #e6e8f2); padding-top:12px; font-size:13.5px; }
+    .literature-item { font-size:13px; }
+    .literature-item a { color:var(--ui-link, #2f45c4); }
+    .trial-legend { font-size:12px; margin:0 0 16px; }
+    .lit-review { background:var(--ui-down-bg, #eaf0ff); color:var(--ui-down, #1d4ed8); border-color:#cfdcff; }
+    .lit-meta-analysis { background:#eef0fb; color:var(--ui-ink-2, #2a3160); border-color:var(--ui-line-2, #d5d9ea); }
+    @media (max-width: 860px) { .ag-tables { grid-template-columns:1fr; } }
+    @media (max-width: 600px) { .ag-cta__btn { width:100%; justify-content:center; } .agent { padding:16px; } }
 `;
 
 const SCRIPT = `<script>
@@ -323,11 +365,11 @@ function renderSummary(data, agents) {
     topNames.slice(0,3).join(', ') + (topNames.length > 3 ? ' and others.' : '.');
 
   document.getElementById('stats-row').innerHTML =
-    '<span class="stat"><strong>Collapsed concepts:</strong> ' + total + '</span>' +
-    '<span class="stat"><strong>Source rows:</strong> ' + allAgents.length + '</span>' +
-    '<span class="stat"><strong>Concepts with trials:</strong> ' + withTrials + '</span>' +
-    '<span class="stat"><strong>Trial associations:</strong> ' + totalAssoc + '</span>' +
-    '<span class="stat"><strong>Ontology terms:</strong> ' + (treatmentOntology.terms || []).length + '</span>';
+    '<div class="stat osmf-card osmf-stat"><b>' + total + '</b><span>Collapsed concepts</span></div>' +
+    '<div class="stat osmf-card osmf-stat"><b>' + allAgents.length + '</b><span>Source rows</span></div>' +
+    '<div class="stat osmf-card osmf-stat"><b>' + withTrials + '</b><span>Concepts with trials</span></div>' +
+    '<div class="stat osmf-card osmf-stat"><b>' + totalAssoc + '</b><span>Trial associations</span></div>' +
+    '<div class="stat osmf-card osmf-stat"><b>' + (treatmentOntology.terms || []).length + '</b><span>Ontology terms</span></div>';
 
   let ch = '<tr><th>Condition</th><th>Concepts</th></tr>';
   Object.entries(condCounts).sort((a,b) => b[1] - a[1]).forEach(([c,n]) => {
@@ -431,8 +473,8 @@ function render(list) {
       relHtml +
       (a.studies.length ? '<div class="literature-layer"><strong>Published literature:</strong><div class="lit-chips">' + litChips + '</div><div class="literature-list">' + litItems + '</div></div>' : '') +
       '<div class="meta"><strong>Key Refs:</strong> ' + escape(a.refs.slice(0,4).join(' | ')) + '</div>' +
-      '<div class="meta" style="background:#f8fafc; padding:4px;"><strong>Clinical Notes:</strong> ' + escape(a.notes[0] || '') + '</div>' +
-      '<div class="meta" style="font-size:0.75rem;">Source rows: ' + a.sourceAgents.length + ' | Studies: ' + a.studies.length + ' | Trials: ' + a.trials.length + '</div>' +
+      '<div class="meta agent-notes"><strong>Clinical Notes:</strong> ' + escape(a.notes[0] || '') + '</div>' +
+      '<div class="meta agent-foot">Source rows: ' + a.sourceAgents.length + ' | Studies: ' + a.studies.length + ' | Trials: ' + a.trials.length + '</div>' +
       (trials.length ? '<div class="meta"><strong>Trials:</strong><div class="agent-trials">' + trials.slice(0,24).map(trialChip).join('') + (trials.length > 24 ? '<span class="trial-chip trial-rel-unrelated">+' + (trials.length - 24) + '</span>' : '') + '</div></div>' : '');
     el.appendChild(div);
   });

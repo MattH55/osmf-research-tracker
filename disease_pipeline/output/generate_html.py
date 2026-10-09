@@ -14,7 +14,8 @@ from ..published_conditions import (
     on_db100_index,
 )
 from ..adapters.burden.loader import get_burden_for_slug
-from ..adapters.remission.hero import HERO_REMISSION_CSS, hero_burden_html, hero_remission_html
+from ..adapters.remission.hero import hero_burden_html, hero_remission_html
+from ..light_theme import LIGHT_CSS, restyle_html
 from ..adapters.remission.slug_map import display_names_for_slug
 from ..display_np_names import resolve_np_display_name
 from ..np_publications import resolve_np_publications
@@ -625,7 +626,7 @@ def build_html(data: dict) -> str:
     rel = related_links(slug)
     burden = data.get("burden") or get_burden_for_slug(slug, data["condition"]["name"])
 
-    return f"""<!DOCTYPE html>
+    return restyle_html(f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 {GOOGLE_ANALYTICS_SNIPPET}
@@ -637,101 +638,7 @@ def build_html(data: dict) -> str:
   <link rel="icon" href="{FAVICON_URL}" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
-    :root{{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;
-      --text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b}}
-    body{{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}}
-    a{{color:var(--accent);text-decoration:none}} a:hover{{text-decoration:underline}}
-    code{{background:#2a3050;padding:2px 6px;border-radius:4px;font-size:.85em}}
-    nav{{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}}
-    .nav-container{{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}}
-    .nav-brand{{font-weight:700;font-size:.95rem;color:var(--text)}} .nav-brand span{{color:var(--accent)}}
-    .nav-links{{list-style:none;display:flex;gap:.5rem}} .nav-links a{{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}}
-    .nav-links a:hover,.nav-links a.active{{color:var(--text);background:var(--card);text-decoration:none}}
-    .page-hero{{background:linear-gradient(135deg,#0d1230,#1a1f45);border-bottom:1px solid var(--border);padding:3rem 1.5rem 2.5rem;text-align:center}}
-    .hero-eyebrow{{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}}
-    .page-hero h1{{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}}
-    .page-hero p{{color:var(--muted);max-width:720px;margin:0 auto}}
-    {HERO_REMISSION_CSS}
-    main{{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}}
-    .breadcrumb{{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}}
-    .overview-card{{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem}}
-    .overview-card h2{{font-size:1.1rem;color:var(--accent);margin-bottom:1rem}}
-    .stat-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1rem}}
-    .stat-cell{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem}}
-    .stat-cell .label{{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
-    .stat-cell .value{{font-size:1.4rem;font-weight:700;margin-top:.25rem}}
-    .remission-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem}}
-    .rem-cell{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem}}
-    .rem-cell .label{{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
-    .rem-cell .value{{font-size:.88rem;margin-top:.35rem;line-height:1.4}}
-    .barrier-note{{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.88rem;color:var(--muted);margin-top:.75rem}}
-    .meta-line,.section-sub{{color:var(--muted);font-size:.88rem;margin-bottom:1.25rem}}
-    .section-title{{font-size:1.25rem;font-weight:700;margin-bottom:.25rem}}
-    .filter-row{{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}}
-    .filter-chip{{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:.35rem .9rem;font-size:.8rem;cursor:pointer}}
-    .filter-chip.active,.filter-chip:hover{{border-color:var(--accent);background:rgba(74,158,255,.1)}}
-    .table-wrap{{overflow-x:auto;margin-bottom:2rem}}
-    .data-table{{width:100%;border-collapse:collapse;font-size:.86rem}}
-    .data-table th{{text-align:left;padding:.6rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}}
-    .data-table td{{padding:.55rem 1rem;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:top}}
-    .data-table tr:hover{{background:rgba(74,158,255,.04)}}
-    .price-cell{{font-size:.72rem;color:var(--muted)}}
-    .name-cell strong{{color:var(--text)}} .sub{{font-size:.78rem;color:var(--muted);margin-top:.2rem}}
-    .tier-badge{{display:inline-block;color:#fff;border-radius:4px;padding:2px 8px;font-size:.72rem;font-weight:700}}
-    .type-badge{{display:inline-block;color:#fff;border-radius:4px;padding:2px 7px;font-size:.7rem;font-weight:600}}
-    .ext-link{{font-size:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted)!important;margin-right:.25rem;display:inline-block}}
-    .ext-link:hover{{color:var(--accent)!important;border-color:var(--accent);text-decoration:none!important}}
-    .repurposing{{background:rgba(245,158,11,.15);color:var(--amber);font-size:.7rem;padding:2px 6px;border-radius:4px;margin-left:.35rem}}
-    .natural-agent{{background:rgba(34,197,94,.12);color:var(--green);font-size:.7rem;padding:2px 6px;border-radius:4px;margin-left:.35rem}}
-    .score{{font-weight:700;color:var(--green)}}
-    .muted{{color:var(--muted)}}
-    .no-data{{color:var(--muted);font-style:italic;padding:1rem 0}}
-    .disclaimer{{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.85rem;color:var(--muted);margin-top:2rem}}
-    .tab-bar{{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}}
-    .tab-btn{{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:.45rem 1rem;border-radius:8px;cursor:pointer;font-size:.85rem}}
-    .tab-btn.active{{color:var(--text);border-color:var(--accent);background:rgba(74,158,255,.08)}}
-    .tab-panel{{display:none}} .tab-panel.active{{display:block}}
-    .ev-badge{{display:inline-block;font-size:.68rem;padding:2px 6px;border-radius:4px;margin:0 .2rem .2rem 0}}
-    .ev-badge.trial{{background:rgba(74,158,255,.15);color:var(--accent)}}
-    .ev-badge.lit{{background:rgba(34,197,94,.12);color:var(--green)}}
-    .ev-badge.assoc{{background:rgba(245,158,11,.12);color:var(--amber)}}
-    .ev-details{{margin-top:.35rem;font-size:.78rem}}
-    .ev-details summary{{cursor:pointer;color:var(--accent)}}
-    .ev-details ul{{margin:.35rem 0 .5rem 1rem;color:var(--muted)}}
-    .ev-lit-type{{color:var(--green);font-size:.7rem;font-weight:600;margin-right:.25rem}}
-    .ev-search a{{font-size:.75rem;margin-right:.5rem}}
-    .np-pubs{{list-style:none;margin:.35rem 0 0;padding:0;font-size:.76rem}}
-    .np-pubs li{{margin:.2rem 0;line-height:1.35}}
-    .np-pubs a{{color:var(--accent);text-decoration:none}}
-    .np-pubs a:hover{{text-decoration:underline}}
-    .np-pub-type{{color:var(--green);font-size:.68rem;font-weight:600;margin-right:.2rem}}
-    .evidence-toggle{{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1rem;cursor:pointer;user-select:none;flex-wrap:wrap}}
-    .evidence-toggle input{{accent-color:var(--accent);width:1rem;height:1rem}}
-    .hidden-count{{color:var(--amber);font-size:.82rem}}
-    .therapeutic-row.no-clinical-evidence{{display:none}}
-    section.show-no-clinical-evidence .therapeutic-row.no-clinical-evidence{{display:table-row}}
-    #alterations.hide-alterations-without-value tbody tr.alt-no-value{{display:none}}
-    footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}}
-    .related-links{{font-size:.88rem;margin-bottom:1.5rem}}
-    html,body{{overflow-x:clip}}
-    img,svg,video,iframe{{max-width:100%}}
-    code{{overflow-wrap:anywhere;word-break:break-word}}
-    .nav-container{{flex-wrap:wrap;height:auto;min-height:60px;padding:.65rem 1rem}}
-    .nav-links{{flex-wrap:wrap;justify-content:flex-end}}
-    .table-wrap{{-webkit-overflow-scrolling:touch}}
-    .data-table{{min-width:560px}}
-    @media(max-width:720px){{
-      .nav-brand{{font-size:.82rem}}
-      .nav-links{{width:100%;justify-content:flex-start;gap:.25rem}}
-      .nav-links a{{font-size:.75rem;padding:.3rem .5rem}}
-      .page-hero{{padding:2rem 1rem 1.5rem}}
-      main{{padding:1.25rem 1rem 3rem}}
-      .stat-grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}
-      .remission-grid{{grid-template-columns:1fr}}
-      .overview-card{{padding:1.15rem}}
-    }}
-  </style>
+{LIGHT_CSS}  </style>
 </head>
 <body>
 {render_nav(depth="di", active="di")}
@@ -854,7 +761,7 @@ def build_html(data: dict) -> str:
     }})();
   </script>
 </body>
-</html>"""
+</html>""")
 
 
 def build_index_html(pages: list[dict]) -> str:
@@ -896,7 +803,7 @@ def build_index_html(pages: list[dict]) -> str:
         brand=REPURPOS_BRAND,
         brand_span=REPURPOS_TAGLINE,
     )
-    return f"""<!DOCTYPE html>
+    return restyle_html(f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 {GOOGLE_ANALYTICS_SNIPPET}
@@ -908,35 +815,7 @@ def build_index_html(pages: list[dict]) -> str:
   <link rel="icon" href="{FAVICON_URL}" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
-    :root{{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;--text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff}}
-    body{{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}}
-    a{{color:var(--accent);text-decoration:none}} a:hover{{text-decoration:underline}}
-    nav{{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border)}}
-    .nav-container{{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}}
-    .nav-brand{{font-weight:700;font-size:.95rem;color:var(--text)}} .nav-brand span{{color:var(--accent)}}
-    .nav-links{{list-style:none;display:flex;gap:.5rem;flex-wrap:wrap}} .nav-links a{{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}}
-    .nav-links a:hover,.nav-links a.active{{color:var(--text);background:var(--card);text-decoration:none}}
-    main{{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}}
-    h1{{margin-bottom:.5rem}} .sub{{color:var(--muted);margin-bottom:2rem;max-width:720px}}
-    .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}}
-    .disease-card{{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-decoration:none;color:inherit;display:block}}
-    .disease-card:hover{{border-color:var(--accent)}}
-    .disease-card h3{{color:var(--accent);margin-bottom:.5rem}}
-    .muted{{color:var(--muted);font-size:.9rem}} .date{{font-size:.8rem;color:var(--muted);margin-top:.5rem}}
-    .search-bar{{margin-bottom:1.25rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}}
-    .search-wrap{{flex:1;min-width:220px;position:relative}}
-    .search-wrap input{{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.65rem 2.5rem .65rem 2.25rem;color:var(--text);font:inherit;font-size:.95rem}}
-    .search-wrap input:focus{{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(74,158,255,.15)}}
-    .search-wrap input::placeholder{{color:var(--muted)}}
-    .search-icon{{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;pointer-events:none}}
-    .search-clear{{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.5rem .9rem;font:inherit;cursor:pointer}}
-    .search-clear:hover{{border-color:var(--accent);color:var(--text)}}
-    .search-meta{{color:var(--muted);font-size:.85rem}}
-    .disease-card.hidden{{display:none}}
-    .search-empty{{display:none;grid-column:1/-1;text-align:center;padding:2.5rem 1rem;color:var(--muted);border:1px dashed var(--border);border-radius:12px;background:var(--surface)}}
-    .search-empty.visible{{display:block}}
-  </style>
+{LIGHT_CSS}  </style>
 </head>
 <body>
 {nav}
@@ -1009,7 +888,7 @@ def build_index_html(pages: list[dict]) -> str:
 }})();
 </script>
 </body>
-</html>"""
+</html>""")
 
 
 def write_page(data: dict, html_dir: Path) -> Path:

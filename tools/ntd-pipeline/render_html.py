@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 render_html.py — NTD Intelligence section for research.opensourcemed.info.
-Matches RepurpOS / disease-intelligence page styling (dark theme, embedded CSS).
+Matches RepurpOS / disease-intelligence page styling (shared light theme from
+disease_pipeline/light_theme.py, embedded CSS).
 """
 
 from __future__ import annotations
@@ -10,9 +11,14 @@ import html
 import json
 import os
 
-import ntd_registry as reg
-import persistence as pers
-import therapeutics as ther
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+from disease_pipeline.light_theme import LIGHT_CSS, restyle_html  # noqa: E402
+
+import ntd_registry as reg  # noqa: E402
+import persistence as pers  # noqa: E402
+import therapeutics as ther  # noqa: E402
 
 SITE_CSS_HREF = ""
 FAVICON_URL = "https://opensourcemed.info/favicon.png"
@@ -44,67 +50,7 @@ KIND_BADGE = {
     "none": ("No post-acute phase", "#8892a4"),
 }
 
-CSS = """
-*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
-:root{{--bg:#0a0e1a;--surface:#141828;--card:#1a1f35;--border:#2a3050;
-  --text:#e1e4e8;--muted:#8892a4;--accent:#4a9eff;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}}
-body{{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.6}}
-a{{color:var(--accent);text-decoration:none}} a:hover{{text-decoration:underline}}
-code{{background:#2a3050;padding:2px 6px;border-radius:4px;font-size:.85em}}
-nav{{background:rgba(10,14,26,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}}
-.nav-container{{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}}
-.nav-brand{{font-weight:700;font-size:.95rem;color:var(--text)}} .nav-brand span{{color:var(--accent)}}
-.nav-links{{list-style:none;display:flex;gap:.5rem;flex-wrap:wrap}} .nav-links a{{color:var(--muted);font-size:.85rem;padding:.35rem .75rem;border-radius:6px}}
-.nav-links a:hover,.nav-links a.active{{color:var(--text);background:var(--card);text-decoration:none}}
-.page-hero{{background:linear-gradient(135deg,#0d1230,#1a1f45);border-bottom:1px solid var(--border);padding:3rem 1.5rem 2.5rem;text-align:center}}
-.hero-eyebrow{{color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}}
-.page-hero h1{{font-size:clamp(1.75rem,4vw,2.5rem);margin:.75rem 0}}
-.page-hero p{{color:var(--muted);max-width:760px;margin:0 auto;font-size:.95rem}}
-main{{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 4rem}}
-.breadcrumb{{display:flex;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:2rem;flex-wrap:wrap}}
-.stat-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2rem}}
-.stat-cell{{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem}}
-.stat-cell .label{{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}}
-.stat-cell .value{{font-size:1.4rem;font-weight:700;margin-top:.25rem}}
-.stat-cell .sub{{font-size:.75rem;color:var(--muted);margin-top:.2rem}}
-.section-title{{font-size:1.25rem;font-weight:700;margin-bottom:.25rem}}
-.section-sub{{color:var(--muted);font-size:.88rem;margin-bottom:1.25rem}}
-.badge{{display:inline-block;color:#fff;border-radius:4px;padding:2px 8px;font-size:.72rem;font-weight:700}}
-.pi-block{{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--red);border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:2rem}}
-.pi-block .big{{font-size:2rem;font-weight:800;color:var(--amber);margin:.35rem 0}}
-.pi-kv{{display:grid;grid-template-columns:160px 1fr;gap:.4rem 1rem;font-size:.88rem;margin-top:1rem}}
-.pi-kv .k{{color:var(--muted)}}
-.pi-src{{font-size:.8rem;color:var(--muted);margin-top:1rem}}
-.table-wrap{{overflow-x:auto;margin-bottom:2rem}}
-.data-table{{width:100%;border-collapse:collapse;font-size:.86rem}}
-.data-table th{{text-align:left;padding:.6rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}}
-.data-table td{{padding:.55rem 1rem;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:top}}
-.data-table tr:hover{{background:rgba(74,158,255,.04)}}
-.disclaimer{{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.85rem;color:var(--muted);margin-top:2rem}}
-.caveat{{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:.85rem 1.1rem;font-size:.84rem;color:var(--amber);margin-bottom:1.5rem}}
-footer{{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}}
-.muted{{color:var(--muted)}}
-.source-soc{{color:var(--green);font-size:.78rem;font-weight:600}}
-.source-ot{{color:var(--muted);font-size:.78rem}}
-.stage-heading{{font-size:1.05rem;font-weight:700;margin:1.75rem 0 .75rem;color:var(--text)}}
-.stage-heading:first-of-type{{margin-top:1rem}}
-.evidence-toggle{{display:flex;align-items:center;gap:.5rem;font-size:.88rem;color:var(--muted);margin-bottom:1.25rem;cursor:pointer;user-select:none}}
-.evidence-toggle input{{accent-color:var(--accent);width:1rem;height:1rem}}
-.evidence-badge{{display:inline-block;font-size:.68rem;font-weight:600;padding:2px 6px;border-radius:4px;margin-left:.35rem}}
-.evidence-published{{background:rgba(34,197,94,.15);color:var(--green)}}
-.evidence-pipeline{{background:rgba(245,158,11,.12);color:var(--amber)}}
-.evidence-preliminary{{background:rgba(136,146,164,.15);color:var(--muted)}}
-.agent-row.evidence-pipeline,.agent-row.evidence-preliminary{{display:none}}
-body.show-unpublished .agent-row.evidence-pipeline,body.show-unpublished .agent-row.evidence-preliminary{{display:table-row}}
-.hidden-count{{color:var(--amber);font-size:.82rem;margin-left:.5rem}}
-@media(max-width:720px){{
-.nav-container{{height:auto;min-height:60px;padding:.75rem 1rem;flex-wrap:wrap;gap:.5rem}}
-.nav-links{{width:100%;justify-content:flex-start}}
-.pi-kv{{grid-template-columns:1fr}}
-.stat-grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}
-}}
-"""
-CSS = CSS.replace("{{", "{").replace("}}", "}")
+CSS = LIGHT_CSS
 
 
 def esc(x):
@@ -454,10 +400,10 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     rows = load_rows()
     with open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as f:
-        f.write(index_page(rows))
+        f.write(restyle_html(index_page(rows)))
     for r in rows:
         with open(os.path.join(OUT_DIR, f"{slug(r)}.html"), "w", encoding="utf-8") as f:
-            f.write(disease_page(r))
+            f.write(restyle_html(disease_page(r)))
     print(f"Rendered {len(rows) + 1} pages into ./{OUT_DIR}/ (index + {len(rows)} diseases)")
 
 

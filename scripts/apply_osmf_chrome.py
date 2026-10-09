@@ -58,14 +58,20 @@ CITE_START, CITE_END = "<!-- OSMF_CITE_START -->", "<!-- OSMF_CITE_END -->"
 DS_START, DS_END = "<!-- OSMF_DATASET_START -->", "<!-- OSMF_DATASET_END -->"
 
 CITE_CSS = (
-    "<style>.osmf-cite-wrap{max-width:1200px;margin:2.5rem auto 2rem;padding:0 1.5rem;"
-    "display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));font-family:Inter,system-ui,sans-serif}"
-    ".osmf-cite,.osmf-sub{border:1px solid #e5e7eb;border-radius:12px;padding:1.1rem 1.25rem;background:#f8fafc;color:#1f2937}"
-    ".osmf-cite h3,.osmf-sub h3{font-size:1rem;margin:0 0 .5rem;color:#0052c7}"
-    ".osmf-cite p,.osmf-sub p{font-size:.9rem;line-height:1.55;margin:0 0 .6rem}"
-    ".osmf-cite code{display:block;white-space:normal;font-size:.82rem;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:.6rem .75rem;margin-bottom:.6rem}"
-    ".osmf-cite button,.osmf-sub a.btn{display:inline-block;background:#0068f8;color:#fff;border:0;border-radius:8px;padding:.5rem .9rem;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:none}"
-    ".osmf-cite button:hover,.osmf-sub a.btn:hover{background:#0052c7}</style>"
+    "<style>.osmf-cite-wrap{box-sizing:border-box;max-width:1200px;margin:56px auto 8px;padding:0 clamp(16px,3.2vw,32px);"
+    "display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));font-family:var(--ui-font,Inter,system-ui,sans-serif)}"
+    ".osmf-cite,.osmf-sub{box-sizing:border-box;min-width:0;border:1px solid var(--ui-line,#e6e8f2);border-radius:14px;padding:22px 24px;background:#fff;"
+    "box-shadow:var(--ui-shadow-1,0 1px 2px rgba(14,20,68,.05));color:var(--ui-text,#3d4466)}"
+    ".osmf-sub{background:var(--ui-bg-soft,#f7f8fc)}"
+    ".osmf-cite h3,.osmf-sub h3{font-size:17px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--ui-ink,#0e1444);text-transform:none}"
+    ".osmf-cite p,.osmf-sub p{font-size:14.5px;line-height:1.6;margin:0 0 14px;color:var(--ui-text,#3d4466)}"
+    ".osmf-cite code{display:block;white-space:normal;overflow-wrap:anywhere;font-size:12.5px;line-height:1.6;color:var(--ui-ink-2,#2a3160);"
+    "background:var(--ui-bg-soft,#f7f8fc);border:1px solid var(--ui-line,#e6e8f2);border-radius:10px;padding:12px 14px;margin:0 0 14px}"
+    ".osmf-cite button,.osmf-sub a.btn{display:inline-flex;align-items:center;background:var(--ui-ink,#0e1444);color:#fff!important;border:0;border-radius:999px;"
+    "padding:9px 16px;font:600 13.5px/1.2 var(--ui-font,Inter,system-ui,sans-serif);cursor:pointer;text-decoration:none!important}"
+    ".osmf-sub a.btn{background:linear-gradient(180deg,#ffa31a,#f2711c);box-shadow:0 6px 16px rgba(242,113,28,.28)}"
+    ".osmf-cite button:hover{background:var(--ui-navy-700,#18206a)}.osmf-sub a.btn:hover{filter:brightness(1.05)}"
+    ".osmf-sub a:not(.btn){color:var(--ui-link,#2f45c4)!important;font-size:13.5px}</style>"
 )
 
 
@@ -104,7 +110,7 @@ def cite_block(page: Path, markup: str) -> str:
     <h3>Weekly post-viral research digest</h3>
     <p>New peer-reviewed studies and trial activity across Long COVID, ME/CFS, PACVS, Lyme and Gulf War Illness, every week. Free, no spam.</p>
     <a class="btn" href="https://opensourcemed.substack.com/subscribe?utm_source=tracker&amp;utm_medium=cite_box" rel="noopener">Subscribe on Substack</a>
-    &nbsp; <a href="digest/index.html" style="font-size:.85rem;color:#0052c7;">Browse the digest archive</a> · <a href="digest/feed.xml" style="font-size:.85rem;color:#0052c7;">RSS</a>
+    &nbsp; <a href="digest/index.html" style="font-size:13.5px;color:#2f45c4;">Browse the digest archive</a> · <a href="digest/feed.xml" style="font-size:13.5px;color:#2f45c4;">RSS</a>
   </div>
 </section>
 {CITE_END}"""
@@ -115,7 +121,10 @@ def inject_before_footer(markup: str, block: str, start: str, end: str) -> str:
         pre, rest = markup.split(start, 1)
         _, post = rest.split(end, 1)
         return pre + block + post
-    idx = markup.rfind("<footer")
+    # pages carry the shared footer from apply_osmf_ui.py; insert above it
+    idx = markup.find("<!-- OSMF_UI_FOOTER_START -->")
+    if idx == -1:
+        idx = markup.rfind("<footer")
     if idx == -1:
         idx = markup.rfind("</body>")
     if idx == -1:

@@ -91,15 +91,35 @@ def matrix(cohorts):
     return out
 
 def render_vocab():
+    from html import escape as esc
     hpo=load(HPO); ext=load(OSMF)
     rows=[]
     for t in ext:
         maps="; ".join(f"{m.get('predicate')}: {m.get('target')}" for m in t.get('mappings',[]))
-        rows.append(f"<tr><td>{t.get('id')}</td><td>{t.get('label')}</td><td>{t.get('definition')}</td><td>{maps}</td><td>{t.get('justification')}</td></tr>")
-    body="<h1>PAIS vocabulary</h1><p>This page documents the pinned HPO subset and public OSMF extension justifications.</p>"
-    body+=f"<p>HPO release: {hpo.get('release')}; {len(hpo.get('terms',[]))} shipped terms.</p>"
-    body+=("<h2>OSMF extensions</h2><table><tr><th>ID</th><th>Label</th><th>Definition</th><th>HPO mappings</th><th>Justification</th></tr>"+"".join(rows)+"</table>") if rows else "<h2>OSMF extensions</h2><p>No extension terms have been added.</p>"
-    with open(VOCAB_HTML,"w",encoding="utf-8",newline="\n") as f:f.write("<!doctype html><meta charset='utf-8'><title>PAIS vocabulary</title><style>body{font:16px system-ui;max-width:1100px;margin:2rem auto;padding:0 1rem}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:.5rem;text-align:left;vertical-align:top}</style>"+body)
+        rows.append("<tr>"+"".join(f"<td>{esc(str(v))}</td>" for v in (t.get('id'),t.get('label'),t.get('definition'),maps,t.get('justification')))+"</tr>")
+    terms=hpo.get('terms',[])
+    hrows="".join(f"<tr><td><code>{esc(str(t.get('id')))}</code></td><td>{esc(str(t.get('label') or t.get('name') or ''))}</td></tr>" for t in terms)
+    css=("<style>.voc{max-width:1200px;margin:0 auto;padding:56px clamp(16px,3.2vw,32px) 24px}"
+         ".voc section{margin:0 0 56px}.voc h2{font-size:24px;margin:0 0 10px}.voc .lede{max-width:72ch;font-size:16.5px;line-height:1.7;margin:0 0 28px}"
+         ".voc-stats{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 40px}.voc-stats .osmf-card{min-width:180px}"
+         ".voc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}.voc-scroll table{min-width:560px}"
+         ".osmf-hero.voc-hero{padding:72px clamp(16px,3.2vw,32px) 64px;text-align:center}"
+         ".voc-hero h1{font-size:clamp(34px,5vw,54px);margin:16px 0 12px}.voc-hero p{max-width:640px;margin:0 auto;font-size:17px;line-height:1.6}</style>")
+    hero=("<header class=\"osmf-hero voc-hero\"><span class=\"osmf-eyebrow\">PAIS cohort database</span>"
+          "<h1>PAIS <em>vocabulary</em></h1><p>This page documents the pinned HPO subset and public OSMF extension justifications.</p></header>")
+    stats=(f"<div class=\"voc-stats\"><div class=\"osmf-card osmf-stat\"><b>{esc(str(hpo.get('release')))}</b><span>HPO release</span></div>"
+           f"<div class=\"osmf-card osmf-stat\"><b>{len(terms)}</b><span>Shipped terms</span></div>"
+           f"<div class=\"osmf-card osmf-stat\"><b>{len(rows)}</b><span>OSMF extensions</span></div></div>")
+    hsec=(f"<section><h2>Pinned HPO subset</h2><p class=\"lede\">HPO release: {esc(str(hpo.get('release')))}; {len(terms)} shipped terms.</p>"
+          f"<div class=\"voc-scroll\"><table><thead><tr><th>HPO ID</th><th>Label</th></tr></thead><tbody>{hrows}</tbody></table></div></section>") if terms else ""
+    osec=("<section><h2>OSMF extensions</h2>"+(
+          "<div class=\"voc-scroll\"><table><thead><tr><th>ID</th><th>Label</th><th>Definition</th><th>HPO mappings</th><th>Justification</th></tr></thead><tbody>"+"".join(rows)+"</tbody></table></div>"
+          if rows else "<p class=\"osmf-callout\">No extension terms have been added.</p>")+"</section>")
+    head=("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+          "<title>PAIS vocabulary</title><meta name=\"description\" content=\"The pinned HPO subset and OSMF extension terms used by the PAIS cohort database.\">"
+          "<link rel=\"canonical\" href=\"https://research.opensourcemed.info/vocab.html\">"+css+"</head>")
+    with open(VOCAB_HTML,"w",encoding="utf-8",newline="\n") as f:
+        f.write(head+"<body>"+hero+"<main class=\"voc\">"+stats+hsec+osec+"</main></body></html>\n")
 
 def main():
     strict="--strict" in sys.argv; check="--check" in sys.argv

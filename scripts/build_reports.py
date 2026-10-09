@@ -40,8 +40,8 @@ REPORTS_DIR = os.path.join(ROOT, "reports")
 REPORTS_URL = f"{SITE}/reports/"
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 ACTIVE_STATUSES = {"RECRUITING", "NOT_YET_RECRUITING", "ACTIVE_NOT_RECRUITING", "ENROLLING_BY_INVITATION"}
-BLUE = "#0068f8"
-DIR_COLORS = {"up": "#dc2626", "down": "#2563eb", "mixed": "#d97706", "other": "#9ca3af"}
+BLUE = "#3346b8"
+DIR_COLORS = {"up": "#c2410c", "down": "#2f45c4", "mixed": "#d4a017", "other": "#c4c9e0"}
 
 
 # --------------------------------------------------------------------------
@@ -210,9 +210,9 @@ def svg_hbar(rows: List[Tuple[str, int]], title: str, color: str = BLUE, label_w
         y = top + i * (bar_h + gap)
         w = max(2, round(plot_w * v / mx))
         lab = label if len(label) <= max_label else label[:max_label - 1] + "…"
-        parts.append(f'<text x="{label_w - 8}" y="{y + bar_h * 0.72:.0f}" text-anchor="end" font-size="12" fill="#374151">{esc(lab)}</text>')
+        parts.append(f'<text x="{label_w - 8}" y="{y + bar_h * 0.72:.0f}" text-anchor="end" font-size="12" fill="#3d4466">{esc(lab)}</text>')
         parts.append(f'<rect x="{label_w}" y="{y}" width="{w}" height="{bar_h}" rx="4" fill="{color}"><title>{esc(label)}: {v}</title></rect>')
-        parts.append(f'<text x="{label_w + w + 6}" y="{y + bar_h * 0.72:.0f}" font-size="12" fill="#374151">{v}</text>')
+        parts.append(f'<text x="{label_w + w + 6}" y="{y + bar_h * 0.72:.0f}" font-size="12" fill="#3d4466">{v}</text>')
     parts.append("</svg>")
     return "".join(parts)
 
@@ -229,18 +229,18 @@ def svg_months(by_month: List[int], year: int, now: dt.date) -> str:
     # gridlines (recessive)
     for frac in (0.5, 1.0):
         y = top + plot_h - plot_h * frac
-        parts.append(f'<line x1="{left}" x2="{W - 10}" y1="{y:.1f}" y2="{y:.1f}" stroke="#e5e7eb" stroke-width="1"/>')
-        parts.append(f'<text x="{left - 6}" y="{y + 4:.1f}" text-anchor="end" font-size="11" fill="#6b7280">{round(mx * frac)}</text>')
-    parts.append(f'<line x1="{left}" x2="{W - 10}" y1="{top + plot_h}" y2="{top + plot_h}" stroke="#9ca3af" stroke-width="1"/>')
+        parts.append(f'<line x1="{left}" x2="{W - 10}" y1="{y:.1f}" y2="{y:.1f}" stroke="#e6e8f2" stroke-width="1"/>')
+        parts.append(f'<text x="{left - 6}" y="{y + 4:.1f}" text-anchor="end" font-size="11" fill="#6b7194">{round(mx * frac)}</text>')
+    parts.append(f'<line x1="{left}" x2="{W - 10}" y1="{top + plot_h}" y2="{top + plot_h}" stroke="#d5d9ea" stroke-width="1"/>')
     for i, v in enumerate(by_month):
         x = left + i * col + 4
         h = round(plot_h * v / mx)
         future = (year > now.year) or (year == now.year and i + 1 > now.month)
-        fill = "#cbd5e1" if future else BLUE
+        fill = "#e6e8f2" if future else BLUE
         if v > 0:
             parts.append(f'<rect x="{x:.1f}" y="{top + plot_h - h}" width="{bar_w:.1f}" height="{h}" rx="4" fill="{fill}"><title>{MONTHS[i]} {year}: {v}</title></rect>')
-            parts.append(f'<text x="{x + bar_w / 2:.1f}" y="{top + plot_h - h - 4}" text-anchor="middle" font-size="11" fill="#374151">{v}</text>')
-        parts.append(f'<text x="{x + bar_w / 2:.1f}" y="{H - 10}" text-anchor="middle" font-size="11" fill="{"#9ca3af" if future else "#374151"}">{MONTHS[i]}</text>')
+            parts.append(f'<text x="{x + bar_w / 2:.1f}" y="{top + plot_h - h - 4}" text-anchor="middle" font-size="11" fill="#3d4466">{v}</text>')
+        parts.append(f'<text x="{x + bar_w / 2:.1f}" y="{H - 10}" text-anchor="middle" font-size="11" fill="{"#9aa0bd" if future else "#3d4466"}">{MONTHS[i]}</text>')
     parts.append("</svg>")
     return "".join(parts)
 
@@ -257,7 +257,7 @@ def svg_stacked(rows: List[Tuple[str, Dict[str, int]]], labels: Dict[str, str], 
         y = top + i * (bar_h + gap)
         total = sum(v.values())
         lab = labels.get(cat, cat.replace("_", " ").title())
-        parts.append(f'<text x="{label_w - 8}" y="{y + bar_h * 0.72:.0f}" text-anchor="end" font-size="12" fill="#374151">{esc(lab)}</text>')
+        parts.append(f'<text x="{label_w - 8}" y="{y + bar_h * 0.72:.0f}" text-anchor="end" font-size="12" fill="#3d4466">{esc(lab)}</text>')
         x = label_w
         for d in ("up", "down", "mixed", "other"):
             n = v.get(d, 0)
@@ -266,10 +266,10 @@ def svg_stacked(rows: List[Tuple[str, Dict[str, int]]], labels: Dict[str, str], 
             w = max(2, round(plot_w * n / mx))
             parts.append(f'<rect x="{x}" y="{y}" width="{max(0, w - 2)}" height="{bar_h}" rx="3" fill="{DIR_COLORS[d]}"><title>{esc(lab)} - {d}: {n}</title></rect>')
             x += w
-        parts.append(f'<text x="{x + 6}" y="{y + bar_h * 0.72:.0f}" font-size="12" fill="#374151">{total}</text>')
+        parts.append(f'<text x="{x + 6}" y="{y + bar_h * 0.72:.0f}" font-size="12" fill="#3d4466">{total}</text>')
     parts.append("</svg>")
-    legend = ('<div class="small" style="margin-top:.3rem">'
-              + " &nbsp; ".join(f'<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:{DIR_COLORS[d]};margin-right:4px"></span>{lbl}'
+    legend = ('<div class="legend">'
+              + "".join(f'<span><i style="background:{DIR_COLORS[d]}"></i>{lbl}</span>'
                                 for d, lbl in (("up", "Elevated"), ("down", "Reduced"), ("mixed", "Mixed / inconsistent"), ("other", "Not stated")))
               + "</div>")
     return "".join(parts) + legend
@@ -507,7 +507,7 @@ def render_report(r: Dict[str, Any], now: dt.date) -> str:
     # ---- cite ----
     out.append(f'<div class="box" id="cite"><h3>Suggested citation</h3><div class="cite">{ORG_NAME}. {esc(title)}'
                f'{" (year-to-date, generated " + esc(fmt_date(now)) + ")" if partial else ""}. {ORG_NAME}; {year}. {esc(url)}</div>'
-               f'<p class="small" style="margin-top:.6rem">For a stable reference, cite the generation date shown; the page is regenerated as data arrive. '
+               f'<p class="small" style="margin:.8rem 0 0">For a stable reference, cite the generation date shown; the page is regenerated as data arrive. '
                f'Weekly updates: <a href="{SUBSTACK}" rel="noopener">subscribe on Substack</a> or follow the <a href="{SITE}/digest/feed.xml">digest RSS feed</a>.</p></div>')
     out.append('<div class="disclaimer"><strong>Disclaimer.</strong> This report is an automated description of a research database maintained by the '
                'Open Source Medicine Foundation. It is not a systematic review and not medical advice. Discuss any treatment decision with a qualified clinician.</div>')
