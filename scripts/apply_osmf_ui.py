@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_DIRS = ("biomarkers", "compare", "trials", "pairs", "digest", "reports", "tools", "embed",
-               "chronic-disease-interventions", "disease-intelligence", "ntd", "pais-cohorts", "agents")
+               "chronic-disease-interventions", "disease-intelligence", "ntd", "pais-cohorts", "agents", "feeds")
 EXCLUDED_NAMES = {"agents-local.html", "clinical_trials-local.html"}
 SKIP_PARTS = {"ntd-pipeline", "__pycache__", "hospital-ranking", "med-freedom-map", "data", "files"}
 # iframe-able / embedded documents keep their own minimal chrome
