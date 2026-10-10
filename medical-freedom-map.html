@@ -84,7 +84,13 @@
     .mfm-seo ul { margin:.5rem 0 1rem 1.25rem; }
     .btnsm { padding:.3rem .65rem; font-size:.75rem; border-radius:6px; border:1px solid var(--mfm-border); background:var(--mfm-bg2); cursor:pointer; color:var(--mfm-fg); }
     .btnsm:hover { border-color:var(--mfm-primary); }
-  </style>
+  
+.nv{color:#6b7194;font-style:italic;font-size:.85em}
+.mfm-ev{margin:.25rem 0 0 1.1rem;font-size:.85rem;display:grid;gap:.6rem}
+.mfm-ev q{display:block;margin-top:.2rem;color:#3d4466;font-style:italic;quotes:"C" "D"}
+.mfm-sup{display:block;margin-top:.15rem;font-size:.75rem;color:#6b7194}
+.mfm-vnote{margin-top:1rem;padding:.7rem .9rem;border-radius:10px;background:#f7f8fc;border:1px solid #e6e8f2;font-size:.82rem;color:#3d4466}
+</style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -186,7 +192,7 @@
       <li><strong>Unmet need diseases:</strong> conditions without approved disease-modifying therapy in the <a href="disease-intelligence/right-to-try.html">Right-to-Try Compendium</a>.</li>
       <li><strong>Monogenic therapies:</strong> approved and pipeline gene therapies in the <a href="disease-intelligence/gene-therapy-mapper.html">Gene Therapy Mapper</a>.</li>
     </ul>
-    <p>Hosted as static HTML/JSON on GitHub Pages (research.opensourcemed.info) so search engines can index every page. Data last exported for static hosting: August 2026.</p>
+    <p>Hosted as static HTML/JSON on GitHub Pages (research.opensourcemed.info) so search engines can index every page. Every record was re-checked against quoted sources in October 2026; values no source supports are shown as &ldquo;Not verified&rdquo; and unsourced prices were removed. <a href="/maps/methodology.html">How the data is verified</a>.</p>
   </section>
 </main>
 
@@ -276,7 +282,8 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
   function label(s) {
-    if (!s) return '—';
+    if (!s || s === 'UNKNOWN') return 'Not verified';
+    if (s === 'NOT_AUTHORISED') return 'Not authorised';
     return String(s).replace(/_/g, ' ');
   }
   function badgeClass(kind, val) {
@@ -286,6 +293,7 @@
       if (/RIGHT_TO_TRY|RTT|EXPANDED|OFF_LABEL|DISCRETION|DECRIM/.test(v)) return 'bg-warn';
       if (/TRIAL/.test(v)) return 'bg-info';
       if (/PROHIBIT/.test(v)) return 'bg-bad';
+      if (/NOT_AUTHORISED/.test(v)) return 'bg-info';
       return '';
     }
     if (kind === 'ov') {
@@ -379,7 +387,7 @@
       '<td>' + esc(r.jurisdiction_name) + '</td>' +
       '<td><span class="badge ' + badgeClass('legal', r.legal_status) + '">' + esc(label(r.legal_status)) + '</span></td>' +
       '<td><span class="badge ' + badgeClass('ov', r.oversight_quality) + '">' + esc(label(r.oversight_quality || '—')) + '</span></td>' +
-      '<td>' + esc(r.estimated_cost_range_usd || '—') + '</td>' +
+      '<td>' + (r.estimated_cost_range_usd ? esc(r.estimated_cost_range_usd) : '<span class="nv">Not verified</span>') + '</td>' +
       '</tr>'
     ).join('') + (sorted.length > 500
       ? '<tr><td colspan="5" style="padding:1rem;color:var(--mfm-muted);text-align:center">Showing first 500 of ' + sorted.length.toLocaleString() + '. Refine filters or export CSV for the full set.</td></tr>'
@@ -439,13 +447,14 @@
     if (r.sources) {
       const arr = Array.isArray(r.sources) ? r.sources : [];
       if (arr.length) {
-        sources = '<h4>Sources</h4><ul style="margin-left:1.1rem;font-size:.85rem">' +
+        sources = '<h4>Evidence</h4><ul class="mfm-ev">' +
           arr.map(s => {
             if (typeof s === 'string') return '<li>' + esc(s) + '</li>';
             const t = s.title || s.name || s.url || 'Source';
-            return s.url
-              ? '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(t) + '</a></li>'
-              : '<li>' + esc(t) + '</li>';
+            const link = s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(t) + '</a>' : esc(t);
+            const q = s.quote ? '<q>' + esc(s.quote) + '</q>' : '';
+            const sup = (s.supports && s.supports.length) ? '<span class="mfm-sup">Supports: ' + s.supports.map(x => esc(label(x)).toLowerCase()).join(', ') + '</span>' : '';
+            return '<li>' + link + q + sup + '</li>';
           }).join('') + '</ul>';
       }
     }
@@ -456,9 +465,9 @@
       '<div class="ms"><strong>Legal status</strong><p><span class="badge ' + badgeClass('legal', r.legal_status) + '">' + esc(label(r.legal_status)) + '</span></p></div>' +
       '<div class="ms"><strong>Oversight</strong><p><span class="badge ' + badgeClass('ov', r.oversight_quality) + '">' + esc(label(r.oversight_quality || '—')) + '</span></p></div>' +
       '<div class="ms"><strong>Modality</strong><p><span class="badge">' + esc(label(r.modality)) + '</span></p></div>' +
-      '<div class="ms"><strong>Cost (USD)</strong><p>' + esc(r.estimated_cost_range_usd || '—') + '</p></div>' +
-      '<div class="ms"><strong>Access pathway</strong><p>' + esc(label(r.access_pathway || '—')) + '</p></div>' +
-      '<div class="ms"><strong>Authority</strong><p>' + esc(r.regulatory_authority || '—') + '</p></div>' +
+      '<div class="ms"><strong>Cost (USD)</strong><p>' + (r.estimated_cost_range_usd ? esc(r.estimated_cost_range_usd) : '<span class="nv">Not verified</span>') + '</p></div>' +
+      '<div class="ms"><strong>Access pathway</strong><p>' + esc(label(r.access_pathway)) + '</p></div>' +
+      '<div class="ms"><strong>Authority</strong><p>' + (r.regulatory_authority ? esc(r.regulatory_authority) : '<span class="nv">Not verified</span>') + '</p></div>' +
       '</div>' +
       section('Access pathway details', r.access_pathway_details) +
       section('Legal basis', r.legal_basis) +
@@ -469,7 +478,9 @@
       section('Arbitrage summary', r.arbitrage_summary) +
       section('Oversight notes', r.oversight_notes) +
       section('Cost notes', r.cost_notes) +
-      (r.last_verified ? '<div class="ms" style="margin-top:1rem"><strong>Last verified</strong><p>' + esc(r.last_verified) + '</p></div>' : '') +
+      (r.verification ? '<p class="mfm-vnote">Every statement shown here was checked against the evidence below on ' + esc(r.last_verified || '') +
+        '. Statements no source could support were removed or are marked &ldquo;Not verified&rdquo;. Laws change: confirm with the linked source before acting.</p>'
+        : (r.last_verified ? '<div class="ms" style="margin-top:1rem"><strong>Last verified</strong><p>' + esc(r.last_verified) + '</p></div>' : '')) +
       sources;
     document.getElementById('mfm-modal').classList.add('open');
   };

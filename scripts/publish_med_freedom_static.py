@@ -55,6 +55,7 @@ def export_access_json() -> dict:
                 "latitude": d.get("latitude"),
                 "longitude": d.get("longitude"),
                 "general_notes": d.get("general_notes"),
+                "verification": parse_json_field(d.get("verification_json")),
                 "level": d.get("level"),
                 "parent_id": d.get("parent_id"),
             }
@@ -74,6 +75,7 @@ def export_access_json() -> dict:
                 "diseases": parse_json_field(d.get("diseases")) or [],
                 "description": d.get("description"),
                 "typical_us_cost_range": d.get("typical_us_cost_range"),
+                "verification": parse_json_field(d.get("verification_json")),
             }
         )
 
@@ -126,11 +128,14 @@ def export_access_json() -> dict:
                 "therapeutic_areas": parse_json_field(d.get("p_therapeutic_areas")) or [],
                 "diseases": parse_json_field(d.get("p_diseases")) or [],
                 "status": d.get("status") or "active",
+                "verification": parse_json_field(d.get("verification_json")),
             }
         )
 
     payload = {
-        "generated": "2026-08-08",
+        "generated": __import__("datetime").date.today().isoformat(),
+        "verification": "Every field checked in the October 2026 verification pass; fields no source "
+                        "could support are null (legal_status UNKNOWN). Evidence per record in `sources`.",
         "source": "med-freedom-map SQLite export for static GitHub Pages",
         "counts": {
             "jurisdictions": len(jurisdictions),
@@ -453,14 +458,16 @@ def copy_maps_to_site_root() -> None:
     for name, src in [
         ("maps", maps_src),
         ("states", maps_src / "states"),
-        ("compare", maps_src / "compare"),
+        # NOT /compare/: since 2026-10 that path holds the generated condition
+        # comparisons (scripts/build_compare_pages.py). State comparisons stay
+        # at /maps/compare/; copying here would delete those pages.
         ("corrections", FRONTEND / "corrections"),
     ]:
         dest = ROOT / name
-        if dest.exists():
-            shutil.rmtree(dest)
+        # merge rather than rmtree: deleting large trees on OneDrive fails
+        # part-way with PermissionError and leaves the site half-deleted
         if src.exists():
-            shutil.copytree(src, dest)
+            shutil.copytree(src, dest, dirs_exist_ok=True)
             n = len(list(dest.rglob("*.html")))
             print(f"Published /{name}/ ({n} HTML files)")
         else:

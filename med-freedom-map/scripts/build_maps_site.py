@@ -13,7 +13,9 @@ Pages generated:
   /maps/embed.js                                   embeddable choropleth component
 """
 
+import html
 import json
+from html import escape as _esc  # functions use a local named `html`
 import os
 import sys
 import yaml
@@ -154,6 +156,13 @@ LAYER_SLUGS = {
 }
 
 
+METHOD_NOTE = ('<p class="meta">Methodology: every value was checked in October 2026 against a specific source '
+               '(statute, regulator or official list, or a named tracker page), and each links to that page with a short quote. '
+               'Values no source could support are shown as &ldquo;Not verified&rdquo;. Verification was AI-assisted and spot-checked; '
+               'laws change, so confirm with the linked source before relying on a value. '
+               '<a href="/maps/methodology.html">How values are verified</a> &middot; <a href="/corrections/">Report an error</a>.</p>')
+
+
 def load_yaml(p: Path) -> dict:
     with open(p, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -170,6 +179,11 @@ def load_all_cells() -> Dict[str, Dict[str, dict]]:
         return cells
     for f in sorted(CELLS_DIR.rglob("*.yaml")):
         cell = load_yaml(f)
+        # Claims the October 2026 verification pass could not support are
+        # shown as "Not verified" and excluded from counts, never as values.
+        for dim in cell.get("dimensions", []):
+            if dim.get("verification_status") == "unsupported":
+                dim["value"] = "not_verified"
         key = (cell["jurisdiction"], cell["layer"])
         cells[key] = cell
     return cells
@@ -177,6 +191,8 @@ def load_all_cells() -> Dict[str, Dict[str, dict]]:
 
 def dim_label(dim_id: str, value) -> str:
     """Human-readable label for a dimension value."""
+    if value == "not_verified":
+        return "Not verified"
     phrases = DIM_PHRASES.get(dim_id, {})
     labels = phrases.get("value_labels", {})
     key = str(value).lower() if isinstance(value, bool) else str(value)
@@ -265,6 +281,9 @@ body{{max-width:1200px;margin:0 auto;padding:0 1rem}}
 .badge-true,.badge-full,.badge-participating{{background:#dcfce7;color:#166534}}
 .badge-false,.badge-none,.badge-restricted{{background:#fee2e2;color:#991b1b}}
 .badge-reduced,.badge-limited{{background:#fef3c7;color:#92400e}}
+.badge-not-verified{{background:#f1f3f9;color:#6b7194;border:1px dashed #c4c9e0}}
+.amb{{display:inline-block;margin-left:.35rem;font-size:.7rem;font-weight:600;color:#a16207;background:#fff7df;border:1px solid #f5e0a3;border-radius:999px;padding:.05rem .45rem}}
+.evq{{display:block;margin-top:.3rem;font-size:.78rem;color:#6b7194;font-style:italic;max-width:46ch}}
 .card-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}}
 .card{{border:1px solid var(--brd);border-radius:8px;padding:1rem;transition:box-shadow .15s}}
 .card:hover{{box-shadow:0 2px 8px rgba(0,0,0,.08)}}
@@ -366,7 +385,7 @@ def build_t1_index(layers_registry: dict):
 
     html = html_head(title, desc, breadcrumbs=bc, extra_jsonld=jsonld)
     html += HTML_HEAD_CLOSE
-    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header>'
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
     html += body
     html += HTML_FOOTER.format(date=today)
     write_file(out_path, html)
@@ -431,7 +450,7 @@ def build_t1_layer(layer: dict, cells: dict):
 
     html = html_head(title, desc, breadcrumbs=bc, extra_jsonld=jsonld)
     html += HTML_HEAD_CLOSE
-    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header>'
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
     html += body
     html += HTML_FOOTER.format(date=today)
     write_file(out_path, html)
@@ -522,7 +541,7 @@ def build_t2_dimension(layer: dict, dim: dict, cells: dict):
     body += build_embed_cta(lslug, dim_id=dim_id)
 
     # Methods note
-    body += '<p class="meta">Methodology: Values are derived from public secondary trackers (AANP, AAPA, IMLCC, NCSBN, PSYPACT, Mercatus) and official compact member lists. Each value includes a citation, source URL, verification date, and confidence rating. Stale cells are greyed. <a href="/corrections/">Report an error</a>.</p>'
+    body += METHOD_NOTE
 
     jsonld = json.dumps({
         "@context": "https://schema.org",
@@ -536,7 +555,7 @@ def build_t2_dimension(layer: dict, dim: dict, cells: dict):
 
     html = html_head(title, desc, breadcrumbs=bc, extra_jsonld=jsonld)
     html += HTML_HEAD_CLOSE
-    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header>'
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
     html += body
     html += HTML_FOOTER.format(date=today_str)
 
@@ -591,8 +610,12 @@ def build_t3_state_leaf(layer: dict, state_code: str, cell: dict):
 
         body += f'<tr>'
         body += f'<td><strong>{dphrase}</strong></td>'
-        body += f'<td><span class="badge {badge_class}">{label}</span></td>'
-        body += f'<td>{citation}</td>'
+        amb = ' <span class="amb" title="Sources conflict or the law does not fit the category cleanly; see the note and source.">sources differ</span>' if dim.get("verification_status") == "ambiguous" else ""
+        note_html = f'<span class="evq" style="font-style:normal">Note: {_esc(str(dim.get("note")))}</span>' if dim.get("note") and dim.get("verification_status") in ("ambiguous", "corrected", "unsupported") else ""
+        body += f'<td><span class="badge {badge_class}">{label}</span>{amb}</td>'
+        quote = dim.get("evidence_quote")
+        quote_html = f'<span class="evq">&ldquo;{_esc(quote)}&rdquo;</span>' if quote else ""
+        body += f'<td>{_esc(citation)}{quote_html}{note_html}</td>'
         body += f'<td><a href="{source_url}" rel="noopener" target="_blank">Link</a></td>'
         body += f'<td>{verified_on}</td>'
         body += f'<td>{confidence}</td>'
@@ -602,11 +625,11 @@ def build_t3_state_leaf(layer: dict, state_code: str, cell: dict):
 
     # Neighboring state comparison cross-links
     body += f'<div class="cta"><p><a href="/states/{s_slug}/">View full {s_name} profile</a> (all layers) &middot; <a href="/corrections/">Report an error on this page</a></p></div>'
-    body += '<p class="meta">Methodology: Data aggregated from public sources. Informational use only; verify with official state statutes before acting.</p>'
+    body += METHOD_NOTE
 
     html = html_head(title, desc, breadcrumbs=bc)
     html += HTML_HEAD_CLOSE
-    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header>'
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
     html += body
     html += HTML_FOOTER.format(date=today_str)
     write_file(out_path, html)
@@ -670,11 +693,11 @@ def build_t4_state_hub(state_code: str, cells: dict):
             body += '</tr>'
         body += '</tbody></table>'
 
-    body += '<p class="meta">Methodology: Data aggregated from public sources. Informational use only; verify with official state statutes before acting.</p>'
+    body += METHOD_NOTE
 
     html = html_head(title, desc, breadcrumbs=bc)
     html += HTML_HEAD_CLOSE
-    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header>'
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
     html += body
     html += HTML_FOOTER.format(date=today_str)
     write_file(out_path, html)
@@ -689,14 +712,87 @@ def build_compare_page():
     title = "Compare State Healthcare Laws | Medical Freedom Maps"
     desc = "Compare healthcare access laws side-by-side across US states."
 
-    html = html_head(title, desc, canonical="/compare/", noindex=True)
+    html = html_head(title, desc, canonical="/maps/compare/", noindex=True)
     html += HTML_HEAD_CLOSE
-    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/compare/">Compare</a></nav></header>'
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
     html += '<section class="hero"><h2>Compare State Healthcare Laws</h2><p>Select states and layers to compare side-by-side. This tool is under development.</p></section>'
     html += '<p class="meta">Compare tool coming soon. In the meantime, browse <a href="/maps/">layer maps</a> or <a href="/maps/states/">state profiles</a>.</p>'
     html += HTML_FOOTER.format(date=date.today().strftime("%B %Y"))
     write_file(out_path, html)
     print(f"  Compare: {out_path}")
+
+
+def build_methodology_page():
+    """/maps/methodology.html -- how every value on the maps was verified.
+
+    Counts are read from the verification summaries written by
+    scripts/apply_verification.py and scripts/apply_access_verification.py,
+    so the page never states numbers the data does not back."""
+    ver = ROOT / "data" / "verification"
+    def load(name):
+        try:
+            return json.loads((ver / name).read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    st = load("state-summary.json").get("counts", {})
+    ac = load("access-summary.json").get("counts", {})
+    qc_found = qc_total = 0
+    for f in ver.glob("quote-check-*.json"):
+        d = load(f.name)
+        qc_found += len(d.get("found", []))
+        qc_total += len(d.get("found", [])) + len(d.get("not_found", [])) + len(d.get("unfetchable", []))
+    audit = load("quote-audit-summary.json")
+    def n(d, k):
+        return f"{int(d.get(k, 0)):,}"
+    ls = {k.split(":")[1]: v for k, v in ac.items() if k.startswith("legal_status:")}
+    title = "How the Medical Freedom Maps are verified"
+    desc = "Every value on the Medical Freedom Maps was checked against a specific source with a quoted passage. Values no source supports are shown as Not verified."
+    html = html_head(title, desc, canonical="/maps/methodology.html")
+    html += f'<header class="hdr"><div><h1><a href="/maps/" style="color:var(--fg);text-decoration:none">{BRAND}</a></h1></div><nav><a href="/maps/">All Layers</a> | <a href="/maps/compare/">Compare</a></nav></header>'
+    html += '<main class="wrap" style="max-width:860px">'
+    html += f'<h1>{title}</h1>'
+    html += ('<p>In October 2026 the Open Source Medicine Foundation re-checked every value on these maps and on the '
+             '<a href="/medical-freedom-map.html">Medical Freedom Arbitrage Map</a>. The earlier data had been compiled from '
+             'general knowledge and secondary trackers and was labelled as verified without per-value sources. That labelling '
+             'was wrong, and this pass replaces it.</p>')
+    html += '<h2>The rule</h2><ul>'
+    html += ('<li>A value is shown only if a specific, retrievable source states it: a statute, a regulator&rsquo;s register or decision, '
+             'an official list, or a named tracker page for that exact topic. A website homepage never counts.</li>'
+             '<li>Each verified value links to that page and carries a short verbatim quote from it.</li>'
+             '<li>Where sources conflict or the law does not fit a category cleanly, the value is marked <em>sources differ</em> with a note.</li>'
+             '<li>Where no adequate source could be found, the value is shown as <em>Not verified</em>. Nothing is guessed.</li>'
+             '<li>Prices are shown only where a source gives a price for that jurisdiction; otherwise they were removed.</li></ul>')
+    html += '<h2>How it was done</h2>'
+    html += ('<p>Research agents (AI-assisted) looked up each claim, recorded the source URL and a verbatim quote, and gave a verdict: '
+             'confirmed, corrected, ambiguous or unsupported. A script then fetched every cited page, including rendered pages, '
+             'their data files and Internet Archive copies, and checked that each quote actually appears there. Quotes the script '
+             'could not match were read by a second reviewer; quotes that could not be confirmed were discarded, and any value left '
+             'without evidence became <em>Not verified</em>.</p>')
+    html += '<h2>Results</h2><table class="tbl"><thead><tr><th>Dataset</th><th>Confirmed</th><th>Corrected</th><th>Ambiguous</th><th>Not verified</th></tr></thead><tbody>'
+    if st:
+        html += (f'<tr><td>State law layers (claims)</td><td>{n(st,"confirmed")}</td><td>{n(st,"corrected")}</td>'
+                 f'<td>{n(st,"ambiguous")}</td><td>{int(st.get("unsupported",0)) + int(st.get("no_result",0)):,}</td></tr>')
+    if ls:
+        html += (f'<tr><td>Procedure &times; jurisdiction records (legal status)</td><td>{n(ls,"confirmed")}</td><td>{n(ls,"corrected")}</td>'
+                 f'<td>{n(ls,"ambiguous")}</td><td>{n(ls,"unsupported")}</td></tr>')
+    html += '</tbody></table>'
+    if audit.get("total_quotes"):
+        html += (f'<p>Quotes: {audit["total_quotes"]:,} evidence quotes were collected. {audit["auto_found"]:,} were found on the cited page '
+                 f'automatically; a reviewer read the remaining {audit["audited"]:,} pages and confirmed {audit["audit_present"]:,} as written '
+                 f'and corrected the wording of {audit["audit_paraphrase_corrected"]:,}. {audit["discarded"]:,} could not be confirmed and were '
+                 'discarded, together with any value that depended on them.</p>')
+    elif qc_total:
+        html += f'<p>Automated quote check: {qc_found:,} of {qc_total:,} quotes found on the cited page before manual review.</p>'
+    html += '<h2>Limits</h2><ul>'
+    html += ('<li>Narrative text on each record was rewritten to contain only statements the cited sources support, but the automated '
+             'check confirms the quote, not every sentence; sentence-level support rests on the reviewer&rsquo;s reading of the page.</li>'
+             '<li>Many national medicine registers cannot be read automatically, so some jurisdictions have many <em>Not verified</em> values.</li>'
+             '<li>Laws change. Each value shows the date it was checked. Confirm with the linked source before relying on it.</li>'
+             '<li>This is research information, not legal or medical advice.</li></ul>')
+    html += '<p><a href="/corrections/">Report an error</a> &middot; the full verification data, including every source and quote, is in the '
+    html += '<a href="https://github.com/MattH55/osmf-research-tracker/tree/main/med-freedom-map/data/verification">public repository</a>.</p>'
+    html += '</main></body></html>'
+    write_file(OUT_DIR / "methodology.html", html)
 
 
 def build_corrections_page():
@@ -878,6 +974,7 @@ def main():
 
     # Corrections page
     build_corrections_page()
+    build_methodology_page()
 
     # Embed JS
     build_embed_js()
