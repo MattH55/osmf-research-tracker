@@ -1,7 +1,7 @@
 # PeptideOS rebuild: handoff (2026-10-10)
 
 ## State in one paragraph
-PeptideOS has been rebuilt from scratch: 37 compound records, each researched under `data/RESEARCH_PROTOCOL.md` and machine-checked, are rendered into a static site with an index, a methods page, a purity page, an open-data page, and governance pages. The previous content was withdrawn: its citations were fabricated (of 26 DOIs, 18 didn't resolve and 7 of the 8 that did pointed to unrelated papers; all 5 NCTs were wrong), and its COI page listed grants that couldn't be substantiated. The corrections log says so. **Committed locally, not pushed**: pushing publishes it via GitHub Pages (see "Decisions for the maintainer").
+PeptideOS has been rebuilt from scratch: 37 compound records, each researched under `data/RESEARCH_PROTOCOL.md` and machine-checked, are rendered into a static site with an index, a methods page, a purity page, an open-data page, and governance pages. The previous content was withdrawn: its citations were fabricated (of 26 DOIs, 18 didn't resolve and 7 of the 8 that did pointed to unrelated papers; all 5 NCTs were wrong), and its COI page listed grants that couldn't be substantiated. The corrections log says so. **Published 2026-10-14** at https://research.opensourcemed.info/peptideos/ (GitHub Pages).
 
 ## Pipeline
 | Step | Command (from `research-tracker/`, with `PYTHONIOENCODING=utf-8`) | What it does |
@@ -35,7 +35,7 @@ Source check (2026-10-10): **0 hard failures across all 37.** Three regulator qu
 - **No human second review yet:** records name "OSMF research team (AI-assisted, source-verified)". The brief (§8.2) asks for blind double-tiering by two reviewers.
 
 ## Decisions for the maintainer
-1. **Push or wait.** The brief (§9) advises publishing only after OSMF's own trial is registered and ethics-approved, given the Próspera optics. To publish: `git push https://github.com/MattH55/osmf-research-tracker.git main` (explicit URL because `.git/config` is a broken OneDrive placeholder; restore it with remote `origin` = that URL and branch `main` tracking `origin/main`).
+1. **Pushing.** Use `git push https://github.com/MattH55/osmf-research-tracker.git main` (explicit URL because `.git/config` is a broken OneDrive placeholder; restore it with remote `origin` = that URL and branch `main` tracking `origin/main`).
 2. **COI funding text.** `coi-disclosure.html` now says "no dedicated external funding". Correct this in `coi_page()` in `scripts/build_peptideos.py` if it's wrong. Named editors: add a human reviewer name to records once one exists.
 3. **Purity programme:** the page says "not started; counsel reviews first". Update it only after legal sign-off.
 
@@ -44,4 +44,4 @@ Source check (2026-10-10): **0 hard failures across all 37.** Three regulator qu
 2. Run a research pass for UK, AU, JP and CN regulatory entries (same protocol; agents can self-check with the two commands above).
 3. Run a human blind re-tier of a sample (say 10 records) and log any changes in `CORRECTIONS` in `build_peptideos.py`.
 4. Full desktop QA. Desktop screenshots were checked only for 4 compound pages, the index and methods. Mobile (390px) passed for the index, methods and 6 compound pages.
-5. Push (after decision 1), then add research.opensourcemed.info to Search Console.
+5. Add research.opensourcemed.info to Search Console.
