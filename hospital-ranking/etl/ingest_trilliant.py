@@ -23,10 +23,26 @@ etl/price_contract.py:
   * priceVintage comes from the file's last_updated_on; no date -> quarantined.
 
 Sources (pick one):
-  --rescan-cache        Rebuild from data/trilliant/cache/*.duckdb (no downloads)
+  --rescan-cache        Rebuild from data/trilliant/extracts/*.json.gz plus any
+                        data/trilliant/cache/*.duckdb still present (no downloads).
+                        Output is byte-identical whichever of the two a slug comes from.
   --duckdb-dir PATH     Folder of per-hospital *.duckdb files
   --consolidated PATH   A single DuckDB with the same tables
-  --oria                Download per-hospital files into the cache, then extract
+  --oria                Download per-hospital files, extract, save the compact
+                        extract, then delete the DuckDB file (disk-bounded)
+  --convert-cache       Write an extract for every cached DuckDB file (verified
+                        by read-back); with --delete-duckdb also delete the DuckDB
+
+Extracts (data/trilliant/extracts/<slug>.json.gz) hold the raw inputs of the
+rules, not their results: the source_metadata/hospitals provenance fields, every
+standard_charges line that the candidate SQL filter selects for the current
+procedures.json codes, and the dollar payer rates for those lines. All contract
+rules run on top of them at assembly time, exactly as on a DuckDB file. Each
+extract records the code-filter key it was made with; if procedures.json codes
+change, the extract is refused and the slug must be downloaded again.
+
+Disk: --oria refuses to start a download that would leave less than
+--min-free-gb (default 40) free; such entries go to failedSlugs ("disk_low").
 
 Every run REBUILDS trilliant-prices.json from the files it read, except --oria
 --append which merges new rows into the existing file (same dedupe rule).
@@ -47,11 +63,16 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import hashlib
 import json
 import os
+import random
 import re
+import shutil
 import sys
+import threading
 import time
+import urllib.error
 import urllib.request
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
@@ -76,17 +97,25 @@ from price_contract import (  # noqa: E402
     deterministic_id,
     dump_json,
     is_stale,
+    json_roundtrip,
     line_scope_problem,
     load_hospitals,
     name_tokens,
     order_row,
     parse_iso_date,
     read_json,
+    read_json_gz,
+    write_json_gz,
     write_quarantine_section,
 )
 
 TRILLIANT_DIR = ROOT / "data" / "trilliant"
 CACHE_DIR = TRILLIANT_DIR / "cache"
+EXTRACT_DIR = TRILLIANT_DIR / "extracts"
+EXTRACT_VERSION = 1
+SLUG_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.\-]*$")
+MAX_DOWNLOAD_WORKERS = 4
+DEFAULT_MIN_FREE_GB = 40.0
 MRF_PRICES_JSON = CMS_DIR / "mrf-prices.json"
 OUT_PRICES = CMS_DIR / "trilliant-prices.json"
 OUT_META = CMS_DIR / "trilliant-meta.json"
@@ -112,6 +141,17 @@ QUARANTINE_SECTION = "trilliant_mrf"
 
 # ============================================================ network (--oria)
 
+def backoff_sleep(attempt: int, base: float = 2.0, cap: float = 120.0) -> None:
+    """Exponential backoff with jitter: ~2, 4, 8, 16 ... s (capped)."""
+    time.sleep(min(cap, base * (2 ** attempt)) * (0.75 + 0.5 * random.random()))
+
+
+def _retryable(exc: Exception) -> bool:
+    if isinstance(exc, urllib.error.HTTPError):
+        return exc.code in (408, 425, 429) or exc.code >= 500
+    return True
+
+
 def fetch_text(url: str, timeout: int = 120, retries: int = 5) -> str:
     last_err: Exception | None = None
     for attempt in range(retries):
@@ -121,9 +161,43 @@ def fetch_text(url: str, timeout: int = 120, retries: int = 5) -> str:
                 return resp.read().decode("utf-8", errors="replace")
         except Exception as exc:  # noqa: BLE001
             last_err = exc
-            if attempt < retries - 1:
-                time.sleep(2 * (attempt + 1))
+            if attempt < retries - 1 and _retryable(exc):
+                backoff_sleep(attempt)
+            else:
+                break
     raise last_err  # type: ignore[misc]
+
+
+def free_bytes() -> int:
+    return shutil.disk_usage(str(ROOT)).free
+
+
+class DiskGuard:
+    """Refuse new downloads that would leave less than min_free bytes free.
+
+    Accounts for downloads already in flight (their expected size is reserved
+    until they finish), so concurrent workers cannot jointly overshoot.
+    """
+
+    def __init__(self, min_free_gb: float):
+        self.min_free = int(min_free_gb * 1024 ** 3)
+        self.lock = threading.Lock()
+        self.reserved = 0
+        self.tripped = False
+
+    def reserve(self, nbytes: int) -> bool:
+        with self.lock:
+            if self.tripped:
+                return False
+            if free_bytes() - self.reserved - nbytes < self.min_free:
+                self.tripped = True
+                return False
+            self.reserved += nbytes
+            return True
+
+    def release(self, nbytes: int) -> None:
+        with self.lock:
+            self.reserved = max(0, self.reserved - nbytes)
 
 
 def load_oria_index(refresh: bool = False) -> list[dict]:
@@ -153,49 +227,153 @@ def validate_duckdb(path: Path) -> bool:
         return False
 
 
-def download_file(url: str, dest: Path, timeout: int = 600) -> None:
+def download_file(url: str, dest: Path, timeout: int = 600, retries: int = 4) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
-    part = dest.with_suffix(dest.suffix + f".part.{os.getpid()}")
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    # Short temp name (Windows 260-char path limit with long slugs).
+    part = dest.parent / f".p{os.getpid()}-{threading.get_ident() % 100000}.part"
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp, open(part, "wb") as out:
+                expected = resp.headers.get("Content-Length")
+                n = 0
+                while True:
+                    chunk = resp.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    out.write(chunk)
+                    n += len(chunk)
+            if expected and expected.isdigit() and int(expected) != n:
+                raise OSError(f"truncated download: {n} of {expected} bytes")
+            part.replace(dest)
+            return
+        except Exception as exc:  # noqa: BLE001
+            last_err = exc
+            if attempt < retries - 1 and _retryable(exc):
+                backoff_sleep(attempt, base=4.0)
+            else:
+                break
+        finally:
+            if part.exists():
+                try:
+                    part.unlink()
+                except OSError:
+                    pass
+    raise last_err  # type: ignore[misc]
+
+
+# ============================================================ extracts
+
+def codes_key(codes: CodeIndex) -> str:
+    """Identifies the candidate-line filter an extract was made with."""
+    return deterministic_id("trilliant-extract-filter", f"v{EXTRACT_VERSION}",
+                            ",".join(sorted(codes.drg)), ",".join(sorted(codes.cpt)))
+
+
+def extract_path(slug: str) -> Path:
+    if not SLUG_RE.match(slug):
+        raise ValueError(f"unsafe ORIA slug: {slug!r}")
+    return EXTRACT_DIR / f"{slug}.json.gz"
+
+
+class ExtractUnusable(Exception):
+    pass
+
+
+def load_extract(path: Path, codes: CodeIndex) -> dict:
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp, open(part, "wb") as out:
-            while True:
-                chunk = resp.read(1024 * 1024)
-                if not chunk:
-                    break
-                out.write(chunk)
-        part.replace(dest)
-    finally:
-        if part.exists():
-            try:
-                part.unlink()
-            except OSError:
-                pass
+        raw = read_json_gz(path)
+    except (OSError, EOFError, ValueError) as exc:
+        raise ExtractUnusable(f"unreadable extract: {exc}"[:200]) from exc
+    if not isinstance(raw, dict) or raw.get("extractVersion") != EXTRACT_VERSION:
+        raise ExtractUnusable("extract version mismatch")
+    if raw.get("codesKey") != codes_key(codes):
+        raise ExtractUnusable("extract made for a different procedures.json code list; re-download needed")
+    if raw.get("error"):
+        raise ExtractUnusable(f"extract records a read error: {raw['error'].get('reason')}")
+    return raw
 
 
-def ensure_cached(entry: dict, use_cache: bool) -> tuple[str, str | None]:
-    """Download one ORIA hospital DuckDB into the cache. Returns (slug, error)."""
+def ensure_extract_dir() -> None:
+    EXTRACT_DIR.mkdir(parents=True, exist_ok=True)
+    gi = EXTRACT_DIR / ".gitignore"
+    if not gi.exists():
+        # data/trilliant/ must stay out of git; the repo .gitignore only lists cache/.
+        gi.write_text("# generated per-hospital ORIA extracts; never commit\n*\n", encoding="utf-8")
+
+
+def save_extract(raw: dict) -> int:
+    """Write the extract and verify it reads back identical. Returns bytes on disk."""
+    path = extract_path(raw["slug"])
+    ensure_extract_dir()
+    size = write_json_gz(path, raw)
+    if read_json_gz(path) != raw:
+        path.unlink(missing_ok=True)
+        raise OSError(f"extract read-back mismatch for {raw['slug']}")
+    return size
+
+
+def fetch_entry(entry: dict, codes: CodeIndex, use_cache: bool, guard: DiskGuard,
+                keep_duckdb: bool = False) -> tuple[str, dict | None, str | None]:
+    """Get one ORIA hospital's extract: cached extract, else cached DuckDB, else download.
+
+    Returns (slug, processed_extraction, error). After a successful download the
+    compact extract is saved and the DuckDB file deleted (unless keep_duckdb).
+    """
     slug = entry["id"]
     if entry.get("status") != "completed":
-        return slug, "not_completed"
+        return slug, None, "not_completed"
+    try:
+        ext_path = extract_path(slug)
+    except ValueError as exc:
+        return slug, None, f"bad_slug: {exc}"[:160]
     cache_path = CACHE_DIR / f"{slug}.duckdb"
-    if use_cache and cache_path.exists() and cache_path.stat().st_size > 1000 and validate_duckdb(cache_path):
-        return slug, None
+    if use_cache and ext_path.exists():
+        try:
+            raw = load_extract(ext_path, codes)
+            return slug, process_raw(raw, codes, entry), None
+        except ExtractUnusable:
+            pass  # fall through: rebuild from DuckDB / re-download
+    have_duckdb = (use_cache and cache_path.exists() and cache_path.stat().st_size > 1000
+                   and validate_duckdb(cache_path))
+    reserved = 0
     try:
-        html = fetch_text(ORIA_HOSPITAL_URL.format(slug=slug), timeout=60)
-    except Exception as exc:  # noqa: BLE001
-        return slug, f"index_page_error: {exc}"[:160]
-    m = DUCKDB_PATH_RE.search(html)
-    if not m:
-        return slug, "no_duckdb_url"
-    try:
-        download_file(ORIA_BASE + m.group(1), cache_path)
-    except Exception as exc:  # noqa: BLE001
-        return slug, f"download_error: {exc}"[:160]
-    if not validate_duckdb(cache_path):
-        cache_path.unlink(missing_ok=True)
-        return slug, "corrupt_duckdb"
-    return slug, None
+        if not have_duckdb:
+            reserved = int(entry.get("duckdbSize") or 0) or 512 * 1024 ** 2
+            if not guard.reserve(reserved):
+                reserved = 0
+                return slug, None, "disk_low: not downloaded (free space under limit)"
+            try:
+                html = fetch_text(ORIA_HOSPITAL_URL.format(slug=slug), timeout=60)
+            except Exception as exc:  # noqa: BLE001
+                return slug, None, f"index_page_error: {exc}"[:160]
+            m = DUCKDB_PATH_RE.search(html)
+            if not m:
+                return slug, None, "no_duckdb_url"
+            try:
+                download_file(ORIA_BASE + m.group(1), cache_path)
+            except Exception as exc:  # noqa: BLE001
+                return slug, None, f"download_error: {exc}"[:160]
+            if not validate_duckdb(cache_path):
+                cache_path.unlink(missing_ok=True)
+                return slug, None, "corrupt_duckdb"
+        raw = read_raw(str(cache_path), codes)
+        if raw.get("error"):
+            # Never freeze a read error into an extract: drop the file, retry later.
+            if not keep_duckdb:
+                cache_path.unlink(missing_ok=True)
+            return slug, None, f"extract_error: {raw['error'].get('message') or raw['error'].get('reason')}"[:160]
+        try:
+            save_extract(raw)
+        except OSError as exc:
+            return slug, None, f"extract_write_error: {exc}"[:160]
+        if not keep_duckdb:
+            cache_path.unlink(missing_ok=True)
+        return slug, process_raw(raw, codes, entry), None
+    finally:
+        if reserved:
+            guard.release(reserved)
 
 
 # ============================================================ run lock
@@ -309,21 +487,113 @@ def facility_identity(src: dict, index_entry: dict | None) -> dict:
     }
 
 
-def extract_file(path_str: str, code_cfg: dict, index_entry: dict | None) -> dict:
-    """Extract per-procedure aggregates from one DuckDB file. Runs in a worker process."""
-    codes = CodeIndex(code_cfg["procedures"])
-    q = Quarantine()
-    slug = Path(path_str).stem
-    out: dict = {"slug": slug, "file": Path(path_str).name, "procs": {}, "quarantine": None}
+def candidate_where(codes: CodeIndex, sc_cols: set[str]) -> str:
+    """SQL filter for candidate lines: any explicit or typed mention of our codes.
+
+    Deliberately broad (typed columns included) so that lines the rules reject
+    are still seen and quarantined with a reason.
+    """
+    all_drg = sorted(codes.drg)
+    all_cpt = sorted(codes.cpt)
+    alt = "|".join([str(int(d)) for d in all_drg] + all_cpt)
+    pattern = rf"(MS-DRG|CPT|HCPCS)\s*:\s*0*({alt})"
+    typed = []
+    drg_variants = sorted(set(all_drg) | {str(int(d)) for d in all_drg})
+    if "ms_drg" in sc_cols:
+        typed.append("sc.ms_drg IN (" + ", ".join(f"'{d}'" for d in drg_variants) + ")")
+    for c in ("cpt", "hcpcs"):
+        if c in sc_cols:
+            typed.append(f"sc.{c} IN (" + ", ".join(f"'{x}'" for x in all_cpt) + ")")
+    where = f"regexp_matches(coalesce(sc.all_codes, ''), '{pattern}')"
+    if typed:
+        where = f"({where}) OR " + " OR ".join(typed)
+    return where
+
+
+LINE_FIELDS = ("description", "all_codes", "ms_drg", "cpt", "hcpcs", "setting", "billing_class",
+               "modifiers", "discounted_cash", "gross_charge")
+DETAIL_FIELDS = ("payer_name", "plan_name", "standard_charge_dollar", "methodology")
+
+
+def read_raw(path_str: str, codes: CodeIndex) -> dict:
+    """Read everything the contract rules need from one DuckDB file.
+
+    The result is exactly what is stored as the extract (it is passed through a
+    JSON round trip here), so rules applied to it give identical output whether
+    the source was the DuckDB file or the saved extract.
+    """
+    raw: dict = {
+        "extractVersion": EXTRACT_VERSION,
+        "slug": Path(path_str).stem,
+        "file": Path(path_str).name,
+        "codesKey": codes_key(codes),
+    }
     try:
         con = duckdb.connect(path_str, read_only=True)
     except duckdb.Error as exc:
-        q.add("file:source_file_unreadable", {"file": Path(path_str).name, "error": str(exc)[:200]})
+        raw["error"] = {"reason": "file:source_file_unreadable", "message": str(exc)[:200]}
+        return json_roundtrip(raw)
+    try:
+        raw["source"] = read_source(con)
+        sc_cols = table_columns(con, "standard_charges")
+        if "all_codes" not in sc_cols:
+            raw["noAllCodesColumn"] = True
+            return json_roundtrip(raw)
+        sel = ", ".join(["sc.charge_id AS charge_id"] + [_col(sc_cols, "sc", f) for f in LINE_FIELDS])
+        lines = con.execute(
+            f"SELECT {sel} FROM standard_charges sc WHERE {candidate_where(codes, sc_cols)} "
+            f"ORDER BY sc.charge_id"
+        ).fetchall()
+        raw["lines"] = {"cols": [d[0] for d in con.description], "rows": [list(r) for r in lines]}
+        d_cols = table_columns(con, "standard_charge_details")
+        raw["details"] = None
+        if {"charge_id", "standard_charge_dollar"} <= d_cols:
+            charge_ids = sorted({r[0] for r in lines if r[0] is not None})
+            rows: list = []
+            dcols = ["charge_id"] + list(DETAIL_FIELDS)
+            if charge_ids:
+                id_list = ", ".join(str(int(c)) for c in charge_ids)
+                dsel = ", ".join(["d.charge_id AS charge_id"] + [_col(d_cols, "d", f) for f in DETAIL_FIELDS])
+                # Total order (methodology last) so ties never reorder between runs.
+                drows = con.execute(
+                    f"SELECT {dsel} FROM standard_charge_details d "
+                    f"WHERE d.charge_id IN ({id_list}) AND d.standard_charge_dollar IS NOT NULL "
+                    f"ORDER BY d.charge_id, d.payer_name, d.plan_name, d.standard_charge_dollar, d.methodology"
+                ).fetchall()
+                dcols = [x[0] for x in con.description]
+                rows = [list(r) for r in drows]
+            raw["details"] = {"cols": dcols, "rows": rows}
+    except duckdb.Error as exc:
+        raw["error"] = {"reason": "file:duckdb_query_error", "message": str(exc)[:200]}
+    finally:
+        con.close()
+    return json_roundtrip(raw)
+
+
+def extract_file(path_str: str, code_cfg: dict, index_entry: dict | None) -> dict:
+    """Extract per-procedure aggregates from one DuckDB file. Runs in a worker process."""
+    codes = CodeIndex(code_cfg["procedures"])
+    return process_raw(read_raw(path_str, codes), codes, index_entry)
+
+
+def process_raw(raw: dict, codes: CodeIndex, index_entry: dict | None) -> dict:
+    """Apply the contract's line rules to one source's raw extract."""
+    q = Quarantine()
+    slug = raw["slug"]
+    out: dict = {"slug": slug, "file": raw["file"], "procs": {}, "quarantine": None}
+    err = raw.get("error")
+    if err and err.get("reason") == "file:source_file_unreadable":
+        q.add("file:source_file_unreadable", {"file": raw["file"], "error": err.get("message")})
         out["quarantine"] = q.to_dict()
         out["error"] = "unreadable"
         return out
+    if "source" not in raw:
+        q.add("file:duckdb_query_error", {"file": out["file"], "error": (err or {}).get("message")})
+        out["error"] = "query_error"
+        out["quarantine"] = q.to_dict()
+        return out
     try:
-        src = read_source(con)
+        src = raw["source"]
         out["identity"] = facility_identity(src, index_entry)
         hosp = (src.get("hospitals") or [{}])[0]
         vintage = parse_iso_date(hosp.get("last_updated_on")) or parse_iso_date(src.get("mrf_last_updated_on"))
@@ -344,46 +614,18 @@ def extract_file(path_str: str, code_cfg: dict, index_entry: dict | None) -> dic
         out["sourceDocumentHash"] = f"md5:{md5}" if md5 and re.fullmatch(r"[0-9a-fA-F]{32}", str(md5)) else None
         out["nHospitalRows"] = len(src.get("hospitals") or [])
 
-        sc_cols = table_columns(con, "standard_charges")
-        if "all_codes" not in sc_cols:
+        if raw.get("noAllCodesColumn"):
             q.add("file:no_all_codes_column", {"file": out["file"]})
             out["quarantine"] = q.to_dict()
             return out
-        all_drg = sorted(codes.drg)
-        all_cpt = sorted(codes.cpt)
-        alt = "|".join([str(int(d)) for d in all_drg] + all_cpt)
-        pattern = rf"(MS-DRG|CPT|HCPCS)\s*:\s*0*({alt})"
-        typed = []
-        drg_variants = sorted(set(all_drg) | {str(int(d)) for d in all_drg})
-        if "ms_drg" in sc_cols:
-            typed.append("sc.ms_drg IN (" + ", ".join(f"'{d}'" for d in drg_variants) + ")")
-        for c in ("cpt", "hcpcs"):
-            if c in sc_cols:
-                typed.append(f"sc.{c} IN (" + ", ".join(f"'{x}'" for x in all_cpt) + ")")
-        where = f"regexp_matches(coalesce(sc.all_codes, ''), '{pattern}')"
-        if typed:
-            where = f"({where}) OR " + " OR ".join(typed)
-        sel = ", ".join([
-            "sc.charge_id AS charge_id",
-            _col(sc_cols, "sc", "description"),
-            _col(sc_cols, "sc", "all_codes"),
-            _col(sc_cols, "sc", "ms_drg"),
-            _col(sc_cols, "sc", "cpt"),
-            _col(sc_cols, "sc", "hcpcs"),
-            _col(sc_cols, "sc", "setting"),
-            _col(sc_cols, "sc", "billing_class"),
-            _col(sc_cols, "sc", "modifiers"),
-            _col(sc_cols, "sc", "discounted_cash"),
-            _col(sc_cols, "sc", "gross_charge"),
-        ])
-        lines = con.execute(
-            f"SELECT {sel} FROM standard_charges sc WHERE {where} ORDER BY sc.charge_id"
-        ).fetchall()
-        cols = [d[0] for d in con.description]
+        if "lines" not in raw:
+            raise _RawQueryError()
+        cols = raw["lines"]["cols"]
+        lines = raw["lines"]["rows"]
 
         accepted: dict[str, list[dict]] = defaultdict(list)
-        for raw in lines:
-            line = dict(zip(cols, raw))
+        for raw_line in lines:
+            line = dict(zip(cols, raw_line))
             sample = {
                 "file": out["file"],
                 "chargeId": line["charge_id"],
@@ -422,27 +664,18 @@ def extract_file(path_str: str, code_cfg: dict, index_entry: dict | None) -> dic
                 "sample": sample,
             })
 
-        # payer-level dollar rates for accepted lines
-        d_cols = table_columns(con, "standard_charge_details")
-        charge_ids = sorted({ln["chargeId"] for lns in accepted.values() for ln in lns})
+        # payer-level dollar rates for accepted lines (details hold every candidate
+        # line's rates in a total order; keep the accepted lines' rates, in order)
+        if "details" not in raw:
+            raise _RawQueryError()
+        charge_ids = {ln["chargeId"] for lns in accepted.values() for ln in lns}
         rates_by_charge: dict = defaultdict(list)
-        if charge_ids and {"charge_id", "standard_charge_dollar"} <= d_cols:
-            id_list = ", ".join(str(int(c)) for c in charge_ids)
-            dsel = ", ".join([
-                "d.charge_id AS charge_id",
-                _col(d_cols, "d", "payer_name"),
-                _col(d_cols, "d", "plan_name"),
-                _col(d_cols, "d", "standard_charge_dollar"),
-                _col(d_cols, "d", "methodology"),
-            ])
-            drows = con.execute(
-                f"SELECT {dsel} FROM standard_charge_details d "
-                f"WHERE d.charge_id IN ({id_list}) AND d.standard_charge_dollar IS NOT NULL "
-                f"ORDER BY d.charge_id, d.payer_name, d.plan_name, d.standard_charge_dollar"
-            ).fetchall()
-            dcols = [x[0] for x in con.description]
-            for r in drows:
-                rates_by_charge[r[0]].append(dict(zip(dcols, r)))
+        details = raw.get("details")
+        if charge_ids and details is not None:
+            dcols = details["cols"]
+            for r in details["rows"]:
+                if r[0] in charge_ids:
+                    rates_by_charge[r[0]].append(dict(zip(dcols, r)))
 
         for proc_id, lns in sorted(accepted.items()):
             for ln in lns:
@@ -459,13 +692,16 @@ def extract_file(path_str: str, code_cfg: dict, index_entry: dict | None) -> dic
                 "matchedCodes": sorted({lab for ln in lns for lab in ln["labels"]}),
             })
             out["procs"][proc_id] = agg
-    except duckdb.Error as exc:
-        q.add("file:duckdb_query_error", {"file": out["file"], "error": str(exc)[:200]})
+    except _RawQueryError:
+        q.add("file:duckdb_query_error", {"file": out["file"], "error": (err or {}).get("message")})
         out["error"] = "query_error"
-    finally:
-        con.close()
+        out["procs"] = {}
     out["quarantine"] = q.to_dict()
     return out
+
+
+class _RawQueryError(Exception):
+    """The DuckDB read stopped part-way (recorded in raw['error'])."""
 
 
 # ============================================================ assembly
@@ -628,17 +864,80 @@ def merge_price_lists(direct: list[dict], trilliant: list[dict]) -> list[dict]:
     return [by_key[k] for k in sorted(by_key)]
 
 
-def run_extractions(paths: list[Path], codes: CodeIndex, workers: int) -> list[dict]:
+def extract_source(slug: str, ext_path: str | None, duck_path: str | None, prefer: str,
+                   procedures: list[dict], index_entry: dict | None) -> dict:
+    """Worker: processed extraction for one slug from its extract or DuckDB file.
+
+    Returns {"slug", "file", "unusable": reason} when neither source can be used.
+    """
+    codes = CodeIndex(procedures)
+    order = [("extract", ext_path), ("duckdb", duck_path)]
+    if prefer == "duckdb":
+        order.reverse()
+    reasons = []
+    for kind, p in order:
+        if not p:
+            continue
+        if kind == "duckdb":
+            return process_raw(read_raw(p, codes), codes, index_entry)
+        try:
+            return process_raw(load_extract(Path(p), codes), codes, index_entry)
+        except ExtractUnusable as exc:
+            reasons.append(str(exc))
+    return {"slug": slug, "file": f"{slug}.duckdb", "unusable": "; ".join(reasons) or "no source"}
+
+
+def run_extractions(sources: list[tuple[str, str | None, str | None]], codes: CodeIndex,
+                    workers: int, prefer: str = "extract") -> list[dict]:
+    """sources: (slug, extract_path, duckdb_path)."""
     index = load_index_by_slug()
-    cfg = {"procedures": codes.procedures}
     results: list[dict] = []
     with ProcessPoolExecutor(max_workers=workers) as ex:
-        futs = [ex.submit(extract_file, str(p), cfg, index.get(p.stem)) for p in paths]
+        futs = [ex.submit(extract_source, slug, e, d, prefer, codes.procedures, index.get(slug))
+                for slug, e, d in sources]
         for i, f in enumerate(futs, 1):
             results.append(f.result())
-            if i % 50 == 0 or i == len(futs):
-                print(f"  extracted {i}/{len(futs)} files")
+            if i % 250 == 0 or i == len(futs):
+                print(f"  extracted {i}/{len(futs)} sources", flush=True)
     return results
+
+
+def rescan_sources() -> list[tuple[str, str | None, str | None]]:
+    duck = {p.stem: str(p) for p in list_duckdb(CACHE_DIR)} if CACHE_DIR.exists() else {}
+    ext = {}
+    if EXTRACT_DIR.exists():
+        ext = {p.name[: -len(".json.gz")]: str(p) for p in sorted(EXTRACT_DIR.glob("*.json.gz"))}
+    return [(s, ext.get(s), duck.get(s)) for s in sorted(set(duck) | set(ext))]
+
+
+def convert_one(path_str: str, procedures: list[dict], delete: bool) -> tuple[str, str, int]:
+    """Worker: write the extract for one cached DuckDB file; optionally delete the DuckDB.
+
+    The DuckDB is deleted only when the saved extract reads back identical and
+    the rules give the identical extraction from both sources.
+    """
+    codes = CodeIndex(procedures)
+    slug = Path(path_str).stem
+    raw = read_raw(path_str, codes)
+    if raw.get("error"):
+        return slug, f"kept_duckdb_read_error: {raw['error'].get('message')}"[:200], 0
+    try:
+        size = save_extract(raw)
+    except (OSError, ValueError) as exc:
+        return slug, f"kept_duckdb_extract_write_error: {exc}"[:200], 0
+    if delete:
+        index = load_index_by_slug()
+        from_duck = process_raw(raw, codes, index.get(slug))
+        from_ext = process_raw(load_extract(extract_path(slug), codes), codes, index.get(slug))
+        if json.dumps(from_duck, sort_keys=True) != json.dumps(from_ext, sort_keys=True):
+            return slug, "kept_duckdb_extract_mismatch", size
+        Path(path_str).unlink()
+        return slug, "converted_deleted", size
+    return slug, "converted_kept", size
+
+
+def index_order_hash(index: list[dict]) -> str:
+    return hashlib.sha256("\n".join(e.get("id", "") for e in index).encode("utf-8")).hexdigest()[:24]
 
 
 def list_duckdb(directory: Path) -> list[Path]:
@@ -669,6 +968,18 @@ def main() -> int:
     ap.add_argument("--merge", action="store_true", help="Also write combined mrf-prices.json")
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--refresh-index", action="store_true")
+    src.add_argument("--convert-cache", action="store_true",
+                     help="Write extracts for all cached DuckDB files (no price output)")
+    ap.add_argument("--delete-duckdb", action="store_true",
+                    help="(--convert-cache) delete each DuckDB once its extract is verified")
+    ap.add_argument("--rescan-source", choices=("extract", "duckdb"), default="extract",
+                    help="(--rescan-cache) which source to prefer when a slug has both")
+    ap.add_argument("--retry-failed", action="store_true",
+                    help="(--oria) process the progress file's failedSlugs instead of an offset slice")
+    ap.add_argument("--force-offset", action="store_true",
+                    help="(--oria) allow an --offset other than the progress file's nextOffset")
+    ap.add_argument("--min-free-gb", type=float, default=DEFAULT_MIN_FREE_GB,
+                    help="(--oria) never start a download that would leave less free disk than this")
     args = ap.parse_args()
 
     if args.force and RUN_LOCK.exists():
@@ -677,58 +988,147 @@ def main() -> int:
         return 1
     atexit.register(release_run_lock)
 
+    codes = CodeIndex()
+    if args.convert_cache:
+        paths = list_duckdb(CACHE_DIR)
+        print(f"Converting {len(paths)} cached DuckDB file(s) to extracts "
+              f"({'deleting' if args.delete_duckdb else 'keeping'} DuckDB files)…", flush=True)
+        ensure_extract_dir()
+        statuses: dict[str, int] = defaultdict(int)
+        total_size = 0
+        kept: list[tuple[str, str]] = []
+        with ProcessPoolExecutor(max_workers=args.workers) as ex:
+            futs = [ex.submit(convert_one, str(p), codes.procedures, args.delete_duckdb) for p in paths]
+            for i, f in enumerate(futs, 1):
+                slug, status, size = f.result()
+                statuses[status.split(":")[0]] += 1
+                total_size += size
+                if status.startswith("kept_duckdb"):
+                    kept.append((slug, status))
+                if i % 50 == 0 or i == len(futs):
+                    print(f"  converted {i}/{len(futs)}", flush=True)
+        print("Conversion:", json.dumps(dict(sorted(statuses.items()))),
+              f"extract bytes written: {total_size}")
+        for slug, status in kept:
+            print(f"  KEPT {slug}: {status}")
+        return 0 if not kept else 2
+
     hospitals = load_hospitals()
     hospitals_by_id = {h["id"]: h for h in hospitals}
     matcher = StrictHospitalMatcher(hospitals)
-    codes = CodeIndex()
     previous = read_json(OUT_PRICES, []) or []
     q = Quarantine()
     progress = None
+    unusable_failures: dict[str, str] = {}
 
     if args.consolidated:
-        paths = [Path(args.consolidated)]
         mode = "consolidated"
+        p = Path(args.consolidated)
+        extractions = run_extractions([(p.stem, None, str(p))], codes, args.workers, "duckdb")
     elif args.duckdb_dir:
-        paths = list_duckdb(Path(args.duckdb_dir))
         mode = "duckdb-dir"
+        extractions = run_extractions([(p.stem, None, str(p)) for p in list_duckdb(Path(args.duckdb_dir))],
+                                      codes, args.workers, "duckdb")
     elif args.rescan_cache:
-        paths = list_duckdb(CACHE_DIR)
         mode = "rescan-cache"
+        sources = rescan_sources()
+        n_ext = sum(1 for _, e, _d in sources if e)
+        n_duck = sum(1 for _, _e, d in sources if d)
+        print(f"Rescanning {len(sources)} source(s): {n_ext} extract(s), {n_duck} DuckDB file(s) "
+              f"(prefer {args.rescan_source})…", flush=True)
+        extractions = run_extractions(sources, codes, args.workers, args.rescan_source)
     else:
         mode = "oria"
         index = load_oria_index(refresh=args.refresh_index)
-        start = max(0, args.offset)
-        end = len(index) if not args.limit else min(len(index), start + args.limit)
-        batch = index[start:end]
-        print(f"Downloading ORIA entries {start}..{end - 1} of {len(index)} into cache…")
+        prev_prog = read_json(PROGRESS_JSON, {}) or {}
+        order_hash = index_order_hash(index)
+        if prev_prog.get("oriaIndexOrderHash") and prev_prog["oriaIndexOrderHash"] != order_hash \
+                and not args.force_offset:
+            print("ORIA index order changed since this run's progress file was written; offsets "
+                  "would skip or repeat entries. Reset progress (run_trilliant_batches.py "
+                  "--reset-progress) or pass --force-offset.", file=sys.stderr)
+            return 1
+        if args.retry_failed:
+            failed = prev_prog.get("failedSlugs") or {}
+            batch = [e for e in index if e.get("id") in failed]
+            if args.limit:
+                batch = batch[: args.limit]
+            start = end = None
+            missing = sorted(set(failed) - {e.get("id") for e in index})
+            if missing:
+                print(f"  {len(missing)} failed slug(s) are no longer in the ORIA index: {missing[:5]}…")
+            print(f"Retrying {len(batch)} failed ORIA entr(y/ies)…", flush=True)
+        else:
+            start = max(0, args.offset)
+            expected = prev_prog.get("nextOffset")
+            if expected is not None and int(expected) != start and not args.force_offset:
+                print(f"--offset {start} != progress nextOffset {expected}: that would skip or repeat "
+                      f"index entries. Pass --force-offset to override.", file=sys.stderr)
+                return 1
+            end = len(index) if not args.limit else min(len(index), start + args.limit)
+            batch = index[start:end]
+            print(f"Fetching ORIA entries {start}..{end - 1} of {len(index)}…", flush=True)
+        if free_bytes() < args.min_free_gb * 1024 ** 3:
+            print(f"Free disk {free_bytes() / 1024 ** 3:.1f} GB is under --min-free-gb "
+                  f"{args.min_free_gb}; not starting.", file=sys.stderr)
+            return 3
+        # Partial downloads left by an interrupted run (we hold the run lock, so
+        # nothing else is writing them).
+        for stale in list(CACHE_DIR.glob(".p*.part")) if CACHE_DIR.exists() else []:
+            stale.unlink(missing_ok=True)
+        guard = DiskGuard(args.min_free_gb)
+        workers = max(1, min(args.workers, MAX_DOWNLOAD_WORKERS))
         failures: dict[str, str] = {}
         ok_slugs: list[str] = []
-        with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            for slug, err in pool.map(lambda e: ensure_cached(e, not args.no_cache), batch):
+        extractions = []
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            for slug, ext, err in pool.map(lambda e: fetch_entry(e, codes, not args.no_cache, guard), batch):
                 if err:
                     failures[slug] = err
                 else:
                     ok_slugs.append(slug)
-        paths = [CACHE_DIR / f"{s}.duckdb" for s in sorted(ok_slugs)]
-        prev_prog = read_json(PROGRESS_JSON, {}) or {}
+                    extractions.append(ext)
         retry = dict(prev_prog.get("failedSlugs") or {})
         for s in ok_slugs:
             retry.pop(s, None)
         retry.update({s: e for s, e in failures.items() if e != "not_completed"})
-        progress = {
-            "lastBatch": {"offset": start, "end": end, "attempted": len(batch),
-                          "cached": len(ok_slugs), "failed": len(failures)},
-            # Every index entry in [start, end) was attempted exactly once; entries that
-            # failed are carried in failedSlugs for retry rather than silently skipped.
-            "nextOffset": end,
+        not_completed = set(prev_prog.get("notCompletedSlugs") or [])
+        not_completed |= {s for s, e in failures.items() if e == "not_completed"}
+        not_completed -= set(ok_slugs)
+        progress = dict(prev_prog)
+        progress.update({
+            "lastBatch": {"mode": "retry-failed" if args.retry_failed else "offset",
+                          "offset": start, "end": end, "attempted": len(batch),
+                          "ok": len(ok_slugs), "failed": len(failures),
+                          "diskLowStop": guard.tripped,
+                          "freeGbAfter": round(free_bytes() / 1024 ** 3, 1)},
             "oriaIndexTotal": len(index),
+            "oriaIndexOrderHash": order_hash,
+            # Every index entry in [start, end) was attempted exactly once; entries that
+            # failed (incl. disk_low) are carried in failedSlugs for retry, never skipped.
             "failedSlugs": dict(sorted(retry.items())),
-        }
+            "notCompletedSlugs": sorted(not_completed),
+        })
+        if not args.retry_failed:
+            progress["nextOffset"] = end
         for s, e in sorted(failures.items()):
             q.add("file:oria_download_failed", {"slug": s, "error": e})
+        if guard.tripped:
+            print(f"Disk guard tripped: free space would drop under {args.min_free_gb} GB; "
+                  f"remaining entries recorded in failedSlugs as disk_low.", file=sys.stderr)
 
-    print(f"Extracting {len(paths)} DuckDB file(s) [{mode}]…")
-    extractions = run_extractions(paths, codes, args.workers)
+    usable = []
+    for ext in extractions:
+        if ext.get("unusable"):
+            unusable_failures[ext["slug"]] = f"extract_unusable: {ext['unusable']}"[:160]
+            q.add("file:extract_unusable_needs_redownload", {"slug": ext["slug"], "why": ext["unusable"]})
+        else:
+            usable.append(ext)
+    if unusable_failures:
+        print(f"WARNING: {len(unusable_failures)} extract(s) unusable; recorded in failedSlugs for "
+              f"re-download.", file=sys.stderr)
+    extractions = usable
+    print(f"Assembling {len(extractions)} extraction(s) [{mode}]…", flush=True)
     rows, reference_date, stats = assemble(extractions, matcher, codes, hospitals_by_id, q)
 
     if mode == "oria" and args.append:
@@ -782,15 +1182,18 @@ def main() -> int:
     write_quarantine_section(QUARANTINE_SECTION, q, {"referenceDate": reference_date})
     if progress is not None:
         progress["priceCount"] = len(rows)
+        progress["cmsHospitalsWithPrices"] = meta["cmsHospitalsWithPrices"]
+        if unusable_failures:
+            progress["failedSlugs"] = dict(sorted({**progress["failedSlugs"], **unusable_failures}.items()))
         atomic_write_text(PROGRESS_JSON, dump_json(progress))
     elif mode == "rescan-cache":
-        prev_prog = read_json(PROGRESS_JSON, {}) or {}
-        atomic_write_text(PROGRESS_JSON, dump_json({
-            "nextOffset": prev_prog.get("nextOffset", 0),
-            "oriaIndexTotal": prev_prog.get("oriaIndexTotal"),
-            "failedSlugs": prev_prog.get("failedSlugs", {}),
-            "lastRescan": {"files": len(paths), "priceCount": len(rows), "referenceDate": reference_date},
-        }))
+        prog = dict(read_json(PROGRESS_JSON, {}) or {})
+        prog.setdefault("nextOffset", 0)
+        prog["failedSlugs"] = dict(sorted({**(prog.get("failedSlugs") or {}), **unusable_failures}.items()))
+        prog["lastRescan"] = {"sources": stats.get("files", 0), "priceCount": len(rows),
+                              "cmsHospitalsWithPrices": meta["cmsHospitalsWithPrices"],
+                              "referenceDate": reference_date}
+        atomic_write_text(PROGRESS_JSON, dump_json(prog))
 
     print(f"\nWrote {len(rows)} Trilliant prices ({meta['cmsHospitalsWithPrices']} hospitals) → {OUT_PRICES}")
     print("Quarantine:", json.dumps(dict(sorted(q.counts.items())), indent=1))

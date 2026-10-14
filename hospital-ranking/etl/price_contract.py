@@ -134,6 +134,75 @@ def dump_json(obj, indent: int | None = 2) -> str:
     return json.dumps(obj, indent=indent, ensure_ascii=False) + "\n"
 
 
+# ---------------------------------------------------------------- extract IO
+# Compact per-source extracts (gzip JSON). Pure I/O: no price rules live here.
+
+def jsonable(v):
+    """Convert DB values to JSON types (date/Decimal/etc. -> str, tuple -> list)."""
+    if v is None or isinstance(v, (bool, int, float, str)):
+        return v
+    if isinstance(v, (list, tuple)):
+        return [jsonable(x) for x in v]
+    if isinstance(v, dict):
+        return {str(k): jsonable(x) for k, x in v.items()}
+    return str(v)
+
+
+def encode_json_compact(obj) -> bytes:
+    return json.dumps(obj, ensure_ascii=False, separators=(",", ":"), allow_nan=True).encode("utf-8")
+
+
+def json_roundtrip(obj):
+    """Exactly what a write_json_gz/read_json_gz cycle returns for obj."""
+    return json.loads(encode_json_compact(jsonable(obj)).decode("utf-8"))
+
+
+def write_json_gz(path: Path, obj, retries: int = 8) -> int:
+    """Deterministic (mtime=0) atomic gzip JSON write. Returns bytes written."""
+    import gzip
+
+    data = gzip.compress(encode_json_compact(jsonable(obj)), compresslevel=6, mtime=0)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    # Short temp name in the same directory: long slugs + a long project path
+    # are close to the Windows 260-char path limit.
+    import threading
+
+    tmp = path.parent / f".t{os.getpid()}-{threading.get_ident() % 100000}.gz"
+    for attempt in range(retries):
+        try:
+            tmp.write_bytes(data)
+            tmp.replace(path)
+            return len(data)
+        except OSError:
+            if attempt == retries - 1:
+                raise
+            time.sleep(1.5 * (attempt + 1))
+        finally:
+            if tmp.exists():
+                try:
+                    tmp.unlink()
+                except OSError:
+                    pass
+    return len(data)
+
+
+def read_json_gz(path: Path):
+    import gzip
+
+    data = b""
+    for attempt in range(8):
+        try:
+            data = path.read_bytes()
+            break
+        except FileNotFoundError:
+            raise
+        except OSError:
+            if attempt == 7:
+                raise
+            time.sleep(1.5 * (attempt + 1))
+    return json.loads(gzip.decompress(data).decode("utf-8"))
+
+
 # ---------------------------------------------------------------- procedures
 
 def load_procedures() -> list[dict]:
