@@ -6,8 +6,7 @@ import {
   getMrfPriceMeta,
   getProcedures,
 } from "@/lib/data";
-import { TOURISM_METHODOLOGY } from "@/lib/medical-tourism";
-import { ESTIMATE_METHODOLOGY } from "@/lib/pricing";
+import { PRICE_CEILING, STALE_MONTHS } from "@/lib/pricing";
 
 export const metadata = {
   title: "About & data sources",
@@ -44,8 +43,9 @@ export default function AboutPage() {
               >
                 CMS Provider Data Catalog
               </a>{" "}
-              — Overall Hospital Quality Star Rating, readmissions, and safety measures for{" "}
-              {hospitalCount.toLocaleString()} U.S. hospitals (vintage {DATA_VINTAGE}).
+              — Overall Hospital Quality Star Rating and the share of readmission and mortality
+              measures on which each hospital is worse than the U.S. rate, for{" "}
+              {hospitalCount.toLocaleString()} U.S. hospitals (CMS release {DATA_VINTAGE}).
             </li>
             <li>
               <strong>Coverage:</strong> Acute care, critical access, children&apos;s,
@@ -81,8 +81,7 @@ export default function AboutPage() {
               {mrfMeta.directCount > 0
                 ? ` — ${mrfMeta.directCount.toLocaleString()} prices`
                 : ""}
-              ). We do <strong>not</strong> show modeled guesses unless{" "}
-              <code className="text-xs">ALLOW_MODELED_ESTIMATES=1</code> is set.
+              ). Nothing is modelled: a hospital without a verifiable published figure shows none.
             </li>
             <li>
               <strong>Procedures:</strong> {procedures.length} CMS-aligned shoppable services
@@ -120,8 +119,10 @@ export default function AboutPage() {
             </li>
             <li>
               Query <code className="text-xs">standard_charges</code> for our{" "}
-              {procedures.length} CPT/DRG codes and match facilities to CMS hospitals by
-              name, state, and ZIP
+              {procedures.length} procedures&apos; codes (MS-DRG for inpatient stays, CPT/HCPCS for
+              outpatient services, with the code type checked) and match each file to a CMS
+              hospital by CMS certification number, or by exact name and location; uncertain
+              matches are discarded, not guessed
             </li>
             <li>
               Output <code className="text-xs">data/cms/trilliant-prices.json</code> with{" "}
@@ -143,60 +144,52 @@ export default function AboutPage() {
           </ol>
         </div>
 
-        <div id="medical-tourism">
-          <h2 className="text-xl font-semibold text-slate-900">Medical tourism estimates</h2>
-          <p className="mt-2 text-sm">{TOURISM_METHODOLOGY.summary}</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
-            {TOURISM_METHODOLOGY.sources.map((s) => (
-              <li key={s}>{s}</li>
-            ))}
-          </ul>
-          <p className="mt-3 text-sm text-slate-600">
-            Search results show typical all-inclusive package ranges for{" "}
-            {procedures.length} procedures across six destinations (Mexico, Costa Rica,
-            Colombia, India, Thailand, Turkey). When local U.S. hospital prices are
-            available, savings are calculated against your area median; otherwise we use
-            U.S. national benchmarks. Data vintage: {TOURISM_METHODOLOGY.vintage}.
-          </p>
-          <p className="mt-2 text-sm text-slate-600">
-            <strong>Clinic listings:</strong> Individual accredited facilities with direct
-            booking links will be added to{" "}
-            <code className="text-xs">data/seed/medical-tourism.json</code> under each
-            destination&apos;s <code className="text-xs">clinics</code> array. API:{" "}
-            <code className="text-xs">/api/medical-tourism?procedure=knee-replacement</code>
-          </p>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900">
-            Deprecated: modeled estimates
-          </h2>
-          <p className="mt-2 text-sm">{ESTIMATE_METHODOLOGY.summary}</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
-            {ESTIMATE_METHODOLOGY.sources.map((s) => (
-              <li key={s}>{s}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900">Roadmap</h2>
-          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm">
-            <li>Verified medical-tourism clinic profiles with accreditation and booking links</li>
-            <li>Run full Trilliant consolidated ingest for all ~5,000+ ORIA hospitals</li>
-            <li>Automated CMS quality ETL (`etl/cms_quality.py`)</li>
-            <li>PostgreSQL + PostGIS, Meilisearch procedure index</li>
-            <li>Insurance plan selector for personalized OOP</li>
-            <li>Maps view and procedure explainer guides</li>
-          </ol>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900">Legal & privacy</h2>
+        <div id="what-we-exclude">
+          <h2 className="text-xl font-semibold text-slate-900">What we leave out, and why</h2>
           <p className="mt-2 text-sm">
-            We do not collect or store protected health information (PHI). Consult an
-            attorney before production launch for terms of service and privacy policy.
-            All figures are estimates — always confirm with your hospital and insurer.
+            A price is shown only if it passes every check below. Rows that fail are set aside
+            with the reason recorded (<code className="text-xs">data/cms/quarantine.json</code>),
+            and the build fails if one slips through.
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+            <li>The billing code must be labelled with its code system (a bare &ldquo;470&rdquo; could be an MS-DRG, an APR-DRG or a revenue code).</li>
+            <li>Each procedure is priced at one scope only, so figures are comparable: the whole inpatient stay (MS-DRG) or the hospital&apos;s facility fee for an outpatient service. Physician-only fees are excluded.</li>
+            <li>Cash, negotiated and gross (list) prices are kept separate; a list price is never shown as a cash price.</li>
+            <li>Values of zero or less, at or above {PRICE_CEILING.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })} (placeholder values like 999,999,999), or too low to be the whole service are excluded.</li>
+            <li>The price must carry the date from the hospital&apos;s file; figures more than {STALE_MONTHS} months older than the dataset are flagged.</li>
+            <li>The file must match the hospital, and the procedure must fit the hospital type (no surgery prices on psychiatric hospitals).</li>
+          </ul>
+          {mrfMeta.rejectedCount > 0 && (
+            <p className="mt-2 text-sm text-amber-800">
+              {mrfMeta.rejectedCount} row(s) failed these checks at load time and are hidden.
+            </p>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">What this tool can&apos;t tell you</h2>
+          <p className="mt-2 text-sm">
+            Your own cost with insurance depends on your plan&apos;s deductible, coinsurance and
+            network, and on the care you actually receive. We show what the hospital publishes:
+            its cash price and the range of rates it negotiated with insurers. Ask your insurer for
+            an estimate using the codes shown on each hospital page.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">Locations</h2>
+          <p className="mt-2 text-sm">
+            ZIP codes are located with the U.S. Census Bureau&apos;s ZIP Code Tabulation Areas
+            (Gazetteer). Hospitals are placed by geocoding their CMS street address with the Census
+            geocoder, or at their ZIP&apos;s point when the address doesn&apos;t match.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">Privacy</h2>
+          <p className="mt-2 text-sm">
+            We do not collect or store protected health information. Always confirm prices with
+            the hospital and your insurer before care.
           </p>
         </div>
 

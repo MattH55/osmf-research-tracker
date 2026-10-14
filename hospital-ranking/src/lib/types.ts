@@ -11,6 +11,15 @@ export interface Procedure {
   category: string;
   isShoppable: boolean;
   searchTerms: string[];
+  /** The one scope this procedure is priced at, so figures are comparable */
+  scope?: PriceScope;
+  matchType?: "ms-drg" | "cpt" | "hcpcs";
+  /** Lowest plausible figure for the whole service; lower rows are quarantined */
+  priceFloorUsd?: number;
+  /** Where the code definitions were checked */
+  codeSource?: string;
+  /** Caveat about what the code covers */
+  codeNote?: string;
 }
 
 export interface Hospital {
@@ -28,8 +37,10 @@ export interface Hospital {
   phone?: string;
   website?: string;
   shoppableUrl?: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
+  /** How the coordinates were obtained (census_address_exact, zcta_point, none) */
+  geocodeSource?: string;
   cmsOverallStars: number | null;
   hcahpsSummary: number | null;
   readmissionRate: number | null;
@@ -68,6 +79,8 @@ export interface ProcedurePriceBundle {
   completenessScore: number;
 }
 
+export type PriceScope = "inpatient_stay" | "facility_service" | "professional";
+
 export interface ProcedurePrice {
   hospitalId: string;
   procedureId: string;
@@ -78,25 +91,23 @@ export interface ProcedurePrice {
   negotiatedMedian: number | null;
   negotiatedLow?: number | null;
   negotiatedHigh?: number | null;
-  allowedP10?: number | null;
-  allowedMedian?: number | null;
-  allowedP90?: number | null;
+  /** Number of distinct payer/plan rates behind the negotiated figures */
+  payerCount?: number | null;
+  /** Hospital's list price; shown only as such, never as a cash price */
   grossCharge?: number | null;
-  matchType?: "cpt" | "drg" | "mixed" | null;
+  matchType?: "ms-drg" | "cpt" | "hcpcs" | null;
+  /** e.g. ["MS-DRG:470"], ["CPT:45378"] */
   matchedCodes?: string[];
-  setting?: string | string[] | null;
-  billingClass?: string | string[] | null;
-  mixedScope?: boolean;
-  oopUninsured: number | null;
-  oopPpo: number | null;
-  oopHdhp: number | null;
-  priceSource: string;
+  /** What the figure covers; each procedure has exactly one canonical scope */
+  scope?: PriceScope | null;
+  priceSource: "hospital_mrf" | "trilliant_mrf";
+  /** Date from the source file, never the build date */
   priceVintage: string;
-  mrfUrl?: string;
+  /** The hospital's own machine-readable file, when the source provides it */
+  mrfUrl?: string | null;
+  sourceDataset?: string | null;
   sourceDocumentHash?: string | null;
-  /** True if this price is modeled/estimated rather than observed */
-  isEstimate?: boolean;
-  /** True if observation is >18 months old */
+  /** True if the source date is more than 18 months before the dataset reference date */
   stale?: boolean;
   /** Data provenance metadata */
   provenance?: ProcedurePriceProvenance;
@@ -109,7 +120,8 @@ export interface SearchResult {
   procedure: Procedure;
   price: ProcedurePrice | null;
   distanceMiles: number;
-  estimatedOop: number | null;
+  /** The figure the result leads with (cash or negotiated), or null if the hospital publishes none */
+  headline: { amount: number; kind: "cash" | "negotiated" } | null;
 }
 
 export interface SearchParams {
@@ -131,42 +143,4 @@ export interface ZipCentroid {
   lng: number;
   city: string;
   state: string;
-}
-
-export type TourismClinicStatus = "coming_soon" | "active";
-
-export interface TourismClinic {
-  id: string;
-  name: string | null;
-  city: string;
-  url: string | null;
-  accreditation?: string;
-  status: TourismClinicStatus;
-}
-
-export interface TourismDestination {
-  id: string;
-  country: string;
-  flagEmoji: string;
-  region: string;
-  hubCities: string[];
-  accreditationNote: string;
-  travelFromUs: string;
-  multipliers: { low: number; median: number; high: number };
-  clinics: TourismClinic[];
-}
-
-export interface TourismEstimate {
-  procedureId: string;
-  destinationId: string;
-  destination: TourismDestination;
-  cashLow: number;
-  cashMedian: number;
-  cashHigh: number;
-  usReferenceMedian: number;
-  savingsPercent: number;
-  packageIncludes: string[];
-  packageExcludes: string[];
-  priceSource: "medical_tourism_estimate";
-  priceVintage: string;
 }

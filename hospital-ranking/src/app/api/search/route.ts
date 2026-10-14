@@ -44,14 +44,17 @@ export async function GET(request: NextRequest) {
       hospitalName: r.hospital.name,
       distanceMiles: Math.round(r.distanceMiles * 10) / 10,
       cmsOverallStars: r.hospital.cmsOverallStars,
-      estimatedOop: r.estimatedOop,
+      headlinePrice: r.headline?.amount ?? null,
+      headlineKind: r.headline?.kind ?? null,
       cashMedian: r.price?.cashMedian ?? null,
+      negotiatedMedian: r.price?.negotiatedMedian ?? null,
+      scope: r.price?.scope ?? null,
+      matchedCodes: r.price?.matchedCodes ?? [],
+      priceVintage: r.price?.priceVintage ?? null,
+      stale: r.price?.stale ?? null,
       hasPrice: Boolean(r.price),
       priceSource: r.price?.priceSource ?? null,
-      isReported:
-        r.price?.priceSource === "sample_mrf" ||
-        r.price?.priceSource === "hospital_mrf" ||
-        r.price?.priceSource === "trilliant_mrf",
+      mrfUrl: r.price?.mrfUrl ?? null,
     })),
   });
 }

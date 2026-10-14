@@ -2,32 +2,45 @@
 """
 Ingest hospital prices from Trilliant Health ORIA parsed DuckDB files.
 
-Trilliant parses each hospital's CMS-required MRF into DuckDB (standard_charges
-table). This script extracts our 24 shoppable CPT/DRG codes and maps facilities
-to CMS Provider IDs in data/cms/hospitals.json.
+Trilliant parses each hospital's CMS-required machine-readable file (MRF) into
+DuckDB (standard_charges + standard_charge_details). This script extracts the
+procedures defined in data/seed/procedures.json under the contract in
+etl/price_contract.py:
+
+  * a line counts only when its all_codes field carries an explicit
+    MS-DRG:<n> / CPT:<n> / HCPCS:<n> token for one of the procedure's codes
+    (the typed ms_drg/cpt/hcpcs columns are NOT trusted on their own: in many
+    files ms_drg holds APR-DRG, TRICARE DRG or revenue codes);
+  * the line must be in the procedure's canonical scope (MS-DRG -> inpatient
+    facility stay; CPT/HCPCS -> outpatient/both facility line, no modifier);
+  * cash = the published discounted cash price only; negotiated = payer/plan
+    rates published as dollars (per-diem and percent-of-charge methodologies
+    excluded; percentages/algorithms are never converted by us); gross charge is
+    reported separately and never substituted for cash;
+  * the facility must match exactly one CMS hospital (exact CCN, or identical
+    name tokens + city/ZIP, or identical name tokens + state when the file has
+    no city and the name is unique in the state);
+  * priceVintage comes from the file's last_updated_on; no date -> quarantined.
 
 Sources (pick one):
-  --consolidated PATH   Oria "Full Data Download" DuckDB archive
-  --duckdb-dir PATH     Folder of per-hospital *_parsed.duckdb files
-  --oria                Download from oria-data.trillianthealth.com (public)
-  --rescan-cache        Re-query data/trilliant/cache/*.duckdb (no downloads)
+  --rescan-cache        Rebuild from data/trilliant/cache/*.duckdb (no downloads)
+  --duckdb-dir PATH     Folder of per-hospital *.duckdb files
+  --consolidated PATH   A single DuckDB with the same tables
+  --oria                Download per-hospital files into the cache, then extract
 
---rescan-cache merges into the existing extract. It does not delete hospitals
-that are not in the local cache.
+Every run REBUILDS trilliant-prices.json from the files it read, except --oria
+--append which merges new rows into the existing file (same dedupe rule).
+Rows from the previous file that are not reproduced are listed in
+data/cms/quarantine.json ("row:previous_row_not_reproduced").
 
-Output:
-  data/cms/trilliant-prices.json
-  data/cms/trilliant-meta.json
-
-With --merge, also writes data/cms/mrf-prices.json combining direct MRF scrape
-(hospital_mrf) and Trilliant (trilliant_mrf); direct scrape wins on conflicts.
+With --merge, also writes data/cms/mrf-prices.json combining direct hospital
+MRF rows (hospital_mrf) with Trilliant rows; the direct hospital MRF row wins
+when both exist for the same hospital+procedure.
 
 USAGE:
   python etl/ingest_trilliant.py --rescan-cache
-  python etl/ingest_trilliant.py --consolidated data/trilliant/consolidated.duckdb
   python etl/ingest_trilliant.py --duckdb-dir data/trilliant/duckdb
-  python etl/ingest_trilliant.py --oria --limit 50
-  python etl/ingest_trilliant.py --oria --merge
+  python etl/ingest_trilliant.py --oria --limit 50 --append
 """
 
 from __future__ import annotations
@@ -37,44 +50,67 @@ import atexit
 import json
 import os
 import re
-import statistics
 import sys
-import tempfile
 import time
 import urllib.request
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import date
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
 
 import duckdb
 
-ROOT = Path(__file__).resolve().parents[1]
-CMS_DIR = ROOT / "data" / "cms"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from price_contract import (  # noqa: E402
+    CMS_DIR,
+    ROOT,
+    FACILITY_KIND_WORDS,
+    GENERIC_ONLY,
+    CodeIndex,
+    Quarantine,
+    StrictHospitalMatcher,
+    ZIP_RE,
+    aggregate_lines,
+    atomic_write_text,
+    blocked_reason,
+    contract_problems,
+    deterministic_id,
+    dump_json,
+    is_stale,
+    line_scope_problem,
+    load_hospitals,
+    name_tokens,
+    order_row,
+    parse_iso_date,
+    read_json,
+    write_quarantine_section,
+)
+
 TRILLIANT_DIR = ROOT / "data" / "trilliant"
 CACHE_DIR = TRILLIANT_DIR / "cache"
-HOSPITALS_JSON = CMS_DIR / "hospitals.json"
-PROCEDURES_JSON = ROOT / "data" / "seed" / "procedures.json"
 MRF_PRICES_JSON = CMS_DIR / "mrf-prices.json"
 OUT_PRICES = CMS_DIR / "trilliant-prices.json"
 OUT_META = CMS_DIR / "trilliant-meta.json"
-
-ORIA_INDEX_URL = "https://oria-data.trillianthealth.com/search-index.json"
-ORIA_INDEX_CACHE = TRILLIANT_DIR / "oria-search-index.json"
-ORIA_HOSPITAL_URL = "https://oria-data.trillianthealth.com/hospital/{slug}"
 PROGRESS_JSON = CMS_DIR / "trilliant-progress.json"
+
+ORIA_BASE = "https://oria-data.trillianthealth.com"
+ORIA_INDEX_URL = f"{ORIA_BASE}/search-index.json"
+ORIA_INDEX_CACHE = TRILLIANT_DIR / "oria-search-index.json"
+ORIA_HOSPITAL_URL = ORIA_BASE + "/hospital/{slug}"
 USER_AGENT = (
     "Mozilla/5.0 (compatible; OpenSourceMed-HospitalCompare/1.0; "
     "+https://opensourcemed.info; trilliant-orias-ingest)"
 )
 DUCKDB_PATH_RE = re.compile(r'(/data/store/[^"\']+_parsed\.duckdb)')
-ZIP_RE = re.compile(r"\b(\d{5})(?:-\d{4})?\b")
-NAME_STOPWORDS = {
-    "hospital", "medical", "center", "centre", "health", "regional",
-    "community", "memorial", "general", "the", "of", "and", "inc", "llc",
-    "dba", "at", "campus", "system", "st", "saint", "san",
-}
+DEDUPE_RULE = (
+    "one row per CMS hospital + procedure: the row from the source file with the most "
+    "recent priceVintage wins; ties go to the file with more accepted MRF lines, then to "
+    "the lexically smallest sourceDataset. Losers are quarantined as "
+    "row:duplicate_superseded."
+)
+QUARANTINE_SECTION = "trilliant_mrf"
 
+
+# ============================================================ network (--oria)
 
 def fetch_text(url: str, timeout: int = 120, retries: int = 5) -> str:
     last_err: Exception | None = None
@@ -83,25 +119,26 @@ def fetch_text(url: str, timeout: int = 120, retries: int = 5) -> str:
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return resp.read().decode("utf-8", errors="replace")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             last_err = exc
-            if attempt == retries - 1:
-                break
-            time.sleep(2 * (attempt + 1))
+            if attempt < retries - 1:
+                time.sleep(2 * (attempt + 1))
     raise last_err  # type: ignore[misc]
 
 
 def load_oria_index(refresh: bool = False) -> list[dict]:
-    """Cache ORIA search-index.json locally so batches don't re-download every run."""
-    TRILLIANT_DIR.mkdir(parents=True, exist_ok=True)
     if not refresh and ORIA_INDEX_CACHE.exists():
-        age_h = (time.time() - ORIA_INDEX_CACHE.stat().st_mtime) / 3600
-        if age_h < 72:
-            return json.loads(ORIA_INDEX_CACHE.read_text(encoding="utf-8"))
+        return json.loads(ORIA_INDEX_CACHE.read_text(encoding="utf-8"))
     print("Fetching ORIA search index…")
     text = fetch_text(ORIA_INDEX_URL, timeout=180, retries=6)
     atomic_write_text(ORIA_INDEX_CACHE, text)
     return json.loads(text)
+
+
+def load_index_by_slug() -> dict[str, dict]:
+    if not ORIA_INDEX_CACHE.exists():
+        return {}
+    return {e["id"]: e for e in json.loads(ORIA_INDEX_CACHE.read_text(encoding="utf-8")) if e.get("id")}
 
 
 def validate_duckdb(path: Path) -> bool:
@@ -114,27 +151,6 @@ def validate_duckdb(path: Path) -> bool:
             con.close()
     except duckdb.Error:
         return False
-
-
-def atomic_write_text(path: Path, content: str, retries: int = 8) -> None:
-    """Write via temp file + replace to avoid Windows/OneDrive lock errors."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
-    for attempt in range(retries):
-        try:
-            tmp.write_text(content, encoding="utf-8")
-            tmp.replace(path)
-            return
-        except OSError:
-            if attempt == retries - 1:
-                raise
-            time.sleep(1.5 * (attempt + 1))
-        finally:
-            if tmp.exists() and not path.exists():
-                try:
-                    tmp.unlink()
-                except OSError:
-                    pass
 
 
 def download_file(url: str, dest: Path, timeout: int = 600) -> None:
@@ -157,21 +173,40 @@ def download_file(url: str, dest: Path, timeout: int = 600) -> None:
                 pass
 
 
+def ensure_cached(entry: dict, use_cache: bool) -> tuple[str, str | None]:
+    """Download one ORIA hospital DuckDB into the cache. Returns (slug, error)."""
+    slug = entry["id"]
+    if entry.get("status") != "completed":
+        return slug, "not_completed"
+    cache_path = CACHE_DIR / f"{slug}.duckdb"
+    if use_cache and cache_path.exists() and cache_path.stat().st_size > 1000 and validate_duckdb(cache_path):
+        return slug, None
+    try:
+        html = fetch_text(ORIA_HOSPITAL_URL.format(slug=slug), timeout=60)
+    except Exception as exc:  # noqa: BLE001
+        return slug, f"index_page_error: {exc}"[:160]
+    m = DUCKDB_PATH_RE.search(html)
+    if not m:
+        return slug, "no_duckdb_url"
+    try:
+        download_file(ORIA_BASE + m.group(1), cache_path)
+    except Exception as exc:  # noqa: BLE001
+        return slug, f"download_error: {exc}"[:160]
+    if not validate_duckdb(cache_path):
+        cache_path.unlink(missing_ok=True)
+        return slug, "corrupt_duckdb"
+    return slug, None
+
+
+# ============================================================ run lock
+
 RUN_LOCK = CMS_DIR / ".trilliant-ingest.lock"
 
 
 def acquire_run_lock(force: bool) -> bool:
     if RUN_LOCK.exists() and not force:
-        try:
-            holder = RUN_LOCK.read_text(encoding="utf-8").strip()
-        except OSError:
-            holder = "unknown"
-        print(
-            f"\nAnother Trilliant ingest may be running (lock: {RUN_LOCK}, pid {holder}).\n"
-            "Stop other python ingest processes, then retry.\n"
-            "If nothing is running, pass --force to clear the lock.\n",
-            file=sys.stderr,
-        )
+        print(f"Another Trilliant ingest may be running (lock: {RUN_LOCK}). Use --force if not.",
+              file=sys.stderr)
         return False
     CMS_DIR.mkdir(parents=True, exist_ok=True)
     RUN_LOCK.write_text(str(os.getpid()), encoding="utf-8")
@@ -186,973 +221,586 @@ def release_run_lock() -> None:
         pass
 
 
-def normalize_name(name: str) -> set[str]:
-    tokens = re.sub(r"[^a-z0-9\s]", " ", name.lower()).split()
-    return {t for t in tokens if t and t not in NAME_STOPWORDS and len(t) > 1}
+# ============================================================ extraction (one file)
 
-
-def normalize_address(addr: str) -> set[str]:
-    tokens = re.sub(r"[^a-z0-9\s]", " ", addr.lower()).split()
-    return {t for t in tokens if t and not t.isdigit() and len(t) > 2}
-
-
-def extract_zip(text: str) -> str | None:
-    m = ZIP_RE.search(text or "")
-    return m.group(1) if m else None
-
-
-def extract_street_number(text: str) -> str | None:
-    m = re.search(r"\b(\d{1,6})\b", text or "")
-    return m.group(1) if m else None
-
-
-def parse_city_from_address(address: str) -> str:
-    """Parse '420 Thomson Circle, Abbeville, SC 29620' → Abbeville."""
-    if not address:
-        return ""
-    parts = [p.strip() for p in address.split(",") if p.strip()]
-    if len(parts) >= 2:
-        city_part = parts[-2] if ZIP_RE.search(parts[-1]) else parts[-1]
-        city_part = re.sub(r"\b[A-Z]{2}\b", "", city_part).strip()
-        return city_part
-    return ""
-
-
-def flatten_address(addr) -> str:
-    if addr is None:
-        return ""
-    if isinstance(addr, (list, tuple)):
-        return " | ".join(str(a) for a in addr if a)
-    return str(addr)
-
-
-def load_procedure_index() -> tuple[dict[str, dict], set[str], set[str], dict[str, str]]:
-    procs = json.loads(PROCEDURES_JSON.read_text(encoding="utf-8"))
-    by_id = {p["id"]: p for p in procs}
-    cpts: set[str] = set()
-    drgs: set[str] = set()
-    code_to_proc: dict[str, str] = {}
-    for p in procs:
-        for c in p.get("cptCodes") or []:
-            cpts.add(c)
-            code_to_proc[f"cpt:{c}"] = p["id"]
-        for d in p.get("drgCodes") or []:
-            drgs.add(d)
-            code_to_proc[f"drg:{d}"] = p["id"]
-    return by_id, cpts, drgs, code_to_proc
-
-
-def _finite_vals(rows: list[dict], key: str, min_value: float | None = None) -> list[float]:
-    out: list[float] = []
-    for r in rows:
-        v = r.get(key)
-        if v is None:
-            continue
-        try:
-            n = float(v)
-        except (TypeError, ValueError):
-            continue
-        if min_value is not None and n < min_value:
-            continue
-        out.append(n)
-    return out
-
-
-def _median_or_none(vals: list[float]) -> int | None:
-    return round(statistics.median(vals)) if vals else None
-
-
-def aggregate_rows(rows: list[dict]) -> dict | None:
-    sane = [
-        r for r in rows
-        if (r.get("cash") or 0) >= 75 or (r.get("gross") or 0) >= 75
-    ]
-    if not sane:
-        return None
-    cash_vals = _finite_vals(sane, "cash", 75)
-    gross_vals = _finite_vals(sane, "gross", 75)
-    neg_vals = _finite_vals(rows, "negotiated", 1)
-    neg_low = _finite_vals(rows, "negotiated_low", 1)
-    neg_high = _finite_vals(rows, "negotiated_high", 1)
-    if not cash_vals and not gross_vals:
-        return None
-    base = cash_vals or gross_vals
-    cash_median = statistics.median(cash_vals) if cash_vals else statistics.median(gross_vals)
-    match_types = sorted({r.get("match_type") for r in rows if r.get("match_type")})
-    if match_types == ["cpt", "drg"] or set(match_types) == {"cpt", "drg"}:
-        match_type = "mixed"
-    elif len(match_types) == 1:
-        match_type = match_types[0]
-    else:
-        match_type = "mixed" if match_types else None
-    matched_codes = sorted({c for r in rows for c in (r.get("matched_codes") or []) if c})
-    settings = sorted({s for r in rows if (s := r.get("setting"))})
-    billing = sorted({b for r in rows if (b := r.get("billing_class"))})
-    return {
-        "cashLow": round(min(base)),
-        "cashMedian": round(cash_median),
-        "cashHigh": round(max(base)),
-        "negotiatedMedian": _median_or_none(neg_vals),
-        "negotiatedLow": _median_or_none(neg_low) or (round(min(neg_vals)) if neg_vals else None),
-        "negotiatedHigh": _median_or_none(neg_high) or (round(max(neg_vals)) if neg_vals else None),
-        "allowedP10": _median_or_none(_finite_vals(rows, "allowed_p10", 1)),
-        "allowedMedian": _median_or_none(_finite_vals(rows, "allowed_median", 1)),
-        "allowedP90": _median_or_none(_finite_vals(rows, "allowed_p90", 1)),
-        "grossCharge": _median_or_none(gross_vals),
-        "matchType": match_type,
-        "matchedCodes": matched_codes,
-        "setting": settings[0] if len(settings) == 1 else (settings or None),
-        "billingClass": billing[0] if len(billing) == 1 else (billing or None),
-        "mixedScope": match_type == "mixed",
-    }
-
-
-class CmsMatcher:
-    def __init__(self, hospitals: list[dict]):
-        self.hospitals = hospitals
-        self.by_zip: dict[tuple[str, str], list[dict]] = defaultdict(list)
-        self.by_state: dict[str, list[dict]] = defaultdict(list)
-        for h in hospitals:
-            state = (h.get("state") or "").upper()
-            zip5 = (h.get("zip") or "")[:5]
-            if state:
-                self.by_state[state].append(h)
-            if state and zip5:
-                self.by_zip[(state, zip5)].append(h)
-
-    def match(
-        self,
-        name: str,
-        address: str,
-        state: str,
-        city: str = "",
-    ) -> dict | None:
-        state = (state or "").upper()
-        if not state:
-            return None
-        parsed_city = city or parse_city_from_address(address)
-        zip5 = extract_zip(address) or extract_zip(parsed_city) or extract_zip(name)
-        name_tokens = normalize_name(name)
-        addr_tokens = normalize_address(address)
-        street_num = extract_street_number(address)
-
-        candidates: list[dict] = []
-        if zip5 and (state, zip5) in self.by_zip:
-            candidates = self.by_zip[(state, zip5)]
-        else:
-            candidates = self.by_state.get(state, [])
-
-        if not candidates:
-            return None
-
-        best: dict | None = None
-        best_score = 0.0
-        for h in candidates:
-            h_name = normalize_name(h.get("name", ""))
-            h_addr = normalize_address(h.get("address", ""))
-            if not name_tokens:
-                continue
-            name_overlap = len(name_tokens & h_name) / max(len(name_tokens | h_name), 1)
-            addr_overlap = (
-                len(addr_tokens & h_addr) / max(len(addr_tokens | h_addr), 1)
-                if addr_tokens and h_addr
-                else 0.0
-            )
-            h_zip = (h.get("zip") or "")[:5]
-            zip_match = zip5 and h_zip == zip5
-            zip_bonus = 0.3 if zip_match else 0.0
-            city_bonus = (
-                0.12
-                if parsed_city
-                and parsed_city.lower() in (h.get("city") or "").lower()
-                else 0.0
-            )
-            street_bonus = (
-                0.15
-                if street_num and street_num == extract_street_number(h.get("address", ""))
-                else 0.0
-            )
-            score = (
-                name_overlap * 0.55
-                + addr_overlap * 0.2
-                + zip_bonus
-                + city_bonus
-                + street_bonus
-            )
-            if score > best_score:
-                best_score = score
-                best = h
-
-        threshold = 0.18 if zip5 and best and (best.get("zip") or "")[:5] == zip5 else 0.26
-        if best_score < threshold:
-            return None
-        return best
-
-
-def match_oria_entry(entry: dict, matcher: CmsMatcher) -> dict | None:
-    name = entry.get("locationName") or entry.get("hospitalName") or ""
-    address = entry.get("address") or ""
-    state = entry.get("state") or ""
-    city = entry.get("city") or parse_city_from_address(address)
-    return matcher.match(name, address, state, city)
-
-
-def remap_prices_to_cms(prices: list[dict], cms: dict) -> list[dict]:
-    cms_id = cms["cmsProviderId"]
-    remapped: list[dict] = []
-    seen: set[str] = set()
-    for p in prices:
-        proc = p["procedureId"]
-        if proc in seen:
-            continue
-        seen.add(proc)
-        remapped.append({
-            **p,
-            "hospitalId": f"hosp-cms-{cms_id}",
-            "cmsProviderId": cms_id,
-        })
-    return remapped
-
-
-def table_columns(con: duckdb.DuckDBPyConnection, table: str) -> set[str]:
+def table_columns(con, table: str) -> set[str]:
     try:
         rows = con.execute(
-            "SELECT column_name FROM information_schema.columns "
-            "WHERE table_name = ?",
-            [table],
+            "SELECT column_name FROM information_schema.columns WHERE table_name = ?", [table]
         ).fetchall()
         return {r[0] for r in rows}
     except duckdb.Error:
         return set()
 
 
-def hospital_columns(con: duckdb.DuckDBPyConnection) -> set[str]:
-    return table_columns(con, "hospitals")
+def _col(cols: set[str], alias: str, name: str) -> str:
+    return f"{alias}.{name} AS {name}" if name in cols else f"NULL AS {name}"
 
 
-def _sql_or_null(cols: set[str], table_alias: str, name: str, as_name: str | None = None) -> str:
-    alias = as_name or name
-    if name in cols:
-        return f"{table_alias}.{name} AS {alias}"
-    return f"NULL AS {alias}"
+def _as_list(v) -> list[str]:
+    if v is None:
+        return []
+    if isinstance(v, (list, tuple)):
+        return [str(x).strip() for x in v if x is not None and str(x).strip()]
+    s = str(v).strip()
+    return [s] if s else []
 
 
-def charge_query(cpts: set[str], drgs: set[str], h_cols: set[str], sc_cols: set[str]) -> str:
-    cpt_list = ", ".join(f"'{c}'" for c in sorted(cpts))
-    drg_list = ", ".join(f"'{d}'" for d in sorted(drgs))
-    if "hospital_city" in h_cols:
-        city_sel = "h.hospital_city AS hospital_city"
-    elif "enriched_hospital_city" in h_cols:
-        city_sel = "h.enriched_hospital_city AS hospital_city"
-    else:
-        city_sel = "NULL AS hospital_city"
-    return f"""
-        SELECT
-            h.hospital_name,
-            h.hospital_address,
-            h.hospital_state,
-            {city_sel},
-            sc.cpt,
-            {_sql_or_null(sc_cols, "sc", "hcpcs")},
-            sc.ms_drg,
-            sc.discounted_cash,
-            sc.gross_charge,
-            sc.avg_negotiated_rate,
-            {_sql_or_null(sc_cols, "sc", "min_negotiated_rate")},
-            {_sql_or_null(sc_cols, "sc", "max_negotiated_rate")},
-            sc.minimum,
-            sc.maximum,
-            {_sql_or_null(sc_cols, "sc", "setting")},
-            {_sql_or_null(sc_cols, "sc", "billing_class")}
-        FROM standard_charges sc
-        JOIN hospitals h ON h.hospital_id = sc.hospital_id
-        WHERE sc.cpt IN ({cpt_list}) OR sc.ms_drg IN ({drg_list})
-    """
+def read_source(con) -> dict:
+    meta: dict = {}
+    sm_cols = table_columns(con, "source_metadata")
+    if sm_cols:
+        names = [n for n in ("mrf_url", "mrf_content_md5", "mrf_last_updated_on", "data_downloaded",
+                             "package_db_path", "hpt_hospital_name", "source_page_url") if n in sm_cols]
+        row = con.execute(f"SELECT {', '.join(names)} FROM source_metadata LIMIT 1").fetchone()
+        if row:
+            meta.update(dict(zip(names, row)))
+    h_cols = table_columns(con, "hospitals")
+    want = [n for n in ("hospital_id", "hospital_name", "location_name", "hospital_address",
+                        "hospital_state", "last_updated_on", "license_number",
+                        "enriched_hospital_city", "enriched_hospital_address") if n in h_cols]
+    hosp_rows = con.execute(f"SELECT {', '.join(want)} FROM hospitals ORDER BY hospital_id").fetchall()
+    meta["hospitals"] = [dict(zip(want, r)) for r in hosp_rows]
+    return meta
 
 
-def fetch_allowed_amounts(
-    con: duckdb.DuckDBPyConnection,
-    cpts: set[str],
-    drgs: set[str],
-) -> dict[tuple[str, str], dict]:
-    """Median p10 / median / p90 from standard_charge_details, keyed by code."""
-    d_cols = table_columns(con, "standard_charge_details")
-    needed = {"percentile_10th", "median_amount", "percentile_90th"}
-    if not needed.intersection(d_cols):
-        return {}
-    cpt_list = ", ".join(f"'{c}'" for c in sorted(cpts))
-    drg_list = ", ".join(f"'{d}'" for d in sorted(drgs))
-    p10_expr = "median(d.percentile_10th)" if "percentile_10th" in d_cols else "NULL"
-    med_expr = "median(d.median_amount)" if "median_amount" in d_cols else "NULL"
-    p90_expr = "median(d.percentile_90th)" if "percentile_90th" in d_cols else "NULL"
+def facility_identity(src: dict, index_entry: dict | None) -> dict:
+    """Names / state / cities / ZIPs the source file states about its facility."""
+    hospitals = src.get("hospitals") or []
+    loc_names: list[str] = []
+    hosp_names: list[str] = []
+    states: set[str] = set()
+    cities: set[str] = set()
+    zips: set[str] = set()
+    addresses: list[str] = []
+    for h in hospitals:
+        loc_names += _as_list(h.get("location_name"))
+        hosp_names += _as_list(h.get("hospital_name"))
+        if h.get("hospital_state"):
+            states.add(str(h["hospital_state"]).strip().upper())
+        addresses += _as_list(h.get("hospital_address")) + _as_list(h.get("enriched_hospital_address"))
+        c = h.get("enriched_hospital_city")
+        if c and str(c).strip().lower() != "not provided":
+            cities.add(str(c))
+    if index_entry:
+        if index_entry.get("state"):
+            states.add(str(index_entry["state"]).strip().upper())
+        if index_entry.get("city") and index_entry["city"] != "Not provided":
+            cities.add(index_entry["city"])
+        if index_entry.get("address") and index_entry["address"] != "Not provided":
+            addresses.append(index_entry["address"])
+    for a in addresses:
+        for z in ZIP_RE.findall(a):
+            zips.add(z)
+        m = re.search(r",\s*([A-Za-z .'\-]+?),?\s+[A-Z]{2}\s+\d{5}", a)
+        if m:
+            cities.add(m.group(1))
+    hpt = src.get("hpt_hospital_name")
+    if hpt:
+        loc_names.append(str(hpt))
+    loc_names = sorted(set(n for n in loc_names if n))
+    return {
+        "locationNames": loc_names,
+        "hospitalNames": sorted(set(hosp_names)),
+        "states": sorted(states),
+        "cities": sorted(cities),
+        "zips": sorted(zips),
+        "addresses": sorted(set(addresses)),
+    }
+
+
+def extract_file(path_str: str, code_cfg: dict, index_entry: dict | None) -> dict:
+    """Extract per-procedure aggregates from one DuckDB file. Runs in a worker process."""
+    codes = CodeIndex(code_cfg["procedures"])
+    q = Quarantine()
+    slug = Path(path_str).stem
+    out: dict = {"slug": slug, "file": Path(path_str).name, "procs": {}, "quarantine": None}
     try:
-        rows = con.execute(
-            f"""
-            SELECT
-                d.cpt,
-                d.ms_drg,
-                {p10_expr} AS allowed_p10,
-                {med_expr} AS allowed_median,
-                {p90_expr} AS allowed_p90
-            FROM standard_charge_details d
-            WHERE d.cpt IN ({cpt_list}) OR d.ms_drg IN ({drg_list})
-            GROUP BY 1, 2
-            """
+        con = duckdb.connect(path_str, read_only=True)
+    except duckdb.Error as exc:
+        q.add("file:source_file_unreadable", {"file": Path(path_str).name, "error": str(exc)[:200]})
+        out["quarantine"] = q.to_dict()
+        out["error"] = "unreadable"
+        return out
+    try:
+        src = read_source(con)
+        out["identity"] = facility_identity(src, index_entry)
+        hosp = (src.get("hospitals") or [{}])[0]
+        vintage = parse_iso_date(hosp.get("last_updated_on")) or parse_iso_date(src.get("mrf_last_updated_on"))
+        out["vintage"] = vintage
+        out["downloaded"] = parse_iso_date(src.get("data_downloaded"))
+        dl = str(src.get("data_downloaded") or "")
+        m = re.match(r"^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})", dl)
+        out["retrievedAt"] = f"{m.group(1)}T{m.group(2)}Z" if m else None
+        mrf_url = src.get("mrf_url")
+        out["mrfUrl"] = mrf_url if isinstance(mrf_url, str) and mrf_url.startswith("https://") else None
+        out["mrfUrlRaw"] = mrf_url
+        pkg = src.get("package_db_path")
+        out["sourceDataset"] = (
+            f"{ORIA_BASE}/data/store/{pkg}" if pkg and not str(pkg).startswith(("/", "\\")) and ":" not in str(pkg)
+            else ORIA_HOSPITAL_URL.format(slug=slug)
+        )
+        md5 = src.get("mrf_content_md5")
+        out["sourceDocumentHash"] = f"md5:{md5}" if md5 and re.fullmatch(r"[0-9a-fA-F]{32}", str(md5)) else None
+        out["nHospitalRows"] = len(src.get("hospitals") or [])
+
+        sc_cols = table_columns(con, "standard_charges")
+        if "all_codes" not in sc_cols:
+            q.add("file:no_all_codes_column", {"file": out["file"]})
+            out["quarantine"] = q.to_dict()
+            return out
+        all_drg = sorted(codes.drg)
+        all_cpt = sorted(codes.cpt)
+        alt = "|".join([str(int(d)) for d in all_drg] + all_cpt)
+        pattern = rf"(MS-DRG|CPT|HCPCS)\s*:\s*0*({alt})"
+        typed = []
+        drg_variants = sorted(set(all_drg) | {str(int(d)) for d in all_drg})
+        if "ms_drg" in sc_cols:
+            typed.append("sc.ms_drg IN (" + ", ".join(f"'{d}'" for d in drg_variants) + ")")
+        for c in ("cpt", "hcpcs"):
+            if c in sc_cols:
+                typed.append(f"sc.{c} IN (" + ", ".join(f"'{x}'" for x in all_cpt) + ")")
+        where = f"regexp_matches(coalesce(sc.all_codes, ''), '{pattern}')"
+        if typed:
+            where = f"({where}) OR " + " OR ".join(typed)
+        sel = ", ".join([
+            "sc.charge_id AS charge_id",
+            _col(sc_cols, "sc", "description"),
+            _col(sc_cols, "sc", "all_codes"),
+            _col(sc_cols, "sc", "ms_drg"),
+            _col(sc_cols, "sc", "cpt"),
+            _col(sc_cols, "sc", "hcpcs"),
+            _col(sc_cols, "sc", "setting"),
+            _col(sc_cols, "sc", "billing_class"),
+            _col(sc_cols, "sc", "modifiers"),
+            _col(sc_cols, "sc", "discounted_cash"),
+            _col(sc_cols, "sc", "gross_charge"),
+        ])
+        lines = con.execute(
+            f"SELECT {sel} FROM standard_charges sc WHERE {where} ORDER BY sc.charge_id"
         ).fetchall()
         cols = [d[0] for d in con.description]
-    except duckdb.Error:
-        return {}
 
-    out: dict[tuple[str, str], dict] = {}
-    for raw in rows:
-        row = dict(zip(cols, raw))
-        payload = {
-            "allowed_p10": row.get("allowed_p10"),
-            "allowed_median": row.get("allowed_median"),
-            "allowed_p90": row.get("allowed_p90"),
-        }
-        if not any(payload.values()):
-            continue
-        cpt = (row.get("cpt") or "").strip()
-        drg = (row.get("ms_drg") or "").strip()
-        if cpt:
-            out[("cpt", cpt)] = payload
-        if drg:
-            out[("drg", drg)] = payload
+        accepted: dict[str, list[dict]] = defaultdict(list)
+        for raw in lines:
+            line = dict(zip(cols, raw))
+            sample = {
+                "file": out["file"],
+                "chargeId": line["charge_id"],
+                "description": (line.get("description") or "")[:100],
+                "allCodes": (line.get("all_codes") or "")[:160],
+                "msDrgColumn": line.get("ms_drg"),
+                "cptColumn": line.get("cpt"),
+                "setting": line.get("setting"),
+                "billingClass": line.get("billing_class"),
+            }
+            matches, problems = codes.match_all_codes(line.get("all_codes"))
+            procs = sorted({m[0] for m in matches})
+            if not matches:
+                if problems:
+                    q.add("line:code_with_modifier_or_suffix", sample)
+                else:
+                    q.add("line:code_type_not_explicit", sample)
+                continue
+            if len(procs) > 1:
+                q.add("line:ambiguous_multiple_procedures", sample)
+                continue
+            proc_id = procs[0]
+            scope = codes.scope(proc_id)
+            sample["procedureId"] = proc_id
+            prob = line_scope_problem(scope, line.get("setting"), line.get("billing_class"),
+                                      line.get("modifiers"))
+            if prob:
+                q.add(prob, sample)
+                continue
+            accepted[proc_id].append({
+                "chargeId": line["charge_id"],
+                "cash": line.get("discounted_cash"),
+                "gross": line.get("gross_charge"),
+                "labels": sorted({m[2] for m in matches}),
+                "types": sorted({m[1] for m in matches}),
+                "sample": sample,
+            })
+
+        # payer-level dollar rates for accepted lines
+        d_cols = table_columns(con, "standard_charge_details")
+        charge_ids = sorted({ln["chargeId"] for lns in accepted.values() for ln in lns})
+        rates_by_charge: dict = defaultdict(list)
+        if charge_ids and {"charge_id", "standard_charge_dollar"} <= d_cols:
+            id_list = ", ".join(str(int(c)) for c in charge_ids)
+            dsel = ", ".join([
+                "d.charge_id AS charge_id",
+                _col(d_cols, "d", "payer_name"),
+                _col(d_cols, "d", "plan_name"),
+                _col(d_cols, "d", "standard_charge_dollar"),
+                _col(d_cols, "d", "methodology"),
+            ])
+            drows = con.execute(
+                f"SELECT {dsel} FROM standard_charge_details d "
+                f"WHERE d.charge_id IN ({id_list}) AND d.standard_charge_dollar IS NOT NULL "
+                f"ORDER BY d.charge_id, d.payer_name, d.plan_name, d.standard_charge_dollar"
+            ).fetchall()
+            dcols = [x[0] for x in con.description]
+            for r in drows:
+                rates_by_charge[r[0]].append(dict(zip(dcols, r)))
+
+        for proc_id, lns in sorted(accepted.items()):
+            for ln in lns:
+                ln["rates"] = [
+                    {"payer": r.get("payer_name"), "plan": r.get("plan_name"),
+                     "dollar": r.get("standard_charge_dollar"), "methodology": r.get("methodology")}
+                    for r in rates_by_charge.get(ln["chargeId"], [])
+                ]
+            agg = aggregate_lines(lns, codes.floor(proc_id), q)
+            types = sorted({t for ln in lns for t in ln["types"]})
+            agg.update({
+                "scope": codes.scope(proc_id),
+                "matchType": "ms-drg" if "ms-drg" in types else ("cpt" if "cpt" in types else "hcpcs"),
+                "matchedCodes": sorted({lab for ln in lns for lab in ln["labels"]}),
+            })
+            out["procs"][proc_id] = agg
+    except duckdb.Error as exc:
+        q.add("file:duckdb_query_error", {"file": out["file"], "error": str(exc)[:200]})
+        out["error"] = "query_error"
+    finally:
+        con.close()
+    out["quarantine"] = q.to_dict()
     return out
 
 
-def read_source_meta(con: duckdb.DuckDBPyConnection) -> dict:
-    cols = table_columns(con, "source_metadata")
-    if not cols:
-        return {}
-    select = ", ".join(
-        _sql_or_null(cols, "source_metadata", name)
-        for name in ("mrf_url", "mrf_content_md5", "schema_version")
-    )
-    try:
-        row = con.execute(f"SELECT {select} FROM source_metadata LIMIT 1").fetchone()
-        if not row:
-            return {}
-        names = [d[0] for d in con.description]
-        return dict(zip(names, row))
-    except duckdb.Error:
-        return {}
+# ============================================================ assembly
+
+def resolve_hospital(ext: dict, matcher: StrictHospitalMatcher) -> tuple[dict | None, str]:
+    ident = ext.get("identity") or {}
+    states = ident.get("states") or []
+    if len(states) != 1:
+        return None, "no_state" if not states else "multiple_states_in_file"
+    state = states[0]
+    cities = set(ident.get("cities") or [])
+    zips = set(ident.get("zips") or [])
+    names = ident.get("locationNames") or []
+    found: dict[str, tuple[dict, str]] = {}
+    reasons: list[str] = []
+    candidates = [[n] for n in names] if names else [[n] for n in ident.get("hospitalNames") or []]
+    for cand in candidates:
+        h, how = matcher.match(cand, state, cities, zips)
+        if h:
+            found.setdefault(h["cmsProviderId"], (h, how))
+        else:
+            reasons.append(how)
+    if not found and names:
+        # Location names did not resolve. Fall back to the file's hospital_name
+        # only if the file names exactly one facility.
+        # The location name may only differ from hospital_name by an abbreviation
+        # (e.g. "BMH Tipton" vs "Baptist Memorial Hospital-Tipton"): at most one
+        # extra non-generic token and no facility-kind word (rehab, behavioral...).
+        loc_toks = name_tokens(names[0]) if names else frozenset()
+        if ext.get("nHospitalRows") == 1 and len(names) <= 1:
+            for n in ident.get("hospitalNames") or []:
+                extra = loc_toks - name_tokens(n) - GENERIC_ONLY
+                if len(extra) > 1 or (loc_toks & FACILITY_KIND_WORDS) - name_tokens(n):
+                    reasons.append("location_name_differs_from_hospital_name")
+                    continue
+                h, how = matcher.match([n], state, cities, zips)
+                if h:
+                    found.setdefault(h["cmsProviderId"], (h, how + "(hospital_name)"))
+                else:
+                    reasons.append(how)
+    if len(found) > 1:
+        return None, "multi_facility_file_not_itemised"
+    if found:
+        return next(iter(found.values()))
+    if "ambiguous_hospital_match" in reasons:
+        return None, "ambiguous_hospital_match"
+    if "location_name_differs_from_hospital_name" in reasons:
+        return None, "location_name_differs_from_hospital_name"
+    if "name_matched_but_city_or_uniqueness_failed" in reasons:
+        return None, "name_matched_but_city_or_uniqueness_failed"
+    return None, "no_strict_hospital_match"
 
 
-def extract_from_connection(
-    con: duckdb.DuckDBPyConnection,
-    matcher: CmsMatcher,
-    code_to_proc: dict[str, str],
-    cpts: set[str],
-    drgs: set[str],
-    source_url: str = "",
-    vintage: str | None = None,
-) -> tuple[list[dict], dict]:
-    vintage = vintage or date.today().isoformat()
-    h_cols = hospital_columns(con)
-    sc_cols = table_columns(con, "standard_charges")
-    allowed = fetch_allowed_amounts(con, cpts, drgs)
-    src_meta = read_source_meta(con)
-    try:
-        rows = con.execute(charge_query(cpts, drgs, h_cols, sc_cols)).fetchall()
-        cols = [d[0] for d in con.description]
-    except duckdb.Error:
-        return [], {"matched": 0, "unmatched": 0, "skipped": True}
-
-    grouped: dict[tuple[str, str], list[dict]] = defaultdict(list)
-    facility_meta: dict[str, dict] = {}
-
-    for raw in rows:
-        row = dict(zip(cols, raw))
-        name = row.get("hospital_name") or ""
-        address = flatten_address(row.get("hospital_address"))
-        state = row.get("hospital_state") or ""
-        city = row.get("hospital_city") or ""
-        fac_key = f"{name}|{address}|{state}"
-
-        if fac_key not in facility_meta:
-            facility_meta[fac_key] = {
-                "name": name,
-                "address": address,
-                "state": state,
-                "city": city,
+def assemble(extractions: list[dict], matcher: StrictHospitalMatcher, codes: CodeIndex,
+             hospitals_by_id: dict[str, dict], q: Quarantine) -> tuple[list[dict], str, dict]:
+    downloaded = sorted(e["downloaded"] for e in extractions if e.get("downloaded"))
+    vintages = sorted(e["vintage"] for e in extractions if e.get("vintage"))
+    reference_date = downloaded[-1] if downloaded else (vintages[-1] if vintages else None)
+    stats = defaultdict(int)
+    candidates: list[dict] = []
+    for ext in sorted(extractions, key=lambda e: e["file"]):
+        q.merge(Quarantine.from_dict(ext.get("quarantine")))
+        stats["files"] += 1
+        if ext.get("error"):
+            stats["filesWithErrors"] += 1
+            continue
+        if not ext["procs"]:
+            stats["filesWithoutMatchingLines"] += 1
+            continue
+        base = {"file": ext["file"], "identity": {k: ext["identity"].get(k) for k in ("locationNames", "hospitalNames", "states", "cities", "zips")}}
+        hosp, how = resolve_hospital(ext, matcher)
+        if not hosp:
+            stats["filesUnmatched"] += 1
+            for pid in sorted(ext["procs"]):
+                q.add(f"row:{how}", {**base, "procedureId": pid})
+            continue
+        stats["filesMatched"] += 1
+        if not ext.get("vintage"):
+            for pid in sorted(ext["procs"]):
+                q.add("row:missing_source_vintage", {**base, "procedureId": pid})
+            continue
+        for pid, agg in sorted(ext["procs"].items()):
+            cms_id = hosp["cmsProviderId"]
+            row = {
+                "hospitalId": f"hosp-cms-{cms_id}",
+                "cmsProviderId": cms_id,
+                "procedureId": pid,
+                "priceSource": "trilliant_mrf",
+                "scope": agg["scope"],
+                "matchType": agg["matchType"],
+                "matchedCodes": agg["matchedCodes"],
+                "cashLow": agg["cashLow"],
+                "cashMedian": agg["cashMedian"],
+                "cashHigh": agg["cashHigh"],
+                "negotiatedLow": agg["negotiatedLow"],
+                "negotiatedMedian": agg["negotiatedMedian"],
+                "negotiatedHigh": agg["negotiatedHigh"],
+                "payerCount": agg["payerCount"],
+                "grossCharge": agg["grossCharge"],
+                "priceVintage": ext["vintage"],
+                "stale": is_stale(ext["vintage"], reference_date),
+                "mrfUrl": ext["mrfUrl"],
+                "sourceDataset": ext["sourceDataset"],
+                "sourceDocumentHash": ext["sourceDocumentHash"],
+                "sourceRetrievedAt": ext.get("retrievedAt"),
+                "sourceFacilityName": (ext["identity"].get("locationNames") or ext["identity"].get("hospitalNames") or [None])[0],
+                "hospitalMatch": how,
+                "lineCount": agg["lineCount"],
             }
-
-        cpt = (row.get("cpt") or "").strip()
-        hcpcs = (row.get("hcpcs") or "").strip()
-        drg = (row.get("ms_drg") or "").strip()
-        proc_id = None
-        match_type = None
-        matched_codes: list[str] = []
-        if cpt and f"cpt:{cpt}" in code_to_proc:
-            proc_id = code_to_proc[f"cpt:{cpt}"]
-            match_type = "cpt"
-            matched_codes.append(f"CPT {cpt}")
-        elif hcpcs and f"cpt:{hcpcs}" in code_to_proc:
-            proc_id = code_to_proc[f"cpt:{hcpcs}"]
-            match_type = "cpt"
-            matched_codes.append(f"HCPCS {hcpcs}")
-        if drg and f"drg:{drg}" in code_to_proc:
-            drg_proc = code_to_proc[f"drg:{drg}"]
-            if not proc_id:
-                proc_id = drg_proc
-                match_type = "drg"
-                matched_codes.append(f"MS-DRG {drg}")
-            elif drg_proc == proc_id:
-                match_type = "mixed"
-                matched_codes.append(f"MS-DRG {drg}")
-        if not proc_id:
-            continue
-
-        allowed_row = allowed.get(("cpt", cpt)) or allowed.get(("cpt", hcpcs)) or allowed.get(("drg", drg)) or {}
-        cash = row.get("discounted_cash")
-        gross = row.get("gross_charge")
-        neg = row.get("avg_negotiated_rate")
-        grouped[(fac_key, proc_id)].append({
-            "cash": float(cash) if cash is not None else None,
-            "gross": float(gross) if gross is not None else None,
-            "negotiated": float(neg) if neg is not None else None,
-            "negotiated_low": row.get("min_negotiated_rate"),
-            "negotiated_high": row.get("max_negotiated_rate"),
-            "allowed_p10": allowed_row.get("allowed_p10"),
-            "allowed_median": allowed_row.get("allowed_median"),
-            "allowed_p90": allowed_row.get("allowed_p90"),
-            "match_type": match_type,
-            "matched_codes": matched_codes,
-            "setting": row.get("setting"),
-            "billing_class": row.get("billing_class"),
-        })
-
-    prices: list[dict] = []
-    matched = 0
-    unmatched = 0
-    seen_cms: set[str] = set()
-
-    for (fac_key, proc_id), charge_rows in grouped.items():
-        meta = facility_meta[fac_key]
-        cms = matcher.match(meta["name"], meta["address"], meta["state"], meta["city"])
-        if not cms:
-            unmatched += 1
-            continue
-        matched += 1
-        cms_id = cms["cmsProviderId"]
-        seen_cms.add(cms_id)
-        agg = aggregate_rows(charge_rows)
-        if not agg:
-            continue
-        prices.append({
-            "hospitalId": f"hosp-cms-{cms_id}",
-            "cmsProviderId": cms_id,
-            "procedureId": proc_id,
-            "cashLow": agg["cashLow"],
-            "cashMedian": agg["cashMedian"],
-            "cashHigh": agg["cashHigh"],
-            "negotiatedMedian": agg["negotiatedMedian"],
-            "negotiatedLow": agg.get("negotiatedLow"),
-            "negotiatedHigh": agg.get("negotiatedHigh"),
-            "allowedP10": agg.get("allowedP10"),
-            "allowedMedian": agg.get("allowedMedian"),
-            "allowedP90": agg.get("allowedP90"),
-            "grossCharge": agg.get("grossCharge"),
-            "matchType": agg.get("matchType"),
-            "matchedCodes": agg.get("matchedCodes") or [],
-            "setting": agg.get("setting"),
-            "billingClass": agg.get("billingClass"),
-            "mixedScope": bool(agg.get("mixedScope")),
-            "oopUninsured": agg["cashMedian"],
-            "oopPpo": round(agg["cashMedian"] * 0.15) if agg["cashMedian"] else None,
-            "oopHdhp": round(agg["cashMedian"] * 0.22) if agg["cashMedian"] else None,
-            "priceSource": "trilliant_mrf",
-            "priceVintage": vintage,
-            "mrfUrl": source_url or src_meta.get("mrf_url") or None,
-            "sourceDocumentHash": src_meta.get("mrf_content_md5") or None,
-            "trilliantFacility": meta["name"],
-        })
-
-    return prices, {
-        "matched": matched,
-        "unmatched": unmatched,
-        "hospitals": len(seen_cms),
-        "prices": len(prices),
-    }
-
-
-def read_vintage(con: duckdb.DuckDBPyConnection) -> str:
-    try:
-        row = con.execute(
-            "SELECT last_updated_on FROM hospitals WHERE last_updated_on IS NOT NULL LIMIT 1"
-        ).fetchone()
-        if row and row[0]:
-            return str(row[0])[:10]
-    except duckdb.Error:
-        pass
-    try:
-        row = con.execute(
-            "SELECT last_updated_on FROM mrf_metadata WHERE last_updated_on IS NOT NULL LIMIT 1"
-        ).fetchone()
-        if row and row[0]:
-            return str(row[0])[:10]
-    except duckdb.Error:
-        pass
-    return date.today().isoformat()
-
-
-def ingest_duckdb_file(
-    path: Path,
-    matcher: CmsMatcher,
-    code_to_proc: dict[str, str],
-    cpts: set[str],
-    drgs: set[str],
-    source_url: str = "",
-) -> tuple[list[dict], dict]:
-    con = duckdb.connect(str(path), read_only=True)
-    try:
-        vintage = read_vintage(con)
-        return extract_from_connection(
-            con, matcher, code_to_proc, cpts, drgs, source_url, vintage
-        )
-    finally:
-        con.close()
-
-
-def ingest_consolidated(
-    path: Path,
-    matcher: CmsMatcher,
-    code_to_proc: dict[str, str],
-    cpts: set[str],
-    drgs: set[str],
-) -> tuple[list[dict], dict]:
-    print(f"Querying consolidated DuckDB: {path}")
-    con = duckdb.connect(str(path), read_only=True)
-    try:
-        vintage = read_vintage(con)
-        return extract_from_connection(
-            con, matcher, code_to_proc, cpts, drgs, str(path), vintage
-        )
-    finally:
-        con.close()
-
-
-def discover_duckdb_paths(slug: str) -> str | None:
-    try:
-        html = fetch_text(ORIA_HOSPITAL_URL.format(slug=slug), timeout=60)
-    except Exception:
-        return None
-    m = DUCKDB_PATH_RE.search(html)
-    if not m:
-        return None
-    return "https://oria-data.trillianthealth.com" + m.group(1)
-
-
-def process_oria_hospital(
-    entry: dict,
-    matcher: CmsMatcher,
-    code_to_proc: dict[str, str],
-    cpts: set[str],
-    drgs: set[str],
-    use_cache: bool,
-) -> tuple[list[dict], dict, str]:
-    slug = entry["id"]
-    name = entry.get("locationName") or entry.get("hospitalName") or slug
-    if entry.get("status") != "completed":
-        return [], {"skipped": True, "reason": "not_completed"}, slug
-
-    cache_path = CACHE_DIR / f"{slug}.duckdb"
-    duckdb_url = discover_duckdb_paths(slug)
-    if not duckdb_url:
-        return [], {"skipped": True, "reason": "no_duckdb_url"}, slug
-
-    def ensure_cache() -> str | None:
-        if use_cache and cache_path.exists() and cache_path.stat().st_size > 1000:
-            if validate_duckdb(cache_path):
-                return None
-            try:
-                cache_path.unlink()
-            except OSError:
-                pass
-        try:
-            download_file(duckdb_url, cache_path)
-        except Exception as exc:
-            return str(exc)[:120]
-        if not cache_path.exists() or cache_path.stat().st_size < 1000:
-            return "incomplete_download"
-        if not validate_duckdb(cache_path):
-            try:
-                cache_path.unlink()
-            except OSError:
-                pass
-            return "corrupt_duckdb"
-        return None
-
-    cache_err = ensure_cache()
-    if cache_err:
-        try:
-            download_file(duckdb_url, cache_path)
-        except Exception as exc:
-            return [], {"skipped": True, "reason": str(exc)[:120]}, slug
-        if not validate_duckdb(cache_path):
-            return [], {"skipped": True, "reason": cache_err}, slug
-
-    index_cms = match_oria_entry(entry, matcher)
-
-    try:
-        prices, stats = ingest_duckdb_file(
-            cache_path,
-            matcher,
-            code_to_proc,
-            cpts,
-            drgs,
-            duckdb_url,
-        )
-    except duckdb.Error as exc:
-        try:
-            cache_path.unlink(missing_ok=True)
-            download_file(duckdb_url, cache_path)
-            prices, stats = ingest_duckdb_file(
-                cache_path,
-                matcher,
-                code_to_proc,
-                cpts,
-                drgs,
-                duckdb_url,
-            )
-        except Exception:
-            return [], {"skipped": True, "reason": f"duckdb_error: {exc}"[:120]}, slug
-
-    if not prices and index_cms:
-        stats["indexMatchOnly"] = True
-
-    if index_cms and prices:
-        duckdb_cms_ids = {p.get("cmsProviderId") for p in prices if p.get("cmsProviderId")}
-        if not duckdb_cms_ids or index_cms["cmsProviderId"] not in duckdb_cms_ids:
-            prices = remap_prices_to_cms(prices, index_cms)
-            stats["remappedViaIndex"] = True
-
-    stats["name"] = name
-    if index_cms:
-        stats["indexCmsId"] = index_cms["cmsProviderId"]
-    return prices, stats, slug
-
-
-def ingest_oria(
-    matcher: CmsMatcher,
-    code_to_proc: dict[str, str],
-    cpts: set[str],
-    drgs: set[str],
-    limit: int = 0,
-    offset: int = 0,
-    workers: int = 4,
-    use_cache: bool = True,
-    refresh_index: bool = False,
-) -> tuple[list[dict], dict]:
-    index = load_oria_index(refresh=refresh_index)
-    total_index = len(index)
-    if offset:
-        index = index[offset:]
-    if limit:
-        index = index[:limit]
-    print(
-        f"Processing {len(index)} ORIA hospitals "
-        f"(offset {offset}, index total {total_index}, {workers} workers)…"
-    )
-
-    all_prices: list[dict] = []
-    stats_agg = {
-        "oriaIndexTotal": total_index,
-        "oriaHospitals": len(index),
-        "offset": offset,
-        "processed": 0,
-        "skipped": 0,
-        "matchedFacilities": 0,
-        "unmatchedFacilities": 0,
-        "indexRemapped": 0,
-        "cmsHospitals": set(),
-        "errors": 0,
-    }
-
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = {
-            pool.submit(
-                process_oria_hospital,
-                entry,
-                matcher,
-                code_to_proc,
-                cpts,
-                drgs,
-                use_cache,
-            ): entry
-            for entry in index
-        }
-        for i, fut in enumerate(as_completed(futures), 1):
-            entry = futures[fut]
-            slug = entry.get("id", "?")
-            try:
-                prices, stats, slug = fut.result()
-            except Exception as exc:
-                stats_agg["errors"] += 1
-                print(f"  [{i}/{len(index)}] {slug}: ERROR {exc}")
+            row["id"] = deterministic_id(row["sourceDataset"], row["hospitalId"], pid)
+            sample = {**base, "hospitalId": row["hospitalId"], "hospitalName": hosp.get("name"),
+                      "hospitalType": hosp.get("hospitalType"), "procedureId": pid,
+                      "cashMedian": row["cashMedian"], "negotiatedMedian": row["negotiatedMedian"]}
+            blocked = blocked_reason(hosp, pid, codes)
+            if blocked:
+                q.add(f"row:{blocked}", sample)
                 continue
-
-            if stats.get("skipped"):
-                stats_agg["skipped"] += 1
-                if i % 25 == 0 or limit and limit <= 20:
-                    print(f"  [{i}/{len(index)}] {slug}: skip ({stats.get('reason', '?')})")
+            if row["cashMedian"] is None and row["negotiatedMedian"] is None:
+                q.add("row:no_valid_cash_or_negotiated_price", {**sample, "grossCharge": row["grossCharge"]})
                 continue
-
-            stats_agg["processed"] += 1
-            stats_agg["matchedFacilities"] += stats.get("matched", 0)
-            stats_agg["unmatchedFacilities"] += stats.get("unmatched", 0)
-            if stats.get("remappedViaIndex"):
-                stats_agg["indexRemapped"] += 1
-            stats_agg["cmsHospitals"].update(
-                p["cmsProviderId"] for p in prices if p.get("cmsProviderId")
-            )
-            all_prices.extend(prices)
-
-            if prices:
-                print(
-                    f"  [{i}/{len(index)}] {stats.get('name', slug)}: "
-                    f"{len(prices)} price(s), CMS hospitals={stats.get('hospitals', 0)}"
-                )
-            elif i % 50 == 0:
-                print(f"  [{i}/{len(index)}] … {len(all_prices)} total prices so far")
-
-    stats_agg["cmsHospitals"] = len(stats_agg["cmsHospitals"])
-    return all_prices, stats_agg
+            probs = contract_problems(row, codes, hospitals_by_id)
+            if probs:
+                q.add(f"row:contract_violation:{probs[0]}", sample)
+                continue
+            candidates.append(order_row(row))
+    rows = dedupe(candidates, q)
+    rows.sort(key=lambda r: (r["hospitalId"], r["procedureId"]))
+    return rows, reference_date, dict(stats)
 
 
-def ingest_duckdb_dir(
-    directory: Path,
-    matcher: CmsMatcher,
-    code_to_proc: dict[str, str],
-    cpts: set[str],
-    drgs: set[str],
-) -> tuple[list[dict], dict]:
-    files = sorted(directory.rglob("*_parsed.duckdb")) + sorted(directory.rglob("*.duckdb"))
-    files = [f for f in files if f.is_file()]
-    # dedupe
-    seen: set[Path] = set()
-    unique: list[Path] = []
-    for f in files:
-        if f.resolve() not in seen:
-            seen.add(f.resolve())
-            unique.append(f)
-
-    print(f"Scanning {len(unique)} DuckDB file(s) in {directory}")
-    all_prices: list[dict] = []
-    cms_ids: set[str] = set()
-    for i, path in enumerate(unique, 1):
-        prices, stats = ingest_duckdb_file(path, matcher, code_to_proc, cpts, drgs, str(path))
-        all_prices.extend(prices)
-        cms_ids.update(p["cmsProviderId"] for p in prices if p.get("cmsProviderId"))
-        if prices:
-            print(f"  [{i}/{len(unique)}] {path.name}: {len(prices)} price(s)")
-    return all_prices, {"duckdbFiles": len(unique), "cmsHospitals": len(cms_ids)}
+def dedupe(rows: list[dict], q: Quarantine) -> list[dict]:
+    groups: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for r in rows:
+        groups[(r["cmsProviderId"], r["procedureId"])].append(r)
+    out: list[dict] = []
+    for key in sorted(groups):
+        g = sorted(groups[key], key=lambda r: r["sourceDataset"] or "")
+        g.sort(key=lambda r: (r["priceVintage"], r.get("lineCount") or 0), reverse=True)
+        out.append(g[0])
+        for loser in g[1:]:
+            q.add("row:duplicate_superseded", {
+                "hospitalId": loser["hospitalId"], "procedureId": loser["procedureId"],
+                "sourceDataset": loser["sourceDataset"], "priceVintage": loser["priceVintage"],
+                "keptSourceDataset": g[0]["sourceDataset"], "keptPriceVintage": g[0]["priceVintage"],
+            })
+    return out
 
 
-def dedupe_prices(prices: list[dict]) -> list[dict]:
-    """Keep best price per (cmsProviderId, procedureId) — lowest cash median."""
-    best: dict[tuple[str, str], dict] = {}
-    for p in prices:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        prev = best.get(key)
-        if not prev or (p.get("cashMedian") or 0) < (prev.get("cashMedian") or 9e18):
-            best[key] = p
-    return list(best.values())
+def merge_rows(existing: list[dict], new: list[dict], q: Quarantine) -> list[dict]:
+    return dedupe(existing + new, q)
 
 
-def merge_rescan_into_existing(existing: list[dict], scanned: list[dict]) -> list[dict]:
-    """Keep nationwide extract; scanned cache rows replace the same hospital+procedure."""
-    by_key: dict[tuple[str, str], dict] = {}
-    for p in existing:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        by_key[key] = p
-    for p in scanned:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        by_key[key] = p
-    return list(by_key.values())
-
-
-def merge_price_lists(
-    direct: list[dict],
-    trilliant: list[dict],
-) -> list[dict]:
-    """Direct hospital_mrf scrape wins over trilliant_mrf."""
+def merge_price_lists(direct: list[dict], trilliant: list[dict]) -> list[dict]:
+    """Direct hospital_mrf rows win over trilliant_mrf rows for the same hospital+procedure."""
     by_key: dict[tuple[str, str], dict] = {}
     for p in trilliant:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        by_key[key] = p
+        by_key[(p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])] = p
     for p in direct:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        by_key[key] = p
-    return list(by_key.values())
+        by_key[(p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])] = p
+    return [by_key[k] for k in sorted(by_key)]
 
+
+def run_extractions(paths: list[Path], codes: CodeIndex, workers: int) -> list[dict]:
+    index = load_index_by_slug()
+    cfg = {"procedures": codes.procedures}
+    results: list[dict] = []
+    with ProcessPoolExecutor(max_workers=workers) as ex:
+        futs = [ex.submit(extract_file, str(p), cfg, index.get(p.stem)) for p in paths]
+        for i, f in enumerate(futs, 1):
+            results.append(f.result())
+            if i % 50 == 0 or i == len(futs):
+                print(f"  extracted {i}/{len(futs)} files")
+    return results
+
+
+def list_duckdb(directory: Path) -> list[Path]:
+    seen: set[Path] = set()
+    out: list[Path] = []
+    for f in sorted(directory.rglob("*.duckdb")):
+        r = f.resolve()
+        if f.is_file() and r not in seen:
+            seen.add(r)
+            out.append(f)
+    return out
+
+
+# ============================================================ main
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Ingest Trilliant ORIA MRF prices")
     src = ap.add_mutually_exclusive_group(required=True)
-    src.add_argument("--consolidated", metavar="PATH", help="Consolidated Oria DuckDB file")
-    src.add_argument("--duckdb-dir", metavar="PATH", help="Directory of per-hospital DuckDB files")
-    src.add_argument("--oria", action="store_true", help="Download from ORIA public directory")
-    src.add_argument(
-        "--rescan-cache",
-        action="store_true",
-        help="Re-query data/trilliant/cache and merge richer fields into existing extract",
-    )
-    ap.add_argument("--limit", type=int, default=0, help="Max ORIA hospitals per batch")
-    ap.add_argument("--offset", type=int, default=0, help="Skip first N ORIA index entries")
-    ap.add_argument("--workers", type=int, default=4, help="Parallel ORIA downloads")
-    ap.add_argument("--no-cache", action="store_true", help="Re-download ORIA DuckDB files")
-    ap.add_argument(
-        "--append",
-        action="store_true",
-        help="Merge with existing trilliant-prices.json instead of replacing",
-    )
-    ap.add_argument("--merge", action="store_true", help="Merge into data/cms/mrf-prices.json")
-    ap.add_argument(
-        "--force",
-        action="store_true",
-        help="Ignore stale lock file if no other ingest is running",
-    )
-    ap.add_argument(
-        "--refresh-index",
-        action="store_true",
-        help="Re-download ORIA search-index.json instead of using local cache",
-    )
+    src.add_argument("--consolidated", metavar="PATH")
+    src.add_argument("--duckdb-dir", metavar="PATH")
+    src.add_argument("--oria", action="store_true")
+    src.add_argument("--rescan-cache", action="store_true")
+    ap.add_argument("--limit", type=int, default=0, help="Max ORIA index entries this batch")
+    ap.add_argument("--offset", type=int, default=0, help="ORIA index offset")
+    ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--no-cache", action="store_true", help="Re-download ORIA files")
+    ap.add_argument("--append", action="store_true", help="(--oria) merge into existing output")
+    ap.add_argument("--merge", action="store_true", help="Also write combined mrf-prices.json")
+    ap.add_argument("--force", action="store_true")
+    ap.add_argument("--refresh-index", action="store_true")
     args = ap.parse_args()
 
     if args.force and RUN_LOCK.exists():
-        try:
-            RUN_LOCK.unlink()
-        except OSError:
-            pass
-
+        RUN_LOCK.unlink(missing_ok=True)
     if not acquire_run_lock(args.force):
         return 1
     atexit.register(release_run_lock)
 
-    if not HOSPITALS_JSON.exists():
-        print(f"Missing {HOSPITALS_JSON} — run: npm run build:data", file=sys.stderr)
-        return 1
-
-    hospitals = json.loads(HOSPITALS_JSON.read_text(encoding="utf-8"))
-    matcher = CmsMatcher(hospitals)
-    _, cpts, drgs, code_to_proc = load_procedure_index()
+    hospitals = load_hospitals()
+    hospitals_by_id = {h["id"]: h for h in hospitals}
+    matcher = StrictHospitalMatcher(hospitals)
+    codes = CodeIndex()
+    previous = read_json(OUT_PRICES, []) or []
+    q = Quarantine()
+    progress = None
 
     if args.consolidated:
-        path = Path(args.consolidated)
-        if not path.exists():
-            print(f"File not found: {path}", file=sys.stderr)
-            return 1
-        all_prices, run_stats = ingest_consolidated(path, matcher, code_to_proc, cpts, drgs)
-    elif args.rescan_cache:
-        if not CACHE_DIR.is_dir():
-            print(f"Cache directory not found: {CACHE_DIR}", file=sys.stderr)
-            return 1
-        all_prices, run_stats = ingest_duckdb_dir(
-            CACHE_DIR, matcher, code_to_proc, cpts, drgs
-        )
-        run_stats["source"] = "rescan-cache"
+        paths = [Path(args.consolidated)]
+        mode = "consolidated"
     elif args.duckdb_dir:
-        path = Path(args.duckdb_dir)
-        if not path.is_dir():
-            print(f"Directory not found: {path}", file=sys.stderr)
-            return 1
-        all_prices, run_stats = ingest_duckdb_dir(path, matcher, code_to_proc, cpts, drgs)
+        paths = list_duckdb(Path(args.duckdb_dir))
+        mode = "duckdb-dir"
+    elif args.rescan_cache:
+        paths = list_duckdb(CACHE_DIR)
+        mode = "rescan-cache"
     else:
-        all_prices, run_stats = ingest_oria(
-            matcher,
-            code_to_proc,
-            cpts,
-            drgs,
-            limit=args.limit,
-            offset=args.offset,
-            workers=args.workers,
-            use_cache=not args.no_cache,
-            refresh_index=args.refresh_index,
-        )
+        mode = "oria"
+        index = load_oria_index(refresh=args.refresh_index)
+        start = max(0, args.offset)
+        end = len(index) if not args.limit else min(len(index), start + args.limit)
+        batch = index[start:end]
+        print(f"Downloading ORIA entries {start}..{end - 1} of {len(index)} into cache…")
+        failures: dict[str, str] = {}
+        ok_slugs: list[str] = []
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            for slug, err in pool.map(lambda e: ensure_cached(e, not args.no_cache), batch):
+                if err:
+                    failures[slug] = err
+                else:
+                    ok_slugs.append(slug)
+        paths = [CACHE_DIR / f"{s}.duckdb" for s in sorted(ok_slugs)]
+        prev_prog = read_json(PROGRESS_JSON, {}) or {}
+        retry = dict(prev_prog.get("failedSlugs") or {})
+        for s in ok_slugs:
+            retry.pop(s, None)
+        retry.update({s: e for s, e in failures.items() if e != "not_completed"})
+        progress = {
+            "lastBatch": {"offset": start, "end": end, "attempted": len(batch),
+                          "cached": len(ok_slugs), "failed": len(failures)},
+            # Every index entry in [start, end) was attempted exactly once; entries that
+            # failed are carried in failedSlugs for retry rather than silently skipped.
+            "nextOffset": end,
+            "oriaIndexTotal": len(index),
+            "failedSlugs": dict(sorted(retry.items())),
+        }
+        for s, e in sorted(failures.items()):
+            q.add("file:oria_download_failed", {"slug": s, "error": e})
 
-    if args.rescan_cache:
-        existing: list[dict] = []
-        if OUT_PRICES.exists():
-            for attempt in range(8):
-                try:
-                    existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
-                    break
-                except OSError:
-                    if attempt == 7:
-                        raise
-                    time.sleep(1.5 * (attempt + 1))
-        scanned = dedupe_prices(all_prices)
-        all_prices = merge_rescan_into_existing(existing, scanned)
-        run_stats["cachePrices"] = len(scanned)
-        run_stats["existingBefore"] = len(existing)
-        print(
-            f"Rescan merge: {len(scanned)} cache prices into {len(existing)} existing "
-            f"→ {len(all_prices)} total"
-        )
-    elif args.append and OUT_PRICES.exists():
-        for attempt in range(8):
-            try:
-                existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
-                break
-            except OSError:
-                if attempt == 7:
-                    raise
-                time.sleep(1.5 * (attempt + 1))
-        all_prices = dedupe_prices(existing + all_prices)
-    else:
-        all_prices = dedupe_prices(all_prices)
-    CMS_DIR.mkdir(parents=True, exist_ok=True)
-    atomic_write_text(OUT_PRICES, json.dumps(all_prices, indent=2))
+    print(f"Extracting {len(paths)} DuckDB file(s) [{mode}]…")
+    extractions = run_extractions(paths, codes, args.workers)
+    rows, reference_date, stats = assemble(extractions, matcher, codes, hospitals_by_id, q)
 
+    if mode == "oria" and args.append:
+        rows = merge_rows([r for r in previous if r.get("scope")], rows, q)
+        rows.sort(key=lambda r: (r["hospitalId"], r["procedureId"]))
+
+    new_keys = {(r["cmsProviderId"], r["procedureId"]) for r in rows}
+    for p in previous:
+        key = (p.get("cmsProviderId"), p.get("procedureId"))
+        if key not in new_keys:
+            q.add("row:previous_row_not_reproduced", {
+                "hospitalId": p.get("hospitalId"), "procedureId": p.get("procedureId"),
+                "previousCashMedian": p.get("cashMedian"), "previousVintage": p.get("priceVintage"),
+                "previousSource": p.get("mrfUrl"),
+                "why": "not re-derivable from the local source files under the current rules",
+            })
+
+    atomic_write_text(OUT_PRICES, dump_json(rows))
+    by_proc: dict[str, int] = defaultdict(int)
+    for r in rows:
+        by_proc[r["procedureId"]] += 1
     meta = {
-        "priceCount": len(all_prices),
-        "cmsHospitalsWithPrices": len({p.get("cmsProviderId") for p in all_prices}),
         "source": "Trilliant Health ORIA parsed hospital MRF DuckDB files",
         "attribution": "https://oria-data.trillianthealth.com/",
-        "method": (
-            "DuckDB standard_charges + optional standard_charge_details "
-            "(allowed-amount percentiles) + CMS hospital fuzzy match (name/state/zip)"
-            + ("; rescan of local cache merged into existing extract" if args.rescan_cache else "")
-        ),
-        "builtAt": date.today().isoformat(),
-        "runStats": run_stats,
-        "note": (
-            "Prices are as published in hospital MRFs, parsed by Trilliant Health. "
-            "For full nationwide coverage, download the consolidated archive from "
-            "https://oria.trillianthealth.com/full-data-download"
-        ),
+        "mode": mode,
+        "referenceDate": reference_date,
+        "referenceDateRule": "latest data_downloaded date among the source files read (not the build date)",
+        "staleRule": "stale = priceVintage more than 18 months before referenceDate",
+        "priceCount": len(rows),
+        "cmsHospitalsWithPrices": len({r["cmsProviderId"] for r in rows}),
+        "rowsByProcedure": dict(sorted(by_proc.items())),
+        "staleRows": sum(1 for r in rows if r["stale"]),
+        "runStats": stats,
+        "contract": {
+            "codeMatching": "explicit MS-DRG:/CPT:/HCPCS: token in all_codes; typed columns alone are not trusted; codes with modifiers/suffixes rejected",
+            "scope": "one canonical scope per procedure (procedures.json 'scope'); MS-DRG lines must be inpatient/both (or unspecified) and not professional; CPT/HCPCS lines must be billing_class facility and setting outpatient or both",
+            "cash": "discounted_cash only; cashLow/High = min/max across accepted lines, cashMedian = median",
+            "negotiated": "standard_charge_dollar per payer+plan (median per plan when a plan has several lines), then median/min/max across plans; per diem and percent-of-total-billed-charges methodologies excluded; percentages, algorithms and estimated_amount never used; payerCount = distinct payer+plan pairs",
+            "grossCharge": "median gross charge across accepted lines; never used as cash",
+            "bounds": "values <= 0, >= 500000 or sentinels (e.g. 999999999) dropped per value; cash and payer rates below the procedure floor dropped",
+            "procedureFloorsUsd": {p["id"]: codes.floor(p["id"]) for p in codes.procedures},
+            "hospitalMatching": "exact CCN if the source has one (Trilliant files have none); else identical distinctive name tokens + same state + same city or ZIP; else one name's tokens containing the other's (>= 2 shared, one non-generic, no unmatched facility-kind word such as rehab/behavioral/LTAC) + same state + same city or ZIP; else identical name tokens + state when the file states no city/ZIP and the name is unique in the state; the file's hospital_name is used only when its location name differs by at most one abbreviation token; files whose locations resolve to more than one CMS hospital are not attached; ambiguous or failed matches are quarantined",
+            "hospitalTypeBlocks": "Psychiatric and Long-term hospitals: imaging only; Rural Emergency Hospitals: no inpatient_stay procedures",
+            "dedupe": DEDUPE_RULE,
+            "mrfUrl": "the hospital's own MRF URL from source_metadata.mrf_url when https, else null; sourceDataset = the Trilliant DuckDB package URL",
+            "vintage": "hospitals.last_updated_on from the MRF, else source_metadata.mrf_last_updated_on; rows without a source date are quarantined",
+        },
+        "note": "Prices are exactly as published in hospital MRFs, parsed by Trilliant Health. Nothing is estimated.",
     }
-    atomic_write_text(OUT_META, json.dumps(meta, indent=2))
-    print(f"\nWrote {len(all_prices)} Trilliant prices → {OUT_PRICES}")
+    atomic_write_text(OUT_META, dump_json(meta))
+    write_quarantine_section(QUARANTINE_SECTION, q, {"referenceDate": reference_date})
+    if progress is not None:
+        progress["priceCount"] = len(rows)
+        atomic_write_text(PROGRESS_JSON, dump_json(progress))
+    elif mode == "rescan-cache":
+        prev_prog = read_json(PROGRESS_JSON, {}) or {}
+        atomic_write_text(PROGRESS_JSON, dump_json({
+            "nextOffset": prev_prog.get("nextOffset", 0),
+            "oriaIndexTotal": prev_prog.get("oriaIndexTotal"),
+            "failedSlugs": prev_prog.get("failedSlugs", {}),
+            "lastRescan": {"files": len(paths), "priceCount": len(rows), "referenceDate": reference_date},
+        }))
 
-    if args.oria:
-        batch_n = args.limit or int(run_stats.get("oriaHospitals", 0))
-        progress = {
-            "lastCompletedOffset": args.offset,
-            "nextOffset": args.offset + batch_n,
-            "batchLimit": args.limit,
-            "priceCount": len(all_prices),
-            "cmsHospitalsWithPrices": meta["cmsHospitalsWithPrices"],
-            "oriaIndexTotal": run_stats.get("oriaIndexTotal"),
-            "updatedAt": date.today().isoformat(),
-        }
-        atomic_write_text(PROGRESS_JSON, json.dumps(progress, indent=2))
-        print(
-            f"Progress saved → next batch: --offset {progress['nextOffset']}"
-        )
+    print(f"\nWrote {len(rows)} Trilliant prices ({meta['cmsHospitalsWithPrices']} hospitals) → {OUT_PRICES}")
+    print("Quarantine:", json.dumps(dict(sorted(q.counts.items())), indent=1))
 
     if args.merge:
-        existing = []
-        if MRF_PRICES_JSON.exists():
-            existing = json.loads(MRF_PRICES_JSON.read_text(encoding="utf-8"))
+        existing = read_json(MRF_PRICES_JSON, []) or []
         direct = [p for p in existing if p.get("priceSource") == "hospital_mrf"]
-        merged = merge_price_lists(all_prices, direct)
-        MRF_PRICES_JSON.write_text(json.dumps(merged, indent=2), encoding="utf-8")
+        merged = merge_price_lists(direct=direct, trilliant=rows)
+        atomic_write_text(MRF_PRICES_JSON, dump_json(merged))
         print(f"Merged {len(merged)} total prices → {MRF_PRICES_JSON}")
-
     return 0
 
 

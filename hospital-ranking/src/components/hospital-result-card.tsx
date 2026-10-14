@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { formatCurrency, formatPriceRange } from "@/lib/format";
-import { isReportedPrice } from "@/lib/pricing";
+import { priceKindLabel, SCOPE_LABEL } from "@/lib/pricing";
 import { formatDistance } from "@/lib/geo";
 import type { SearchResult } from "@/lib/types";
 import { StarRating } from "./star-rating";
 
 export function HospitalResultCard({ result }: { result: SearchResult }) {
-  const { hospital, price, distanceMiles, estimatedOop, procedure } = result;
+  const { hospital, price, distanceMiles, headline, procedure } = result;
   const detailHref = `/hospital/${hospital.id}?procedure=${procedure.slug}`;
 
   return (
@@ -44,38 +44,47 @@ export function HospitalResultCard({ result }: { result: SearchResult }) {
             {hospital.readmissionRate != null && (
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Readmission
+                  Readmission measures worse than U.S.
                 </p>
-                <p className="font-medium text-slate-800">{hospital.readmissionRate}%</p>
+                <p className="font-medium text-slate-800">{hospital.readmissionRate}% of measures</p>
               </div>
             )}
           </div>
         </div>
         <div className="shrink-0 text-left sm:text-right">
-          {price ? (
+          {price && headline ? (
             <>
-              <div className="flex items-center justify-start gap-2 sm:justify-end">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Est. out-of-pocket
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                {priceKindLabel(headline.kind)}
+              </p>
+              <p className="text-2xl font-bold text-teal-700">
+                {formatCurrency(headline.amount)}
+              </p>
+              {headline.kind === "cash" && price.cashLow != null && (
+                <p className="mt-1 text-xs text-slate-500">
+                  Range {formatPriceRange(price.cashLow, price.cashHigh)}
                 </p>
-                {!isReportedPrice(price) && (
-                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-800">
-                    Est.
+              )}
+              {headline.kind === "negotiated" && (
+                <p className="mt-1 text-xs text-slate-500">
+                  Range {formatPriceRange(price.negotiatedLow, price.negotiatedHigh)}
+                  {price.payerCount ? ` across ${price.payerCount} payer rates` : ""}. Your share depends on your plan.
+                </p>
+              )}
+              {price.scope && <p className="text-xs text-slate-500">{SCOPE_LABEL[price.scope]}</p>}
+              <p className="text-xs text-slate-500">
+                Published {price.priceVintage}
+                {price.stale && (
+                  <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-800">
+                    Over 18 months old
                   </span>
                 )}
-              </div>
-              <p className="text-2xl font-bold text-teal-700">
-                {formatCurrency(estimatedOop)}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Cash median {formatCurrency(price.cashMedian)}
-              </p>
-              <p className="text-xs text-slate-500">
-                Range {formatPriceRange(price.cashLow, price.cashHigh)}
               </p>
             </>
           ) : (
-            <p className="text-sm italic text-slate-500">Price not available</p>
+            <p className="text-sm italic text-slate-500">
+              {price ? "No published figure of this kind" : "No published price"}
+            </p>
           )}
           <Link
             href={detailHref}

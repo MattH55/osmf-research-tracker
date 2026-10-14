@@ -1,32 +1,28 @@
 import { existsSync, readFileSync } from "fs";
 import path from "path";
-import seedZips from "../../data/seed/zip-centroids.json";
 import type { ZipCentroid } from "./types";
 
 const EARTH_RADIUS_MI = 3958.8;
 
 let _zipIndex: Record<string, ZipCentroid> | null = null;
 
+/** Census Gazetteer ZCTA points (etl/build_dataset.py). Missing file = broken deploy, not demo data. */
 function loadZipIndex(): Record<string, ZipCentroid> {
   if (_zipIndex) return _zipIndex;
-  const cmsPath = path.join(process.cwd(), "data", "cms", "zip-centroids.json");
-  if (existsSync(cmsPath)) {
-    _zipIndex = JSON.parse(readFileSync(cmsPath, "utf-8")) as Record<
-      string,
-      ZipCentroid
-    >;
-  } else {
-    _zipIndex = seedZips as Record<string, ZipCentroid>;
-  }
+  const file = path.join(process.cwd(), "data", "cms", "zip-centroids.json");
+  if (!existsSync(file)) throw new Error("Required data file missing: data/cms/zip-centroids.json");
+  _zipIndex = JSON.parse(readFileSync(file, "utf-8")) as Record<string, ZipCentroid>;
   return _zipIndex;
 }
 
+/** Digits only, first five. Short input is NOT zero-padded: "2134" is not 02134. */
 export function normalizeZip(zip: string): string {
-  return zip.replace(/\D/g, "").slice(0, 5).padStart(5, "0");
+  return zip.replace(/\D/g, "").slice(0, 5);
 }
 
 export function lookupZip(zip: string): ZipCentroid | null {
   const key = normalizeZip(zip);
+  if (key.length !== 5) return null;
   return loadZipIndex()[key] ?? null;
 }
 
@@ -34,11 +30,11 @@ export function lookupZip(zip: string): ZipCentroid | null {
 export function inRadiusBox(
   lat: number,
   lng: number,
-  pointLat: number,
-  pointLng: number,
+  pointLat: number | null,
+  pointLng: number | null,
   radiusMiles: number,
 ): boolean {
-  if (!pointLat || !pointLng) return false;
+  if (pointLat == null || pointLng == null) return false;
   const latDelta = radiusMiles / 69;
   const lngDelta = radiusMiles / (69 * Math.cos((lat * Math.PI) / 180));
   return (

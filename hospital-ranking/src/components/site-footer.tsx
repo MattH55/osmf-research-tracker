@@ -10,8 +10,8 @@ export function SiteFooter() {
         <p className="font-medium text-slate-800">HospitalCompare — free &amp; public</p>
         <p className="mt-2 max-w-2xl">
           Compare CMS hospital quality ratings across {hospitalCount.toLocaleString()} U.S.
-          hospitals with shoppable procedure price estimates. Quality data vintage:{" "}
-          {DATA_VINTAGE}. MIT licensed — contributions welcome.
+          hospitals with the procedure prices hospitals publish themselves. CMS quality data
+          release: {DATA_VINTAGE}. MIT licensed — contributions welcome.
         </p>
         <p className="mt-4 text-xs text-slate-500">
           © {new Date().getFullYear()} Open Source Medicine Foundation · Not medical or legal advice

@@ -94,7 +94,7 @@
     
     <div class="stats">
         <div class="stat-item">
-            <div class="stat-number">21,005</div>
+            <div class="stat-number" id="obs-count">&mdash;</div>
             <div class="stat-label">Real US Price Observations</div>
         </div>
         <div class="stat-item">
@@ -124,5 +124,10 @@
         </p>
     </footer>
 </div>
+<script>
+fetch('data/summary.json').then(function(r){return r.json();}).then(function(d){
+  document.getElementById('obs-count').textContent = (d.total_observations || 0).toLocaleString('en-US');
+}).catch(function(){});
+</script>
 </body>
 </html>

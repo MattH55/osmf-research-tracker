@@ -2,7 +2,7 @@
 
 Free, public web app for U.S. patients to compare **hospital quality** (CMS star ratings) and **shoppable procedure prices** by ZIP code.
 
-> **Estimates only.** Verify with your hospital and insurer. Not medical advice. No PHI stored.
+> **Hospital-published prices only; nothing is estimated.** Verify with your hospital and insurer. Not medical advice. No PHI stored.
 
 ## MVP features (Phase 1)
 
@@ -29,15 +29,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```
 hospital-ranking/
-├── data/seed/          # Demo hospitals, procedures, prices, ZIP centroids
-├── db/schema.sql       # PostgreSQL + PostGIS schema for production
+├── data/seed/procedures.json  # Procedures and their billing codes (with code sources)
+├── data/cms/                  # Real data the app loads: hospitals, ZIP points, prices, quarantine
 ├── etl/
-│   ├── cms_quality.py  # CMS Provider Data importer (skeleton)
-│   └── requirements.txt
+│   ├── build_dataset.py       # CMS hospitals + Census ZIP points + Census address geocoding
+│   ├── ingest_trilliant.py    # Prices from Trilliant ORIA parsed hospital price files
+│   ├── ingest_mrf_prices.py   # Prices from hospitals' own price files
+│   └── priceos_validate.py    # Data contract validation (runs before every build)
+├── tests/                     # node --test: pricing rules + real-data integrity checks
 └── src/
-    ├── app/            # Next.js App Router pages & API
+    ├── app/                   # Next.js App Router pages & API
     ├── components/
-    └── lib/            # Search, geo, formatting
+    └── lib/                   # Data loading, search, geo, price labelling
 ```
 
 ## API
@@ -47,12 +50,15 @@ hospital-ranking/
 | `GET /api/procedures` | List searchable procedures |
 | `GET /api/search?procedure=knee-replacement&zip=10016&radius=50` | JSON search results |
 
-## Data pipeline (production)
+## Data pipeline
 
-1. **Quality** — Run `etl/cms_quality.py` against [data.cms.gov/provider-data](https://data.cms.gov/provider-data/) (quarterly).
-2. **Prices** — Integrate [Turquoise Health API](https://turquoise.health) or parse hospital MRFs ([CMS HPT tools](https://github.com/CMSgov/hospital-price-transparency)).
-3. **Load** — Upsert into PostgreSQL (`db/schema.sql`); add PostGIS geocoding for all ZIPs.
-4. **Search** — Optional Meilisearch / Typesense for fuzzy procedure names.
+1. **Hospitals and locations:** `python etl/build_dataset.py` (CMS Hospital General Information,
+   with its CMS release date as the vintage; Census Gazetteer ZIP points; Census address geocoding).
+   Use `--regeocode` to refresh locations only.
+2. **Prices:** `npm run ingest:trilliant` / `npm run ingest:prices`. Only hospital-published
+   figures with an explicit code system, a single scope per procedure, a source date and a
+   matched hospital are kept; everything else goes to `data/cms/quarantine.json` with a reason.
+3. **Validate:** `npm run validate:data` (also runs automatically before `npm run build`).
 
 ## Environment variables (future)
 
@@ -62,35 +68,10 @@ TURQUOISE_API_KEY=
 GOOGLE_MAPS_API_KEY=
 ```
 
-## Deploy (Vercel → opensourcemed.info/hospital-ranking)
+## Deploy (Vercel)
 
-This app uses `basePath: /hospital-ranking` and lives in the **research-tracker** monorepo subdirectory.
-
-### 1. Create the Vercel project
-
-In [Vercel Dashboard](https://vercel.com/new):
-
-1. Import `MattH55/osmf-research-tracker`
-2. Set **Root Directory** → `hospital-ranking`
-3. Framework: Next.js (auto-detected)
-4. Deploy
-
-### 2. Route from opensourcemed.info
-
-On the **opensourcemed.info** Vercel project, add rewrites (see `vercel-parent-rewrite.example.json`):
-
-```json
-{
-  "rewrites": [
-    { "source": "/hospital-ranking", "destination": "https://YOUR-HOSPITAL-RANKING.vercel.app/hospital-ranking" },
-    { "source": "/hospital-ranking/:path*", "destination": "https://YOUR-HOSPITAL-RANKING.vercel.app/hospital-ranking/:path*" }
-  ]
-}
-```
-
-Or use Vercel **Microfrontends** / path routing in Team → Domains.
-
-### 3. CLI deploy (from this folder)
+Production: **https://hospital-ranking.vercel.app**, served from the domain root (no `basePath`).
+The project lives in the **research-tracker** monorepo with Root Directory `hospital-ranking`.
 
 ```bash
 cd hospital-ranking
@@ -98,7 +79,12 @@ npx vercel link
 npx vercel --prod
 ```
 
-**Production URL:** https://opensourcemed.info/hospital-ranking
+`npm run build` runs the data validation first (`prebuild`), so a dataset that breaks the
+price contract cannot be deployed.
+
+Serving it under a sub-path such as opensourcemed.info/hospital-ranking would need
+`basePath` restored in `next.config.ts`; a plain rewrite to the root deployment breaks
+asset URLs.
 
 ## License
 

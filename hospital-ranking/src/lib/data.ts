@@ -1,22 +1,28 @@
 import { existsSync, readFileSync } from "fs";
 import path from "path";
 import proceduresJson from "../../data/seed/procedures.json";
-import pricesJson from "../../data/seed/prices.json";
-import seedHospitalsJson from "../../data/seed/hospitals.json";
-import { estimateProcedurePrice } from "./pricing";
+import { PRICE_CEILING, priceFloor } from "./pricing";
 import type { Hospital, Procedure, ProcedurePrice } from "./types";
 
 const CMS_DIR = path.join(process.cwd(), "data", "cms");
 
-function readJson<T>(file: string): T | null {
-  if (!existsSync(file)) return null;
+/** Real data only: a missing file is a broken deploy, never a reason to show demo data. */
+function readRequired<T>(file: string): T {
+  if (!existsSync(file)) {
+    throw new Error(`Required data file missing: ${path.relative(process.cwd(), file)}`);
+  }
   return JSON.parse(readFileSync(file, "utf-8")) as T;
+}
+
+function readOptional<T>(file: string, fallback: T): T {
+  return existsSync(file) ? (JSON.parse(readFileSync(file, "utf-8")) as T) : fallback;
 }
 
 export interface DataMeta {
   hospitalCount?: number;
   zipCount?: number;
   builtAt?: string;
+  cmsReleaseDate?: string;
   priceNote?: string;
 }
 
@@ -25,9 +31,7 @@ let _hospitalById: Map<string, Hospital> | null = null;
 let _meta: DataMeta | null = null;
 
 function loadHospitals(): Hospital[] {
-  if (_hospitals) return _hospitals;
-  const cms = readJson<Hospital[]>(path.join(CMS_DIR, "hospitals.json"));
-  _hospitals = cms ?? (seedHospitalsJson as Hospital[]);
+  if (!_hospitals) _hospitals = readRequired<Hospital[]>(path.join(CMS_DIR, "hospitals.json"));
   return _hospitals;
 }
 
@@ -39,73 +43,61 @@ function hospitalMap(): Map<string, Hospital> {
 }
 
 export function getDataMeta(): DataMeta {
-  if (!_meta) {
-    _meta = readJson<DataMeta>(path.join(CMS_DIR, "meta.json")) ?? {
-      hospitalCount: loadHospitals().length,
-      builtAt: "seed",
-    };
-  }
+  if (!_meta) _meta = readRequired<DataMeta>(path.join(CMS_DIR, "meta.json"));
   return _meta;
 }
 
+/** CMS release date of the quality data (falls back to the build date only if CMS gave none). */
 export const DATA_VINTAGE =
-  getDataMeta().builtAt ?? "2025-10-01";
-export const PRICE_VINTAGE = "2025-09-15";
+  getDataMeta().cmsReleaseDate ?? getDataMeta().builtAt ?? "unknown";
 
 const procedures = proceduresJson as Procedure[];
-const prices = pricesJson as ProcedurePrice[];
-const seedHospitals = seedHospitalsJson as Hospital[];
-
 const procedureById = new Map(procedures.map((p) => [p.id, p]));
 const procedureBySlug = new Map(procedures.map((p) => [p.slug, p]));
 
-/** Map sample demo prices onto CMS hospitals via cmsProviderId */
-const priceByCmsAndProcedure = new Map<string, ProcedurePrice>();
-for (const sh of seedHospitals) {
-  const cmsId = sh.cmsProviderId;
-  if (!cmsId) continue;
-  for (const p of prices) {
-    if (p.hospitalId === sh.id) {
-      priceByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, {
-        ...p,
-        hospitalId: `hosp-cms-${cmsId}`,
-      });
-    }
-  }
+/**
+ * Second line of defence behind the ETL validator: a row that breaks the data contract
+ * is dropped at load time rather than shown. The pipeline should already have
+ * quarantined it; `getRejectedPriceCount()` makes any leak visible.
+ */
+let rejected = 0;
+function acceptable(p: ProcedurePrice): boolean {
+  const proc = procedureById.get(p.procedureId);
+  const amounts = [p.cashLow, p.cashMedian, p.cashHigh, p.negotiatedLow, p.negotiatedMedian, p.negotiatedHigh]
+    .filter((v): v is number => typeof v === "number");
+  const headline = p.cashMedian ?? p.negotiatedMedian;
+  const ok =
+    !!proc &&
+    (p.priceSource === "hospital_mrf" || p.priceSource === "trilliant_mrf") &&
+    headline != null &&
+    amounts.every((v) => v > 0 && v < PRICE_CEILING) &&
+    headline >= priceFloor(p.scope) &&
+    /^\d{4}-\d{2}-\d{2}$/.test(p.priceVintage ?? "") &&
+    (p.mrfUrl == null || p.mrfUrl.startsWith("https://"));
+  if (!ok) rejected++;
+  return ok;
 }
 
-const priceByHospitalProcedure = new Map(
-  prices.map((p) => [`${p.hospitalId}:${p.procedureId}`, p]),
-);
+function loadPrices(file: string): ProcedurePrice[] {
+  return readOptional<ProcedurePrice[]>(path.join(CMS_DIR, file), []).filter(acceptable);
+}
 
 /** Direct hospital MRF scrape (etl/ingest_mrf_prices.py) — highest priority */
-const directMrfPrices =
-  readJson<ProcedurePrice[]>(path.join(CMS_DIR, "mrf-prices.json")) ?? [];
-const directMrfByCmsAndProcedure = new Map<string, ProcedurePrice>();
-const directMrfByHospitalProcedure = new Map<string, ProcedurePrice>();
-for (const p of directMrfPrices) {
-  if (p.priceSource !== "hospital_mrf") continue;
-  directMrfByHospitalProcedure.set(`${p.hospitalId}:${p.procedureId}`, p);
-  const cmsId =
-    p.cmsProviderId ?? p.hospitalId.replace(/^hosp-cms-/, "");
-  if (cmsId) directMrfByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, p);
-}
-
+const directMrfPrices = loadPrices("mrf-prices.json").filter((p) => p.priceSource === "hospital_mrf");
 /** Trilliant ORIA bulk ingest (etl/ingest_trilliant.py) — nationwide MRF coverage */
-const trilliantPrices =
-  readJson<ProcedurePrice[]>(path.join(CMS_DIR, "trilliant-prices.json")) ?? [];
-const trilliantByCmsAndProcedure = new Map<string, ProcedurePrice>();
-const trilliantByHospitalProcedure = new Map<string, ProcedurePrice>();
-for (const p of trilliantPrices) {
-  trilliantByHospitalProcedure.set(`${p.hospitalId}:${p.procedureId}`, p);
-  const cmsId =
-    p.cmsProviderId ?? p.hospitalId.replace(/^hosp-cms-/, "");
-  if (cmsId) trilliantByCmsAndProcedure.set(`${cmsId}:${p.procedureId}`, p);
+const trilliantPrices = loadPrices("trilliant-prices.json");
+
+function indexByCms(rows: ProcedurePrice[]): Map<string, ProcedurePrice> {
+  const m = new Map<string, ProcedurePrice>();
+  for (const p of rows) {
+    const cmsId = p.cmsProviderId ?? p.hospitalId.replace(/^hosp-cms-/, "");
+    m.set(`${cmsId}:${p.procedureId}`, p);
+  }
+  return m;
 }
 
-const mrfPrices = [...trilliantPrices, ...directMrfPrices];
-
-const ALLOW_MODELED_ESTIMATES = true;
+const directByCms = indexByCms(directMrfPrices);
+const trilliantByCms = indexByCms(trilliantPrices);
 
 export function getHospitalCount(): number {
   return loadHospitals().length;
@@ -127,79 +119,33 @@ export function getProcedure(slugOrId: string): Procedure | undefined {
   return procedureBySlug.get(slugOrId) ?? procedureById.get(slugOrId);
 }
 
+/** A hospital's own published price, or undefined. Nothing is ever modelled or imputed. */
 export function getPrice(
   hospitalId: string,
   procedureId: string,
 ): ProcedurePrice | undefined {
-  const directMrf = directMrfByHospitalProcedure.get(
-    `${hospitalId}:${procedureId}`,
-  );
-  if (directMrf) return directMrf;
-
   const h = hospitalMap().get(hospitalId);
-  if (h?.cmsProviderId) {
-    const directCms = directMrfByCmsAndProcedure.get(
-      `${h.cmsProviderId}:${procedureId}`,
-    );
-    if (directCms) return directCms;
-  }
-
-  const trilliantDirect = trilliantByHospitalProcedure.get(
-    `${hospitalId}:${procedureId}`,
-  );
-  if (trilliantDirect) return trilliantDirect;
-
-  if (h?.cmsProviderId) {
-    const trilliantCms = trilliantByCmsAndProcedure.get(
-      `${h.cmsProviderId}:${procedureId}`,
-    );
-    if (trilliantCms) return trilliantCms;
-  }
-
-  const direct = priceByHospitalProcedure.get(`${hospitalId}:${procedureId}`);
-  if (direct) return direct;
-  if (!h) return undefined;
-  if (h.cmsProviderId) {
-    const cms = priceByCmsAndProcedure.get(`${h.cmsProviderId}:${procedureId}`);
-    if (cms) return cms;
-  }
-  if (ALLOW_MODELED_ESTIMATES) {
-    const estimated = estimateProcedurePrice(h, procedureId);
-    if (!estimated) return undefined;
-    // Mark modeled estimates with provenance metadata for transparency
-    return {
-      ...estimated,
-      isEstimate: true,
-      stale: false,
-      provenance: {
-        sourceType: "modeled_estimate",
-        sourceUrl: h.shoppableUrl || h.website,
-        extractedBy: "adapter:estimator_v1",
-        confidence: 0.6,
-      },
-    };
-  }
-  return undefined;
+  const cmsId = h?.cmsProviderId ?? hospitalId.replace(/^hosp-cms-/, "");
+  const key = `${cmsId}:${procedureId}`;
+  return directByCms.get(key) ?? trilliantByCms.get(key);
 }
 
 export function getMrfPriceMeta(): {
   count: number;
   directCount: number;
   trilliantCount: number;
-  allowModeledEstimates: boolean;
+  rejectedCount: number;
 } {
   return {
-    count: mrfPrices.length,
-    directCount: directMrfPrices.filter((p) => p.priceSource === "hospital_mrf")
-      .length,
+    count: directMrfPrices.length + trilliantPrices.length,
+    directCount: directMrfPrices.length,
     trilliantCount: trilliantPrices.length,
-    allowModeledEstimates: ALLOW_MODELED_ESTIMATES,
+    rejectedCount: rejected,
   };
 }
 
 export function getPricesForHospital(hospitalId: string): ProcedurePrice[] {
-  const h = hospitalMap().get(hospitalId);
-  if (!h) return [];
+  if (!hospitalMap().has(hospitalId)) return [];
   return procedures
     .map((proc) => getPrice(hospitalId, proc.id))
     .filter((p): p is ProcedurePrice => Boolean(p));

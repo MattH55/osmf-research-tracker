@@ -7,9 +7,8 @@ import {
   getProcedures,
 } from "./data";
 import { distanceMiles, inRadiusBox, lookupZip, normalizeZip } from "./geo";
-import { estimateOop } from "./format";
 import { matchProcedures } from "./procedure-match";
-import { isReportedPrice } from "./pricing";
+import { headlinePrice } from "./pricing";
 import type { Hospital, InsuranceType, Procedure, SearchParams, SearchResult } from "./types";
 
 const DEFAULT_RADIUS = 50;
@@ -30,11 +29,8 @@ function hospitalCandidates(
 ): Hospital[] {
   const all = getHospitals();
   if (!origin) return all;
-  return all.filter(
-    (h) =>
-      h.latitude &&
-      h.longitude &&
-      inRadiusBox(origin.lat, origin.lng, h.latitude, h.longitude, radiusMiles),
+  return all.filter((h) =>
+    inRadiusBox(origin.lat, origin.lng, h.latitude, h.longitude, radiusMiles),
   );
 }
 
@@ -81,7 +77,9 @@ export function searchHospitals(
 
   if (!origin) {
     warnings.push(
-      `ZIP ${zip} was not found in our geocoder. Try a valid 5-digit U.S. ZIP code.`,
+      zip.length === 5
+        ? `ZIP ${zip} isn't in the Census ZIP code tabulation areas (PO-box-only ZIPs aren't). Try your home ZIP.`
+        : "Enter a 5-digit U.S. ZIP code.",
     );
     return {
       results: [],
@@ -106,15 +104,15 @@ export function searchHospitals(
       const dist = distanceMiles(
         origin.lat,
         origin.lng,
-        hospital.latitude,
-        hospital.longitude,
+        hospital.latitude!,
+        hospital.longitude!,
       );
       return {
         hospital,
         procedure,
         price,
         distanceMiles: dist,
-        estimatedOop: estimateOop(price, insurance),
+        headline: headlinePrice(price, insurance),
       };
     },
   );
@@ -122,26 +120,36 @@ export function searchHospitals(
   results = results.filter((r) => r.distanceMiles <= radius);
 
   if (minStars > 0) {
+    const before = results.length;
     results = results.filter(
-      (r) => (r.hospital.cmsOverallStars ?? 0) >= minStars,
+      (r) => r.hospital.cmsOverallStars != null && r.hospital.cmsOverallStars >= minStars,
     );
+    const unrated = before - results.length;
+    if (unrated > 0) {
+      warnings.push(
+        `The star filter hides ${unrated} hospital(s) that are below it or that CMS doesn't rate.`,
+      );
+    }
   }
 
+  // A price cap can only be checked against a published price: hospitals without one are excluded.
   if (maxPrice != null && maxPrice > 0) {
-    results = results.filter((r) => {
-      const oop = r.estimatedOop ?? r.price?.cashMedian;
-      return oop == null || oop <= maxPrice;
-    });
+    results = results.filter((r) => r.headline != null && r.headline.amount <= maxPrice);
   }
 
   const sort = raw.sort ?? "distance";
   results.sort((a, b) => {
     if (sort === "quality") {
-      return (b.hospital.cmsOverallStars ?? 0) - (a.hospital.cmsOverallStars ?? 0);
+      // Unrated hospitals sort after every rated one; they are not treated as zero stars.
+      const sa = a.hospital.cmsOverallStars ?? -1;
+      const sb = b.hospital.cmsOverallStars ?? -1;
+      if (sa !== sb) return sb - sa;
+      return a.distanceMiles - b.distanceMiles;
     }
     if (sort === "price") {
-      const pa = a.estimatedOop ?? a.price?.cashMedian ?? Infinity;
-      const pb = b.estimatedOop ?? b.price?.cashMedian ?? Infinity;
+      // Only published figures of the same kind are compared; hospitals without one go last.
+      const pa = a.headline?.amount ?? Infinity;
+      const pb = b.headline?.amount ?? Infinity;
       if (pa !== pb) return pa - pb;
       return a.distanceMiles - b.distanceMiles;
     }
@@ -156,15 +164,11 @@ export function searchHospitals(
     );
   }
 
-  const reported = results.filter((r) => r.price && isReportedPrice(r.price)).length;
-  const withPrice = results.filter((r) => r.price).length;
+  const withPrice = results.filter((r) => r.headline).length;
   if (total > 0 && withPrice < total) {
+    const what = insurance === "cash" || insurance === "uninsured" ? "cash price" : "negotiated rate";
     warnings.push(
-      `${total - withPrice} of ${total} result(s) have no published MRF price in our database yet. We only show hospital-reported charges — not modeled guesses.`,
-    );
-  } else if (total > 0 && reported < withPrice) {
-    warnings.push(
-      `${withPrice - reported} result(s) use legacy sample data; ${reported} use scraped hospital MRF files.`,
+      `${total - withPrice} of ${total} hospital(s) have no published ${what} for this procedure in our data. We show only figures from hospitals' own price files, never estimates.`,
     );
   }
 

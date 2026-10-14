@@ -1,82 +1,94 @@
 #!/usr/bin/env python3
 """
-Ingest real hospital prices from CMS-required Machine-Readable Files (MRFs).
+Ingest hospital prices directly from CMS-required machine-readable files (MRFs).
 
-Pipeline per hospital system:
-  1. Fetch cms-hpt.txt from hospital domain (CMS Hospital Price Transparency rule)
-  2. Download each mrf-url listed in cms-hpt.txt
-  3. Extract cash / negotiated charges for our procedure CPT & DRG codes
-  4. Write data/cms/mrf-prices.json
+Pipeline per seed hospital (data/seed/hospitals.json):
+  1. Fetch cms-hpt.txt from the hospital's domain (45 CFR 180.50(d)(6)).
+  2. Keep ONLY the cms-hpt entries whose location-name strictly matches this
+     hospital (etl/price_contract.StrictHospitalMatcher must resolve the
+     location to this hospital's CCN). A system-wide file is never attached to
+     every member hospital; an entry for another campus (e.g. NYU Langone
+     Suffolk for NYU Langone 330214) is skipped and recorded.
+  3. Download the MRF into data/mrf/cache/<CCN>/ (so the extract can be
+     re-derived offline with --offline) and parse CMS template v2 CSV (tall or
+     wide) or JSON.
+  4. Apply the shared contract (etl/price_contract.py): explicit code types,
+     canonical scope, cash = discounted cash only, negotiated = dollar payer
+     rates, bounds, vintage = the file's last_updated_on.
 
-Data source: each hospital's own published MRF (45 CFR § 180.50).
-NOT modeled estimates.
+Output: data/cms/mrf-prices.json (hospital_mrf rows only), data/cms/mrf-meta.json,
+and the "hospital_mrf" section of data/cms/quarantine.json.
 
 USAGE:
-  python etl/ingest_mrf_prices.py                    # seed hospitals with known domains
-  python etl/ingest_mrf_prices.py --limit 3          # smoke test
-  python etl/ingest_mrf_prices.py --hospital 330214  # single CMS provider id
+  python etl/ingest_mrf_prices.py --hospital 330214   # one CMS provider id (network)
+  python etl/ingest_mrf_prices.py --limit 3           # smoke test (network)
+  python etl/ingest_mrf_prices.py --offline           # rebuild from data/mrf/cache only
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
-import io
+import hashlib
 import json
 import re
-import statistics
 import sys
-import tempfile
-from datetime import date
+from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "data" / "cms"
-SEED_HOSPITALS = ROOT / "data" / "seed" / "hospitals.json"
-PROCEDURES = ROOT / "data" / "seed" / "procedures.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from price_contract import (  # noqa: E402
+    CMS_DIR,
+    ROOT,
+    CodeIndex,
+    Quarantine,
+    StrictHospitalMatcher,
+    aggregate_lines,
+    atomic_write_text,
+    blocked_reason,
+    contract_problems,
+    deterministic_id,
+    dump_json,
+    is_stale,
+    line_scope_problem,
+    load_hospitals,
+    order_row,
+    parse_iso_date,
+    read_json,
+    write_quarantine_section,
+)
 
+SEED_HOSPITALS = ROOT / "data" / "seed" / "hospitals.json"
+MRF_CACHE = ROOT / "data" / "mrf" / "cache"
+OUT_PRICES = CMS_DIR / "mrf-prices.json"
+OUT_META = CMS_DIR / "mrf-meta.json"
+QUARANTINE_SECTION = "hospital_mrf"
+MAX_BYTES = 1024 * 1_048_576
+CHUNK = 1024 * 1024
 USER_AGENT = (
     "Mozilla/5.0 (compatible; OpenSourceMed-HospitalCompare/1.0; "
     "+https://opensourcemed.info; hospital-price-transparency-ingest)"
 )
-MAX_JSON_MB = 250
-CHUNK = 256 * 1024
 
 
-def request_headers() -> dict[str, str]:
-    return {
-        "User-Agent": USER_AGENT,
-        "Accept": "text/plain,application/json,text/csv,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-    }
+# ============================================================ network
 
-
-def fetch_text(url: str, timeout: int = 120) -> str:
-    req = Request(url, headers=request_headers())
+def fetch_text(url: str, timeout: int = 60) -> str:
+    req = Request(url, headers={"User-Agent": USER_AGENT})
     with urlopen(req, timeout=timeout) as resp:
         return resp.read().decode("utf-8", errors="replace")
-
-
-def domain_from_url(url: str) -> str:
-    parsed = urlparse(url)
-    return parsed.netloc or ""
 
 
 def cms_hpt_candidates(website: str | None, shoppable_url: str | None) -> list[str]:
     hosts: list[str] = []
     for u in (website, shoppable_url):
-        if not u:
-            continue
-        host = domain_from_url(u)
+        host = urlparse(u).netloc if u else ""
         if host and host not in hosts:
             hosts.append(host)
-    urls: list[str] = []
-    for host in hosts:
-        for scheme in ("https", "http"):
-            urls.append(f"{scheme}://{host}/cms-hpt.txt")
-    return urls
+    return [f"https://{h}/cms-hpt.txt" for h in hosts]
 
 
 def parse_cms_hpt(text: str) -> list[dict[str, str]]:
@@ -92,37 +104,46 @@ def parse_cms_hpt(text: str) -> list[dict[str, str]]:
         if ":" not in line:
             continue
         key, val = line.split(":", 1)
-        current[key.strip().lower().replace("-", "_")] = val.strip()
+        key = key.strip().lower().replace("-", "_")
+        if key in current:  # entries not separated by a blank line
+            entries.append(current)
+            current = {}
+        current[key] = val.strip()
     if current:
         entries.append(current)
     return entries
 
 
-def load_procedure_index() -> tuple[dict[str, dict], set[str], set[str]]:
-    procs = json.loads(PROCEDURES.read_text(encoding="utf-8"))
-    by_id = {p["id"]: p for p in procs}
-    cpts: set[str] = set()
-    drgs: set[str] = set()
-    for p in procs:
-        cpts.update(p.get("cptCodes") or [])
-        drgs.update(p.get("drgCodes") or [])
-    return by_id, cpts, drgs
+def download(url: str, dest: Path) -> str:
+    """Download to dest; returns sha256 of the bytes."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    h = hashlib.sha256()
+    total = 0
+    part = dest.with_suffix(dest.suffix + ".part")
+    req = Request(url, headers={"User-Agent": USER_AGENT})
+    with urlopen(req, timeout=600) as resp, open(part, "wb") as out:
+        while True:
+            chunk = resp.read(CHUNK)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > MAX_BYTES:
+                raise ValueError("MRF exceeds size cap")
+            h.update(chunk)
+            out.write(chunk)
+    part.replace(dest)
+    return h.hexdigest()
 
 
-def match_procedure(cpt: str | None, drg: str | None, by_id: dict[str, dict]) -> str | None:
-    for pid, p in by_id.items():
-        if cpt and cpt in (p.get("cptCodes") or []):
-            return pid
-        if drg and drg in (p.get("drgCodes") or []):
-            return pid
-    return None
+# ============================================================ parsing (CMS template v2)
 
-
-def parse_money(val: str | None) -> float | None:
-    if not val:
+def parse_money(val) -> float | None:
+    if val is None:
         return None
-    v = val.strip().replace("$", "").replace(",", "")
-    if not v or v.lower() in ("n/a", "na", ""):
+    if isinstance(val, (int, float)):
+        return float(val)
+    v = str(val).strip().replace("$", "").replace(",", "")
+    if not v:
         return None
     try:
         return float(v)
@@ -130,294 +151,307 @@ def parse_money(val: str | None) -> float | None:
         return None
 
 
-def aggregate_prices(rows: list[dict]) -> dict | None:
-    sane = [
-        r
-        for r in rows
-        if (r.get("cash") or 0) >= 75 or (r.get("gross") or 0) >= 75
-    ]
-    if not sane:
-        return None
-    cash_vals = [r["cash"] for r in sane if r.get("cash") and r["cash"] >= 75]
-    gross_vals = [r["gross"] for r in sane if r.get("gross") and r["gross"] >= 75]
-    neg_vals = [r["negotiated"] for r in rows if r.get("negotiated")]
-    if not cash_vals and not gross_vals:
-        return None
-    cash_median = statistics.median(cash_vals) if cash_vals else statistics.median(gross_vals)
-    cash_low = min(cash_vals or gross_vals)
-    cash_high = max(cash_vals or gross_vals)
-    neg_med = statistics.median(neg_vals) if neg_vals else None
-    return {
-        "cashLow": round(cash_low),
-        "cashMedian": round(cash_median),
-        "cashHigh": round(cash_high),
-        "negotiatedMedian": round(neg_med) if neg_med else None,
-    }
+def codes_from_pairs(pairs: list[tuple[str, str]]) -> str:
+    """Render (code, type) pairs as an all_codes string: 'CPT:45378 | RC:0750'."""
+    return " | ".join(f"{(t or '').strip().upper()}:{(c or '').strip()}" for c, t in pairs if c)
 
 
-def iter_lines(url: str, timeout: int = 300):
-    req = Request(url, headers=request_headers())
-    with urlopen(req, timeout=timeout) as resp:
-        buf = b""
-        while True:
-            chunk = resp.read(CHUNK)
-            if not chunk:
-                if buf:
-                    yield buf.decode("utf-8", errors="replace")
-                break
-            buf += chunk
-            while b"\n" in buf:
-                line, buf = buf.split(b"\n", 1)
-                yield line.decode("utf-8", errors="replace")
+def parse_csv(path: Path) -> tuple[dict, list[dict]]:
+    """CMS v2 CSV (tall or wide). Returns (header_meta, lines)."""
+    with open(path, encoding="utf-8-sig", errors="replace", newline="") as f:
+        reader = csv.reader(f)
+        head_keys = [h.strip().lower() for h in next(reader)]
+        head_vals = next(reader)
+        meta = dict(zip(head_keys, head_vals))
+        cols = [c.strip().lower() for c in next(reader)]
+        code_idx = []
+        for i, c in enumerate(cols):
+            m = re.fullmatch(r"code\|(\d+)", c)
+            if m and f"code|{m.group(1)}|type" in cols:
+                code_idx.append((i, cols.index(f"code|{m.group(1)}|type")))
+        ix = {c: i for i, c in enumerate(cols)}
+        wide = [
+            (i, c) for i, c in enumerate(cols)
+            if c.startswith("standard_charge|") and c.endswith("|negotiated_dollar") and c.count("|") == 3
+        ]
+        meth_cols = {c.rsplit("|", 1)[0]: i for i, c in enumerate(cols) if c.endswith("|methodology") and c.count("|") == 3}
 
+        def get(row, name):
+            i = ix.get(name)
+            return row[i] if i is not None and i < len(row) else None
 
-def extract_from_csv(url: str, cpts: set[str], drgs: set[str]) -> list[dict]:
-    hits: list[dict] = []
-    found_cpts: set[str] = set()
-    found_drgs: set[str] = set()
-    header: list[str] | None = None
-    for line in iter_lines(url):
-        if header is None:
-            if line.startswith("code|1,") or ",code|1," in line:
-                header = next(csv.reader([line]))
-            continue
-        if not header:
-            continue
-        row = next(csv.reader([line]))
-        if len(row) < len(header):
-            row.extend([""] * (len(header) - len(row)))
-        data = dict(zip(header, row))
-        cpt = (data.get("code|1") or "").strip()
-        drg = (data.get("code|1") or data.get("ms_drg") or "").strip()
-        ctype = (data.get("code|1|type") or "").upper()
-        if ctype == "DRG" or (drg in drgs and drg):
-            code, kind = drg, "drg"
-        elif cpt in cpts:
-            code, kind = cpt, "cpt"
-        else:
-            continue
-        cash = parse_money(data.get("standard_charge|discounted_cash"))
-        gross = parse_money(data.get("standard_charge|gross"))
-        neg = parse_money(data.get("standard_charge|negotiated_dollar"))
-        if neg is None:
-            for k, v in data.items():
-                if "negotiated" in k.lower() and "dollar" in k.lower():
-                    neg = parse_money(v)
-                    if neg:
-                        break
-        hits.append({
-            "code": code,
-            "kind": kind,
-            "cash": cash,
-            "gross": gross,
-            "negotiated": neg,
-            "description": (data.get("description") or "")[:120],
-        })
-        if kind == "cpt":
-            found_cpts.add(code)
-        else:
-            found_drgs.add(code)
-        if found_cpts >= cpts and found_drgs >= drgs:
-            break
-    return hits
-
-
-def download_temp(url: str, max_bytes: int) -> Path:
-    req = Request(url, headers=request_headers())
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mrf")
-    path = Path(tmp.name)
-    total = 0
-    with urlopen(req, timeout=300) as resp, open(path, "wb") as out:
-        while True:
-            chunk = resp.read(CHUNK)
-            if not chunk:
-                break
-            total += len(chunk)
-            if total > max_bytes:
-                raise ValueError(f"MRF exceeds {max_bytes // 1_048_576} MB cap")
-            out.write(chunk)
-    return path
-
-
-def extract_from_json(url: str, cpts: set[str], drgs: set[str]) -> list[dict]:
-    """Scan JSON MRF for CPT/DRG blocks (CMS v2 wide format)."""
-    path = download_temp(url, MAX_JSON_MB * 1_048_576)
-    try:
-        text = path.read_text(encoding="utf-8", errors="replace")
-    finally:
-        path.unlink(missing_ok=True)
-
-    hits: list[dict] = []
-    all_codes = cpts | drgs
-    for code in all_codes:
-        for m in re.finditer(rf'"code"\s*:\s*"{re.escape(code)}"', text):
-            window = text[m.start() : m.start() + 4000]
-            cash_m = re.search(r'"discounted_cash_price"\s*:\s*([0-9.]+)', window)
-            gross_m = re.search(r'"gross_charge"\s*:\s*([0-9.]+)', window)
-            neg_m = re.search(r'"negotiated_dollar"\s*:\s*([0-9.]+)', window)
-            if not cash_m and not gross_m:
+        lines: list[dict] = []
+        for n, row in enumerate(reader, start=4):
+            if not row:
                 continue
-            hits.append({
-                "code": code,
-                "kind": "drg" if code in drgs else "cpt",
-                "cash": float(cash_m.group(1)) if cash_m else None,
-                "gross": float(gross_m.group(1)) if gross_m else None,
-                "negotiated": float(neg_m.group(1)) if neg_m else None,
-                "description": "",
+            all_codes = codes_from_pairs([(row[a] if a < len(row) else "", row[b] if b < len(row) else "")
+                                          for a, b in code_idx])
+            rates = []
+            if "payer_name" in ix:
+                rates.append({
+                    "payer": get(row, "payer_name"), "plan": get(row, "plan_name"),
+                    "dollar": parse_money(get(row, "standard_charge|negotiated_dollar")),
+                    "methodology": get(row, "standard_charge|methodology"),
+                })
+            for i, c in wide:
+                _, payer, plan, _ = c.split("|")
+                meth_i = meth_cols.get(f"standard_charge|{payer}|{plan}")
+                rates.append({
+                    "payer": payer, "plan": plan,
+                    "dollar": parse_money(row[i] if i < len(row) else None),
+                    "methodology": row[meth_i] if meth_i is not None and meth_i < len(row) else None,
+                })
+            lines.append({
+                "lineNo": n,
+                "description": (get(row, "description") or "")[:100],
+                "all_codes": all_codes,
+                "setting": get(row, "setting"),
+                "billing_class": get(row, "billing_class"),
+                "modifiers": get(row, "modifiers"),
+                "cash": parse_money(get(row, "standard_charge|discounted_cash")),
+                "gross": parse_money(get(row, "standard_charge|gross")),
+                "rates": rates,
             })
-    return hits
+    return meta, lines
 
 
-def extract_mrf(url: str, cpts: set[str], drgs: set[str]) -> list[dict]:
-    lower = url.lower()
-    if lower.endswith(".csv"):
-        return extract_from_csv(url, cpts, drgs)
-    if lower.endswith(".json"):
-        return extract_from_json(url, cpts, drgs)
-    try:
-        return extract_from_json(url, cpts, drgs)
-    except Exception:
-        return extract_from_csv(url, cpts, drgs)
+def parse_json(path: Path) -> tuple[dict, list[dict]]:
+    doc = json.loads(path.read_text(encoding="utf-8-sig", errors="replace"))
+    meta = {k: doc.get(k) for k in ("hospital_name", "last_updated_on", "version")}
+    loc = doc.get("hospital_location")
+    meta["hospital_location"] = "|".join(loc) if isinstance(loc, list) else loc
+    lines: list[dict] = []
+    for n, item in enumerate(doc.get("standard_charge_information") or []):
+        all_codes = codes_from_pairs([(ci.get("code"), ci.get("type")) for ci in item.get("code_information") or []])
+        for sc in item.get("standard_charges") or []:
+            rates = [
+                {"payer": p.get("payer_name"), "plan": p.get("plan_name"),
+                 "dollar": parse_money(p.get("standard_charge_dollar")), "methodology": p.get("methodology")}
+                for p in sc.get("payers_information") or []
+            ]
+            lines.append({
+                "lineNo": n,
+                "description": (item.get("description") or "")[:100],
+                "all_codes": all_codes,
+                "setting": sc.get("setting"),
+                "billing_class": sc.get("billing_class"),
+                "modifiers": ",".join(sc.get("modifier_code") or []) if isinstance(sc.get("modifier_code"), list) else sc.get("modifier_code"),
+                "cash": parse_money(sc.get("discounted_cash")),
+                "gross": parse_money(sc.get("gross_charge")),
+                "rates": rates,
+            })
+    return meta, lines
 
 
-def ingest_hospital(
-    seed: dict,
-    by_id: dict[str, dict],
-    cpts: set[str],
-    drgs: set[str],
-) -> list[dict]:
-    cms_id = seed.get("cmsProviderId")
-    if not cms_id:
-        return []
+def parse_mrf(path: Path) -> tuple[dict, list[dict]]:
+    with open(path, "rb") as f:
+        first = f.read(64).lstrip(b"\xef\xbb\xbf").lstrip()
+    return parse_json(path) if first.startswith(b"{") else parse_csv(path)
 
-    hpt_text = None
-    hpt_url = None
-    for candidate in cms_hpt_candidates(seed.get("website"), seed.get("shoppableUrl")):
-        try:
-            hpt_text = fetch_text(candidate, timeout=60)
-            hpt_url = candidate
-            break
-        except Exception:
+
+# ============================================================ extraction
+
+def extract(path: Path, source: dict, hospital: dict, codes: CodeIndex, q: Quarantine) -> list[dict]:
+    meta, lines = parse_mrf(path)
+    vintage = parse_iso_date(meta.get("last_updated_on"))
+    base = {"hospitalId": hospital["id"], "mrfUrl": source["mrfUrl"], "file": path.name}
+    accepted: dict[str, list[dict]] = defaultdict(list)
+    for ln in lines:
+        matches, problems = codes.match_all_codes(ln["all_codes"])
+        sample = {**base, "line": ln["lineNo"], "description": ln["description"], "allCodes": ln["all_codes"][:160]}
+        if not matches:
+            if problems:
+                q.add("line:code_with_modifier_or_suffix", sample)
             continue
-
-    if not hpt_text:
-        print(f"  [{cms_id}] no cms-hpt.txt found")
-        return []
-
-    entries = parse_cms_hpt(hpt_text)
-    print(f"  [{cms_id}] {seed.get('name')} — {len(entries)} MRF location(s) from {hpt_url}")
-
-    proc_rows: dict[str, list[dict]] = {}
-    vintage = date.today().isoformat()
-    mrf_used = None
-
-    for entry in entries:
-        mrf_url = entry.get("mrf_url")
-        if not mrf_url:
+        procs = sorted({m[0] for m in matches})
+        if len(procs) > 1:
+            q.add("line:ambiguous_multiple_procedures", sample)
             continue
-        location = entry.get("location_name", "")
-        try:
-            raw_hits = extract_mrf(mrf_url, cpts, drgs)
-        except Exception as exc:
-            print(f"    skip {location[:40]}: {exc}")
+        pid = procs[0]
+        sample["procedureId"] = pid
+        prob = line_scope_problem(codes.scope(pid), ln["setting"], ln["billing_class"], ln["modifiers"])
+        if prob:
+            q.add(prob, sample)
             continue
-        if not raw_hits:
+        accepted[pid].append({**ln, "sample": sample, "labels": sorted({m[2] for m in matches}),
+                              "types": sorted({m[1] for m in matches})})
+    rows: list[dict] = []
+    for pid, lns in sorted(accepted.items()):
+        if not vintage:
+            q.add("row:missing_source_vintage", {**base, "procedureId": pid})
             continue
-        mrf_used = mrf_url
-        for hit in raw_hits:
-            proc_id = match_procedure(
-                hit["code"] if hit["kind"] == "cpt" else None,
-                hit["code"] if hit["kind"] == "drg" else None,
-                by_id,
-            )
-            if not proc_id:
-                continue
-            proc_rows.setdefault(proc_id, []).append(hit)
-
-    results: list[dict] = []
-    for proc_id, rows in proc_rows.items():
-        agg = aggregate_prices(rows)
-        if not agg:
-            continue
-        results.append({
-            "hospitalId": f"hosp-cms-{cms_id}",
-            "cmsProviderId": cms_id,
-            "procedureId": proc_id,
-            "cashLow": agg["cashLow"],
-            "cashMedian": agg["cashMedian"],
-            "cashHigh": agg["cashHigh"],
-            "negotiatedMedian": agg["negotiatedMedian"],
-            "negotiatedLow": None,
-            "negotiatedHigh": None,
-            "oopUninsured": agg["cashMedian"],
-            "oopPpo": round(agg["cashMedian"] * 0.15) if agg["cashMedian"] else None,
-            "oopHdhp": round(agg["cashMedian"] * 0.22) if agg["cashMedian"] else None,
+        agg = aggregate_lines(lns, codes.floor(pid), q)
+        types = sorted({t for ln in lns for t in ln["types"]})
+        row = {
+            "hospitalId": hospital["id"],
+            "cmsProviderId": hospital["cmsProviderId"],
+            "procedureId": pid,
             "priceSource": "hospital_mrf",
+            "scope": codes.scope(pid),
+            "matchType": "ms-drg" if "ms-drg" in types else ("cpt" if "cpt" in types else "hcpcs"),
+            "matchedCodes": sorted({lab for ln in lns for lab in ln["labels"]}),
+            **{k: agg[k] for k in ("cashLow", "cashMedian", "cashHigh", "negotiatedLow", "negotiatedMedian",
+                                   "negotiatedHigh", "payerCount", "grossCharge", "lineCount")},
             "priceVintage": vintage,
-            "mrfUrl": mrf_used,
-            "cmsHptUrl": hpt_url,
-        })
-    print(f"    → {len(results)} procedure price(s) extracted")
-    return results
+            "stale": False,  # set once the reference date is known
+            "mrfUrl": source["mrfUrl"],
+            "sourceDataset": source.get("cmsHptUrl"),
+            "sourceDocumentHash": source.get("sha256") and f"sha256:{source['sha256']}",
+            "sourceRetrievedAt": source.get("retrievedAt"),
+            "sourceFacilityName": source.get("locationName"),
+            "hospitalMatch": source.get("hospitalMatch"),
+        }
+        row["id"] = deterministic_id(row["mrfUrl"], row["hospitalId"], pid)
+        blocked = blocked_reason(hospital, pid, codes)
+        if blocked:
+            q.add(f"row:{blocked}", {**base, "procedureId": pid})
+            continue
+        if row["cashMedian"] is None and row["negotiatedMedian"] is None:
+            q.add("row:no_valid_cash_or_negotiated_price", {**base, "procedureId": pid})
+            continue
+        rows.append(order_row(row))
+    return rows
 
 
-def merge_direct_prices(existing: list[dict], new: list[dict]) -> list[dict]:
-    by_key: dict[tuple[str, str], dict] = {}
-    for p in existing:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        by_key[key] = p
-    for p in new:
-        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
-        by_key[key] = p
-    return list(by_key.values())
+def source_record_path(ccn: str) -> Path:
+    return MRF_CACHE / ccn / "sources.json"
+
+
+def fetch_sources(seed: dict, hospital: dict, matcher: StrictHospitalMatcher, q: Quarantine) -> None:
+    """Network step: resolve cms-hpt.txt entries for this hospital and cache its MRF(s)."""
+    ccn = hospital["cmsProviderId"]
+    hpt_text = hpt_url = None
+    for cand in cms_hpt_candidates(seed.get("website"), seed.get("shoppableUrl")):
+        try:
+            hpt_text, hpt_url = fetch_text(cand), cand
+            break
+        except Exception:  # noqa: BLE001
+            continue
+    if not hpt_text:
+        q.add("file:no_cms_hpt_txt", {"hospitalId": hospital["id"]})
+        return
+    records = []
+    for entry in parse_cms_hpt(hpt_text):
+        url = entry.get("mrf_url") or ""
+        loc = entry.get("location_name") or ""
+        if not url.startswith("https://"):
+            q.add("file:mrf_url_not_https", {"hospitalId": hospital["id"], "mrfUrl": url})
+            continue
+        h, how = matcher.match([loc], hospital.get("state") or "", {hospital.get("city") or ""},
+                               {(hospital.get("zip") or "")[:5]})
+        if not h or h["cmsProviderId"] != ccn:
+            q.add("file:cms_hpt_location_is_another_facility",
+                  {"hospitalId": hospital["id"], "locationName": loc, "mrfUrl": url,
+                   "resolvedTo": h and h["cmsProviderId"], "why": how})
+            continue
+        name = re.sub(r"[^A-Za-z0-9._-]", "_", Path(urlparse(url).path).name)[-120:] or "mrf"
+        dest = MRF_CACHE / ccn / name
+        try:
+            sha = download(url, dest)
+        except Exception as exc:  # noqa: BLE001
+            q.add("file:mrf_download_failed", {"hospitalId": hospital["id"], "mrfUrl": url, "error": str(exc)[:160]})
+            continue
+        records.append({"file": name, "mrfUrl": url, "cmsHptUrl": hpt_url, "locationName": loc,
+                        "hospitalMatch": how, "sha256": sha,
+                        "retrievedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    if records:
+        atomic_write_text(source_record_path(ccn), dump_json(records))
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int, default=0, help="Max hospital systems to process")
-    ap.add_argument("--hospital", help="CMS provider id (e.g. 330214)")
-    ap.add_argument(
-        "--append",
-        action="store_true",
-        help="Merge with existing mrf-prices.json (newer scrape wins per hospital+procedure)",
-    )
+    ap.add_argument("--limit", type=int, default=0, help="Max seed hospitals (network mode)")
+    ap.add_argument("--hospital", help="CMS provider id")
+    ap.add_argument("--offline", action="store_true", help="Only re-derive from data/mrf/cache")
     args = ap.parse_args()
 
-    by_id, cpts, drgs = load_procedure_index()
-    seeds = json.loads(SEED_HOSPITALS.read_text(encoding="utf-8"))
+    codes = CodeIndex()
+    hospitals = load_hospitals()
+    by_ccn = {h["cmsProviderId"]: h for h in hospitals}
+    hospitals_by_id = {h["id"]: h for h in hospitals}
+    matcher = StrictHospitalMatcher(hospitals)
+    q = Quarantine()
 
-    if args.hospital:
-        seeds = [s for s in seeds if s.get("cmsProviderId") == args.hospital]
-    if args.limit:
-        seeds = seeds[: args.limit]
+    if not args.offline:
+        seeds = read_json(SEED_HOSPITALS, []) or []
+        if args.hospital:
+            seeds = [s for s in seeds if s.get("cmsProviderId") == args.hospital]
+        if args.limit:
+            seeds = seeds[: args.limit]
+        for seed in seeds:
+            h = by_ccn.get(seed.get("cmsProviderId") or "")
+            if h:
+                print(f"Fetching {h['name']} ({h['cmsProviderId']})…")
+                fetch_sources(seed, h, matcher, q)
 
-    all_prices: list[dict] = []
-    seen_cms: set[str] = set()
-    for seed in seeds:
-        cms_id = seed.get("cmsProviderId")
-        if not cms_id or cms_id in seen_cms:
+    # Extraction always runs from the local cache, so the output is reproducible offline.
+    sources: list[tuple[dict, dict, Path]] = []
+    for rec_path in sorted(MRF_CACHE.glob("*/sources.json")) if MRF_CACHE.exists() else []:
+        ccn = rec_path.parent.name
+        h = by_ccn.get(ccn)
+        for rec in read_json(rec_path, []) or []:
+            p = rec_path.parent / rec["file"]
+            if not h or not p.exists():
+                q.add("file:cached_source_missing", {"ccn": ccn, "file": rec.get("file")})
+                continue
+            sources.append((rec, h, p))
+    rows: list[dict] = []
+    for rec, h, p in sources:
+        try:
+            got = extract(p, rec, h, codes, q)
+        except Exception as exc:  # noqa: BLE001
+            q.add("file:mrf_parse_error", {"file": str(p.name), "error": str(exc)[:200]})
             continue
-        seen_cms.add(cms_id)
-        print(f"Ingesting {seed.get('name')}…")
-        all_prices.extend(ingest_hospital(seed, by_id, cpts, drgs))
+        rows.extend(got)
+    # reference date = latest source vintage seen (never the build date)
+    reference_date = max((r["priceVintage"] for r in rows), default=None)
+    checked: list[dict] = []
+    for r in rows:
+        r["stale"] = is_stale(r["priceVintage"], reference_date)
+        probs = contract_problems(r, codes, hospitals_by_id)
+        if probs:
+            q.add(f"row:contract_violation:{probs[0]}", {"hospitalId": r["hospitalId"], "procedureId": r["procedureId"]})
+        else:
+            checked.append(r)
+    rows = checked
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    out_path = OUT / "mrf-prices.json"
-    if args.append and out_path.exists():
-        existing = json.loads(out_path.read_text(encoding="utf-8"))
-        all_prices = merge_direct_prices(existing, all_prices)
-    out_path.write_text(json.dumps(all_prices, indent=2), encoding="utf-8")
-    meta_path = OUT / "mrf-meta.json"
-    meta = {
-        "priceCount": len(all_prices),
-        "hospitalSystemsProcessed": len(seen_cms),
-        "source": "CMS Hospital Price Transparency MRF files (cms-hpt.txt → mrf-url)",
-        "method": "Direct download and CPT/DRG extraction from each hospital's published MRF",
-        "builtAt": date.today().isoformat(),
-        "note": "Prices are as published by hospitals. OOP PPO/HDHP are rough ratios until plan data is added.",
-    }
-    meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
-    print(f"\nWrote {len(all_prices)} prices → {out_path}")
+    # one row per hospital + procedure: most recent vintage, then more lines, then URL order
+    best: dict[tuple[str, str], dict] = {}
+    for r in sorted(rows, key=lambda r: r["mrfUrl"]):
+        k = (r["cmsProviderId"], r["procedureId"])
+        cur = best.get(k)
+        if not cur or (r["priceVintage"], r["lineCount"]) > (cur["priceVintage"], cur["lineCount"]):
+            if cur:
+                q.add("row:duplicate_superseded", {"hospitalId": cur["hospitalId"], "procedureId": cur["procedureId"], "mrfUrl": cur["mrfUrl"]})
+            best[k] = r
+        else:
+            q.add("row:duplicate_superseded", {"hospitalId": r["hospitalId"], "procedureId": r["procedureId"], "mrfUrl": r["mrfUrl"]})
+    rows = [best[k] for k in sorted(best)]
+
+    previous = read_json(OUT_PRICES, []) or []
+    keys = set(best)
+    for p in previous:
+        if (p.get("cmsProviderId"), p.get("procedureId")) not in keys:
+            q.add("row:source_not_reprocessable_offline", {
+                "hospitalId": p.get("hospitalId"), "procedureId": p.get("procedureId"),
+                "previousMrfUrl": p.get("mrfUrl"), "previousVintage": p.get("priceVintage"),
+                "why": "no cached copy of the source MRF in data/mrf/cache; cannot be re-derived under the current rules",
+            })
+
+    atomic_write_text(OUT_PRICES, dump_json(rows))
+    atomic_write_text(OUT_META, dump_json({
+        "source": "CMS Hospital Price Transparency MRF files (cms-hpt.txt -> mrf-url), cached in data/mrf/cache",
+        "method": "Strict cms-hpt location match to the hospital's CCN; explicit code types; shared contract in etl/price_contract.py",
+        "priceCount": len(rows),
+        "cmsHospitalsWithPrices": len({r["cmsProviderId"] for r in rows}),
+        "cachedSourceFiles": len(sources),
+        "referenceDate": reference_date,
+        "referenceDateRule": "latest last_updated_on among the cached source files",
+        "note": "Prices exactly as published by hospitals. Nothing is estimated.",
+    }))
+    write_quarantine_section(QUARANTINE_SECTION, q, {"referenceDate": reference_date})
+    print(f"Wrote {len(rows)} prices → {OUT_PRICES}")
+    print("Quarantine:", json.dumps(dict(sorted(q.counts.items())), indent=1))
     return 0
 
 

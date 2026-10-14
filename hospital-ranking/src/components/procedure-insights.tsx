@@ -21,8 +21,9 @@ const HISTOGRAM_WHITELIST = new Set([
 
 export function ProcedureInsights({ procedure }: { procedure: Procedure }) {
   const allowHistogram = HISTOGRAM_WHITELIST.has(procedure.id);
+  // One kind of figure only: published cash prices. Negotiated rates are a different quantity.
   const reportedPrices = getPricesForProcedure(procedure.id)
-    .map((price) => price.cashMedian ?? price.negotiatedMedian ?? null)
+    .map((price) => price.cashMedian)
     .filter((value): value is number => value != null);
 
   const histogram = buildPriceHistogram(reportedPrices);
@@ -43,19 +44,19 @@ export function ProcedureInsights({ procedure }: { procedure: Procedure }) {
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">Price distribution</h3>
+              <h3 className="text-sm font-semibold text-slate-900">Published cash prices, nationwide</h3>
               <p className="text-xs text-slate-500">
-                Trimmed to remove the bottom and top 5% of reported prices
+                One figure per hospital; the lowest and highest 5% are left off the chart
               </p>
             </div>
             <span className="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-slate-600 shadow-sm">
-              {histogram.count} reported sites
+              {histogram.count} hospitals charted
             </span>
           </div>
 
           {histogram.bins.length === 0 ? (
             <p className="mt-4 text-sm text-slate-600">
-              We do not have enough reported prices yet for a histogram.
+              Too few hospitals publish a cash price for this procedure to chart.
             </p>
           ) : (
             <div className="mt-4 space-y-3">
@@ -79,16 +80,16 @@ export function ProcedureInsights({ procedure }: { procedure: Procedure }) {
 
           {histogram.trimmedMin != null && histogram.trimmedMax != null ? (
             <p className="mt-4 text-sm text-slate-600">
-              Typical reported range after trimming: {formatCurrency(histogram.trimmedMin)} – {formatCurrency(histogram.trimmedMax)}
+              Middle 90% of published cash prices: {formatCurrency(histogram.trimmedMin)} – {formatCurrency(histogram.trimmedMax)}
             </p>
           ) : null}
         </div>
       ) : null}
 
       <div className="rounded-xl border border-slate-200 bg-white p-4">
-        <h3 className="text-sm font-semibold text-slate-900">Availability by state</h3>
+        <h3 className="text-sm font-semibold text-slate-900">Hospitals with a published price, by state</h3>
         <p className="mt-1 text-sm text-slate-600">
-          {procedure.plainName} is currently reported at {totalSites} site{totalSites === 1 ? "" : "s"} across {states.length} state{states.length === 1 ? "" : "s"}.
+          {totalSites} hospital{totalSites === 1 ? "" : "s"} in {states.length} state{states.length === 1 ? "" : "s"} publish a verifiable price for {procedure.plainName.toLowerCase()} in our data.
         </p>
 
         <div className="mt-4 flex flex-wrap gap-2">

@@ -1,5 +1,3 @@
-import type { InsuranceType, ProcedurePrice } from "./types";
-
 export function formatCurrency(amount: number | null | undefined): string {
   if (amount == null || Number.isNaN(amount)) return "—";
   return new Intl.NumberFormat("en-US", {
@@ -18,24 +16,6 @@ export function formatPriceRange(
     return `${formatCurrency(low)} – ${formatCurrency(high)}`;
   }
   return formatCurrency(low ?? high);
-}
-
-export function estimateOop(
-  price: ProcedurePrice | null,
-  insurance: InsuranceType,
-): number | null {
-  if (!price) return null;
-  switch (insurance) {
-    case "cash":
-    case "uninsured":
-      return price.cashMedian ?? price.oopUninsured;
-    case "ppo":
-      return price.oopPpo;
-    case "hdhp":
-      return price.oopHdhp;
-    default:
-      return price.cashMedian;
-  }
 }
 
 export function starLabel(stars: number | null): string {

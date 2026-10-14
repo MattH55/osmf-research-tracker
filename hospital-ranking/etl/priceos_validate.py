@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 """
-PriceOS validator CLI.
+PriceOS validator.
 
-Validates price observations against schemas, checks data quality, staleness,
-FX sanity, and orphaned foreign keys.
+Checks, and exits non-zero on failure:
+  * data/seed/procedures.json: every code in exactly one procedure, one
+    canonical scope per procedure (CodeIndex raises otherwise);
+  * data/cms/trilliant-prices.json and mrf-prices.json: the price-row contract
+    (etl/price_contract.contract_problems), no estimate/OOP fields, no
+    duplicate hospital+procedure, deterministic id present;
+  * data/observations/*.jsonl: JSON schema (schema/price_observation.schema.json),
+    foreign keys (facility_id -> data/cms/hospitals.json or the international
+    facility registry; procedure_id -> procedures.json), canonical scope,
+    matched codes belong to the procedure, amount within bounds, stale flag
+    consistent with the dataset reference date, unique ids.
+
+--strict also fails on warnings.
 
 USAGE:
-  python etl/priceos_validate.py data/observations/
-  python etl/priceos_validate.py data/observations/ --strict
-  python etl/priceos_validate.py data/observations/ --report json
+  python etl/priceos_validate.py [data_dir] [--strict] [--report text|json]
 """
 
 from __future__ import annotations
@@ -16,273 +25,237 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import date, datetime, timedelta
+from collections import Counter
 from pathlib import Path
 
 try:
     import jsonschema
 except ImportError:
     print("Error: jsonschema not installed. Run: pip install jsonschema", file=sys.stderr)
-    sys.exit(1)
+    sys.exit(2)
 
-ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from price_contract import (  # noqa: E402
+    FORBIDDEN_FIELDS,
+    ROOT,
+    CodeIndex,
+    contract_problems,
+    is_stale,
+    normalize_drg,
+    read_json,
+    valid_amount,
+)
+from migrate_to_observation_store import procedure_slug  # noqa: E402
+
 SCHEMA_DIR = ROOT / "schema"
 DATA_DIR = ROOT / "data"
-
-SCHEMAS = {
-    "price_observation": json.loads((SCHEMA_DIR / "price_observation.schema.json").read_text()),
-    "facility": json.loads((SCHEMA_DIR / "facility.schema.json").read_text()),
-    "procedure": json.loads((SCHEMA_DIR / "procedure.schema.json").read_text()),
+OBS_SCHEMA = json.loads((SCHEMA_DIR / "price_observation.schema.json").read_text(encoding="utf-8"))
+PRICE_FILES = ("trilliant-prices.json", "mrf-prices.json")
+REFERENCE_META = {
+    "us-mrf-trilliant.jsonl": "trilliant-meta.json",
+    "us-mrf-direct.jsonl": "mrf-meta.json",
 }
 
 
-class ValidationResult:
-    def __init__(self):
+class Result:
+    def __init__(self) -> None:
         self.errors: list[dict] = []
         self.warnings: list[dict] = []
+        self.codes: Counter = Counter()
         self.stats: dict = {
-            "total_observations": 0,
+            "price_rows": {},
+            "observations": 0,
             "valid_observations": 0,
-            "schema_errors": 0,
-            "data_quality_issues": 0,
             "stale_observations": 0,
-            "missing_required_fields": 0,
-            "observations_by_source": {},
-            "observations_by_procedure": {},
-            "completeness_score_stats": {
-                "min": None,
-                "max": None,
-                "mean": None,
-            },
+            "observations_by_procedure": Counter(),
         }
-        self.facilities: dict[str, dict] = {}
-        self.procedures: set[str] = set()
 
-    def add_error(self, file_path: str, line_num: int | None, message: str, code: str):
-        self.errors.append({
-            "file": str(file_path),
-            "line": line_num,
-            "message": message,
-            "code": code,
-        })
-        if code.startswith("SCHEMA_"):
-            self.stats["schema_errors"] += 1
-        else:
-            self.stats["data_quality_issues"] += 1
+    def error(self, where: str, code: str, msg: str) -> None:
+        self.codes[code] += 1
+        self.errors.append({"where": where, "code": code, "message": msg})
 
-    def add_warning(self, file_path: str, line_num: int | None, message: str, code: str):
-        self.warnings.append({
-            "file": str(file_path),
-            "line": line_num,
-            "message": message,
-            "code": code,
-        })
+    def warn(self, where: str, code: str, msg: str) -> None:
+        self.codes[code] += 1
+        self.warnings.append({"where": where, "code": code, "message": msg})
 
     def to_dict(self) -> dict:
         return {
-            "summary": {
-                "total_errors": len(self.errors),
-                "total_warnings": len(self.warnings),
-                "pass": len(self.errors) == 0,
-                "stats": self.stats,
-            },
-            "errors": self.errors[:100],  # Limit output
-            "warnings": self.warnings[:100],
+            "pass": not self.errors,
+            "errors": len(self.errors),
+            "warnings": len(self.warnings),
+            "byCode": dict(sorted(self.codes.items())),
+            "stats": {**self.stats, "observations_by_procedure": dict(sorted(self.stats["observations_by_procedure"].items()))},
+            "firstErrors": self.errors[:50],
+            "firstWarnings": self.warnings[:50],
         }
 
     def to_text(self) -> str:
-        lines = []
-        lines.append(f"{'='*60}")
-        lines.append(f"Validation Results")
-        lines.append(f"{'='*60}")
-        lines.append(f"Total observations: {self.stats['total_observations']}")
-        lines.append(f"Valid: {self.stats['valid_observations']}")
-        lines.append(f"Schema errors: {self.stats['schema_errors']}")
-        lines.append(f"Data quality issues: {self.stats['data_quality_issues']}")
-        lines.append(f"Stale: {self.stats['stale_observations']}")
-        lines.append(f"")
-        lines.append(f"Observations by source:")
-        for source, count in sorted(self.stats["observations_by_source"].items()):
-            lines.append(f"  {source}: {count}")
-        lines.append(f"")
-        lines.append(f"Observations by procedure:")
-        for proc, count in sorted(self.stats["observations_by_procedure"].items()):
-            lines.append(f"  {proc}: {count}")
-        lines.append(f"")
-        if self.stats["completeness_score_stats"]["mean"]:
-            cs = self.stats["completeness_score_stats"]
-            lines.append(f"Completeness scores: min={cs['min']:.2f}, max={cs['max']:.2f}, mean={cs['mean']:.2f}")
-        lines.append(f"")
-        if self.errors:
-            lines.append(f"Errors ({len(self.errors)} shown, {len(self.errors)} total):")
-            for err in self.errors[:20]:
-                lines.append(f"  {err['code']}: {err['message']} ({err['file']})")
-            if len(self.errors) > 20:
-                lines.append(f"  ... and {len(self.errors) - 20} more")
-        if self.warnings:
-            lines.append(f"")
-            lines.append(f"Warnings ({len(self.warnings)} shown, {len(self.warnings)} total):")
-            for warn in self.warnings[:10]:
-                lines.append(f"  {warn['code']}: {warn['message']}")
-            if len(self.warnings) > 10:
-                lines.append(f"  ... and {len(self.warnings) - 10} more")
-        lines.append(f"")
+        lines = ["=" * 60, "PriceOS validation", "=" * 60]
+        for f, n in self.stats["price_rows"].items():
+            lines.append(f"Price rows {f}: {n}")
+        lines.append(f"Observations: {self.stats['observations']} (schema-valid {self.stats['valid_observations']}, stale {self.stats['stale_observations']})")
+        lines.append(f"Errors: {len(self.errors)}   Warnings: {len(self.warnings)}")
+        for code, n in sorted(self.codes.items()):
+            lines.append(f"  {code}: {n}")
+        for e in self.errors[:20]:
+            lines.append(f"  ERROR {e['code']}: {e['message']} ({e['where']})")
+        for w in self.warnings[:10]:
+            lines.append(f"  WARN  {w['code']}: {w['message']} ({w['where']})")
+        lines.append("PASS" if not self.errors else "FAIL")
         return "\n".join(lines)
 
 
-def validate_observation(obs: dict, file_path: str, line_num: int, result: ValidationResult) -> bool:
-    result.stats["total_observations"] += 1
-
-    # Schema validation
-    try:
-        jsonschema.validate(obs, SCHEMAS["price_observation"])
-    except jsonschema.ValidationError as e:
-        result.add_error(file_path, line_num, f"Schema validation: {e.message}", "SCHEMA_INVALID")
-        return False
-
-    result.stats["valid_observations"] += 1
-
-    # Track facility/procedure references
-    result.facilities[obs.get("facility_id")] = {"id": obs.get("facility_id")}
-    result.procedures.add(obs.get("procedure_slug", "unknown"))
-
-    # Update stats — use canonical provenance.source_type field (not legacy priceSource)
-    source = obs.get("provenance", {}).get("source_type", "unknown")
-    result.stats["observations_by_source"][source] = result.stats["observations_by_source"].get(source, 0) + 1
-
-    proc = obs.get("procedure_slug", "unknown")
-    result.stats["observations_by_procedure"][proc] = result.stats["observations_by_procedure"].get(proc, 0) + 1
-
-    # Check for stale observations (>18 months old)
-    obs_date_str = obs.get("observation_date")
-    if obs_date_str:
-        try:
-            obs_date = datetime.fromisoformat(obs_date_str).date()
-            cutoff = date.today() - timedelta(days=18 * 30)
-            if obs_date < cutoff:
-                result.stats["stale_observations"] += 1
-                result.add_warning(
-                    file_path, line_num,
-                    f"Observation from {obs_date} is >18 months old",
-                    "STALENESS_WARNING"
-                )
-        except (ValueError, TypeError):
-            pass
-
-    # Check for missing required provenance fields
-    prov = obs.get("provenance", {})
-    if not prov.get("source_url"):
-        result.add_error(file_path, line_num, "Missing required provenance.source_url", "PROVENANCE_MISSING_URL")
-    if not obs.get("observation_date"):
-        result.add_error(file_path, line_num, "Missing required observation_date", "PROVENANCE_MISSING_DATE")
-
-    # Check bundle completeness
-    bundle = obs.get("bundle", {})
-    if bundle is None:
-        result.add_error(file_path, line_num, "bundle must not be null (use includes: [])", "BUNDLE_NULL")
-    else:
-        cs = bundle.get("completeness_score")
-        if cs is not None:
-            if result.stats["completeness_score_stats"]["min"] is None:
-                result.stats["completeness_score_stats"]["min"] = cs
-                result.stats["completeness_score_stats"]["max"] = cs
-                result.stats["completeness_score_stats"]["mean"] = 0
-            else:
-                result.stats["completeness_score_stats"]["min"] = min(
-                    result.stats["completeness_score_stats"]["min"], cs
-                )
-                result.stats["completeness_score_stats"]["max"] = max(
-                    result.stats["completeness_score_stats"]["max"], cs
-                )
-            total = sum(
-                result.stats["observations_by_procedure"].values()
-            )
-            result.stats["completeness_score_stats"]["mean"] = (
-                result.stats["completeness_score_stats"]["mean"] * (total - 1) / total + cs / total
-            )
-
-    # FX sanity check
-    amount_native = obs.get("amount_native")
-    amount_usd = obs.get("amount_usd")
-    fx_rate = obs.get("fx_rate_to_usd")
-    if all([amount_native, amount_usd, fx_rate]):
-        computed_usd = round(amount_native * fx_rate, 2)
-        if abs(computed_usd - amount_usd) > 1:
-            result.add_warning(
-                file_path, line_num,
-                f"FX mismatch: {amount_native} * {fx_rate} = {computed_usd}, but amount_usd = {amount_usd}",
-                "FX_MISMATCH"
-            )
-
-    # Sanity: currency vs FX rate
-    currency = obs.get("currency")
-    if currency == "USD" and fx_rate and abs(fx_rate - 1.0) > 0.01:
-        result.add_warning(
-            file_path, line_num,
-            f"USD price should have fx_rate_to_usd = 1.0, but got {fx_rate}",
-            "FX_USD_MISMATCH"
-        )
-
-    return True
+def load_facility_ids(data_dir: Path) -> set[str]:
+    ids = {h["id"] for h in read_json(data_dir / "cms" / "hospitals.json", []) or []}
+    reg = read_json(data_dir / "adapters" / "facility_registry.json", None)
+    if isinstance(reg, list):
+        ids |= {f.get("facility_id") for f in reg if isinstance(f, dict) and f.get("facility_id")}
+    elif isinstance(reg, dict):
+        items = reg.get("facilities") if isinstance(reg.get("facilities"), list) else list(reg.values())
+        for f in items:
+            if isinstance(f, dict) and f.get("facility_id"):
+                ids.add(f["facility_id"])
+    return ids
 
 
-def validate_data_dir(data_dir: Path, result: ValidationResult, strict: bool = False) -> int:
-    """Validate all observation files in data directory."""
+def validate_price_files(data_dir: Path, codes: CodeIndex, hospitals_by_id: dict, res: Result) -> None:
+    for name in PRICE_FILES:
+        path = data_dir / "cms" / name
+        rows = read_json(path, None)
+        if rows is None:
+            res.error(name, "PRICE_FILE_MISSING", f"{path} not found")
+            continue
+        if not isinstance(rows, list):
+            res.error(name, "PRICE_FILE_NOT_ARRAY", "price file must be a JSON array")
+            continue
+        res.stats["price_rows"][name] = len(rows)
+        seen: set[tuple[str, str]] = set()
+        ids: set[str] = set()
+        for i, r in enumerate(rows):
+            where = f"{name}[{i}]"
+            for p in contract_problems(r, codes, hospitals_by_id):
+                res.error(where, "ROW_CONTRACT", f"{r.get('hospitalId')}/{r.get('procedureId')}: {p}")
+            bad = FORBIDDEN_FIELDS & set(r)
+            if bad:
+                res.error(where, "ROW_ESTIMATE_FIELD", f"forbidden fields {sorted(bad)}")
+            key = (r.get("hospitalId"), r.get("procedureId"))
+            if key in seen:
+                res.error(where, "ROW_DUPLICATE", f"duplicate hospital+procedure {key}")
+            seen.add(key)
+            if not r.get("id"):
+                res.error(where, "ROW_NO_ID", "missing deterministic id")
+            elif r["id"] in ids:
+                res.error(where, "ROW_DUPLICATE_ID", r["id"])
+            ids.add(r.get("id"))
+            if r.get("priceSource") != ("trilliant_mrf" if name.startswith("trilliant") else "hospital_mrf"):
+                res.error(where, "ROW_WRONG_SOURCE_FILE", f"priceSource {r.get('priceSource')} in {name}")
+            for c in r.get("matchedCodes") or []:
+                ctype, _, val = str(c).partition(":")
+                owner = codes.drg.get(normalize_drg(val)) if ctype == "MS-DRG" else codes.cpt.get(val)
+                if owner != r.get("procedureId"):
+                    res.error(where, "ROW_CODE_NOT_IN_PROCEDURE", f"{c} does not belong to {r.get('procedureId')}")
+            for k in ("mrfUrl", "sourceDataset"):
+                v = r.get(k)
+                if v and (not str(v).startswith("https://") or "\\" in str(v)):
+                    res.error(where, "ROW_LOCAL_OR_INSECURE_URL", f"{k}={v}")
+
+
+def validate_observations(data_dir: Path, codes: CodeIndex, facility_ids: set[str], res: Result) -> None:
     obs_dir = data_dir / "observations"
-    if not obs_dir.exists():
-        print(f"Directory not found: {obs_dir}", file=sys.stderr)
-        return 1
-
-    obs_files = sorted(obs_dir.glob("*.jsonl"))
-    if not obs_files:
-        print(f"No .jsonl files found in {obs_dir}", file=sys.stderr)
-        return 1
-
-    total_files = len(obs_files)
-    for i, path in enumerate(obs_files, 1):
-        print(f"[{i}/{total_files}] Validating {path.name}…", file=sys.stderr)
-        try:
-            with open(path, encoding="utf-8") as f:
-                for line_num, line in enumerate(f, 1):
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        obs = json.loads(line)
-                        validate_observation(obs, str(path), line_num, result)
-                    except json.JSONDecodeError as e:
-                        result.add_error(path, line_num, f"Invalid JSON: {e}", "JSON_PARSE_ERROR")
-        except OSError as e:
-            print(f"Error reading {path}: {e}", file=sys.stderr)
-            return 1
-
-    # Check for orphaned FKs (references to non-existent facilities/procedures)
-    print(f"Checking foreign keys…", file=sys.stderr)
-    # This is deferred: would need to load facility.json and procedure.json
-
-    return 0 if len(result.errors) == 0 or not strict else 1
+    files = sorted(obs_dir.glob("*.jsonl")) if obs_dir.exists() else []
+    if not files:
+        res.error(str(obs_dir), "OBS_NONE", "no observation files")
+        return
+    validator = jsonschema.Draft7Validator(OBS_SCHEMA, format_checker=jsonschema.FormatChecker())
+    known_slugs = {procedure_slug(p["id"]) for p in codes.procedures}
+    seen_ids: set[str] = set()
+    seen_keys: set[tuple] = set()
+    for path in files:
+        meta_name = REFERENCE_META.get(path.name)
+        ref = (read_json(data_dir / "cms" / meta_name, {}) or {}).get("referenceDate") if meta_name else None
+        with open(path, encoding="utf-8") as f:
+            for n, line in enumerate(f, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                where = f"{path.name}:{n}"
+                res.stats["observations"] += 1
+                try:
+                    obs = json.loads(line)
+                except json.JSONDecodeError as e:
+                    res.error(where, "OBS_JSON", str(e))
+                    continue
+                errs = sorted(validator.iter_errors(obs), key=lambda e: list(e.path))
+                if errs:
+                    for e in errs[:3]:
+                        res.error(where, "OBS_SCHEMA", f"{'/'.join(map(str, e.path))}: {e.message}")
+                    continue
+                res.stats["valid_observations"] += 1
+                oid = obs["observation_id"]
+                if oid in seen_ids:
+                    res.error(where, "OBS_DUPLICATE_ID", oid)
+                seen_ids.add(oid)
+                key = (obs["facility_id"], obs.get("procedure_id") or obs["procedure_slug"], obs["price_type"])
+                if key in seen_keys:
+                    res.error(where, "OBS_DUPLICATE", f"{key}")
+                seen_keys.add(key)
+                if obs["facility_id"] not in facility_ids:
+                    res.error(where, "FK_FACILITY", f"facility_id {obs['facility_id']} not in hospitals.json / facility registry")
+                pid = obs.get("procedure_id")
+                if pid is not None and pid not in codes.by_id:
+                    res.error(where, "FK_PROCEDURE", f"procedure_id {pid} not in procedures.json")
+                if obs["procedure_slug"] not in known_slugs:
+                    res.error(where, "FK_PROCEDURE_SLUG", f"procedure_slug {obs['procedure_slug']} unknown")
+                if pid in codes.by_id:
+                    res.stats["observations_by_procedure"][pid] += 1
+                    if obs.get("scope") != codes.scope(pid):
+                        res.error(where, "OBS_SCOPE", f"{pid} scope {obs.get('scope')} != {codes.scope(pid)}")
+                    for c in obs.get("matched_codes") or []:
+                        ctype, _, val = c.partition(":")
+                        owner = codes.drg.get(normalize_drg(val)) if ctype == "MS-DRG" else codes.cpt.get(val)
+                        if owner != pid:
+                            res.error(where, "OBS_CODE_NOT_IN_PROCEDURE", f"{c} not a code of {pid}")
+                    if valid_amount(obs["amount_usd"], codes.floor(pid)) is None:
+                        res.error(where, "OBS_OUT_OF_BOUNDS", f"{pid} amount {obs['amount_usd']}")
+                if obs.get("stale"):
+                    res.stats["stale_observations"] += 1
+                if ref and bool(obs.get("stale")) != is_stale(obs["observation_date"], ref):
+                    res.error(where, "OBS_STALE_FLAG", f"stale={obs.get('stale')} but date {obs['observation_date']} vs reference {ref}")
+                if obs["observation_date"] > (ref or "9999-12-31"):
+                    res.error(where, "OBS_DATE_AFTER_REFERENCE", f"{obs['observation_date']} > {ref}")
+                amount_native, amount_usd, fx = obs["amount_native"], obs["amount_usd"], obs["fx_rate_to_usd"]
+                if abs(round(amount_native * fx, 2) - amount_usd) > 1:
+                    res.warn(where, "FX_MISMATCH", f"{amount_native} * {fx} != {amount_usd}")
+                if obs["currency"] == "USD" and abs(fx - 1.0) > 0.01:
+                    res.warn(where, "FX_USD_MISMATCH", f"USD with fx {fx}")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="PriceOS data validator")
-    ap.add_argument("data_dir", nargs="?", default=str(DATA_DIR), help="Data directory to validate")
-    ap.add_argument("--strict", action="store_true", help="Fail on any error or warning")
-    ap.add_argument("--report", choices=["text", "json"], default="text", help="Output format")
+    ap.add_argument("data_dir", nargs="?", default=str(DATA_DIR))
+    ap.add_argument("--strict", action="store_true", help="Fail on warnings as well as errors")
+    ap.add_argument("--report", choices=["text", "json"], default="text")
     args = ap.parse_args()
-
     data_dir = Path(args.data_dir)
-    result = ValidationResult()
-
-    rc = validate_data_dir(data_dir, result, args.strict)
-    if rc != 0:
-        return rc
-
-    if args.report == "json":
-        print(json.dumps(result.to_dict(), indent=2))
-    else:
-        print(result.to_text())
-
-    return 0 if len(result.errors) == 0 else 1
+    if data_dir.name == "observations":
+        data_dir = data_dir.parent
+    res = Result()
+    try:
+        codes = CodeIndex()
+    except ValueError as e:
+        res.error("data/seed/procedures.json", "PROCEDURE_CODE_MAP", str(e))
+        print(res.to_text())
+        return 1
+    hospitals = read_json(data_dir / "cms" / "hospitals.json", []) or []
+    hospitals_by_id = {h["id"]: h for h in hospitals}
+    validate_price_files(data_dir, codes, hospitals_by_id, res)
+    validate_observations(data_dir, codes, load_facility_ids(data_dir), res)
+    print(json.dumps(res.to_dict(), indent=2) if args.report == "json" else res.to_text())
+    if res.errors:
+        return 1
+    if args.strict and res.warnings:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

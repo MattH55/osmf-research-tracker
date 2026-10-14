@@ -2,8 +2,11 @@
 """
 Run Trilliant ORIA ingest in resumable batches until the full index is processed.
 
-ORIA has ~7,600 completed hospitals. Each batch downloads parsed DuckDB files,
-extracts our 24 procedure codes, and appends to trilliant-prices.json.
+ORIA has ~7,600 completed hospitals. Each batch downloads parsed DuckDB files
+into data/trilliant/cache, extracts the procedures under the shared price
+contract, and merges into trilliant-prices.json. After a full download, run
+`python etl/ingest_trilliant.py --rescan-cache` to rebuild everything from the
+cache in one deterministic pass.
 
 USAGE:
   python etl/run_trilliant_batches.py --batch-size 250 --workers 4
@@ -144,7 +147,17 @@ def main() -> int:
                 f"{meta.get('cmsHospitalsWithPrices')} CMS hospitals"
             )
 
-        offset += args.batch_size
+        # Advance from what the batch actually recorded, never by assumption: the
+        # ingest writes nextOffset = end of the slice it attempted, and keeps any
+        # entries that failed to download in failedSlugs for a later retry.
+        progress = read_progress() or {}
+        next_offset = progress.get("nextOffset")
+        if next_offset is None or int(next_offset) <= offset:
+            print(f"Progress file did not advance past offset {offset}; stopping.", file=sys.stderr)
+            return 1
+        if progress.get("failedSlugs"):
+            print(f"  {len(progress['failedSlugs'])} index entries awaiting retry (failedSlugs in progress file)")
+        offset = int(next_offset)
 
     print("\nDone.")
     return 0

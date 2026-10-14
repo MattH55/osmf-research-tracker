@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """
-Build static JSON data files for the US price browser page.
+Build static JSON data files for the US price browser page (docs/browse.html).
 
-Reads the real observation store (data/observations/*.jsonl) and emits:
-  docs/data/summary.json                — per-procedure counts + price stats
-  docs/data/procedures/{slug}.json       — every real observation for that procedure
+Reads the observation store (data/observations/*.jsonl) and emits:
+  docs/data/summary.json               per-procedure counts + price stats
+  docs/data/procedures/{slug}.json     one row per hospital for that procedure
 
-No fabricated data. No international data (none exists yet — see
-etl/adapters/, which currently fail against robots.txt on every target site).
-This only publishes what's actually in the observation store.
+Same contract as the app (etl/price_contract.py): only prices published in
+hospital MRFs; nothing modelled or estimated; no out-of-pocket figures. Each
+hospital appears once per procedure with its headline figure: the published
+discounted cash price when there is one, otherwise the median payer-negotiated
+rate (price_type says which). Values outside the shared bounds (<= $0,
+>= $500,000, sentinels, below the procedure floor) never reach the store, and
+any that did would be dropped here, not shown.
 
 USAGE:
   python etl/build_browser_data.py
@@ -18,255 +22,155 @@ from __future__ import annotations
 
 import json
 import statistics
+import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from price_contract import PRICE_CEILING, ROOT, CodeIndex, atomic_write_text, read_json, valid_amount  # noqa: E402
+from migrate_to_observation_store import procedure_slug  # noqa: E402
+
 OBS_DIR = ROOT / "data" / "observations"
 OUT_DIR = ROOT / "docs" / "data"
 PROC_OUT_DIR = OUT_DIR / "procedures"
 HOSPITALS_JSON = ROOT / "data" / "cms" / "hospitals.json"
-PROCEDURES_SEED = ROOT / "data" / "seed" / "procedures.json"
-
-# Same proc-id -> observation-slug aliasing used by migrate_to_observation_store.py
-PROC_ID_ALIASES = {
-    "proc-knee-replacement": "tka",
-    "proc-hip-replacement": "tha",
-    "proc-cataract-surgery": "cataract",
-    "proc-shoulder-replacement": "shoulder",
-}
-
-
-def load_procedure_code_scope() -> dict[str, dict]:
-    """slug -> {cpt_codes, drg_codes, mixed_scope} from the real procedure ontology.
-
-    The Trilliant ingest query matches each procedure by
-    `WHERE cpt IN (...) OR ms_drg IN (...)` (etl/ingest_trilliant.py) but does
-    NOT record which code type actually matched a given hospital's row before
-    it reaches trilliant-prices.json. For any procedure defined with BOTH CPT
-    and MS-DRG codes, that means some rows may be a line-item professional/
-    facility charge (CPT) and others a full bundled inpatient rate (MS-DRG) —
-    fundamentally different billing scopes. This is not fabricated or inferred
-    per-row; it's a real, checkable property of the procedure definition.
-    """
-    if not PROCEDURES_SEED.exists():
-        return {}
-    procs = json.loads(PROCEDURES_SEED.read_text(encoding="utf-8"))
-    out = {}
-    for p in procs:
-        pid = p.get("id", "")
-        slug = PROC_ID_ALIASES.get(pid, pid.replace("proc-", ""))
-        cpt_codes = p.get("cptCodes") or []
-        drg_codes = p.get("drgCodes") or []
-        out[slug] = {
-            "cpt_codes": cpt_codes,
-            "drg_codes": drg_codes,
-            "mixed_scope": bool(cpt_codes) and bool(drg_codes),
-            "multi_cpt": len(cpt_codes) > 1,
-        }
-    return out
-
-OBS_FILES = [
-    OBS_DIR / "us-mrf-trilliant.jsonl",
-    OBS_DIR / "us-mrf-direct.jsonl",
-]
+OBS_FILES = [OBS_DIR / "us-mrf-trilliant.jsonl", OBS_DIR / "us-mrf-direct.jsonl"]
+SOURCE_PRIORITY = {"adapter:direct_hospital_mrf_v2": 0, "adapter:trilliant_oria_v2": 1}
 
 
 def load_observations() -> list[dict]:
-    observations = []
+    out = []
     for path in OBS_FILES:
-        if not path.exists():
-            continue
-        with open(path, encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                observations.append(json.loads(line))
-    return observations
-
-
-def load_facility_locations() -> dict[str, dict]:
-    """facility_id -> {zip, city, state} from real CMS hospital directory."""
-    if not HOSPITALS_JSON.exists():
-        return {}
-    hospitals = json.loads(HOSPITALS_JSON.read_text(encoding="utf-8"))
-    lookup = {}
-    for h in hospitals:
-        fid = h.get("id")
-        if not fid:
-            continue
-        lookup[fid] = {
-            "zip": h.get("zip"),
-            "city": h.get("city"),
-            "state": h.get("state"),
-        }
-    return lookup
-
-
-OUTLIER_CEILING_USD = 500_000  # no legitimate single-procedure cash price should exceed this
-SENTINEL_VALUES = {999999999.0, 999999.0}
-
-
-def is_outlier(amount_usd: float | None) -> bool:
-    """Flag obviously corrupt values from upstream MRF parsing (sentinels, decimal
-    errors) so they can be excluded from stats/histograms without being hidden
-    from the table. See docs/us-data-inventory.md — this is a known upstream
-    Trilliant extraction defect, not something fabricated or corrected here."""
-    if amount_usd is None:
-        return True
-    if amount_usd in SENTINEL_VALUES:
-        return True
-    if amount_usd <= 0 or amount_usd >= OUTLIER_CEILING_USD:
-        return True
-    return False
+        if path.exists():
+            with open(path, encoding="utf-8") as f:
+                out.extend(json.loads(line) for line in f if line.strip())
+    return out
 
 
 def main() -> int:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    PROC_OUT_DIR.mkdir(parents=True, exist_ok=True)
-
-    print("Loading observations…")
+    codes = CodeIndex()
+    hospitals = {h["id"]: h for h in read_json(HOSPITALS_JSON, []) or []}
     observations = load_observations()
-    print(f"Loaded {len(observations)} real observations")
+    print(f"Loaded {len(observations)} observations")
 
-    print("Loading facility locations (zip/city/state)…")
-    locations = load_facility_locations()
-    print(f"Loaded locations for {len(locations)} facilities")
-
-    print("Loading procedure code scope (CPT vs MS-DRG)…")
-    code_scope = load_procedure_code_scope()
-    n_mixed = sum(1 for v in code_scope.values() if v["mixed_scope"])
-    print(f"{n_mixed}/{len(code_scope)} procedures mix CPT + MS-DRG scope")
-
-    by_procedure: dict[str, list[dict]] = defaultdict(list)
-    for obs in observations:
-        by_procedure[obs["procedure_slug"]].append(obs)
-
-    summary = []
-    total_outliers = 0
-    for slug, rows in sorted(by_procedure.items()):
-        # Compact rows for the per-procedure file: only what the UI needs
-        compact_rows = []
-        for r in rows:
-            prov = r.get("provenance", {})
-            loc = locations.get(r.get("facility_id"), {})
-            outlier = is_outlier(r.get("amount_usd"))
-            compact_rows.append({
-                "facility_id": r.get("facility_id"),
-                "facility_name": (r.get("notes") or "").replace("Migrated from Trilliant. Facility: ", "").replace("Migrated from direct_hospital_mrf. Facility: ", ""),
-                "amount_usd": r.get("amount_usd"),
-                "price_type": r.get("price_type"),
-                "completeness_score": (r.get("bundle") or {}).get("completeness_score"),
-                "bundle_includes": (r.get("bundle") or {}).get("includes", []),
-                "observation_date": r.get("observation_date"),
-                "stale": r.get("stale", False),
-                "source_url": prov.get("source_url"),
-                "source_type": prov.get("source_type"),
-                "zip": loc.get("zip"),
-                "city": loc.get("city"),
-                "state": loc.get("state"),
-                "outlier": outlier,
-            })
-        compact_rows.sort(key=lambda x: x["amount_usd"])
-
-        # Stats are computed ONLY from non-outlier rows so a single corrupt
-        # value (e.g. a $999,999,999 sentinel) can't distort the median or
-        # blow out the histogram range. Outlier rows stay in the row list —
-        # nothing is deleted or hidden, only excluded from aggregate stats.
-        prices = [r["amount_usd"] for r in compact_rows if not r["outlier"]]
-        n_outliers = sum(1 for r in compact_rows if r["outlier"])
-        total_outliers += n_outliers
-        if not prices:
+    # headline per (facility, procedure): direct MRF before Trilliant; cash before negotiated
+    best: dict[tuple[str, str], dict] = {}
+    dropped = 0
+    for o in observations:
+        pid = o.get("procedure_id")
+        if pid not in codes.by_id or o.get("is_estimate"):
+            dropped += 1
             continue
-        prices.sort()
+        if valid_amount(o.get("amount_usd"), codes.floor(pid)) is None:
+            dropped += 1
+            continue
+        rank = (SOURCE_PRIORITY.get(o["provenance"].get("extracted_by"), 9),
+                0 if o["price_type"] == "discounted_cash" else 1)
+        key = (o["facility_id"], pid)
+        if key not in best or rank < best[key][0]:
+            best[key] = (rank, o)
 
-        # Trim bottom 2.5% and top 2.5% of the distribution before computing
-        # stats, so that extreme-low and extreme-high values don't skew the
-        # summary statistics or histogram range (5% total removed).
-        n_prices = len(prices)
-        trim_n = max(0, int(n_prices * 0.025))
-        trimmed_prices = prices[trim_n:n_prices - trim_n] if trim_n > 0 else prices
-        n_trimmed = n_prices - len(trimmed_prices)
-
-        proc_file = PROC_OUT_DIR / f"{slug}.json"
-        proc_file.write_text(json.dumps(compact_rows), encoding="utf-8")
-
-        matched_zip = sum(1 for r in compact_rows if r["zip"])
-        scope = code_scope.get(slug, {})
-        summary.append({
-            "slug": slug,
-            "count": len(prices),                  # full non-outlier count
-            "trimmed_count": len(trimmed_prices),  # count after bottom/top 2.5% trim
-            "total_rows": len(compact_rows),
-            "outliers_excluded": n_outliers,
-            "trimmed_excluded": n_trimmed,
-            "min_usd": round(min(trimmed_prices), 2),
-            "median_usd": round(statistics.median(trimmed_prices), 2),
-            "max_usd": round(max(trimmed_prices), 2),
-            "mean_usd": round(statistics.mean(trimmed_prices), 2),
-            "with_zip": matched_zip,
-            "cpt_codes": scope.get("cpt_codes", []),
-            "drg_codes": scope.get("drg_codes", []),
-            "mixed_scope": scope.get("mixed_scope", False),
-            "multi_cpt": scope.get("multi_cpt", False),
+    by_proc: dict[str, list[dict]] = defaultdict(list)
+    for (_fid, pid), (_rank, o) in best.items():
+        h = hospitals.get(o["facility_id"], {})
+        prov = o["provenance"]
+        by_proc[pid].append({
+            "facility_id": o["facility_id"],
+            "facility_name": h.get("name") or o["facility_id"],
+            "amount_usd": o["amount_usd"],
+            "amount_low": o.get("amount_low"),
+            "amount_high": o.get("amount_high"),
+            "price_type": o["price_type"],
+            "payer_count": o.get("payer_count"),
+            "scope": o["scope"],
+            "matched_codes": o["matched_codes"],
+            "completeness_score": o["bundle"]["completeness_score"],
+            "bundle_includes": o["bundle"]["includes"],
+            "observation_date": o["observation_date"],
+            "stale": o["stale"],
+            "source_url": prov.get("source_url"),
+            "source_dataset": prov.get("source_dataset"),
+            "source_type": prov.get("source_type"),
+            "zip": h.get("zip"),
+            "city": h.get("city"),
+            "state": h.get("state"),
+            "outlier": False,
         })
 
-    summary.sort(key=lambda x: -x["count"])
+    PROC_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for old in PROC_OUT_DIR.glob("*.json"):
+        old.unlink()
 
-    summary_out = {
-        "generated_from": "data/observations/*.jsonl (real US MRF/Trilliant data)",
+    summary = []
+    for p in codes.procedures:
+        pid = p["id"]
+        rows = sorted(by_proc.get(pid, []), key=lambda r: (r["amount_usd"], r["facility_id"]))
+        if not rows:
+            continue
+        slug = procedure_slug(pid)
+        atomic_write_text(PROC_OUT_DIR / f"{slug}.json", json.dumps(rows, ensure_ascii=False))
+        prices = [r["amount_usd"] for r in rows]
+        trim_n = int(len(prices) * 0.025)
+        trimmed = prices[trim_n:len(prices) - trim_n] if trim_n else prices
+        summary.append({
+            "slug": slug,
+            "procedure_id": pid,
+            "count": len(prices),
+            "trimmed_count": len(trimmed),
+            "total_rows": len(rows),
+            "cash_rows": sum(1 for r in rows if r["price_type"] == "discounted_cash"),
+            "negotiated_rows": sum(1 for r in rows if r["price_type"] == "negotiated"),
+            "outliers_excluded": 0,
+            "trimmed_excluded": len(prices) - len(trimmed),
+            "min_usd": round(min(trimmed), 2),
+            "median_usd": round(statistics.median(trimmed), 2),
+            "max_usd": round(max(trimmed), 2),
+            "mean_usd": round(statistics.mean(trimmed), 2),
+            "with_zip": sum(1 for r in rows if r["zip"]),
+            "scope": p["scope"],
+            "cpt_codes": p.get("cptCodes") or [],
+            "drg_codes": p.get("drgCodes") or [],
+            "mixed_scope": False,
+            "multi_cpt": len(p.get("cptCodes") or []) > 1,
+            "code_source": p.get("codeSource"),
+        })
+    summary.sort(key=lambda x: (-x["count"], x["slug"]))
+
+    out = {
+        "generated_from": "data/observations/*.jsonl (prices published in hospital MRFs; Trilliant ORIA parse or direct download)",
         "total_observations": len(observations),
+        "total_hospital_procedure_rows": sum(s["count"] for s in summary),
         "total_procedures": len(summary),
-        "total_cms_hospitals": len(locations),
-        "total_outliers_excluded_from_stats": total_outliers,
+        "total_cms_hospitals": len(hospitals),
+        "hospitals_with_prices": len({k[0] for k in best}),
+        "total_outliers_excluded_from_stats": 0,
+        "observations_dropped": dropped,
         "outlier_note": (
-            f"{total_outliers} observations were excluded from median/min/max/mean "
-            f"and histogram calculations because their price is <= $0 or >= "
-            f"${OUTLIER_CEILING_USD:,} (a known upstream Trilliant extraction "
-            f"defect — e.g. a literal 999999999 sentinel, or a decimal-shift error "
-            f"producing an $8M colonoscopy). These rows are NOT deleted — they "
-            f"remain visible in the table with an outlier badge."
+            f"Values <= $0, >= ${PRICE_CEILING:,}, sentinel values such as 999999999, and values below "
+            "each procedure's plausibility floor are removed in the ETL and recorded in "
+            "data/cms/quarantine.json; none are shown here."
         ),
         "trim_note": (
-            "For every procedure, the bottom 2.5% and top 2.5% of prices "
-            "(5% total) are excluded from the median/mean/min/max and from "
-            "the histogram — separately from, and in addition to, the "
-            "outlier removal above. Trimmed rows are NOT deleted; they stay "
-            "in the table."
+            "For every procedure, the bottom 2.5% and top 2.5% of prices (5% total) are excluded from "
+            "the median/mean/min/max and the histogram. Trimmed rows stay in the table."
         ),
         "comparability_note": (
-            "Not every procedure's prices are apples-to-apples. The ingest "
-            "query matches each hospital's row by `CPT code IN (...) OR "
-            "MS-DRG code IN (...)`, but does not record which code type "
-            "actually matched before the price reaches this dataset. For "
-            "procedures where the ontology defines BOTH a CPT and an "
-            "MS-DRG code ('mixed_scope': true — 12 of 24 procedures, e.g. "
-            "knee/hip replacement, C-section, cardiac bypass), some hospital "
-            "rows may reflect a line-item professional/facility charge (CPT) "
-            "while others reflect a full bundled inpatient stay rate "
-            "(MS-DRG) — scopes that can differ by 10-50x for the same "
-            "nominal procedure. This is very likely a major driver of the "
-            "wide price spread seen in those histograms. Procedures with "
-            "'mixed_scope': false (mostly imaging/outpatient/diagnostic) do "
-            "not have this problem, though a few still match multiple CPT "
-            "codes at once ('multi_cpt': true)."
+            "Each procedure is priced at exactly one scope from exactly one code: inpatient procedures "
+            "by their MS-DRG (whole facility stay), outpatient and imaging procedures by the facility "
+            "CPT/HCPCS line. Rows show the hospital's published discounted cash price where it has one, "
+            "otherwise the median of its published payer-negotiated dollar rates (price_type). Physician "
+            "and anesthesia fees are billed separately and are not included."
         ),
+        "estimates_note": "No figure on this page is modelled or estimated.",
         "international_data_available": False,
         "international_data_note": (
-            "International facility adapters exist as code (etl/adapters/) but have "
-            "not successfully collected any real price data — all target sites "
-            "disallow the scraped paths via robots.txt. No international "
-            "observations exist in this system yet."
+            "International facility adapters exist as code (etl/adapters/) but have not collected any "
+            "price data. No international observations exist yet."
         ),
         "procedures": summary,
     }
-
-    (OUT_DIR / "summary.json").write_text(json.dumps(summary_out, indent=2), encoding="utf-8")
-
-    print(f"\nWrote {len(summary)} procedure files to {PROC_OUT_DIR}")
-    print(f"Wrote summary to {OUT_DIR / 'summary.json'}")
-    print(f"\nTotal real observations published: {len(observations)}")
+    atomic_write_text(OUT_DIR / "summary.json", json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+    print(f"Wrote {len(summary)} procedure files and summary to {OUT_DIR} ({dropped} observations dropped)")
     return 0
 
 

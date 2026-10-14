@@ -34,13 +34,11 @@ export default function HomePage() {
             <span className="font-medium text-slate-800">
               {hospitalCount.toLocaleString()} U.S. hospitals
             </span>
-            , see hospital-reported prices, and explore{" "}
-            <span className="font-medium text-slate-800">medical tourism</span>{" "}
-            package estimates abroad for{" "}
+            , and see the prices hospitals publish themselves for{" "}
             <span className="font-medium text-slate-800">
               {procedures.length} shoppable procedures
-            </span>{" "}
-            — all in plain language.
+            </span>
+            . No estimates, all in plain language.
           </p>
         </div>
         <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-slate-200 bg-white p-4 shadow-lg sm:mt-10 sm:p-8">
@@ -69,15 +67,15 @@ export default function HomePage() {
           {[
             {
               title: "Quality you can trust",
-              body: "CMS Overall Star Ratings, patient experience (HCAHPS), and readmission rates — sourced from Medicare.gov.",
+              body: "CMS Overall Star Ratings and how each hospital compares with the U.S. on readmission and mortality measures, from CMS data.",
             },
             {
               title: "Prices that make sense",
-              body: "Cash medians, negotiated ranges, and rough out-of-pocket estimates for shoppable services.",
+              body: "Each hospital's published cash price and its range of insurer-negotiated rates, with the date and source of every figure.",
             },
             {
-              title: "Consider care abroad",
-              body: "See typical package estimates in Mexico, Costa Rica, India, Thailand, and more — with verified clinic listings on the roadmap.",
+              title: "Nothing made up",
+              body: "If a hospital doesn't publish a verifiable price, we show none. Implausible figures and mismatched codes are set aside, with the reason recorded.",
             },
           ].map((card) => (
             <div

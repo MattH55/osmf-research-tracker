@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     "Free tool for U.S. patients to compare hospital CMS quality ratings and shoppable procedure prices by ZIP code.",
-  metadataBase: new URL("https://opensourcemed.info/hospital-ranking"),
+  metadataBase: new URL("https://hospital-ranking.vercel.app"),
   openGraph: {
     title: "HospitalCompare",
     description: "Compare hospital quality and procedure prices near you.",

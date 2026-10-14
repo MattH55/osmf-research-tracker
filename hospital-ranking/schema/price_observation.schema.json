@@ -4,24 +4,27 @@
   "description": "A single atomic price observation—US or international, cash or negotiated, bundled or unbundled.",
   "type": "object",
   "required": [
-    "observation_id",
-    "facility_id",
-    "procedure_slug",
-    "price_type",
     "amount_native",
-    "currency",
-    "fx_rate_to_usd",
-    "fx_rate_date",
     "amount_usd",
     "bundle",
+    "currency",
+    "facility_id",
+    "fx_rate_date",
+    "fx_rate_to_usd",
+    "is_estimate",
+    "observation_date",
+    "observation_id",
+    "price_type",
+    "procedure_slug",
     "provenance",
-    "observation_date"
+    "stale"
   ],
   "properties": {
     "observation_id": {
       "type": "string",
       "format": "uuid",
-      "description": "Unique identifier for this observation"
+      "description": "Deterministic UUIDv5 of source + facility + procedure + price_type (stable across rebuilds)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
     },
     "facility_id": {
       "type": "string",
@@ -48,8 +51,9 @@
     },
     "amount_native": {
       "type": "number",
-      "minimum": 0,
-      "description": "Price in native currency (source of truth)"
+      "description": "Price in native currency (source of truth)",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 500000
     },
     "currency": {
       "type": "string",
@@ -68,12 +72,16 @@
     },
     "amount_usd": {
       "type": "number",
-      "minimum": 0,
-      "description": "Derived USD amount (recomputed at read time from dated FX table)"
+      "description": "Derived USD amount (recomputed at read time from dated FX table)",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 500000
     },
     "bundle": {
       "type": "object",
-      "required": ["includes", "completeness_score"],
+      "required": [
+        "includes",
+        "completeness_score"
+      ],
       "properties": {
         "includes": {
           "type": "array",
@@ -98,22 +106,33 @@
           "description": "Components explicitly included in this price"
         },
         "inpatient_nights": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 0,
           "description": "Number of inpatient nights included, if specified"
         },
         "physio_sessions": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 0,
           "description": "Number of post-op physical therapy sessions, if specified"
         },
         "device_brand": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Brand of implant device (e.g., 'Zimmer Biomet Persona'), if specified"
         },
         "explicitly_excludes": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Components explicitly NOT included"
         },
         "completeness_score": {
@@ -131,17 +150,22 @@
     },
     "is_estimate": {
       "type": "boolean",
-      "default": false,
-      "description": "True if this price is modeled/estimated rather than observed"
+      "const": false,
+      "description": "Always false: modelled or estimated prices are not allowed in the store"
     },
     "stale": {
       "type": "boolean",
       "default": false,
-      "description": "True if observation is >18 months old"
+      "description": "True if observation_date is more than 18 months before the dataset reference date"
     },
     "provenance": {
       "type": "object",
-      "required": ["source_type", "source_url", "retrieved_at", "observation_date"],
+      "required": [
+        "source_type",
+        "source_url",
+        "retrieved_at",
+        "extracted_by"
+      ],
       "properties": {
         "source_type": {
           "type": "string",
@@ -159,12 +183,16 @@
         "source_url": {
           "type": "string",
           "format": "uri",
-          "description": "Mandatory: Live URL where price can be verified"
+          "description": "Mandatory https URL where the price can be verified (the hospital's MRF, else the dataset URL). Never a local path.",
+          "pattern": "^https://"
         },
         "source_document_hash": {
-          "type": ["string", "null"],
-          "pattern": "^sha256:[a-f0-9]{64}$",
-          "description": "SHA256 hash of source document for reproducibility"
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^(sha256:[a-f0-9]{64}|md5:[a-f0-9]{32})$",
+          "description": "Hash of the source document as published by the source (sha256 or the md5 recorded by Trilliant)"
         },
         "retrieved_at": {
           "type": "string",
@@ -173,8 +201,8 @@
         },
         "extracted_by": {
           "type": "string",
-          "enum": ["adapter:*", "human", "llm_extraction"],
-          "description": "Who/what extracted this price"
+          "pattern": "^(adapter:[a-z0-9_]+|human|llm_extraction)$",
+          "description": "Who/what extracted this price: 'adapter:<name>', 'human' or 'llm_extraction'"
         },
         "confidence": {
           "type": "number",
@@ -182,18 +210,86 @@
           "maximum": 1,
           "default": 0.9,
           "description": "Confidence in extraction accuracy (especially for LLM-extracted)"
+        },
+        "source_dataset": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Dataset the price was read from when it is not the MRF itself (e.g. Trilliant ORIA package URL)"
         }
       },
-      "description": "Provenance: mandatory source URL and observation date, or entry is rejected"
+      "description": "Provenance: mandatory source URL and observation date, or entry is rejected",
+      "additionalProperties": false
     },
     "observation_date": {
       "type": "string",
       "format": "date",
-      "description": "When the price was VALID, not when we scraped it"
+      "description": "Date the price was valid: the source file's last_updated_on. Never the build date.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     },
     "notes": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Free-text notes"
+    },
+    "procedure_id": {
+      "type": "string",
+      "pattern": "^proc-[a-z0-9-]+$",
+      "description": "Foreign key into data/seed/procedures.json (id)"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "inpatient_stay",
+        "facility_service",
+        "professional"
+      ],
+      "description": "What the amount covers; must be the procedure's canonical scope"
+    },
+    "match_type": {
+      "type": "string",
+      "enum": [
+        "ms-drg",
+        "cpt",
+        "hcpcs"
+      ]
+    },
+    "matched_codes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(MS-DRG|CPT|HCPCS):[0-9A-Z]+$"
+      },
+      "minItems": 1
+    },
+    "payer_count": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "description": "Distinct payer/plan rates behind a negotiated amount"
+    },
+    "amount_low": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "amount_high": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "price_row_id": {
+      "type": "string",
+      "description": "id of the source row in data/cms/*-prices.json"
     }
   },
   "additionalProperties": false

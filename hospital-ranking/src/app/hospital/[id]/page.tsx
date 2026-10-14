@@ -11,7 +11,7 @@ import {
   getProcedures,
 } from "@/lib/data";
 import { formatCurrency, formatPriceRange, percentLabel } from "@/lib/format";
-import { isReportedPrice, priceSourceLabel } from "@/lib/pricing";
+import { priceSourceLabel, SCOPE_LABEL } from "@/lib/pricing";
 
 export default async function HospitalPage({
   params,
@@ -95,7 +95,7 @@ export default async function HospitalPage({
 
       <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Quality ratings (CMS)</h2>
-        <p className="text-xs text-slate-500">Data vintage: {hospital.dataVintage ?? DATA_VINTAGE}</p>
+        <p className="text-xs text-slate-500">CMS data release: {DATA_VINTAGE}</p>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <dt className="text-xs font-medium uppercase text-slate-500">Overall stars</dt>
@@ -113,15 +113,19 @@ export default async function HospitalPage({
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase text-slate-500">Readmission rate</dt>
+            <dt className="text-xs font-medium uppercase text-slate-500">
+              Readmission measures worse than U.S.
+            </dt>
             <dd className="mt-1 text-lg font-semibold">
-              {percentLabel(hospital.readmissionRate)}
+              {hospital.readmissionRate != null ? `${percentLabel(hospital.readmissionRate)} of measures` : "—"}
             </dd>
           </div>
           <div>
-            <dt className="text-xs font-medium uppercase text-slate-500">Safety rating</dt>
+            <dt className="text-xs font-medium uppercase text-slate-500">
+              Mortality measures worse than U.S.
+            </dt>
             <dd className="mt-1 text-lg font-semibold">
-              {hospital.safetyRating != null ? `${hospital.safetyRating}/5` : "—"}
+              {hospital.mortalityRate != null ? `${percentLabel(hospital.mortalityRate)} of measures` : "—"}
             </dd>
           </div>
         </dl>
@@ -147,48 +151,73 @@ export default async function HospitalPage({
           </h2>
           {focusPrice ? (
             <>
-            {!isReportedPrice(focusPrice) && (
-              <p className="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
-                Modeled estimate — confirm with hospital
-              </p>
-            )}
             <dl className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
-                <dt className="text-xs font-medium uppercase text-slate-500">Cash price range</dt>
+                <dt className="text-xs font-medium uppercase text-slate-500">Published cash price</dt>
                 <dd className="text-xl font-bold text-teal-800">
-                  {formatPriceRange(focusPrice.cashLow, focusPrice.cashHigh)}
+                  {formatCurrency(focusPrice.cashMedian)}
                 </dd>
-                <dd className="text-sm text-slate-600">
-                  Median {formatCurrency(focusPrice.cashMedian)}
-                </dd>
+                {focusPrice.cashLow != null && (
+                  <dd className="text-sm text-slate-600">
+                    Range {formatPriceRange(focusPrice.cashLow, focusPrice.cashHigh)}
+                  </dd>
+                )}
+                {focusPrice.cashMedian == null && (
+                  <dd className="text-sm text-slate-600">This hospital publishes no cash price for it.</dd>
+                )}
               </div>
               <div>
                 <dt className="text-xs font-medium uppercase text-slate-500">
-                  Negotiated (median)
+                  Median negotiated rate (paid by insurers)
                 </dt>
                 <dd className="text-xl font-bold text-slate-800">
                   {formatCurrency(focusPrice.negotiatedMedian)}
                 </dd>
+                {focusPrice.negotiatedLow != null && (
+                  <dd className="text-sm text-slate-600">
+                    Range {formatPriceRange(focusPrice.negotiatedLow, focusPrice.negotiatedHigh)}
+                    {focusPrice.payerCount ? ` across ${focusPrice.payerCount} payer rates` : ""}
+                  </dd>
+                )}
               </div>
-              <div>
-                <dt className="text-xs font-medium uppercase text-slate-500">Est. OOP — PPO</dt>
-                <dd className="font-semibold">{formatCurrency(focusPrice.oopPpo)}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium uppercase text-slate-500">Est. OOP — HDHP</dt>
-                <dd className="font-semibold">{formatCurrency(focusPrice.oopHdhp)}</dd>
-              </div>
+              {focusPrice.grossCharge != null && (
+                <div>
+                  <dt className="text-xs font-medium uppercase text-slate-500">
+                    Gross charge (list price, rarely paid)
+                  </dt>
+                  <dd className="font-semibold">{formatCurrency(focusPrice.grossCharge)}</dd>
+                </div>
+              )}
             </dl>
+            <p className="mt-3 text-sm text-slate-600">
+              What you pay with insurance depends on your plan&apos;s deductible and coinsurance;
+              ask your insurer for an estimate using the codes below.
+            </p>
             </>
           ) : (
             <p className="mt-2 text-sm text-slate-600">
-              We don&apos;t have a price estimate for this procedure at this facility.
+              This hospital&apos;s price file has no figure we could verify for this procedure. We don&apos;t
+              estimate one.
             </p>
           )}
-          <p className="mt-3 text-xs text-slate-500">
-            Price vintage: {focusPrice?.priceVintage ?? "—"} · Source:{" "}
-            {focusPrice ? priceSourceLabel(focusPrice.priceSource) : "—"}
-          </p>
+          {focusPrice && (
+            <p className="mt-3 text-xs text-slate-500 [overflow-wrap:anywhere]">
+              {focusPrice.scope ? `${SCOPE_LABEL[focusPrice.scope]} · ` : ""}
+              {focusPrice.matchedCodes?.length ? `Codes ${focusPrice.matchedCodes.join(", ")} · ` : ""}
+              {focusProcedure.codeNote ? `${focusProcedure.codeNote} · ` : ""}
+              Published {focusPrice.priceVintage}
+              {focusPrice.stale ? " (over 18 months old)" : ""} · Source:{" "}
+              {priceSourceLabel(focusPrice.priceSource)}
+              {focusPrice.mrfUrl && (
+                <>
+                  {" · "}
+                  <a href={focusPrice.mrfUrl} target="_blank" rel="noopener noreferrer" className="text-teal-700 hover:underline">
+                    hospital&apos;s price file
+                  </a>
+                </>
+              )}
+            </p>
+          )}
         </section>
       )}
 
@@ -199,9 +228,9 @@ export default async function HospitalPage({
             <thead>
               <tr className="border-b border-slate-200 text-xs uppercase text-slate-500">
                 <th className="py-2 pr-4">Procedure</th>
-                <th className="py-2 pr-4">Cash median</th>
-                <th className="py-2 pr-4">Negotiated</th>
-                <th className="py-2">Source</th>
+                <th className="py-2 pr-4">Cash price</th>
+                <th className="py-2 pr-4">Negotiated median</th>
+                <th className="py-2">Published</th>
               </tr>
             </thead>
             <tbody>
@@ -214,7 +243,8 @@ export default async function HospitalPage({
                     <td className="py-3 pr-4">{formatCurrency(pr.cashMedian)}</td>
                     <td className="py-3 pr-4">{formatCurrency(pr.negotiatedMedian)}</td>
                     <td className="py-3 text-xs text-slate-500">
-                      {isReportedPrice(pr) ? "MRF" : "Est."}
+                      {pr.priceVintage}
+                      {pr.stale ? " (old)" : ""}
                     </td>
                   </tr>
                 );
@@ -232,7 +262,7 @@ export default async function HospitalPage({
             rel="noopener noreferrer"
             className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
           >
-            Hospital price estimator
+            Hospital&apos;s own price tool
           </a>
         )}
         {hospital.website && (
