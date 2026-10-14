@@ -79,8 +79,10 @@ npx vercel link
 npx vercel --prod
 ```
 
-`npm run build` runs the data validation first (`prebuild`), so a dataset that breaks the
-price contract cannot be deployed.
+`npm run build` first runs the real-data integrity tests (`prebuild`, Node only, so it also
+runs on Vercel), so a dataset that breaks the price contract cannot be deployed. After
+regenerating data, also run the full schema validator: `npm run validate:data` (needs
+`pip install jsonschema`).
 
 Serving it under a sub-path such as opensourcemed.info/hospital-ranking would need
 `basePath` restored in `next.config.ts`; a plain rewrite to the root deployment breaks
