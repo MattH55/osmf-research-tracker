@@ -348,7 +348,7 @@ def index_page(recs: list[dict]) -> str:
             cards.append(
                 f'<a class="card b{tnum(t)}" href="compounds/{r["slug"]}.html" data-class="{cls}" data-tiers="{" ".join(sorted(tiers))}" '
                 f'data-wada="{wada}" {jattr}><div style="display:flex;justify-content:space-between;gap:8px;align-items:start">'
-                f'<h3>{esc(display_name(r))}</h3><span class="clsbadge" title="{CLASSES[cls]}">{cls} &middot; {CLASSES[cls]}</span></div>'
+                f'<h3>{esc(display_name(r))}</h3><span class="clsbadge" title="Class {cls}: {CLASSES[cls]}">{cls} &middot; {CLASSES[cls].replace("Investigational", "Investig.")}</span></div>'
                 f'<div class="alt">{esc(", ".join(alt))}</div>{mini(tiers)}<div class="ind">{esc(ind)}</div>'
                 f'<div class="meta"><span>safety {r["safety"]["grade"]}</span><span>reviewed {esc(str(r["last_reviewed"]))}</span></div></a>')
         bands.append(f'<section class="band" data-band="{t}"><h2><span class="chip t{tnum(t)}">{t}</span>{esc(TIER_LABEL[t])}</h2>'
