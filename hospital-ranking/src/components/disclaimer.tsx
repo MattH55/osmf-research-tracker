@@ -8,9 +8,9 @@ export function Disclaimer({ compact = false }: { compact?: boolean }) {
           : "rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
       }
     >
-      <strong className="font-semibold">Hospital-reported prices only.</strong> We show
-      charges from each hospital&apos;s CMS-required price transparency file when
-      ingested — otherwise no price is shown. Verify all amounts with the hospital and
+      <strong className="font-semibold">Prices are estimates and reported charges.</strong> We show
+      hospital-reported charges when available and modeled estimates for other hospitals
+      when direct price data is missing. Verify all amounts with the hospital and
       your insurer. Not medical advice — no PHI stored.
     </aside>
   );

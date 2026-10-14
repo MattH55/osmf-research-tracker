@@ -10,6 +10,10 @@ Sources (pick one):
   --consolidated PATH   Oria "Full Data Download" DuckDB archive
   --duckdb-dir PATH     Folder of per-hospital *_parsed.duckdb files
   --oria                Download from oria-data.trillianthealth.com (public)
+  --rescan-cache        Re-query data/trilliant/cache/*.duckdb (no downloads)
+
+--rescan-cache merges into the existing extract. It does not delete hospitals
+that are not in the local cache.
 
 Output:
   data/cms/trilliant-prices.json
@@ -19,6 +23,7 @@ With --merge, also writes data/cms/mrf-prices.json combining direct MRF scrape
 (hospital_mrf) and Trilliant (trilliant_mrf); direct scrape wins on conflicts.
 
 USAGE:
+  python etl/ingest_trilliant.py --rescan-cache
   python etl/ingest_trilliant.py --consolidated data/trilliant/consolidated.duckdb
   python etl/ingest_trilliant.py --duckdb-dir data/trilliant/duckdb
   python etl/ingest_trilliant.py --oria --limit 50
@@ -237,6 +242,26 @@ def load_procedure_index() -> tuple[dict[str, dict], set[str], set[str], dict[st
     return by_id, cpts, drgs, code_to_proc
 
 
+def _finite_vals(rows: list[dict], key: str, min_value: float | None = None) -> list[float]:
+    out: list[float] = []
+    for r in rows:
+        v = r.get(key)
+        if v is None:
+            continue
+        try:
+            n = float(v)
+        except (TypeError, ValueError):
+            continue
+        if min_value is not None and n < min_value:
+            continue
+        out.append(n)
+    return out
+
+
+def _median_or_none(vals: list[float]) -> int | None:
+    return round(statistics.median(vals)) if vals else None
+
+
 def aggregate_rows(rows: list[dict]) -> dict | None:
     sane = [
         r for r in rows
@@ -244,19 +269,41 @@ def aggregate_rows(rows: list[dict]) -> dict | None:
     ]
     if not sane:
         return None
-    cash_vals = [r["cash"] for r in sane if r.get("cash") and r["cash"] >= 75]
-    gross_vals = [r["gross"] for r in sane if r.get("gross") and r["gross"] >= 75]
-    neg_vals = [r["negotiated"] for r in rows if r.get("negotiated")]
+    cash_vals = _finite_vals(sane, "cash", 75)
+    gross_vals = _finite_vals(sane, "gross", 75)
+    neg_vals = _finite_vals(rows, "negotiated", 1)
+    neg_low = _finite_vals(rows, "negotiated_low", 1)
+    neg_high = _finite_vals(rows, "negotiated_high", 1)
     if not cash_vals and not gross_vals:
         return None
     base = cash_vals or gross_vals
     cash_median = statistics.median(cash_vals) if cash_vals else statistics.median(gross_vals)
-    neg_med = statistics.median(neg_vals) if neg_vals else None
+    match_types = sorted({r.get("match_type") for r in rows if r.get("match_type")})
+    if match_types == ["cpt", "drg"] or set(match_types) == {"cpt", "drg"}:
+        match_type = "mixed"
+    elif len(match_types) == 1:
+        match_type = match_types[0]
+    else:
+        match_type = "mixed" if match_types else None
+    matched_codes = sorted({c for r in rows for c in (r.get("matched_codes") or []) if c})
+    settings = sorted({s for r in rows if (s := r.get("setting"))})
+    billing = sorted({b for r in rows if (b := r.get("billing_class"))})
     return {
         "cashLow": round(min(base)),
         "cashMedian": round(cash_median),
         "cashHigh": round(max(base)),
-        "negotiatedMedian": round(neg_med) if neg_med else None,
+        "negotiatedMedian": _median_or_none(neg_vals),
+        "negotiatedLow": _median_or_none(neg_low) or (round(min(neg_vals)) if neg_vals else None),
+        "negotiatedHigh": _median_or_none(neg_high) or (round(max(neg_vals)) if neg_vals else None),
+        "allowedP10": _median_or_none(_finite_vals(rows, "allowed_p10", 1)),
+        "allowedMedian": _median_or_none(_finite_vals(rows, "allowed_median", 1)),
+        "allowedP90": _median_or_none(_finite_vals(rows, "allowed_p90", 1)),
+        "grossCharge": _median_or_none(gross_vals),
+        "matchType": match_type,
+        "matchedCodes": matched_codes,
+        "setting": settings[0] if len(settings) == 1 else (settings or None),
+        "billingClass": billing[0] if len(billing) == 1 else (billing or None),
+        "mixedScope": match_type == "mixed",
     }
 
 
@@ -367,21 +414,38 @@ def remap_prices_to_cms(prices: list[dict], cms: dict) -> list[dict]:
     return remapped
 
 
-def hospital_columns(con: duckdb.DuckDBPyConnection) -> set[str]:
+def table_columns(con: duckdb.DuckDBPyConnection, table: str) -> set[str]:
     try:
         rows = con.execute(
             "SELECT column_name FROM information_schema.columns "
-            "WHERE table_name = 'hospitals'"
+            "WHERE table_name = ?",
+            [table],
         ).fetchall()
         return {r[0] for r in rows}
     except duckdb.Error:
         return set()
 
 
-def charge_query(cpts: set[str], drgs: set[str], h_cols: set[str]) -> str:
+def hospital_columns(con: duckdb.DuckDBPyConnection) -> set[str]:
+    return table_columns(con, "hospitals")
+
+
+def _sql_or_null(cols: set[str], table_alias: str, name: str, as_name: str | None = None) -> str:
+    alias = as_name or name
+    if name in cols:
+        return f"{table_alias}.{name} AS {alias}"
+    return f"NULL AS {alias}"
+
+
+def charge_query(cpts: set[str], drgs: set[str], h_cols: set[str], sc_cols: set[str]) -> str:
     cpt_list = ", ".join(f"'{c}'" for c in sorted(cpts))
     drg_list = ", ".join(f"'{d}'" for d in sorted(drgs))
-    city_sel = "h.hospital_city" if "hospital_city" in h_cols else "NULL AS hospital_city"
+    if "hospital_city" in h_cols:
+        city_sel = "h.hospital_city AS hospital_city"
+    elif "enriched_hospital_city" in h_cols:
+        city_sel = "h.enriched_hospital_city AS hospital_city"
+    else:
+        city_sel = "NULL AS hospital_city"
     return f"""
         SELECT
             h.hospital_name,
@@ -389,16 +453,91 @@ def charge_query(cpts: set[str], drgs: set[str], h_cols: set[str]) -> str:
             h.hospital_state,
             {city_sel},
             sc.cpt,
+            {_sql_or_null(sc_cols, "sc", "hcpcs")},
             sc.ms_drg,
             sc.discounted_cash,
             sc.gross_charge,
             sc.avg_negotiated_rate,
+            {_sql_or_null(sc_cols, "sc", "min_negotiated_rate")},
+            {_sql_or_null(sc_cols, "sc", "max_negotiated_rate")},
             sc.minimum,
-            sc.maximum
+            sc.maximum,
+            {_sql_or_null(sc_cols, "sc", "setting")},
+            {_sql_or_null(sc_cols, "sc", "billing_class")}
         FROM standard_charges sc
         JOIN hospitals h ON h.hospital_id = sc.hospital_id
         WHERE sc.cpt IN ({cpt_list}) OR sc.ms_drg IN ({drg_list})
     """
+
+
+def fetch_allowed_amounts(
+    con: duckdb.DuckDBPyConnection,
+    cpts: set[str],
+    drgs: set[str],
+) -> dict[tuple[str, str], dict]:
+    """Median p10 / median / p90 from standard_charge_details, keyed by code."""
+    d_cols = table_columns(con, "standard_charge_details")
+    needed = {"percentile_10th", "median_amount", "percentile_90th"}
+    if not needed.intersection(d_cols):
+        return {}
+    cpt_list = ", ".join(f"'{c}'" for c in sorted(cpts))
+    drg_list = ", ".join(f"'{d}'" for d in sorted(drgs))
+    p10_expr = "median(d.percentile_10th)" if "percentile_10th" in d_cols else "NULL"
+    med_expr = "median(d.median_amount)" if "median_amount" in d_cols else "NULL"
+    p90_expr = "median(d.percentile_90th)" if "percentile_90th" in d_cols else "NULL"
+    try:
+        rows = con.execute(
+            f"""
+            SELECT
+                d.cpt,
+                d.ms_drg,
+                {p10_expr} AS allowed_p10,
+                {med_expr} AS allowed_median,
+                {p90_expr} AS allowed_p90
+            FROM standard_charge_details d
+            WHERE d.cpt IN ({cpt_list}) OR d.ms_drg IN ({drg_list})
+            GROUP BY 1, 2
+            """
+        ).fetchall()
+        cols = [d[0] for d in con.description]
+    except duckdb.Error:
+        return {}
+
+    out: dict[tuple[str, str], dict] = {}
+    for raw in rows:
+        row = dict(zip(cols, raw))
+        payload = {
+            "allowed_p10": row.get("allowed_p10"),
+            "allowed_median": row.get("allowed_median"),
+            "allowed_p90": row.get("allowed_p90"),
+        }
+        if not any(payload.values()):
+            continue
+        cpt = (row.get("cpt") or "").strip()
+        drg = (row.get("ms_drg") or "").strip()
+        if cpt:
+            out[("cpt", cpt)] = payload
+        if drg:
+            out[("drg", drg)] = payload
+    return out
+
+
+def read_source_meta(con: duckdb.DuckDBPyConnection) -> dict:
+    cols = table_columns(con, "source_metadata")
+    if not cols:
+        return {}
+    select = ", ".join(
+        _sql_or_null(cols, "source_metadata", name)
+        for name in ("mrf_url", "mrf_content_md5", "schema_version")
+    )
+    try:
+        row = con.execute(f"SELECT {select} FROM source_metadata LIMIT 1").fetchone()
+        if not row:
+            return {}
+        names = [d[0] for d in con.description]
+        return dict(zip(names, row))
+    except duckdb.Error:
+        return {}
 
 
 def extract_from_connection(
@@ -412,8 +551,11 @@ def extract_from_connection(
 ) -> tuple[list[dict], dict]:
     vintage = vintage or date.today().isoformat()
     h_cols = hospital_columns(con)
+    sc_cols = table_columns(con, "standard_charges")
+    allowed = fetch_allowed_amounts(con, cpts, drgs)
+    src_meta = read_source_meta(con)
     try:
-        rows = con.execute(charge_query(cpts, drgs, h_cols)).fetchall()
+        rows = con.execute(charge_query(cpts, drgs, h_cols, sc_cols)).fetchall()
         cols = [d[0] for d in con.description]
     except duckdb.Error:
         return [], {"matched": 0, "unmatched": 0, "skipped": True}
@@ -438,15 +580,32 @@ def extract_from_connection(
             }
 
         cpt = (row.get("cpt") or "").strip()
+        hcpcs = (row.get("hcpcs") or "").strip()
         drg = (row.get("ms_drg") or "").strip()
         proc_id = None
+        match_type = None
+        matched_codes: list[str] = []
         if cpt and f"cpt:{cpt}" in code_to_proc:
             proc_id = code_to_proc[f"cpt:{cpt}"]
-        elif drg and f"drg:{drg}" in code_to_proc:
-            proc_id = code_to_proc[f"drg:{drg}"]
+            match_type = "cpt"
+            matched_codes.append(f"CPT {cpt}")
+        elif hcpcs and f"cpt:{hcpcs}" in code_to_proc:
+            proc_id = code_to_proc[f"cpt:{hcpcs}"]
+            match_type = "cpt"
+            matched_codes.append(f"HCPCS {hcpcs}")
+        if drg and f"drg:{drg}" in code_to_proc:
+            drg_proc = code_to_proc[f"drg:{drg}"]
+            if not proc_id:
+                proc_id = drg_proc
+                match_type = "drg"
+                matched_codes.append(f"MS-DRG {drg}")
+            elif drg_proc == proc_id:
+                match_type = "mixed"
+                matched_codes.append(f"MS-DRG {drg}")
         if not proc_id:
             continue
 
+        allowed_row = allowed.get(("cpt", cpt)) or allowed.get(("cpt", hcpcs)) or allowed.get(("drg", drg)) or {}
         cash = row.get("discounted_cash")
         gross = row.get("gross_charge")
         neg = row.get("avg_negotiated_rate")
@@ -454,6 +613,15 @@ def extract_from_connection(
             "cash": float(cash) if cash is not None else None,
             "gross": float(gross) if gross is not None else None,
             "negotiated": float(neg) if neg is not None else None,
+            "negotiated_low": row.get("min_negotiated_rate"),
+            "negotiated_high": row.get("max_negotiated_rate"),
+            "allowed_p10": allowed_row.get("allowed_p10"),
+            "allowed_median": allowed_row.get("allowed_median"),
+            "allowed_p90": allowed_row.get("allowed_p90"),
+            "match_type": match_type,
+            "matched_codes": matched_codes,
+            "setting": row.get("setting"),
+            "billing_class": row.get("billing_class"),
         })
 
     prices: list[dict] = []
@@ -481,14 +649,24 @@ def extract_from_connection(
             "cashMedian": agg["cashMedian"],
             "cashHigh": agg["cashHigh"],
             "negotiatedMedian": agg["negotiatedMedian"],
-            "negotiatedLow": None,
-            "negotiatedHigh": None,
+            "negotiatedLow": agg.get("negotiatedLow"),
+            "negotiatedHigh": agg.get("negotiatedHigh"),
+            "allowedP10": agg.get("allowedP10"),
+            "allowedMedian": agg.get("allowedMedian"),
+            "allowedP90": agg.get("allowedP90"),
+            "grossCharge": agg.get("grossCharge"),
+            "matchType": agg.get("matchType"),
+            "matchedCodes": agg.get("matchedCodes") or [],
+            "setting": agg.get("setting"),
+            "billingClass": agg.get("billingClass"),
+            "mixedScope": bool(agg.get("mixedScope")),
             "oopUninsured": agg["cashMedian"],
             "oopPpo": round(agg["cashMedian"] * 0.15) if agg["cashMedian"] else None,
             "oopHdhp": round(agg["cashMedian"] * 0.22) if agg["cashMedian"] else None,
             "priceSource": "trilliant_mrf",
             "priceVintage": vintage,
-            "mrfUrl": source_url or None,
+            "mrfUrl": source_url or src_meta.get("mrf_url") or None,
+            "sourceDocumentHash": src_meta.get("mrf_content_md5") or None,
             "trilliantFacility": meta["name"],
         })
 
@@ -784,6 +962,18 @@ def dedupe_prices(prices: list[dict]) -> list[dict]:
     return list(best.values())
 
 
+def merge_rescan_into_existing(existing: list[dict], scanned: list[dict]) -> list[dict]:
+    """Keep nationwide extract; scanned cache rows replace the same hospital+procedure."""
+    by_key: dict[tuple[str, str], dict] = {}
+    for p in existing:
+        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
+        by_key[key] = p
+    for p in scanned:
+        key = (p.get("cmsProviderId") or p["hospitalId"], p["procedureId"])
+        by_key[key] = p
+    return list(by_key.values())
+
+
 def merge_price_lists(
     direct: list[dict],
     trilliant: list[dict],
@@ -805,6 +995,11 @@ def main() -> int:
     src.add_argument("--consolidated", metavar="PATH", help="Consolidated Oria DuckDB file")
     src.add_argument("--duckdb-dir", metavar="PATH", help="Directory of per-hospital DuckDB files")
     src.add_argument("--oria", action="store_true", help="Download from ORIA public directory")
+    src.add_argument(
+        "--rescan-cache",
+        action="store_true",
+        help="Re-query data/trilliant/cache and merge richer fields into existing extract",
+    )
     ap.add_argument("--limit", type=int, default=0, help="Max ORIA hospitals per batch")
     ap.add_argument("--offset", type=int, default=0, help="Skip first N ORIA index entries")
     ap.add_argument("--workers", type=int, default=4, help="Parallel ORIA downloads")
@@ -851,6 +1046,14 @@ def main() -> int:
             print(f"File not found: {path}", file=sys.stderr)
             return 1
         all_prices, run_stats = ingest_consolidated(path, matcher, code_to_proc, cpts, drgs)
+    elif args.rescan_cache:
+        if not CACHE_DIR.is_dir():
+            print(f"Cache directory not found: {CACHE_DIR}", file=sys.stderr)
+            return 1
+        all_prices, run_stats = ingest_duckdb_dir(
+            CACHE_DIR, matcher, code_to_proc, cpts, drgs
+        )
+        run_stats["source"] = "rescan-cache"
     elif args.duckdb_dir:
         path = Path(args.duckdb_dir)
         if not path.is_dir():
@@ -870,7 +1073,26 @@ def main() -> int:
             refresh_index=args.refresh_index,
         )
 
-    if args.append and OUT_PRICES.exists():
+    if args.rescan_cache:
+        existing: list[dict] = []
+        if OUT_PRICES.exists():
+            for attempt in range(8):
+                try:
+                    existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
+                    break
+                except OSError:
+                    if attempt == 7:
+                        raise
+                    time.sleep(1.5 * (attempt + 1))
+        scanned = dedupe_prices(all_prices)
+        all_prices = merge_rescan_into_existing(existing, scanned)
+        run_stats["cachePrices"] = len(scanned)
+        run_stats["existingBefore"] = len(existing)
+        print(
+            f"Rescan merge: {len(scanned)} cache prices into {len(existing)} existing "
+            f"→ {len(all_prices)} total"
+        )
+    elif args.append and OUT_PRICES.exists():
         for attempt in range(8):
             try:
                 existing = json.loads(OUT_PRICES.read_text(encoding="utf-8"))
@@ -890,7 +1112,11 @@ def main() -> int:
         "cmsHospitalsWithPrices": len({p.get("cmsProviderId") for p in all_prices}),
         "source": "Trilliant Health ORIA parsed hospital MRF DuckDB files",
         "attribution": "https://oria-data.trillianthealth.com/",
-        "method": "DuckDB standard_charges query + CMS hospital fuzzy match (name/state/zip)",
+        "method": (
+            "DuckDB standard_charges + optional standard_charge_details "
+            "(allowed-amount percentiles) + CMS hospital fuzzy match (name/state/zip)"
+            + ("; rescan of local cache merged into existing extract" if args.rescan_cache else "")
+        ),
         "builtAt": date.today().isoformat(),
         "runStats": run_stats,
         "note": (

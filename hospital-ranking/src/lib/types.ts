@@ -78,12 +78,22 @@ export interface ProcedurePrice {
   negotiatedMedian: number | null;
   negotiatedLow?: number | null;
   negotiatedHigh?: number | null;
+  allowedP10?: number | null;
+  allowedMedian?: number | null;
+  allowedP90?: number | null;
+  grossCharge?: number | null;
+  matchType?: "cpt" | "drg" | "mixed" | null;
+  matchedCodes?: string[];
+  setting?: string | string[] | null;
+  billingClass?: string | string[] | null;
+  mixedScope?: boolean;
   oopUninsured: number | null;
   oopPpo: number | null;
   oopHdhp: number | null;
   priceSource: string;
   priceVintage: string;
   mrfUrl?: string;
+  sourceDocumentHash?: string | null;
   /** True if this price is modeled/estimated rather than observed */
   isEstimate?: boolean;
   /** True if observation is >18 months old */
