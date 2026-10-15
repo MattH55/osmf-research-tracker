@@ -1093,7 +1093,7 @@ def render_index(conds, records, hubs) -> str:
 <main>
 <section class="card"><h2>Search markers</h2>
 <label for="q" class="muted">Type a marker name, abbreviation, LOINC code or condition</label>
-<input class="search" id="q" type="search" placeholder="e.g. IL-6, D-dimer, 26881-5, Lyme" autocomplete="off">
+<input class="search" id="q" type="search" placeholder="e.g. IL-6, D-dimer, 26881-3, Lyme" autocomplete="off">
 <div id="results"></div>
 <script>{SEARCH_JS}</script></section>
 <section class="card"><h2>Conditions</h2><ul class="cond-list">{''.join(cond_items)}</ul></section>

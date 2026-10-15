@@ -32,6 +32,10 @@ class NTD:
     search_terms: list            # names to resolve against Open Targets / used for CT.gov cond=
     efo_hint: Optional[str] = None  # optional pre-known EFO/MONDO id (verified at runtime anyway)
     note: str = ""
+    # Verified ontology id (checked against EBI OLS4). When set, the pipeline uses it
+    # as-is and never consults the Open Targets name search, whose top hit can be an
+    # unrelated disease (e.g. "yellow fever" -> ankylosing spondylitis).
+    pinned_id: Optional[str] = None
 
 
 # --- The official WHO 21 (some groups split for burden/therapeutic granularity) ---
@@ -94,7 +98,9 @@ SUPPLEMENTAL_VIRAL = [
         ["measles", "rubeola"], efo_hint="EFO_0007184",
         note="Supplemental viral disease — not on WHO NTD list; included for post-viral research parity."),
     NTD("yellow_fever", "Yellow fever", "virus",
-        ["yellow fever"], efo_hint="EFO_0007187",
+        ["yellow fever"], efo_hint="MONDO_0020502",
+        # OLS4: MONDO:0020502 = "yellow fever" (EFO_0007187 is obsolete).
+        pinned_id="MONDO_0020502",
         note="Supplemental viral disease — not on WHO NTD list."),
     NTD("zika", "Zika virus disease", "virus",
         ["zika", "zika virus infection", "zika fever"], efo_hint="EFO_0007690",

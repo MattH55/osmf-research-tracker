@@ -63,6 +63,9 @@ _MOCK_TARGETS = {
 
 
 def resolve_id(ntd, ot, mock):
+    # A verified (OLS-checked) id always wins over the fuzzy name search.
+    if getattr(ntd, "pinned_id", None):
+        return ntd.pinned_id
     if mock:
         return ntd.efo_hint or f"MOCK_{ntd.key}"
     rid = ot.resolve_disease(ntd.search_terms[0]) or ntd.efo_hint
@@ -126,8 +129,22 @@ def build_rows(args):
     burden = burden_mod.load_burden(args.burden_csv)
     seed_flag = burden.get("_meta", {}).get("is_seed", True)
 
+    only = set(getattr(args, "only", None) or [])
+    existing = {}
+    if only:
+        # Rebuild just the named diseases; keep every other row exactly as last written.
+        with open(f"{args.out}.json", encoding="utf-8") as f:
+            existing = {r["key"]: r for r in json.load(f)}
+        unknown = only - {n.key for n in reg.all_diseases()}
+        if unknown:
+            raise SystemExit(f"--only: unknown disease key(s): {sorted(unknown)}")
+
     rows = []
     for ntd in reg.all_diseases():
+        if only and ntd.key not in only:
+            if ntd.key in existing:
+                rows.append(existing[ntd.key])
+            continue
         b = burden_mod.get(burden, ntd.key)
         pa = reg.get_post_acute(ntd.key)
 
@@ -176,7 +193,7 @@ def write_outputs(rows, prefix):
     cols = ["rank", "disease", "pathogen", "efo_id", "deaths_per_year", "dalys_per_year",
             "burden_confidence", "has_post_acute", "post_acute_kind", "post_acute_syndrome",
             "post_acute_onset", "post_acute_source"]
-    with open(f"{prefix}.csv", "w", newline="") as f:
+    with open(f"{prefix}.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(cols + ["top_drugs", "top_targets", "ct_trials_total", "ct_trials_post_acute"])
         for r in rows:
@@ -210,6 +227,9 @@ def main():
     ap.add_argument("--top", type=int, default=21, help="rows to print")
     ap.add_argument("--sleep", type=float, default=0.34, help="delay between diseases (live mode)")
     ap.add_argument("--out", default="ntd_intelligence", help="output file prefix")
+    ap.add_argument("--only", action="append", metavar="KEY",
+                    help="rebuild only this disease key (repeatable); other rows are kept "
+                         "from the existing <out>.json")
     args = ap.parse_args()
 
     mode = "MOCK (no network)" if args.mock else "LIVE"

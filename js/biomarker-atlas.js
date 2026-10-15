@@ -162,6 +162,14 @@
     return `<td class="trial-cell"><div class="trial-chips scroll-panel-sm">${chips}${more}</div>${viewAll}</td>`;
   }
 
+  /** Citation linked to its DOI; plain text when the entry has no verified DOI (reference under review). */
+  function renderReference(ref) {
+    const r = ref || {};
+    const cite = escapeHtml(r.citation || '');
+    if (!r.doi) return cite;
+    return `<a class="ref-link" href="https://doi.org/${escapeAttr(r.doi)}" target="_blank" rel="noopener">${cite}</a>`;
+  }
+
   function escapeAttr(s) {
     return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   }
@@ -355,7 +363,7 @@
         </div>
         <div class="marker-detail-block">
           <h4>Key reference</h4>
-          <p><a class="ref-link" href="https://doi.org/${escapeAttr(marker.reference.doi)}" target="_blank" rel="noopener">${escapeHtml(marker.reference.citation)}</a></p>
+          <p>${renderReference(marker.reference)}</p>
         </div>
       </div>
       ${labBlock}
@@ -471,7 +479,7 @@
         <td><span class="category-tag cat-${b.category}">${categories[b.category] || b.category}</span></td>
         <td>${b.comparison}</td>
         <td>${b.symptoms || ''}</td>
-        <td><a class="ref-link" href="https://doi.org/${b.reference.doi}" target="_blank" rel="noopener">${b.reference.citation}</a></td>
+        <td>${renderReference(b.reference)}</td>
         ${renderCommercialCell(b, key)}
         ${renderTrialCell(b, key)}
         ${renderInterventionCell(b, key)}
