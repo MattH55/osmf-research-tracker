@@ -1422,7 +1422,7 @@ def main():
         json.dump(index, f, ensure_ascii=False, indent=2)
 
     def write_csv(path, rows):
-        buf = io.StringIO(); w = csv.writer(buf)
+        buf = io.StringIO(); w = csv.writer(buf, lineterminator="\n")
         for r in rows:
             w.writerow(r)
         with open(path, "w", encoding="utf-8", newline="") as f:
