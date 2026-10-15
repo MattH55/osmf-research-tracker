@@ -95,6 +95,10 @@ jobs:
       - name: Rebuild and confirm committed artifacts are in sync
         run: |
           python scripts/build_pais_cohorts.py
+          # Committed pages carry the shared header/footer that the deploy pipeline injects;
+          # apply the same two passes so the comparison is like for like.
+          python scripts/apply_osmf_chrome.py
+          python scripts/apply_osmf_ui.py
           if ! git diff --quiet -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv data/pais-predictors.csv data/pais-estimates.csv data/pais-estimates.json data/pais-contrasts.csv data/pais-specimens.csv data/pais-comparability.json pais-cohorts.html pais-susceptibility.html pais-cohorts/ vocab.html; then
             echo "::error::Built artifacts are out of date. Run 'python scripts/build_pais_cohorts.py' and commit the result."
             git --no-pager diff --stat -- data/pais-cohorts-index.json data/pais-cohorts.csv data/pais-observations.csv data/pais-predictors.csv data/pais-estimates.csv data/pais-estimates.json data/pais-contrasts.csv data/pais-specimens.csv data/pais-comparability.json pais-cohorts.html pais-susceptibility.html pais-cohorts/ vocab.html

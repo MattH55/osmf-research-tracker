@@ -50,14 +50,22 @@ NTD_LIST = [
         ["dengue", "dengue fever", "severe dengue"], efo_hint="EFO_0001056",
         note="WHO groups dengue+chikungunya as one NTD entry; split here."),
     NTD("chikungunya", "Chikungunya", "virus",
-        ["chikungunya", "chikungunya fever"], efo_hint="EFO_0007200",
+        ["chikungunya", "chikungunya fever"], efo_hint="MONDO_0017941",
+        # OLS4: MONDO:0017941 = "chikungunya" (EFO_0007200 is obsolete; OT name search
+        # returned EFO_0008494 "Chikungunya encephalitis", too narrow).
+        pinned_id="MONDO_0017941",
         note="WHO groups dengue+chikungunya as one NTD entry; split here."),
     NTD("dracunculiasis", "Dracunculiasis (Guinea-worm disease)", "helminth",
         ["dracunculiasis", "Guinea worm disease"]),
     NTD("echinococcosis", "Echinococcosis", "helminth",
         ["echinococcosis", "hydatid disease"], efo_hint="EFO_0007309"),
     NTD("foodborne_trematodiases", "Foodborne trematodiases", "helminth",
-        ["opisthorchiasis", "clonorchiasis", "fascioliasis", "paragonimiasis"]),
+        ["opisthorchiasis", "clonorchiasis", "fascioliasis", "paragonimiasis"],
+        efo_hint="MONDO_0015675",
+        # OLS4: MONDO:0015675 = "distomatosis" (syn. fluke infection; liver, lung and
+        # intestinal flukes). Umbrella term; no MONDO "foodborne trematodiasis" exists.
+        # OT name search returned MONDO_0005884 "opisthorchiasis" (one parasite only).
+        pinned_id="MONDO_0015675"),
     NTD("hat", "Human African trypanosomiasis (sleeping sickness)", "protozoa",
         ["human African trypanosomiasis", "sleeping sickness"], efo_hint="EFO_0007360"),
     NTD("leishmaniasis", "Leishmaniasis", "protozoa",
@@ -65,28 +73,53 @@ NTD_LIST = [
     NTD("leprosy", "Leprosy (Hansen's disease)", "bacteria",
         ["leprosy", "Hansen disease"], efo_hint="EFO_0005066"),
     NTD("lymphatic_filariasis", "Lymphatic filariasis", "helminth",
-        ["lymphatic filariasis", "elephantiasis"], efo_hint="EFO_0007370"),
+        ["lymphatic filariasis", "elephantiasis"], efo_hint="MONDO_0005761",
+        # OLS4: MONDO:0005761 = "filarial elephantiasis" (syn. Lymphatic Filariasis,
+        # Bancroftian filariasis). EFO_0007370 is obsolete; OT name search returned
+        # MONDO_0016075 "filariasis" (too broad, includes loiasis/onchocerciasis).
+        pinned_id="MONDO_0005761"),
     NTD("mycetoma", "Mycetoma, chromoblastomycosis and other deep mycoses", "fungus",
-        ["mycetoma", "chromoblastomycosis", "eumycetoma"]),
+        ["mycetoma", "chromoblastomycosis", "eumycetoma"],
+        efo_hint="MONDO_0016823",
+        # OLS4: MONDO:0016823 = "mycetoma" (covers eumycetoma and actinomycetoma).
+        # OT name search returned MONDO_0005757 "eumycotic mycetoma" (one form only).
+        pinned_id="MONDO_0016823"),
     NTD("noma", "Noma (cancrum oris)", "polymicrobial",
         ["noma", "cancrum oris", "necrotizing ulcerative stomatitis"],
         note="Added to WHO NTD list December 2023 (21st NTD)."),
     NTD("onchocerciasis", "Onchocerciasis (river blindness)", "helminth",
         ["onchocerciasis", "river blindness"], efo_hint="EFO_0007438"),
     NTD("rabies", "Rabies", "virus",
-        ["rabies"], efo_hint="EFO_0001064"),
+        ["rabies"], efo_hint="MONDO_0019173",
+        # OLS4: MONDO:0019173 = "rabies" (EFO_0001064 is obsolete; OT name search
+        # returned MONDO_0005944 "Rhabdoviridae infectious disease", too broad).
+        pinned_id="MONDO_0019173"),
     NTD("scabies", "Scabies and other ectoparasitoses", "mite",
-        ["scabies"], efo_hint="EFO_0007469"),
+        ["scabies"], efo_hint="MONDO_0004525",
+        # OLS4: MONDO:0004525 = "scabies" (EFO_0007469 is obsolete; OT name search
+        # returned MONDO_0021201 "skin infection").
+        pinned_id="MONDO_0004525"),
     NTD("schistosomiasis", "Schistosomiasis", "helminth",
         ["schistosomiasis", "bilharzia"], efo_hint="EFO_0007488"),
     NTD("sth", "Soil-transmitted helminthiases", "helminth",
-        ["ascariasis", "trichuriasis", "hookworm infection", "soil-transmitted helminthiasis"]),
+        ["ascariasis", "trichuriasis", "hookworm infection", "soil-transmitted helminthiasis"],
+        efo_hint="MONDO_0024271",
+        # OLS4: MONDO:0024271 = "intestinal helminthiasis". No MONDO/EFO term for
+        # soil-transmitted helminthiasis exists; this is the closest correct parent and is
+        # broader (also covers taeniasis, intestinal schistosomiasis, anisakiasis).
+        # OT name search returned MONDO_0005654 "ascariasis" (one parasite only).
+        pinned_id="MONDO_0024271"),
     NTD("snakebite", "Snakebite envenoming", "venom",
-        ["snakebite envenoming", "snake envenomation"]),
+        ["snakebite envenoming", "snake envenomation"], efo_hint="MONDO_0018669",
+        # OLS4: MONDO:0018669 = "snakebite envenomation".
+        pinned_id="MONDO_0018669"),
     NTD("cysticercosis", "Taeniasis / cysticercosis", "helminth",
         ["cysticercosis", "neurocysticercosis", "taeniasis"], efo_hint="EFO_0007511"),
     NTD("trachoma", "Trachoma", "bacteria",
-        ["trachoma"], efo_hint="EFO_0007520"),
+        ["trachoma"], efo_hint="MONDO_0001249",
+        # OLS4: MONDO:0001249 = "trachoma" (EFO_0007520 is "trichinosis"; OT name search
+        # returned MONDO_0005808 "inclusion conjunctivitis").
+        pinned_id="MONDO_0001249"),
     NTD("yaws", "Yaws (endemic treponematoses)", "bacteria",
         ["yaws", "endemic treponematosis"]),
 ]

@@ -19,7 +19,7 @@ python -m pip install -r biomarker_pipeline/requirements.txt
 ## Step 2 — Verify the .env file exists
 The file `research-tracker/.env` must contain at minimum:
 ```
-NCBI_API_KEY=840aa1d841d0869ea10610dda7d8370e5708
+NCBI_API_KEY=<your NCBI API key>
 ```
 If `ANTHROPIC_API_KEY` is also present, Stage 4 LLM extraction will run automatically.
 If it is absent, Stage 4 is skipped — the pipeline still produces full DB + literature results.
