@@ -114,19 +114,32 @@ def row_to_observations(row: dict, adapter: str) -> list[dict]:
     return out
 
 
-def migrate(src: Path, dest: Path, adapter: str, codes: CodeIndex, hospitals_by_id: dict) -> int:
+def direct_keys(codes: CodeIndex, hospitals_by_id: dict) -> set[tuple[str, str]]:
+    """(hospital, procedure) pairs priced from the hospital's own file: these win over Trilliant,
+    exactly as in the app (src/lib/data.ts getPrice), so each pair has one source."""
+    rows = read_json(MRF_PRICES, []) or []
+    return {(r["hospitalId"], r["procedureId"]) for r in rows
+            if not contract_problems(r, codes, hospitals_by_id)}
+
+
+def migrate(src: Path, dest: Path, adapter: str, codes: CodeIndex, hospitals_by_id: dict,
+            superseded: set[tuple[str, str]] | None = None) -> int:
     rows = read_json(src, []) or []
     obs: list[dict] = []
-    skipped = 0
+    skipped = replaced = 0
     for r in rows:
         if contract_problems(r, codes, hospitals_by_id):
             skipped += 1
+            continue
+        if superseded and (r.get("hospitalId"), r.get("procedureId")) in superseded:
+            replaced += 1
             continue
         obs.extend(row_to_observations(r, adapter))
     obs.sort(key=lambda o: (o["facility_id"], o["procedure_id"], o["price_type"]))
     OBS_DIR.mkdir(parents=True, exist_ok=True)
     atomic_write_text(dest, "".join(json.dumps(o, ensure_ascii=False) + "\n" for o in obs))
-    print(f"{src.name}: {len(rows)} rows -> {len(obs)} observations ({skipped} rows failed the contract) -> {dest}")
+    print(f"{src.name}: {len(rows)} rows -> {len(obs)} observations ({skipped} rows failed the contract, "
+          f"{replaced} superseded by the hospital's own file) -> {dest}")
     return 1 if skipped else 0
 
 
@@ -138,7 +151,8 @@ def main() -> int:
     hospitals_by_id = {h["id"]: h for h in load_hospitals()}
     rc = 0
     if args.source in ("all", "trilliant"):
-        rc |= migrate(TRILLIANT_PRICES, OBS_DIR / "us-mrf-trilliant.jsonl", "trilliant_oria_v2", codes, hospitals_by_id)
+        rc |= migrate(TRILLIANT_PRICES, OBS_DIR / "us-mrf-trilliant.jsonl", "trilliant_oria_v2", codes,
+                      hospitals_by_id, superseded=direct_keys(codes, hospitals_by_id))
     if args.source in ("all", "direct"):
         rc |= migrate(MRF_PRICES, OBS_DIR / "us-mrf-direct.jsonl", "direct_hospital_mrf_v2", codes, hospitals_by_id)
     print("Validate with: python etl/priceos_validate.py --strict")

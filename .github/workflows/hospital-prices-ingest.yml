@@ -84,6 +84,11 @@ jobs:
           if ls _extracts/*.json.gz >/dev/null 2>&1; then
             cp _extracts/*.json.gz "$APP_DIR/data/mrf/extracts/"
           fi
+          # Progress travels with the extracts, so a run whose data failed validation
+          # still resumes where it stopped instead of starting over.
+          if [ -f _extracts/mrf-progress.json ]; then
+            cp _extracts/mrf-progress.json "$APP_DIR/data/cms/mrf-progress.json"
+          fi
           echo "Restored $(ls "$APP_DIR/data/mrf/extracts" | wc -l) extract(s); free disk: $(df -h . | tail -1)"
 
       - name: Refresh hospital-site registry
@@ -99,16 +104,17 @@ jobs:
           if [ "${{ inputs.retry_failed }}" = "true" ]; then ARGS="$ARGS --retry-failed"; fi
           python etl/ingest_mrf_prices.py $ARGS
 
-      - name: Persist extracts (even if validation later fails, so downloads aren't lost)
+      - name: Persist extracts and progress (even if validation later fails, so downloads aren't lost)
         if: always()
         run: |
           cp -f "$APP_DIR"/data/mrf/extracts/*.json.gz _extracts/ 2>/dev/null || true
+          cp -f "$APP_DIR/data/cms/mrf-progress.json" _extracts/ 2>/dev/null || true
           cd _extracts
           git add -f -A .
           if git diff --cached --quiet; then
             echo "No new extracts."
           else
-            git commit -q -m "extracts: $(ls *.json.gz | wc -l) hospital files [$(date -u +%Y-%m-%dT%H:%MZ)]"
+            git commit -q -m "extracts: $(ls *.json.gz | wc -l) hospital files + progress [$(date -u +%Y-%m-%dT%H:%MZ)]"
             git push origin "HEAD:$EXTRACTS_BRANCH"
           fi
 
