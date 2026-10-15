@@ -174,6 +174,22 @@ for (const [name, { rows, source, meta }] of Object.entries(files)) {
   });
 }
 
+test('mrf-prices.json: direct hospital rows carry the hospital\'s own https MRF, its cms-hpt.txt and a strict match', () => {
+  const bad = check(files['mrf-prices.json'].rows, (r) => {
+    if (!/^[0-9A-Z]{6}$/.test(r.cmsProviderId ?? '')) return `cmsProviderId ${r.cmsProviderId}`;
+    if (typeof r.mrfUrl !== 'string' || !r.mrfUrl.startsWith('https://')) return `mrfUrl ${r.mrfUrl}`;
+    if (/trillianthealth\.com/i.test(r.mrfUrl) || /trillianthealth\.com/i.test(r.sourceDataset ?? '')) return 'Trilliant URL in a direct row';
+    if (!/^https:\/\/[^/]+\/cms-hpt\.txt$/.test(r.sourceDataset ?? '')) return `sourceDataset ${r.sourceDataset} is not a cms-hpt.txt`;
+    if (!['ccn', 'name+city', 'name-subset+city', 'name+state'].includes(r.hospitalMatch)) return `hospitalMatch ${r.hospitalMatch}`;
+    if (!r.sourceFacilityName) return 'no cms-hpt location-name';
+    if (!/^sha256:[0-9a-f]{64}$/.test(r.sourceDocumentHash ?? '')) return `sourceDocumentHash ${r.sourceDocumentHash}`;
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(r.sourceRetrievedAt ?? '')) return `sourceRetrievedAt ${r.sourceRetrievedAt}`;
+    if (r.priceVintage > r.sourceRetrievedAt.slice(0, 10)) return 'vintage after retrieval';
+    return null;
+  });
+  assert.equal(bad.length, 0, show(bad));
+});
+
 test('quarantine.json records counts by reason and at most 20 samples per reason', () => {
   const q = readJson('data/cms/quarantine.json');
   assert.ok(q.totalsByReason && typeof q.totalsByReason === 'object');

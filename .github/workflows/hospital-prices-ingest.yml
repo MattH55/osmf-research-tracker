@@ -1,0 +1,182 @@
+name: Hospital prices (direct hospital files)
+
+# Rebuilds HospitalCompare price coverage from hospitals' OWN machine-readable price
+# files (45 CFR 180), found through each hospital's cms-hpt.txt. Runs in time-boxed,
+# resumable chunks: downloads are reduced to small extracts and deleted, extracts are
+# persisted on the `hospital-mrf-extracts` branch, and price data is committed to main
+# only if the data contract validation passes.
+
+on:
+  schedule:
+    - cron: '20 */6 * * *'   # every 6 hours; each run stops itself after MAX_MINUTES
+  workflow_dispatch:
+    inputs:
+      max_minutes:
+        description: 'Minutes of downloading this run'
+        required: false
+        default: '300'
+      discover:
+        description: 'Refresh the hospital-site registry (Wikidata/OSM) first'
+        required: false
+        default: false
+        type: boolean
+      retry_failed:
+        description: 'Retry hospitals recorded as failed'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: hospital-prices-ingest
+  cancel-in-progress: false
+
+env:
+  EXTRACTS_BRANCH: hospital-mrf-extracts
+  APP_DIR: hospital-ranking
+  PYTHONUNBUFFERED: "1"
+  PYTHONIOENCODING: utf-8
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions:
+      contents: write   # commit price data to main and extracts to their branch
+      actions: write    # dispatch the Pages deploy after the bot commit
+    env:
+      # Optional repo secret; without it the Vercel step is skipped and the app is
+      # deployed by hand (`npx vercel --prod` in hospital-ranking/).
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          pip install -r etl/requirements.txt jsonschema
+          npm ci --no-audit --no-fund
+
+      - name: Restore persisted extracts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$EXTRACTS_BRANCH" >/dev/null; then
+            git fetch --depth 1 origin "$EXTRACTS_BRANCH"
+            git worktree add -B "$EXTRACTS_BRANCH" _extracts "origin/$EXTRACTS_BRANCH"
+          else
+            git worktree add --orphan -b "$EXTRACTS_BRANCH" _extracts
+          fi
+          mkdir -p "$APP_DIR/data/mrf/extracts"
+          if ls _extracts/*.json.gz >/dev/null 2>&1; then
+            cp _extracts/*.json.gz "$APP_DIR/data/mrf/extracts/"
+          fi
+          echo "Restored $(ls "$APP_DIR/data/mrf/extracts" | wc -l) extract(s); free disk: $(df -h . | tail -1)"
+
+      - name: Refresh hospital-site registry
+        working-directory: ${{ env.APP_DIR }}
+        if: inputs.discover == true || hashFiles('hospital-ranking/data/cms/hospital-sites.json') == ''
+        run: python etl/discover_hospital_sites.py
+
+      - name: Download and extract hospital price files
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          MAX="${{ inputs.max_minutes || '300' }}"
+          ARGS="--batch --max-minutes $MAX --workers 4 --min-free-gb 6"
+          if [ "${{ inputs.retry_failed }}" = "true" ]; then ARGS="$ARGS --retry-failed"; fi
+          python etl/ingest_mrf_prices.py $ARGS
+
+      - name: Persist extracts (even if validation later fails, so downloads aren't lost)
+        if: always()
+        run: |
+          cp -f "$APP_DIR"/data/mrf/extracts/*.json.gz _extracts/ 2>/dev/null || true
+          cd _extracts
+          git add -f -A .
+          if git diff --cached --quiet; then
+            echo "No new extracts."
+          else
+            git commit -q -m "extracts: $(ls *.json.gz | wc -l) hospital files [$(date -u +%Y-%m-%dT%H:%MZ)]"
+            git push origin "HEAD:$EXTRACTS_BRANCH"
+          fi
+
+      - name: Rebuild prices from extracts and regenerate derived data
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          python etl/ingest_mrf_prices.py --offline
+          python etl/migrate_to_observation_store.py
+          python etl/build_browser_data.py
+
+      - name: Validate (data contract, schema, tests)
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          npm run validate:data
+          npm test
+          npm run test:etl
+
+      - name: Commit price data to main
+        id: commit
+        run: |
+          for p in data/cms/mrf-prices.json data/cms/mrf-meta.json data/cms/mrf-progress.json \
+                   data/cms/quarantine.json data/cms/hospital-sites.json data/observations docs/data; do
+            if [ -e "$APP_DIR/$p" ]; then git add "$APP_DIR/$p"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "No price data changes."
+            exit 0
+          fi
+          git commit -q -m "chore(hospital-prices): direct hospital files [$(date -u +%Y-%m-%d)]"
+          for attempt in 1 2 3 4 5; do
+            if git pull --rebase -q origin main && git push -q origin HEAD:main; then
+              echo "committed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep $((attempt * 15))
+          done
+          echo "Could not push after 5 attempts" >&2
+          exit 1
+
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows.
+      - name: Trigger GitHub Pages deploy (static price browser)
+        if: steps.commit.outputs.committed == 'true'
+        run: gh workflow run deploy-pages.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Deploy app to Vercel
+        if: steps.commit.outputs.committed == 'true' && env.VERCEL_TOKEN != ''
+        working-directory: ${{ env.APP_DIR }}
+        env:
+          VERCEL_ORG_ID: team_qHRhoaGbjJQt39NPpVyYv0n4
+          VERCEL_PROJECT_ID: prj_eMz008FHNYloIIglfInqqGrkZLMJ
+        run: npx --yes vercel@54 deploy --prod --yes --token "$VERCEL_TOKEN"
+
+      - name: Summary
+        if: always()
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          p = pathlib.Path("data/cms/mrf-progress.json")
+          m = pathlib.Path("data/cms/mrf-meta.json")
+          prog = json.loads(p.read_text()) if p.exists() else {}
+          meta = json.loads(m.read_text()) if m.exists() else {}
+          print("### Hospital price ingest")
+          print(f"- Registry position: {prog.get('nextIndex')} ")
+          print(f"- Hospitals done: {len(prog.get('done') or {})}, failed: {len(prog.get('failed') or {})}")
+          for k in ("priceCount", "rowCount", "hospitalCount", "hospitalsWithPrices"):
+              if k in meta:
+                  print(f"- {k}: {meta[k]}")
+          PY

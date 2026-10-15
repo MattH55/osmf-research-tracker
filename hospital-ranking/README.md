@@ -60,6 +60,35 @@ hospital-ranking/
    matched hospital are kept; everything else goes to `data/cms/quarantine.json` with a reason.
 3. **Validate:** `npm run validate:data` (also runs automatically before `npm run build`).
 
+### Direct hospital files
+
+Prices straight from each hospital's own machine-readable file (public under 45 CFR Part 180),
+found through the `cms-hpt.txt` file at the root of the hospital's website. Built to run
+unattended in CI, in time-boxed chunks.
+
+```bash
+pip install -r etl/requirements.txt
+python etl/discover_hospital_sites.py [--sources wikidata,osm] [--offline]
+python etl/ingest_mrf_prices.py --batch --max-minutes 50 --workers 4 --min-free-gb 6
+python etl/ingest_mrf_prices.py --offline     # rebuild outputs from extracts only
+npm run test:etl                             # parser and assembly unit tests
+```
+
+- **Discovery** writes `data/cms/hospital-sites.json`: candidate websites per CCN from Wikidata
+  (CC0) and OpenStreetMap (Overpass; skipped if every server fails), attached only on a strong
+  name match plus the same city/state or within 2 miles. `data/cms/hospital-sites.manual.json`
+  overrides it. A candidate is only a place to look.
+- **Ingest** fetches `cms-hpt.txt` (robots.txt respected, one request per host at a time,
+  backoff on 429/5xx), keeps only entries whose `location-name` strictly matches the CCN,
+  stream-downloads each https MRF (size cap, disk guard), stream-parses CSV (tall/wide) or
+  JSON (v2/v3, gzip/zip), saves a compact extract to `data/mrf/extracts/` and deletes the
+  download. Outputs (`mrf-prices.json`, `mrf-meta.json`, the `hospital_mrf` quarantine section)
+  are always rebuilt from extracts, so `--offline` is byte-identical to a networked run.
+- **Resume:** `data/cms/mrf-progress.json` (`nextIndex`, `orderHash`, `done`, `failed`).
+  `--max-minutes` stops at a hospital boundary and checkpoints; `--retry-failed`,
+  `--hospital CCN`, `--limit N` and `--reset-progress` are also available. Extracts are not
+  committed to main.
+
 ## Environment variables (future)
 
 ```env

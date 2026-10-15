@@ -414,6 +414,9 @@ FACILITY_KIND_WORDS = {
     "er", "ed", "eye", "spine", "joint", "kidney", "transplant", "hospice", "nursing",
     "wellness", "recovery", "addiction", "freestanding", "outpatient", "ambulatory",
 }
+# A source named as a system or network ("X Health System") may be a system-wide file
+# covering several hospitals; it can only be attached by an explicit CCN, never by name.
+SYSTEM_MARKER_RE = re.compile(r"\b(?:systems?|network|partners|alliance|enterprises?)\b", re.I)
 ZIP_RE = re.compile(r"\b(\d{5})(?:-\d{4})?\b")
 CCN_RE = re.compile(r"^[0-9A-Z]{6}$")
 
@@ -475,7 +478,8 @@ class StrictHospitalMatcher:
       3. name+state: identical distinctive name tokens, same state, the source
          gives no city/ZIP at all, and exactly one hospital in the state has that
          name.
-    Subset/fuzzy matches are never accepted. Ambiguity -> no match.
+    Subset/fuzzy matches are never accepted. Ambiguity -> no match. A name that
+    identifies a system or network is never matched by name (CCN only).
     """
 
     def __init__(self, hospitals: list[dict]):
@@ -493,6 +497,9 @@ class StrictHospitalMatcher:
               ccn: str | None = None) -> tuple[dict | None, str]:
         if ccn and ccn in self.by_ccn:
             return self.by_ccn[ccn], "ccn"
+        if names and all(SYSTEM_MARKER_RE.search(n or "") for n in names):
+            return None, "system_level_name_needs_ccn"
+        names = [n for n in names if not SYSTEM_MARKER_RE.search(n or "")]
         state = (state or "").upper().strip()
         if not state:
             return None, "no_state"
