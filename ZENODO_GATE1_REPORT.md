@@ -49,3 +49,13 @@ Companion to `ZENODO_DEPOSIT_AGENT_TASK.md`. Produced from the local checkout at
 ## Tooling note
 
 `jsonschema` is not installed in the system Python. Validation above used a scratch install. Add it to `requirements.txt` or install it before rerunning.
+
+## Owner decisions (2026-10-25)
+
+- **GATE 1:** first batch approved: R1, R2, R4, and R3 with abstracts stripped. R5, R6 and R7 not approved yet.
+- **GATE 2:** R5 and R6 licence is CC BY-SA 4.0. R5 remains blocked on the pair quality gate; R6 on its schema version (data 1.1.0, schema pins 1.0.0).
+- **GATE 3:** creator on every record is Matthew T. J. Halma only.
+- Local data committed in `bc4bf8e6f` (not pushed).
+- R1 is versioned `2026.10`, not `1.1`: the PAIS data changed substantially after the `pais-v1.1` tag.
+
+Bundles: `python scripts/zenodo/build_bundles.py` (writes `dist/zenodo/`, git-ignored). Deposit: `python scripts/zenodo/deposit.py` (sandbox drafts by default; `--check` runs offline). Next step is the sandbox pass, which needs `ZENODO_SANDBOX_TOKEN`.
