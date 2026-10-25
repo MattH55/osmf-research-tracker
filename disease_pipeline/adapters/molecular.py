@@ -36,6 +36,53 @@ query DiseaseTargets($efoId: String!) {
 """
 
 
+OT_SCORES_QUERY = """
+query DiseaseTargetScores($efoId: String!, $ids: [String!]) {
+  disease(efoId: $efoId) {
+    associatedTargets(Bs: $ids, page: {index: 0, size: 500}) {
+      rows { target { id } score }
+    }
+  }
+}
+"""
+
+OT_VERSION_QUERY = "query { meta { dataVersion { year month } } }"
+
+
+def ot_score_label(score: float | None) -> str:
+    """Evidence wording for an Open Targets gene row: the association score itself."""
+    if score is None:
+        return "Open Targets association (score n/a)"
+    return f"OT score {score:.2f}"
+
+
+async def ot_data_version(session: aiohttp.ClientSession) -> str | None:
+    try:
+        data = await graphql(session, OPEN_TARGETS_URL, OT_VERSION_QUERY, {})
+        dv = ((data.get("data") or {}).get("meta") or {}).get("dataVersion") or {}
+        return f"{dv.get('year')}.{dv.get('month')}" if dv.get("year") else None
+    except Exception as e:  # pragma: no cover - network
+        log.warning("[Open Targets] version lookup failed: %s", e)
+        return None
+
+
+async def ot_association_scores(
+    ot_id: str, ensembl_ids: list[str], session: aiohttp.ClientSession
+) -> dict[str, float]:
+    """Current Open Targets overall association score for given targets of a disease."""
+    scores: dict[str, float] = {}
+    ids = [i for i in ensembl_ids if i]
+    for start in range(0, len(ids), 200):
+        chunk = ids[start : start + 200]
+        data = await graphql(session, OPEN_TARGETS_URL, OT_SCORES_QUERY, {"efoId": ot_id, "ids": chunk})
+        rows = (((data.get("data") or {}).get("disease") or {}).get("associatedTargets") or {}).get("rows") or []
+        for row in rows:
+            tid = (row.get("target") or {}).get("id")
+            if tid:
+                scores[tid] = float(row.get("score") or 0)
+    return scores
+
+
 def _slug(text: str) -> str:
     return re.sub(r"[^\w]+", "-", text.lower()).strip("-")
 
@@ -56,19 +103,21 @@ async def _open_targets_genes(
     if not ot_id:
         return []
 
-    ck = f"ot_targets:{ot_id}"
+    # v2: rows carry the OT association score (provenance fix 2026-10-15)
+    ck = f"ot_targets:v2:{ot_id}"
     cached = cache_get("molecular", ck)
     if cached is not None:
         return [Alteration(**a) for a in cached]
 
     try:
         data = await graphql(session, OPEN_TARGETS_URL, OT_TARGETS_QUERY, {"efoId": ot_id})
-        rows = (
-            (data.get("data") or {})
-            .get("disease", {})
-            .get("associatedTargets", {})
-            .get("rows", [])
-        )
+        disease = (data.get("data") or {}).get("disease")
+        if disease is None:
+            # Not an Open Targets disease ID (e.g. MONDO terms OT does not index):
+            # say so instead of silently returning nothing.
+            log.warning("[Open Targets] %s is not an Open Targets disease ID", ot_id)
+            return []
+        rows = (disease.get("associatedTargets") or {}).get("rows", [])
     except Exception as e:
         log.warning("[Open Targets] gene fetch failed: %s", e)
         return []
@@ -96,7 +145,11 @@ async def _open_targets_genes(
                 subtype="gene",
                 sources=["Open Targets"],
                 source_ids={"Ensembl": ensembl_id, **({"UniProt": uniprot} if uniprot else {})},
-                evidence_tier=_ot_evidence_tier(score, datatypes),
+                # Gene-disease association, not a measured alteration: carry the
+                # OT score itself instead of a derived tier.
+                evidence_tier=EvidenceTier.N,
+                evidence_label=ot_score_label(score),
+                association_score=round(score, 4),
                 definition=target.get("approvedName"),
             )
         )

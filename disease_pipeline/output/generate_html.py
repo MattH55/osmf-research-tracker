@@ -29,8 +29,8 @@ from ..site_nav import (
     render_nav,
 )
 
-TIER_COLOUR = {"A": "#22c55e", "B": "#4a9eff", "C": "#f59e0b"}
-TYPE_COLOUR = {"A": "#7c6af7", "B": "#4a9eff", "C": "#f59e0b", "D": "#ef4444", "E": "#22c55e"}
+TIER_COLOUR = {"A": "#22c55e", "B": "#4a9eff", "C": "#f59e0b", "N": "#8892a4"}
+TYPE_COLOUR = {"A": "#7c6af7", "B": "#4a9eff", "C": "#f59e0b", "D": "#ef4444", "E": "#22c55e", "T": "#8892a4"}
 
 # PubMed / registry counts that indicate direct clinical evidence (not association-only hits).
 _CLINICAL_EVIDENCE_KEYS = (
@@ -538,6 +538,7 @@ def _summary_cards(data: dict) -> str:
         ("Alterations", str(s["alteration_count"])),
         ("Molecular (A)", str(counts.get("A", 0))),
         ("Clinical (B–E)", str(sum(counts.get(k, 0) for k in "BCDE"))),
+        ("Trial outcome measures (T)", str(counts.get("T", 0))),
         ("Direct drugs", str(tc.get("direct", 0))),
         ("Via biomarker", str(tc.get("via_biomarker", 0))),
         ("Natural agents", str(tc.get("natural", 0))),
@@ -667,7 +668,7 @@ def build_html(data: dict) -> str:
 
     <section id="alterations">
       <h2 class="section-title">Alterations</h2>
-      <p class="section-sub">{alt_note} · Types A (molecular) through E (functional)</p>
+      <p class="section-sub">{alt_note} · Types A (molecular) through E (functional). Molecular rows are Open Targets gene–disease associations (evidence column = OT association score), not measured levels; phenotypes are HPO terms annotated directly to this disease (Monarch); type T rows are outcome measures used in completed ClinicalTrials.gov studies, not alterations of the disease.</p>
       <div class="filter-row" id="type-filters">
         <button class="filter-chip active" data-filter="all" type="button">All</button>
         {''.join(type_chips)}

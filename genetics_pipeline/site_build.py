@@ -16,6 +16,25 @@ from .matrix import build_evidence_map, build_matrix
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
+# Retired variant IDs -> current ID. Old static URLs stay live as redirect
+# pages so external links keep resolving. 3_45823240_G_C had the wrong ref
+# allele for rs10490770 (Ensembl GRCh38: T/C).
+VARIANT_ID_REDIRECTS = {"3_45823240_G_C": "3_45823240_T_C"}
+
+REDIRECT_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, follow">
+  <title>Moved — Genetic Correlates Explorer</title>
+  <link rel="canonical" href="https://research.opensourcemed.info/genetics/variant/{new}.html">
+  <meta http-equiv="refresh" content="0; url={new}.html">
+</head>
+<body>
+  <p>This variant page has moved to <a href="{new}.html">{new}</a>.</p>
+</body>
+</html>"""
+
 
 def _env() -> Environment:
     return Environment(
@@ -154,6 +173,9 @@ def build(check: bool = False) -> None:
             genes=genes_dedup,
             **base_ctx,
         )
+
+    for old, new in VARIANT_ID_REDIRECTS.items():
+        (SITE_DIR / "variant" / f"{old}.html").write_text(REDIRECT_HTML.format(new=new) + "\n", encoding="utf-8")
 
     # ---- gene pages ----
     for g in tables["genes"]:

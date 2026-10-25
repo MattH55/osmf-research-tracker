@@ -2,7 +2,8 @@
 
 Runs, in order:
   0. connectivity check (module 4's "fail loudly on 410/404" rule, applied
-     at the top of the run rather than per-module)
+     at the top of the run rather than per-module); the real HTTP status of
+     every probe is written to data/genetics/manifest.json before failing
   1. registry: live EFO/MONDO term-currency check
   2. validate: schema + cross-reference validation (local)
   3. grading + matrix (module 6, local)
@@ -13,11 +14,34 @@ Runs, in order:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from datetime import datetime, timezone
+from http import HTTPStatus
 
 from . import registry, site_build, validate
 from .adapters import gwas_catalog
+from .config import ENSEMBL_BASE, EUROPEPMC_BASE, MANIFEST_PATH, OLS_BASE
 from .io_tables import load_all
+
+OTHER_PROBES = {
+    "europepmc_search": f"{EUROPEPMC_BASE}/search?query=long%20covid&format=json&pageSize=1",
+    "ensembl_rest": f"{ENSEMBL_BASE}/info/ping?content-type=application/json",
+    "ols4_search": f"{OLS_BASE}/search?q=long%20covid&rows=1",
+}
+
+
+def record_connectivity(results: dict) -> None:
+    """Overwrite manifest.connectivity_check with what the probes actually got."""
+    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    check = {}
+    for name, r in results.items():
+        status = r["status"]
+        label = f"{status} {HTTPStatus(status).phrase}" if status in HTTPStatus._value2member_map_ else str(status)
+        check[name] = {"status": label, "url": r["url"]} | ({"error": r["error"]} if "error" in r else {})
+    manifest["connectivity_check"] = check
+    manifest["connectivity_checked_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -28,7 +52,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.skip_live:
         print("== connectivity check ==")
-        print(gwas_catalog.check_connectivity())
+        results = gwas_catalog.check_connectivity()
+        results |= {name: gwas_catalog.probe(url) for name, url in OTHER_PROBES.items()}
+        record_connectivity(results)
+        print({name: r["status"] for name, r in results.items()})
+        gwas_catalog.raise_if_retired(results)
 
     print("== validate ==")
     validate.run()

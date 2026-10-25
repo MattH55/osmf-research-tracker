@@ -5,23 +5,32 @@
     {
       "source_id": "SRC-GWASCAT",
       "name": "GWAS Catalog",
-      "access": "REST API v2 (https://www.ebi.ac.uk/gwas/api/v2) for study metadata; legacy REST API (https://www.ebi.ac.uk/gwas/rest/api) for per-study associations, which remains live for curated top hits even though the old bulk summary-statistics API returns HTTP 410 on every path (ToolUniverse #642)",
+      "access": "REST API v2 (https://www.ebi.ac.uk/gwas/rest/api/v2) for studies-by-PubMed-ID and curated associations; v2 web service (https://www.ebi.ac.uk/gwas/api/v2) for study metadata. The legacy REST API (https://www.ebi.ac.uk/gwas/rest/api) and the old bulk summary-statistics API both return HTTP 410 and are not called (ToolUniverse #642). Association rows in this build are curated in data/genetics/associations.csv; GCST90454540 has no curated associations in REST API v2 (checked 2026-10-15), so the A0001/A0002 effect estimates cannot be re-verified from the Catalog API and should be checked against PMID:40399555 or the GCST90454540 summary statistics",
       "retrieved_at": "2026-09-22",
-      "records_used": ["GCST90454540", "GCST90095123"]
+      "records_used": [
+        "GCST90454540",
+        "GCST90095123"
+      ]
     },
     {
       "source_id": "SRC-EUROPEPMC",
       "name": "Europe PMC REST API",
       "access": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
       "retrieved_at": "2026-09-22",
-      "records_used": ["PACVS literature sweep queries logged in data/genetics/phenotypes.csv"]
+      "records_used": [
+        "PACVS literature sweep queries logged in data/genetics/phenotypes.csv"
+      ]
     },
     {
       "source_id": "SRC-ENSEMBL",
       "name": "Ensembl REST API",
       "access": "https://rest.ensembl.org (GRCh38)",
       "retrieved_at": "2026-09-22",
-      "records_used": ["FOXP4", "LZTFL1", "SLC6A20"]
+      "records_used": [
+        "FOXP4",
+        "LZTFL1",
+        "SLC6A20"
+      ]
     },
     {
       "source_id": "SRC-OLS",
@@ -31,11 +40,30 @@
     }
   ],
   "connectivity_check": {
-    "gwas_catalog_v2_studies": "200 OK",
-    "gwas_catalog_legacy_associations": "200 OK (per-study endpoint; bulk summary-statistics API confirmed 410 per spec, not used)",
-    "europepmc_search": "200 OK",
-    "ensembl_rest": "200 OK",
-    "ols4_search": "200 OK"
+    "gwas_catalog_v2_studies": {
+      "status": "200 OK",
+      "url": "https://www.ebi.ac.uk/gwas/api/v2/studies?size=1"
+    },
+    "gwas_catalog_rest_v2_studies": {
+      "status": "200 OK",
+      "url": "https://www.ebi.ac.uk/gwas/rest/api/v2/studies?size=1"
+    },
+    "gwas_catalog_rest_v2_associations": {
+      "status": "200 OK",
+      "url": "https://www.ebi.ac.uk/gwas/rest/api/v2/associations?size=1"
+    },
+    "europepmc_search": {
+      "status": "200 OK",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=long%20covid&format=json&pageSize=1"
+    },
+    "ensembl_rest": {
+      "status": "200 OK",
+      "url": "https://rest.ensembl.org/info/ping?content-type=application/json"
+    },
+    "ols4_search": {
+      "status": "200 OK",
+      "url": "https://www.ebi.ac.uk/ols4/api/search?q=long%20covid&rows=1"
+    }
   },
   "not_yet_implemented": [
     "Open Targets Platform bulk Parquet ingestion (module 4 credible sets, L2G scores, colocalisation) — locus-to-gene assignment in this build uses the spec's documented distance-window fallback only",
@@ -44,5 +72,6 @@
     "IEU OpenGWAS PheWAS-style lookups — requires an API token (see build spec open question)",
     "HLA allele support (IPD-IMGT/HLA nomenclature) — no HLA-typed associations ingested yet; vaccine-reactogenicity and post-vaccination-myocarditis phenotypes remain not_searched",
     "Pinned HPO release for phenotypes.hpo_ids — left blank pending the same pinned release used by the PAIS cohort database"
-  ]
+  ],
+  "connectivity_checked_at": "2026-10-15T15:48:55Z"
 }

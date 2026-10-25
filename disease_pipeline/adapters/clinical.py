@@ -92,99 +92,87 @@ def _parse_frequency(freq: dict | str | None) -> tuple[str | None, str | None]:
     return mapped if mapped else (None, None)
 
 
+MONARCH_PAGE = 500
+
+
 async def get_hpo_phenotypes(
     omim_id: str | None,
     session: aiohttp.ClientSession,
     *,
     mondo_id: str | None = None,
 ) -> list[Alteration]:
-    if not omim_id and not mondo_id:
-        log.warning("HPO skipped: no OMIM or MONDO ID")
+    """HPO phenotypes annotated DIRECTLY to the disease (Monarch v3, direct=true).
+
+    Before 2026-10-15 this queried Monarch without ``direct=true``, which returns
+    the phenotypes of every descendant disease (mostly rare Mendelian subtypes);
+    in a 60-row audit only 13 were annotated to the named disease itself. The
+    legacy hpo.jax.org endpoint (``/hpo/disease/OMIM:``) is retired, so the
+    disease's MONDO ID is the only subject queried; Monarch maps OMIM/Orphanet
+    annotations onto the equivalent MONDO class, so direct=true still returns
+    the disease's own OMIM/Orphanet HPO annotations.
+    """
+    if not mondo_id:
+        log.warning("HPO skipped: no MONDO ID (omim=%s)", omim_id)
         return []
 
-    ck = f"hpo_omim:{omim_id or mondo_id}"
+    ck = f"hpo_direct:v2:{mondo_id}"
     cached = cache_get("clinical", ck)
     if cached is not None:
         return [Alteration(**a) for a in cached]
 
     alterations: list[Alteration] = []
     try:
-        data = None
-        if omim_id:
-            data = await get_json(session, f"{HPO_URL}/hpo/disease/OMIM:{omim_id}")
-        if data:
-            for assoc in data.get("associations", []):
-                hp_id = assoc.get("hpo_id", "")
-                hp_name = assoc.get("hpo_name", hp_id)
-                if not hp_id:
-                    continue
-                alt_type, subtype = classify_hpo_term(hp_id, hp_name)
-                freq_label, freq_pct = _parse_frequency(assoc.get("frequency"))
-                direction = None
-                if alt_type == AlterationType.B:
-                    low = hp_name.lower()
-                    if "hyper" in low or "elevated" in low:
-                        direction = "elevated"
-                    elif "hypo" in low or "reduced" in low:
-                        direction = "reduced"
-                alterations.append(
-                    Alteration(
-                        canonical_id=hp_id,
-                        name=hp_name,
-                        alteration_type=alt_type,
-                        subtype=subtype,
-                        direction=direction,
-                        frequency_label=freq_label,
-                        frequency_pct=freq_pct,
-                        sources=["HPO"],
-                        source_ids={"HPO": hp_id},
-                        evidence_tier=EvidenceTier.B,
-                    )
-                )
-            if alterations:
-                cache_set("clinical", ck, [a.model_dump() for a in alterations])
-                log.info("[HPO] OMIM:%s → %d phenotypes", omim_id, len(alterations))
-                return alterations
-
-        # Fallback: Monarch association API when HPO JAX endpoint unavailable
-        subjects = []
-        if mondo_id:
-            subjects.append(mondo_id)
-        if omim_id:
-            subjects.append(f"OMIM:{omim_id}")
-        monarch_items: list[dict] = []
-        for subject in subjects:
-            monarch = await get_json(
+        items: list[dict] = []
+        offset = 0
+        while True:
+            page = await get_json(
                 session,
                 f"{MONARCH_API}/association",
-                params={"subject": subject, "predicate": "biolink:has_phenotype", "limit": 100},
+                params={
+                    "subject": mondo_id,
+                    "predicate": "biolink:has_phenotype",
+                    "direct": "true",
+                    "limit": MONARCH_PAGE,
+                    "offset": offset,
+                },
             )
-            monarch_items.extend((monarch or {}).get("items", []))
+            batch = (page or {}).get("items", [])
+            items.extend(batch)
+            total = (page or {}).get("total", 0)
+            offset += MONARCH_PAGE
+            if not batch or offset >= total:
+                break
         seen_hp: set[str] = set()
-        for item in monarch_items:
+        for item in items:
             obj = item.get("object", "")
-            if not obj.startswith("HP:") or obj in seen_hp:
+            if item.get("subject") != mondo_id or not obj.startswith("HP:") or obj in seen_hp:
+                continue
+            if item.get("negated"):
                 continue
             seen_hp.add(obj)
             hp_name = item.get("object_label") or obj
             alt_type, subtype = classify_hpo_term(obj, hp_name)
+            freq_label, freq_pct = _parse_frequency(item.get("frequency_qualifier_label"))
+            origin = item.get("original_subject") or ""
             alterations.append(
                 Alteration(
                     canonical_id=obj,
                     name=hp_name,
                     alteration_type=alt_type,
                     subtype=subtype,
+                    frequency_label=freq_label,
+                    frequency_pct=freq_pct,
                     sources=["HPO", "Monarch"],
-                    source_ids={"HPO": obj},
-                    evidence_tier=EvidenceTier.B,
+                    source_ids={"HPO": obj, **({"Annotation": origin} if origin else {})},
+                    evidence_tier=EvidenceTier.N,
+                    evidence_label="HPO annotation",
                 )
             )
-        if alterations:
-            cache_set("clinical", ck, [a.model_dump() for a in alterations])
+        cache_set("clinical", ck, [a.model_dump() for a in alterations])
     except Exception as e:
-        log.error("HPO error for OMIM:%s: %s", omim_id, e)
+        log.error("HPO (Monarch direct) error for %s: %s", mondo_id, e)
 
-    log.info("[HPO] OMIM:%s → %d phenotypes", omim_id, len(alterations))
+    log.info("[HPO] %s -> %d direct phenotypes", mondo_id, len(alterations))
     return alterations
 
 
@@ -227,7 +215,8 @@ async def get_orphanet_phenotypes(
                     frequency_pct=freq_pct,
                     sources=["Orphanet"],
                     source_ids={"HPO": hp_id, "Orphanet": orpha_id},
-                    evidence_tier=EvidenceTier.B,
+                    evidence_tier=EvidenceTier.N,
+                    evidence_label="Orphanet annotation",
                 )
             )
         if alterations:
@@ -268,7 +257,7 @@ async def get_ct_endpoints(
     page_size: int = 50,
     use_cache: bool = True,
 ) -> list[Alteration]:
-    ck = f"ct_endpoints:v3:{identifiers.name.lower()}"
+    ck = f"ct_endpoints:v4:{identifiers.name.lower()}"
     if use_cache:
         cached = cache_get("clinical", ck)
         if cached is not None:
@@ -317,15 +306,18 @@ async def get_ct_endpoints(
         if count < 2:
             continue
         display = measure_display[norm]
-        alt_type, subtype = _classify_endpoint(display)
+        _measure_kind, subtype = _classify_endpoint(display)
+        # A trial outcome measure is what completed trials in the condition
+        # measured, not an alteration of the disease: type T, not A-E.
         alterations.append(
             Alteration(
                 canonical_id=_slug(display),
                 name=display,
-                alteration_type=alt_type,
+                alteration_type=AlterationType.T,
                 subtype=subtype,
                 sources=["ClinicalTrials.gov"],
-                evidence_tier=EvidenceTier.B if count >= 5 else EvidenceTier.C,
+                evidence_tier=EvidenceTier.N,
+                evidence_label=f"Trial outcome measure ({count} trials)",
             )
         )
 

@@ -16,6 +16,7 @@ TYPE_LABELS = {
     "C": "Scales & PROs",
     "D": "Pathology",
     "E": "Functional",
+    "T": "Trial outcome measure",
 }
 
 SUBTYPE_LABELS = {
@@ -29,7 +30,7 @@ SUBTYPE_LABELS = {
     "imaging": "Imaging metric",
 }
 
-TIER_LABELS = {"A": "Strong", "B": "Moderate", "C": "Emerging"}
+TIER_LABELS = {"A": "Strong", "B": "Moderate", "C": "Emerging", "N": "Not graded"}
 
 DIRECTION_LABELS = {
     "elevated": "Elevated",
@@ -142,7 +143,11 @@ def _export_alteration(slug: str, alt: Alteration) -> dict:
         "sources": alt.sources,
         "source_ids": alt.source_ids,
         "evidence_tier": alt.evidence_tier.value,
-        "evidence_tier_label": TIER_LABELS.get(alt.evidence_tier.value, alt.evidence_tier.value),
+        # Source-specific wording (e.g. "OT score 0.62", "HPO annotation") when the
+        # source carries no evidence grade; never a source-count tier.
+        "evidence_tier_label": alt.evidence_label
+        or TIER_LABELS.get(alt.evidence_tier.value, alt.evidence_tier.value),
+        "association_score": alt.association_score,
         "pubmed_count": alt.pubmed_count,
         "definition": alt.definition,
         "external_links": _alteration_links(alt),
@@ -195,7 +200,14 @@ def _export_therapeutic(
 
 
 def _tier_sort_key_alt(a: dict) -> tuple:
-    return ({"A": 0, "B": 1, "C": 2}[a["evidence_tier"]], -len(a["sources"]), -a["pubmed_count"], a["name"])
+    return (
+        a.get("type") == "T",
+        {"A": 0, "B": 1, "C": 2, "N": 3}.get(a["evidence_tier"], 3),
+        -(a.get("association_score") or 0),
+        -len(a["sources"]),
+        -a["pubmed_count"],
+        a["name"],
+    )
 
 
 def _tier_sort_key_drug(d: dict) -> tuple:
@@ -298,7 +310,7 @@ def to_web_json(page: DiseasePageData, *, cap_display: bool = False, slug: str |
             "natural_product_count": len(page.natural_products),
         },
         "categories": TYPE_LABELS,
-        "filters": ["A", "B", "C", "D", "E", "direct", "via_biomarker", "natural_agent", "repurposing"],
+        "filters": ["A", "B", "C", "D", "E", "T", "direct", "via_biomarker", "natural_agent", "repurposing"],
         "alterations": alts_out,
         "therapeutics": {
             "direct": direct_out,

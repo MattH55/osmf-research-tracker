@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from ..models import Alteration, AlterationType, EvidenceTier, Therapeutic
 
-_TIER_RANK = {EvidenceTier.A: 0, EvidenceTier.B: 1, EvidenceTier.C: 2}
+_TIER_RANK = {EvidenceTier.A: 0, EvidenceTier.B: 1, EvidenceTier.C: 2, EvidenceTier.N: 3}
 _FREQ_RANK = {"obligate": 0, "very_frequent": 1, "frequent": 2, "occasional": 3}
 
 
@@ -46,6 +46,15 @@ def _therapeutic_score(drug: Therapeutic) -> int:
 
 
 def score_alterations(alterations: list[Alteration]) -> list[Alteration]:
+    """Merge duplicate alterations (same canonical_id) across adapters.
+
+    The evidence wording is set by each adapter from what the source itself
+    reports (Open Targets association score, HPO annotation, trial outcome
+    measure). It is NOT recomputed from the number of contributing sources:
+    that count produced the old 'Emerging' (1 source) / 'Moderate' (2 sources)
+    labels, which were an artefact (HPO and Monarch are one annotation set, not
+    two independent sources). Provenance fix 2026-10-15.
+    """
     merged: dict[str, Alteration] = {}
     for alt in alterations:
         key = alt.canonical_id.lower()
@@ -56,13 +65,16 @@ def score_alterations(alterations: list[Alteration]) -> list[Alteration]:
         sources = list(dict.fromkeys(existing.sources + alt.sources))
         source_ids = {**existing.source_ids, **alt.source_ids}
         pubmed = max(existing.pubmed_count, alt.pubmed_count)
-        tier = _alteration_tier(len(sources), pubmed)
         merged[key] = existing.model_copy(
             update={
                 "sources": sources,
                 "source_ids": source_ids,
                 "pubmed_count": pubmed,
-                "evidence_tier": tier,
+                "evidence_tier": _best_tier(existing.evidence_tier, alt.evidence_tier),
+                "evidence_label": existing.evidence_label or alt.evidence_label,
+                "association_score": existing.association_score
+                if existing.association_score is not None
+                else alt.association_score,
                 "frequency_label": _best_frequency(existing.frequency_label, alt.frequency_label),
                 "frequency_pct": existing.frequency_pct or alt.frequency_pct,
                 "definition": existing.definition or alt.definition,
@@ -70,14 +82,16 @@ def score_alterations(alterations: list[Alteration]) -> list[Alteration]:
             }
         )
 
-    scored = []
-    for alt in merged.values():
-        tier = _alteration_tier(len(alt.sources), alt.pubmed_count)
-        scored.append(alt.model_copy(update={"evidence_tier": tier}))
-
     return sorted(
-        scored,
-        key=lambda a: (_TIER_RANK[a.evidence_tier], -len(a.sources), -a.pubmed_count, a.name),
+        merged.values(),
+        key=lambda a: (
+            a.alteration_type.value == "T",
+            _TIER_RANK[a.evidence_tier],
+            -(a.association_score or 0),
+            -len(a.sources),
+            -a.pubmed_count,
+            a.name,
+        ),
     )
 
 

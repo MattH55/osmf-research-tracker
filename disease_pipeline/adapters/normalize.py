@@ -86,19 +86,59 @@ async def _oxo_crossmap(efo_id: str, session: aiohttp.ClientSession) -> dict[str
     return mapped
 
 
+def _norm_label(text: str) -> str:
+    t = text.lower().replace("'s", "").replace("’s", "")
+    t = re.sub(r"[^a-z0-9]+", " ", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def label_matches(query: str, label: str | None, synonyms: list[str] | None = None) -> bool:
+    """True when an ontology term's label or one of its synonyms names the query disease.
+
+    Guards identifier resolution against taking the first search hit / an
+    arbitrary cross-mapping (the cause of the wrong MONDO and ORPHA IDs found
+    in the 2026-10-15 provenance audit, e.g. AMD -> acute respiratory failure,
+    ADHD -> ORPHA:250994 1q21.1 microduplication syndrome).
+    """
+    q = _norm_label(query)
+    names = [label or ""] + list(synonyms or [])
+    return any(q and _norm_label(n) == q for n in names if n)
+
+
+async def _ols_term(ontology: str, iri: str, session: aiohttp.ClientSession) -> dict:
+    from urllib.parse import quote
+
+    enc = quote(quote(iri, safe=""), safe="")
+    try:
+        return await get_json(session, f"{ORPHANET_OLS_URL}/ontologies/{ontology}/terms/{enc}") or {}
+    except Exception as e:
+        log.debug("OLS term lookup failed for %s: %s", iri, e)
+        return {}
+
+
+async def verify_mondo(mondo_id: str, names: list[str], session: aiohttp.ClientSession) -> bool:
+    iri = "http://purl.obolibrary.org/obo/" + mondo_id.replace(":", "_")
+    term = await _ols_term("mondo", iri, session)
+    return any(label_matches(n, term.get("label"), term.get("synonyms")) for n in names if n)
+
+
 async def _ordo_orpha(disease_name: str, session: aiohttp.ClientSession) -> str | None:
-    ck = f"orpha_search:{disease_name.lower()}"
+    ck = f"orpha_search:v2:{disease_name.lower()}"
     cached = cache_get("normalize", ck)
     if cached is not None:
         return cached.get("orpha_id")
 
-    params = {"q": disease_name, "ontology": "ordo", "rows": 5}
+    params = {"q": disease_name, "ontology": "ordo", "rows": 5, "fieldList": "obo_id,label,synonym"}
     data = await get_json(session, f"{ORPHANET_OLS_URL}/search", params=params)
     docs = data.get("response", {}).get("docs", [])
     orpha_id = None
     for doc in docs:
         obo_id = doc.get("obo_id", "")
-        if obo_id.startswith("Orphanet:"):
+        # Accept only a term whose label/synonym names the disease; the first
+        # hit was often an unrelated rare syndrome mentioning a shared word.
+        if obo_id.startswith("Orphanet:") and label_matches(
+            disease_name, doc.get("label"), doc.get("synonym") or doc.get("exact_synonyms")
+        ):
             orpha_id = obo_id.replace("Orphanet:", "ORPHA:")
             break
     cache_set("normalize", ck, {"orpha_id": orpha_id})
@@ -153,9 +193,13 @@ async def normalize_disease(disease_name: str, session: aiohttp.ClientSession) -
     mapped = await _oxo_crossmap(crossmap_id, session)
     orpha_id = await _ordo_orpha(canonical_name, session)
     if not mondo_id:
-        mondo_id = mapped.get("MONDO") or await _mondo_from_monarch(crossmap_id, session)
-    elif mapped.get("MONDO"):
-        mondo_id = mapped["MONDO"]
+        candidate = mapped.get("MONDO") or await _mondo_from_monarch(crossmap_id, session)
+        # Keep a cross-mapped MONDO ID only if its label names the disease.
+        if candidate and await verify_mondo(candidate, [disease_name, canonical_name], session):
+            mondo_id = candidate
+    # An Open Targets MONDO hit is never overridden by an OxO cross-mapping:
+    # OxO returns many mappings per prefix and the last one won, which put
+    # unrelated MONDO IDs on 9 diseases (provenance fix 2026-10-15).
 
     ids = DiseaseIdentifiers(
         name=canonical_name,

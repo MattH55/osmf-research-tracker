@@ -14,6 +14,9 @@ DUPLICATE_SLUGS: dict[str, str] = {
     "stroke": "ischemic-stroke",
     "mecfs": "myalgic-encephalomyelitis-chronic-fatigue-syndrome",
     "nafld-mash": "metabolic-dysfunction-associated-steatohepatitis",
+    # Same disease generated twice (provenance fix 2026-10-15); "mcas" kept as
+    # it carries the therapeutics and the display-name mapping.
+    "mast-cell-activation-syndrome": "mcas",
 }
 
 EXCLUDED_SLUGS: frozenset[str] = frozenset(DUPLICATE_SLUGS.keys())

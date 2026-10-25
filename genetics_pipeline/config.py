@@ -23,10 +23,16 @@ TABLES = [
 GENOME_WIDE_SIGNIFICANCE = 5e-8
 SUGGESTIVE_UPPER = 1e-5
 
-# GWAS Catalog's legacy per-study associations endpoint still works for curated
-# top hits; the old bulk summary-statistics API (spec section 4) returns 410 on
-# every path and must never be called.
-GWAS_CATALOG_LEGACY_BASE = "https://www.ebi.ac.uk/gwas/rest/api"
+# The GWAS Catalog legacy REST API (/gwas/rest/api/studies, .../associations)
+# now returns HTTP 410 on every path, as does the old bulk summary-statistics
+# API (spec section 4); neither may be called. Two v2 services remain:
+#   - GWAS_CATALOG_REST_V2_BASE: the documented REST API v2 (snake_case JSON;
+#     docs at https://www.ebi.ac.uk/gwas/rest/api/v2/docs), used for
+#     studies-by-PubMed-ID and association queries
+#   - GWAS_CATALOG_V2_BASE: the camelCase v2 service behind the web UI, used
+#     only by study_v2(); it silently ignores unknown filters such as
+#     accession_id (returns the whole catalogue), so filter names matter
+GWAS_CATALOG_REST_V2_BASE = "https://www.ebi.ac.uk/gwas/rest/api/v2"
 GWAS_CATALOG_V2_BASE = "https://www.ebi.ac.uk/gwas/api/v2"
 EUROPEPMC_BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest"
 ENSEMBL_BASE = "https://rest.ensembl.org"

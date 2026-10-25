@@ -12,12 +12,18 @@ class AlterationType(str, Enum):
     C = "C"  # validated disease scale or PRO instrument
     D = "D"  # pathological / structural finding
     E = "E"  # functional impairment
+    # ClinicalTrials.gov outcome measures: what trials in the condition measure,
+    # not an alteration observed in the disease (kept apart from A-E).
+    T = "T"
 
 
 class EvidenceTier(str, Enum):
     A = "A"  # multiple independent databases + literature (>50 papers)
     B = "B"  # single database + literature (>10 papers)
     C = "C"  # single source or literature only (<10 papers)
+    # Neutral: the source carries no evidence grade (Open Targets association,
+    # HPO annotation, trial outcome measure). See Alteration.evidence_label.
+    N = "N"
 
 
 class DiseaseIdentifiers(BaseModel):
@@ -43,6 +49,11 @@ class Alteration(BaseModel):
     evidence_tier: EvidenceTier = EvidenceTier.C
     pubmed_count: int = 0
     definition: Optional[str] = None
+    # Open Targets overall association score (0-1) for gene rows.
+    association_score: Optional[float] = None
+    # Source-specific evidence wording shown instead of a tier, e.g.
+    # "OT score 0.62", "HPO annotation", "Trial outcome measure".
+    evidence_label: Optional[str] = None
 
 
 class Therapeutic(BaseModel):
