@@ -1,5 +1,5 @@
 # Clinical Trials Card Agent — Weekly Report
-**Date:** 2026-10-24  
+**Date:** 2026-10-25  
 **Conditions covered:** PACVS, Long COVID/PASC, ME/CFS  
 **Total active trials in report:** 632
 
@@ -8,56 +8,6 @@
 
 ---
 
-## Updated Trials This Week
-
-**DAOIB for the Treatment of Brain Fog**  
-**NCT05764538** | **RECRUITING** | **PHASE2** | Last Updated: 2026-10-23
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Daoib
-
-**Sponsor:** Chang Gung Memorial Hospital (OTHER)
-
-**Key Focus / Interventions:**  
-This is a 24-week open trial. We will enroll long-COVID patients with cognitive impairments. All patients will receive DAOIB for 24 weeks. We will assess the patients every 8 weeks during the treatment period (weeks 0, 8, 16, and 24). We hypothesize that DAOIB treatment will be beneficial in improving the cognitive function, mood symptoms, global functioning and quality of life in long-COVID patients with cognitive impairments.
-
-**Timeline:** Start: 2023-02-27 | Primary Completion: 2027-06 | Est. Completion: 2027-06
-**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05764538
-
-**Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-10-24
-
----
-**Phase I Open-Label Safety Trial of Pembrolizumab for Neurological Post- Acute Sequelae of SARS-CoV-2 (PD1-PASC I)**  
-**NCT07388550** | **NOT_YET_RECRUITING** | **PHASE1** | Last Updated: 2026-10-23
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Keytruda
-
-**Sponsor:** National Institute of Neurological Disorders and Stroke (NINDS) (NIH)
-
-**Key Focus / Interventions:**  
-Background:
-
-SARS-CoV-2 is the virus that causes COVID-19. Some people who recover from an acute COVID-19 infection may continue to have symptoms that persist for months or years. These can include neurological symptoms, such as headaches, loss of taste or smell, dizziness, or trouble walking. Pembrolizumab is a drug approved to treat certain cancers. Researchers think this drug might reduce long-term neurologic symptoms after a COVID-19 infectio...
-
-**Timeline:** Start: 2026-10-28 | Primary Completion: 2028-01-01 | Est. Completion: 2028-01-01
-**Enrollment:** 15 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07388550
-
-**Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Nih
-
-**Extraction Date:** 2026-10-24
-
----
 ## All Tracked Trials (Current)
 
 **DAOIB for the Treatment of Brain Fog**  
@@ -80,7 +30,7 @@ This is a 24-week open trial. We will enroll long-COVID patients with cognitive 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Phase I Open-Label Safety Trial of Pembrolizumab for Neurological Post- Acute Sequelae of SARS-CoV-2 (PD1-PASC I)**  
@@ -105,7 +55,7 @@ SARS-CoV-2 is the virus that causes COVID-19. Some people who recover from an ac
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Nih
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Transcraneal Magnetic Stimulation for Treatment of Non-nociceptive Pain in Chronic Diseases**  
@@ -128,7 +78,7 @@ Background: Chronic non-nociceptive or nociplastic pain and neurological sequela
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Hi-OxSR for the Treatment of Post COVID Condition**  
@@ -152,7 +102,7 @@ The RECLAIM study platform will be used to explore whether the use of the Hi-OxS
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Home-based Brain Stimulation Treatment for Post-acute Sequelae of COVID-19 (PASC)**  
@@ -175,7 +125,7 @@ The main goal of this study is to improve dysexecutive symptoms (e.g., sustained
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Intensive Home-based Transcranial Direct Current Stimulation for Long COVID**  
@@ -202,7 +152,7 @@ What are the effects of the treatment sequence on cognition, pain, anxiety,...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Taurine Supplementation in Adolescents With Post-COVID Condition**  
@@ -225,7 +175,7 @@ The COVID-19 pandemic has swept across the globe, affecting millions of individu
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of Transcranial Direct Current in Patients With Persistent COVID-19 With Headaches and Chronic Pain.**  
@@ -248,7 +198,7 @@ This study aims to verify the efficacy/effectiveness of treatment with transcran
 
 **Relevance Tags:** Immunomodulatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **LIFT: Life Improvement Trial**  
@@ -274,7 +224,7 @@ This...
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Whole-body Cryotherapy in Those With Chronic Fatigue: A Feasibility Study**  
@@ -297,7 +247,7 @@ Chronic fatiguing illnesses such as Myalgic Encephalomyelitis/Chronic Fatigue Sy
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Immunotherapy for Neurological Post-Acute Sequelae of SARS-CoV-2**  
@@ -331,7 +281,7 @@ Adults ages 18 and older ...
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Nih
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of a Personalized In-home Telerehabilitation Program on Self-Care in Patients With Long COVID**  
@@ -359,7 +309,7 @@ The main questions it aims to answer are:
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Evaluate the Efficacy and Safety of Plitidepsin in Adults With Post-COVID-19 Condition (PCC)**  
@@ -384,7 +334,7 @@ During t...
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fluvoxamine for Long COVID-19**  
@@ -407,7 +357,7 @@ This clinical trial aims to test the effects of fluvoxamine as a treatment for L
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **PERCEIVE-Outreach: A Scalable, Risk-Based Model for Managing Persistent Cardiovascular Impact in Long COVID**  
@@ -432,7 +382,7 @@ This study is testing a new care model called PERCEIVE-Outreach, designed to hel
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-ENERGIZE Platform Protocol_Appendix B (Structured Pacing (PEM))**  
@@ -457,7 +407,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long Covid (LC)-REVITALIZE - A Long Covid Repurposed Drug Study**  
@@ -481,7 +431,7 @@ The Long-Covid (LC)-Revitalize clinical study is testing repurposed drug treatme
 
 **Relevance Tags:** Repurposed | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **SARS-CoV-2 Specific Monoclonal Antibody for Post-COVID-19 Conditions (Long COVID)**  
@@ -504,7 +454,7 @@ This placebo-controlled, randomized, blinded, two-arm phase II study will test t
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Diaphragmatic Breathing Exercises With KOTS Currents in Patients With Long COVID**  
@@ -528,7 +478,7 @@ This study will evaluate the effects of diaphragmatic breathing exercises combin
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Heat thErapy And mobiLity in COVID-19 Survivors**  
@@ -552,7 +502,7 @@ Post-acute sequelae of SARS-CoV-2 infection (PASC) is becoming a major risk fact
 
 **Relevance Tags:** Metabolic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Randomized Double-Blind Placebo-Controlled Trial EValuating Baricitinib on PERSistent NEurologic and Cardiopulmonary Symptoms of Long COVID**  
@@ -575,7 +525,7 @@ The overarching goal of this study is to determine if baricitinib, as compared t
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **QEEG-NEUROFEEDBACK FOR COGNITIVE REHABILITATION IN LONG COVID-19 SURVIVORS WITH BRAIN FOG**  
@@ -598,7 +548,7 @@ The pandemic has highlighted social, economic, educational, and political issues
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study to Examine Anktiva for the Treatment of COVID-19.**  
@@ -621,7 +571,7 @@ This study will examine the safety and effectiveness of Anktiva in treating pati
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **NE3107 in Adults With Neurological Symptoms of Long COVID**  
@@ -646,7 +596,7 @@ This study is designed as a signal-seeking proof-of-concept Phase 2 study. The p
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Taurine Supplementation in Long COVID**  
@@ -669,7 +619,7 @@ The COVID-19 pandemic has swept across the globe, affecting millions of individu
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluating the Neuromodulatory Effect of Ketamine in Long COVID-19**  
@@ -694,7 +644,7 @@ This study is a clinical trial to see if ketamine can help treat symptoms of Lon
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluation of the Effectiveness of Breathing Control Technique on Long COVID Symptoms at the Reunion University Hospital**  
@@ -717,7 +667,7 @@ Despite the controversy, on October 6, 2021, the World Health Organization (WHO)
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RCT of Mind-body in Long COVID and Myalgic Encephalomyelitis**  
@@ -742,7 +692,7 @@ ME/CFS can affect many different parts of the body, such as the nervous system, 
 
 **Relevance Tags:** Metabolic | Immunomodulatory | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **REVERSE-Long COVID-19 With Baricitinib Study**  
@@ -765,7 +715,7 @@ REVERSE-LC is a phase 3 trial of baricitinib versus placebo in adults with neuro
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Observational Study With CICR-NAM as a Food for Special Medicinal Purposes in Post-COVID Syndrome (PCS)**  
@@ -788,7 +738,7 @@ In patients with post-COVID syndrome, changes in tryptophan metabolism, energy m
 
 **Relevance Tags:** Metabolic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Brain Research and Integrative Neuroscience Network for COVID-19**  
@@ -812,7 +762,7 @@ The aim of the experimental study is to investigate two interventions for the ma
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long-Covid-19 Alleviation Through Learning Mindfulness Study**  
@@ -835,7 +785,7 @@ This research is being done to study a mindfulness intervention among people who
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Nitrite Supplementation in Long COVID Patients**  
@@ -858,7 +808,7 @@ Potential benefits of a nitrate-rich juice supplement to improve skeletal muscle
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mental Intervention and Nicotinamide Riboside Supplementation in Long Covid**  
@@ -883,7 +833,7 @@ Long COVID, also referred to as post-acute sequela of COVID-19 (PASC), is presen
 
 **Relevance Tags:** Metabolic | Mitochondrial | Neurological / Autonomic | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **AT1001 for the Treatment of Long COVID**  
@@ -906,7 +856,7 @@ The primary objective of this study is to evaluate the safety and efficacy of La
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Micro-choice-based Intervention for Multicausal Fatigue**  
@@ -929,7 +879,7 @@ This proof-of-concept study aims to evaluate the feasibility, acceptability, and
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Brain-Training Treatment for Long COVID in Older Adults**  
@@ -952,7 +902,7 @@ This research is being done to collect preliminary data on the potential of comp
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **CArdiac REhabilitation for Building Exertional heArt Rate for Chronotropic Incompetence in Long COVID-19**  
@@ -975,7 +925,7 @@ The goal of this proof-of-concept clinical trial is to determine whether cardiac
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-NEURO: Platform Protocol, Appendix_A to Measure the Effects of BrainHQ, PASC CoRE and tDCS Interventions on Long COVID Symptoms**  
@@ -1003,7 +953,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Probiotic Use for Recovery Enhancement From Long COVID-19**  
@@ -1026,7 +976,7 @@ The goal of this clinical trial is to learn if probiotics can improve symptoms a
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fully Remote, Telehealth-based Ketogenic Metabolic Therapy for Long COVID**  
@@ -1054,7 +1004,7 @@ Can a ketogenic di...
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **tVNS in Long COVID-19**  
@@ -1077,7 +1027,7 @@ A prior open label study has shown that transcutaneous vagus nerve stimulation \
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-AUTONOMIC Platform Protocol**  
@@ -1103,7 +1053,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-AUTONOMIC: Platform Protocol, Appendix A (IVIG)**  
@@ -1129,7 +1079,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Immulina TM Supplements With PASC Patients**  
@@ -1152,7 +1102,7 @@ This is a multi-site study that will try to determine the effects of Immulina �
 
 **Relevance Tags:** Anti-inflammatory | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Development of an Accessible Cognitive Behavioral Therapy Digital Therapeutic for Individuals With Long COVID**  
@@ -1175,7 +1125,7 @@ This study will evaluate Toivoa-004 as an experimental digital therapeutic for p
 
 **Relevance Tags:** Neurological / Autonomic | NA | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Chinese Medicine for Patients With LCOVID-19 Symptoms**  
@@ -1200,7 +1150,7 @@ Most of the infected people will develop mild to moderate illness, for example f
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **CD19-B Cell Depletion in PAIS-ME/CFS Patients**  
@@ -1223,7 +1173,7 @@ Post-acute infection syndromes (PAIS) are long-lasting health problems that can 
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Transcranial Direct Current Stimulation for Long COVID Brain Fog and Fatigue**  
@@ -1248,7 +1198,7 @@ The NEUROSTIM-LC study will evaluate the feasibility and potential effects of r.
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Efficacy of Long-Chain Fatty Acids, Eicosapentaenoic Acid (EPA) and Specialized Pro-Resolving Mediators (SPMs), in Treating Long COVID Neuropsychiatric Symptoms**  
@@ -1272,7 +1222,7 @@ Researchers conducted a 12-week, double-blind, randomized, placebo-controlled tr
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Post-acute Infectious Syndrome - Aripiprazole Symptom Evaluation (PAIS-AriSE)**  
@@ -1295,7 +1245,7 @@ Post-acute infectious syndrome (PAIS), including post-COVID-19 condition (PCC or
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Nutritional Management of Post COVID-19 Cognitive Symptoms**  
@@ -1322,7 +1272,7 @@ The goal of this clinical trial is to learn about in brain "fog" complaints asso
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Magnetic Resonance Analysis of Neural Inflammatory Factors and External Stimulation**  
@@ -1347,7 +1297,7 @@ The goal of this clinical trial is to test whether a type of rapid outpatient br
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cognitive Rehabilitation Therapy for COVID-19**  
@@ -1370,7 +1320,7 @@ Cognitive dysfunction, psychiatric symptoms, functional impairment, and disabili
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Individual Tailored Physical Exercise in Patients With POTS After COVID-19 - a Randomized Controlled Study**  
@@ -1393,7 +1343,7 @@ Covid-19 has the potential to affect physical, cognitive and psychological funct
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cardiovascular Autonomic and Immune Mechanism of Post COVID-19 Tachycardia Syndrome**  
@@ -1418,7 +1368,7 @@ This syndrome affects mostly women (\~80%), present with chronic tachycardia and
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fatigue in Long COVID**  
@@ -1444,7 +1394,7 @@ The goal of this trial is to compare two treatments for people with long COVID t
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Kisspeptin to Quantify GnRH Neuronal Function in Health and Disease**  
@@ -1467,7 +1417,7 @@ The objective of this protocol is to use a case-control paradigm to compare the 
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Pilot Randomized Controlled Trial of Homeopathic Treatment for Long COVID**  
@@ -1491,7 +1441,7 @@ A small-scale test of the intervention, trial design and methods to explore the 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-ENERGIZE Platform Protocol_Appendix A (Exercise Intolerance)**  
@@ -1516,7 +1466,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-SLEEP: Platform Protocol, Appendix_B (CPSD)**  
@@ -1540,7 +1490,7 @@ The platform protocol is designed to be flexible so that it is suitable for a ra
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Pilot rTMS Trial for Neuropsychiatric Symptoms of Long-COVID**  
@@ -1563,7 +1513,7 @@ This is a pilot randomized trial of rTMS for symptoms of fatigue and brain fog, 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Balance Acceptance and Commitment Therapy for Long COVID**  
@@ -1588,7 +1538,7 @@ The primary objective of this trial is to investigate whether Balance-ACT improv
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dapagliflozin for Long COVID Syndrome**  
@@ -1611,7 +1561,7 @@ This is a randomized, placebo-controlled study. Patients with long COVID will be
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Education of Medical Staff to Post Acute Covid susTained sYmptoms**  
@@ -1635,7 +1585,7 @@ Evaluation of the effectiveness of a training and support intervention for gener
 
 **Relevance Tags:** General | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dietary Intervention to Mitigate Post-Acute COVID-19 Syndrome**  
@@ -1660,7 +1610,7 @@ The main research questions this study aims to answe...
 
 **Relevance Tags:** Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Multi-Center, Individually-Randomized, Double-Blind, Placebo-Controlled, Parallel-Group, Superiority Trial to Evaluate the Efficacy of the Combination of Maraviroc and Atorvastatin for the Treatment of Subjects With Long COVID**  
@@ -1684,7 +1634,7 @@ The IMPACT Long Covid Treatment clinical study (IMPACT-LC) is testing two repurp
 
 **Relevance Tags:** Repurposed | Neurological / Autonomic | Phase 2 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Water-based Activity to Enhance Recovery in Long COVID-19**  
@@ -1707,7 +1657,7 @@ This two-year study will evaluate the feasibility and safety of an exercise + co
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Investigation of Treating Chronic Fatigue Syndrome After COVID With Pharmacotherapy (Pregabalin) or Complex Rehabilitation**  
@@ -1736,7 +1686,7 @@ Patients will be randomized in a 1:1:1:1 ratio to pregabalin (75-300 mg daily in
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Network
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of a Physical Rehabilitation Program on Long COVID**  
@@ -1763,7 +1713,7 @@ Does handgrip strength improve after the intervention? Does the 6-minute walk te
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **sElective Serotonin reuPtake inhibitoRs In posT-covid After COVID-19**  
@@ -1788,7 +1738,7 @@ A promising candidate intervention is fluvoxamine, a selective serotonin reuptak
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Non-invasive Treatment for Long COVID (Post COVID-19 Condition) Brain Fog**  
@@ -1814,7 +1764,7 @@ This study aims to assess the effects of both acute and chronic exposures to hyp
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluating the Safety and Efficacy of PNMR as Treatment for Long COVID**  
@@ -1840,7 +1790,7 @@ Patients will be assessed in the clinic at scree...
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-SLEEP: Platform Protocol, Appendix_A (Hypersomnia)**  
@@ -1864,7 +1814,7 @@ The platform protocol is designed to be flexible so that it is suitable for a ra
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluating the Effects of a Fermented Diet on Microbiome Diversity in Individuals With Long COVID**  
@@ -1887,7 +1837,7 @@ The purpose of this study is to evaluate the effects of fermented foods on bacte
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study of Positive Emotions With Long COVID-19**  
@@ -1910,7 +1860,7 @@ This study is testing a new brief mindfulness practice for people suffering from
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Diagnostic and Clinical Management of Non-Obstructive Myocardial Ischemia in Patients With Long Covid-19 Syndrome and New Onset Chest Pain**  
@@ -1933,7 +1883,7 @@ Long Covid-19 INOCA is an investigator-initiated, prospective, randomized, sham-
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Multiparametric [18F]F-AraG Imaging in Post-Acute Sequelae of COVID-19 (PASC)**  
@@ -1959,7 +1909,7 @@ This study uses total-body \[¹⁸F\]F-AraG PET/CT imaging to investigate immune
 
 **Relevance Tags:** Immunomodulatory | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Investigating the Effects of Intermittent Hypoxia-Hyperoxia Treatment (IHHT) in People With Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS) to Improve Fatigue, Pain, and Quality of Life by Targeting Mitochondrial Dysfunction and Autonomic Nervous System Impairment**  
@@ -1984,7 +1934,7 @@ The treatment being studied is called Intermittent Hypoxia-Hyperoxia Treatment (
 
 **Relevance Tags:** Metabolic | Mitochondrial | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fareon Open Label Device Clinical Trial**  
@@ -2007,7 +1957,7 @@ The purpose of this study is to assess the safety and feasibility of an at-home 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **SARS-CoV-2 and Herpesvirus Inhibition for Ending Long COVID Dysfunction**  
@@ -2032,7 +1982,7 @@ The purpose of this research study is to test if the combination of three drugs,
 
 **Relevance Tags:** Persistence / Antiviral | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fatigability in Long COVID-19**  
@@ -2055,7 +2005,7 @@ The overall goal of this project is to advance the understanding of underlying m
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Low Dose Sirolimus in People With Post-Acute Sequelae of COVID-19 (PASC) Long COVID-19**  
@@ -2082,7 +2032,7 @@ This study aims to evaluate the efficacy of Sirolimus in adults with Long COVID.
 
 **Relevance Tags:** Immunomodulatory | Repurposed | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Intermittent Fasting and a No-Sugar Diet for Long COVID Symptoms**  
@@ -2106,7 +2056,7 @@ This cross-over study will assess a no added sugar diet, a restricted daily eati
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **DMSO Dual-Route Therapy for Refractory Tinnitus in Long-COVID and Post-COVID-19 Vaccine Injury**  
@@ -2132,7 +2082,7 @@ All participants will receive two study treatments for 30 days: a DMSO-based ear
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pain Relief With Integrative Medicine (PRIMe)?: Feasibility of Acupuncture for Long COVID**  
@@ -2155,7 +2105,7 @@ The goal of this preliminary study is to test methods and procedures to be used 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study to Assess Anktiva in Patients With Long Covid-19.**  
@@ -2178,7 +2128,7 @@ This study will test the safety and tolerability of Anktiva in patients with Lon
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **NC Testing in LC & POTS**  
@@ -2201,7 +2151,7 @@ Patients with Postural Orthostatic Tachycardia Syndrome (POTS) and Post-Acute Se
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cognitive Muscular Therapy for Patients With Long-COVID and Breathing Pattern Disorder**  
@@ -2225,7 +2175,7 @@ The aim of the study is to test a treatment known as "Cognitive Muscular Therapy
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Transcutaneous Vagus Nerve Stimulation as a Complementary Therapy to Exercise in Chronic Fatigue**  
@@ -2249,7 +2199,7 @@ Chronic fatigue is enhanced by adapted physical activity (APA) programs. Patient
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Intranasal Heparin Treatment to Reduce Transmission Among Household Contacts of COVID 19 Positive Adults and Children**  
@@ -2272,7 +2222,7 @@ Coronavirus-induced disease 2019 (COVID-19) is an infection caused by a virus wh
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Digital Multimodal Rehabilitation for People With Post-acute COVID-19 Syndrome.**  
@@ -2298,7 +2248,7 @@ RehabCOVID (also referred to as RehabNautilus) is b...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID-19 [11C]CPPC Study**  
@@ -2321,7 +2271,7 @@ The goal of this study is to evaluate the safety of using the \[5-cyano-N-(4-(4-
 
 **Relevance Tags:** General | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pycnogenol® in Post-COVID-19 Condition**  
@@ -2344,7 +2294,7 @@ To determine the effect of Pycnogenol® versus placebo on patient-reported healt
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Tele-exercise Training Program for Long COVID**  
@@ -2367,7 +2317,7 @@ Patients with long coronavirus disease (COVID-19) experience multisystem symptom
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **COVID-OUT: Early Outpatient Treatment for SARS-CoV-2 Infection (COVID-19)**  
@@ -2393,7 +2343,7 @@ Patients with long coronavirus disease (COVID-19) experience multisystem symptom
 
 **Relevance Tags:** General | Phase 3 | Very Large (1000+ participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Harnessing Optimism and Perseverance in the Face of Long COVID-Español**  
@@ -2416,7 +2366,7 @@ The Harnessing Optimism and Perseverance in the Face of Long COVID (HOPE-LC) pro
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Investigate the Efficacy of Abrocitinib in Adult Participants With Severe Fatigue From Post COVID Condition/Long COVID**  
@@ -2439,7 +2389,7 @@ The primary purpose of this phase 2a study is to compare the efficacy of abrocit
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Prospective, Open-label Study of Seraph 100 in Patients With Prolonged COVID (PC)**  
@@ -2462,7 +2412,7 @@ This study will use a prospective, open, single-arm design, in which a group of 
 
 **Relevance Tags:** General | NA | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluating the Impact of a Functional and Cognitive Strategy in Patients With Long Covid-19**  
@@ -2488,7 +2438,7 @@ Researchers will compare a structured rehabilitation program to informational su
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID Brain Fog: Cognitive Rehabilitation Trial**  
@@ -2520,7 +2470,7 @@ This study will compare two approaches to cognitive rehabilitation in adults wit
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Multicenter, Adaptive, Randomized, doublE-blinded, Placebo-controlled Study in Participants With Long COVID-19: The REVIVE Trial**  
@@ -2546,7 +2496,7 @@ Long COVID is a multi-systemic condition comprising often severe and persistent 
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of Chemosensory Enhancement Through Neuromodulation Training (SCENT for Long COVID)**  
@@ -2570,7 +2520,7 @@ Persistent smell loss that can include diminished or distorted smell function is
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Improving Attention in Individuals With Long COVID-19**  
@@ -2594,7 +2544,7 @@ This study is to find out if the Attention Processing Training program is a pote
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Ensitrelvir for Viral Persistence and Inflammation in People Experiencing Long COVID**  
@@ -2617,7 +2567,7 @@ Persistent viral infection with viral reservoirs and detection of circulating sp
 
 **Relevance Tags:** Persistence / Antiviral | Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of Liraglutide (A Weight Loss Drug) in High Risk Obese Participants With Cognitive and Memory Issues**  
@@ -2643,7 +2593,7 @@ By doing this study, researchers hope to learn how liraglutide (Saxenda®), a we
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Is Swimming a More Tolerable Form of Movement for Individuals With Myalgic Encephalomyelitis/ Chronic Fatigue Syndrome?**  
@@ -2667,7 +2617,7 @@ Individuals with ME/CFS experience profound exercise intolerance and post-exerti
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-VITAL: Platform Protocol, Appendix to Measure the Effects of Paxlovid on Long COVID Symptoms**  
@@ -2691,7 +2641,7 @@ This is an appendix of master protocol (NCT05595369) designed to be flexible so 
 
 **Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Assessing Safety of Coronavirus Infection (COVID-19) Messenger RNA (mRNA) Vaccine Administration in the Setting of a Previous Adverse Reaction**  
@@ -2715,7 +2665,7 @@ This study will evaluate the safety of administering an additional dose of an mR
 
 **Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Using Enhanced External Counterpulsation to Recover Cardiovascular Function for Patient of Chronic Diseases**  
@@ -2743,7 +2693,7 @@ The main questions it aims to answer are:
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Antiviral Clinical Trial for Long Covid-19**  
@@ -2769,7 +2719,7 @@ Participants will be randomly allocated to receive antivirals, Truvada (tenofovi
 
 **Relevance Tags:** Repurposed | Persistence / Antiviral | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Lumbrokinase for Adults With Long Covid, Post-treatment Lyme Disease Syndrome, and Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -2796,7 +2746,7 @@ This will be a pilot multi-arm clinical trial investigating the feasibility of L
 
 **Relevance Tags:** General | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of Xiflam™ Treatment in Patients Post COVID-19 Infection Suffering From What is Known as Long COVID (LC)**  
@@ -2821,7 +2771,7 @@ Xiflam (n=10) or placebo (n=5) will be administered orally once a day (QD) for 1
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECLAIM: Recovering From COVID-19 Lingering Symptoms Adaptive Integrative Medicine**  
@@ -2847,7 +2797,7 @@ Interventions will las...
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Recovering From COVID-19 Lingering Symptoms Adaptive Integrative Medicine Trial - Effect of Hyperbaric Oxygen Therapy for the Treatment of Post COVID Condition**  
@@ -2872,7 +2822,7 @@ Hyperbaric oxygen therapy is a well-established medical treatment. HBOT promotes
 
 **Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **HOBSCOTCH for People With Post Acute COVID-19 Syndrome (PACS)**  
@@ -2901,7 +2851,7 @@ Will people with PACS experience improved quality of life similar to that found 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **An Open-label, Clinical Feasibility Study of the Efficacy of Remdesivir for Long-COVID.**  
@@ -2924,7 +2874,7 @@ Following an infection with Severe Acute Respiratory Syndrome coronavirus 2 (SAR
 
 **Relevance Tags:** Persistence / Antiviral | Neurological / Autonomic | Phase 4 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-AUTONOMIC: Platform Protocol, Appendix B (Ivabradine)**  
@@ -2950,7 +2900,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mind Body Intervention for Long COVID-19**  
@@ -2973,7 +2923,7 @@ The goal of this study is to determine if a mind-body intervention can help peop
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Fasting Pilot Study for Long COVID**  
@@ -3000,7 +2950,7 @@ The aim of this single center...
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Stellate Ganglion Block for COVID-19-Induced Olfactory Dysfunction**  
@@ -3023,7 +2973,7 @@ Chronic olfactory dysfunction from the COVID-19 pandemic is a growing public hea
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Inspiratory Muscle Pressure and Diaphragmatic Strength in Women With Long COVID-19: A Pressure Biofeedback-Guided Training Study**  
@@ -3048,7 +2998,7 @@ In women after COVID-19, ...
 
 **Relevance Tags:** Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Stellate Ganglion Block for Long COVID Symptoms: A Randomized Controlled Trial**  
@@ -3071,7 +3021,7 @@ This single-center, randomized, controlled, single-blind clinical trial evaluate
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Trial of Shengmai Liquid for Long COVID Fatigue.**  
@@ -3097,7 +3047,7 @@ The goal of this clinical trial is to learn if Shengmai liquid works to treat Lo
 
 **Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Clinical Trial on a Natural Compound to Improve Chronic Inflammation After SARS-CoV-2 Infection**  
@@ -3122,7 +3072,7 @@ A controlled, randomized clinical trial is proposed to demonstrate the effective
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Humanity Neurotech Device Clinical Trial in Adults With Long COVID Cognitive Dysfunction**  
@@ -3145,7 +3095,7 @@ The purpose of this study is to assess the feasibility of an at-home MMT treatme
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The COVID-RASi Trial (COVID-19)**  
@@ -3169,7 +3119,7 @@ The COVID-RASi study is an international randomized clinical trial that will eva
 
 **Relevance Tags:** General | Phase 3 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Investigate Improvement in Physical Function in SF-36 With Vericiguat Compared With Placebo in Participants With Post-COVID-19 Syndrome**  
@@ -3194,7 +3144,7 @@ Par...
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Amantadine Therapy for Cognitive Impairment in Long COVID**  
@@ -3217,7 +3167,7 @@ This study will look at the effects of amantadine on cognitive function in perso
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of 2-HOBA in Persistent Immune Activation in Long COVID POTS**  
@@ -3247,7 +3197,7 @@ Research has found tha...
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-SLEEP: Platform Protocol**  
@@ -3273,7 +3223,7 @@ The platform protocol is designed to be flexible so that it is suitable for a ra
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effect of Acupuncture Treatment on Cognitive Functions and Brain Networks for Long COVID**  
@@ -3298,7 +3248,7 @@ Long COVID(LC) is a prevalent sequalae of SARS-CoV-2 infection and can affect mu
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluating a Comprehensive Multimodal Outpatient Rehabilitation Program for PASC Program to Improve Functioning of Persons Suffering From Post-COVID-19 Syndrome: A Randomized Controlled Trial**  
@@ -3321,7 +3271,7 @@ About 10-20% of persons who contract SARS CoV-2 will experience persistent post-
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID-19 Intervention (COVIDL/MIQoL)**  
@@ -3347,7 +3297,7 @@ The goal of this clinical trial is to assess the effectiveness of a multicompone
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Immunoadsorption in Patients With Chronic Fatigue Syndrome Including Patients With Post-COVID-19 CFS**  
@@ -3372,7 +3322,7 @@ The main questions it aims to answer are: (1) Does repeated immunoadsorption rel
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID Diagnostic Reactivity Assesment Test**  
@@ -3399,7 +3349,7 @@ The study involves a single-session, non-invasive diagnostic procedure without..
 
 **Relevance Tags:** Persistence / Antiviral | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Qigong for Post Acute Sequelae of COVID-19 Infection**  
@@ -3422,7 +3372,7 @@ The purpose of this study is to conduct a pilot feasibility study of a combinati
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Diaphragmatic Breathing Exercises for Post-COVID-19 Diaphragmatic Dysfunction (DD)**  
@@ -3445,7 +3395,7 @@ Diaphragm is the principal muscle of inspiration. Diaphragmatic dysfunction is s
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Safety and Efficacy of Anakinra Treatment for Patients With Post Acute Covid Syndrome**  
@@ -3468,7 +3418,7 @@ The PRECISION is a proof-of-concept, phase II randomized clinical trial aiming t
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID Ultrasound Trial**  
@@ -3496,7 +3446,7 @@ Specific Aims include:
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagal Approaches on Long COVID-19**  
@@ -3522,7 +3472,7 @@ The investigators will use a Fitbit to track participants' health measurements i
 
 **Relevance Tags:** Anti-inflammatory | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of LAU-7b for the Treatment of Long COVID in Adults**  
@@ -3545,7 +3495,7 @@ ESSOR is a double-blind, placebo-controlled study of the orally-administered ant
 
 **Relevance Tags:** Persistence / Antiviral | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Immunoadsorption in Autoimmune Long COVID**  
@@ -3570,7 +3520,7 @@ This study will test a treatment called immunoadsorption, which filters the bloo
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Whole-Body Electrostimulation for Functional Recovery in Post-COVID Syndrome**  
@@ -3595,7 +3545,7 @@ The purpose of this study is to evaluate whe...
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Long COVID Treatment Trial**  
@@ -3618,7 +3568,7 @@ The goal of this study is to determine whether a medicine called tirzepatide, al
 
 **Relevance Tags:** General | Phase 2 | Very Large (1000+ participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Brain Stimulation in Long COVID**  
@@ -3641,7 +3591,7 @@ Cognitive problems and severe fatigue are two frequently occurring symptoms in l
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Investigate the Health Benefits of a Quercetin/Curcumin-Based Supplement for Mild to Moderate Long COVID-19 Symptoms**  
@@ -3664,7 +3614,7 @@ This pragmatic clinical study aims to evaluate the efficacy and tolerance of a c
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Acupuncture and Chinese Herbal Medicine for Long COVID**  
@@ -3693,7 +3643,7 @@ Specific Aims of This Research (...
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Assessing the Efficacy of Sirolimus in Patients With COVID-19 Pneumonia for Prevention of Post-COVID Fibrosis**  
@@ -3716,7 +3666,7 @@ The primary purpose of this study is to determine whether the drug sirolimus red
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Neural Mechanisms of Fatigue in Post-Acute Sequela of SARS-CoV-2**  
@@ -3739,7 +3689,7 @@ This proposal aims to understand the neurobiological mechanisms of fatigue in in
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Design and Validation of Innovative Strategies Based on Dual-Task Approach**  
@@ -3763,7 +3713,7 @@ People affected by Stroke, Multiple Sclerosis (MS), and Parkinson's disease (PD)
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Modulation of the Brain Fog Scale by Eicosapentaenoic Acid Monoglycerides (MAG-EPA).**  
@@ -3787,7 +3737,7 @@ A growing body of studies shows that omega-3s act directly in molecular signalin
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 4 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Myocardial Protection in Patients With Post-acute Inflammatory Cardiac Involvement Due to COVID-19**  
@@ -3811,7 +3761,7 @@ Long COVID or Postacute sequelae of COVID-19 infection (PASC) are increasingly r
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Physiology of Long COVID-19 and the Impact of Cardiopulmonary Rehabilitation on Quality-of-Life and Functional Capacity**  
@@ -3834,7 +3784,7 @@ The primary objectives of this study are to determine whether exercise training 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Kneipp Hydrotherapy in Post-COVID-19 Patients**  
@@ -3857,7 +3807,7 @@ This randomized controlled study evaluates the effects of cold water hydrotherap
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-VITAL: Platform Protocol to Measure the Effects of Antiviral Therapies on Long COVID Symptoms**  
@@ -3880,7 +3830,7 @@ This study is a platform protocol designed to be flexible so that it is suitable
 
 **Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **PAxlovid loNg cOvid-19 pRevention triAl With recruitMent In the Community in Norway**  
@@ -3909,7 +3859,7 @@ Participants with acute COVID-19, documented with positive lateral flow ...
 
 **Relevance Tags:** Persistence / Antiviral | Phase 3 | Very Large (1000+ participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-ENERGIZE Platform Protocol**  
@@ -3935,7 +3885,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Sauna for Long Covid**  
@@ -3958,7 +3908,7 @@ Research suggests that Whole Body Hyperthermia in a sauna-like environment can r
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Stellate Ganglion Block for COVID-induced Parosmia**  
@@ -3981,7 +3931,7 @@ Chronic olfactory dysfunction, both hyposmia and parosmia, from the COVID-19 pan
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Anti-SARS-CoV-2 Monoclonal Antibodies for Long COVID (COVID-19)**  
@@ -4004,7 +3954,7 @@ Persistent viral infection with viral reservoirs and detection of circulating sp
 
 **Relevance Tags:** Persistence / Antiviral | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Open Label Extension of Efgartigimod in Adults With Post-COVID-19 POTS**  
@@ -4027,7 +3977,7 @@ The OLE study aims to investigate the safety, efficacy, pharmacodynamics (PD), p
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Tele-Rehabilitative Exercise Training Program in Nurses With Long COVID**  
@@ -4051,7 +4001,7 @@ Long COVID can cause a decline in cardiorespiratory fitness, resulting in fatigu
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Use of a Cysteine-rich Whey Protein Isolate in Post COVID-19 Cognitive Impairment**  
@@ -4077,7 +4027,7 @@ Objective: To evaluate the efficacy of Immuno...
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study of Human Umbilical Cord Blood (REGENECYTE) Infusion in Patients With Post-COVID Condition**  
@@ -4100,7 +4050,7 @@ REGENECYTE (HPC, Cord Blood) for treatment in patients with post-COVID.
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID-19 Rehabilitation & Recovery Research Program**  
@@ -4123,7 +4073,7 @@ The purpose of the study is to assess the physiologic, immunologic, and mental h
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Tragus Stimulation for POTS Treatment**  
@@ -4146,7 +4096,7 @@ Postural Tachycardia Syndrome (POTS) is a form of dysautonomia characterized by 
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Transcranial Ultrasound Stimulation for Cognitive Function Modulation in Patients With Post COVID-19 Brain Fog**  
@@ -4171,7 +4121,7 @@ In observational study, the objective was to identify potential intervention tar
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Paxlovid for Treatment of Long Covid**  
@@ -4199,7 +4149,7 @@ This study uses the term post-acute sequelae of SARS-CoV-2 (PASC), which is anot
 
 **Relevance Tags:** Persistence / Antiviral | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study of Amantadine for Cognitive Dysfunction in Patients With Long-Covid**  
@@ -4225,7 +4175,7 @@ Purpose: To decrease symptom burden, improve cognitive function, improve enduran
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Synbiotic Therapy for NP-PASC**  
@@ -4249,7 +4199,7 @@ Gut microbiome dysbiosis has been noted in patients with Post-acute sequelae (PA
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Use of Incentive Spirometry in Adult Patients Hospitalised in a Rehabilitation Center With Long-covid Syndrome**  
@@ -4272,7 +4222,7 @@ The aim of this clinical trial is to investigate the efficacy of Triflow in the 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagus Nerve Stimulation to the Ear to Improve Symptoms in Post-COVID-19 and ME/CFS**  
@@ -4297,7 +4247,7 @@ Participants will try two different types of stimula...
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Evaluate Benefits & Safety of Endourage Formula C™ Oral Drops in People With Post-Acute COVID-19 Syndrome.**  
@@ -4320,7 +4270,7 @@ This study will explore the contribution of CBD oral drops in persons experienci
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID-19 Syndrome Lifestyle Intervention Study**  
@@ -4343,7 +4293,7 @@ Rationale: Hyper-inflammatory responses seen in acute COVID-19 are also a featur
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Does a Technology Enabled Multi-disciplinary Team-based Care Model for the Management of Long COVID and Other Fatiguing Illnesses Improve Clinical Care of Patients and Represent a Sustainable Approach Within a Federally Qualified Health Center?**  
@@ -4366,7 +4316,7 @@ The primary objective of the present research is to determine the effectiveness 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pursuing Reduction in Fatigue After COVID-19 Via Exercise and Rehabilitation (PREFACER): A Randomized Feasibility Trial**  
@@ -4389,7 +4339,7 @@ Long COVID is a complex condition that affects approximately 1.4 million Canadia
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Bevacizumab in Post-acute Sequelae of COVID-19 : Efficacy and Safety (Pilot Study)**  
@@ -4412,7 +4362,7 @@ The aim of this research is to evaluate an innovative treatment, Bevacizumab, in
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Telerehabilitation Decision Support System: Pilot Testing Protocol**  
@@ -4435,7 +4385,7 @@ This study follows the successfully completed HOLOBalance project which was fund
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RECOVER-NEURO: Platform Protocol to Measure the Effects of Cognitive Dysfunction Interventions on Long COVID Symptoms**  
@@ -4463,7 +4413,7 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Double-Blind Randomized Placebo-Controlled Trial of a Proprietary Full Hemp Flower Formulation for Long COVID**  
@@ -4486,7 +4436,7 @@ This is a double-blind, randomized, placebo-controlled single-center clinical tr
 
 **Relevance Tags:** General | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Telerehabilitation of Balance Clinical and Economic Decision Support System**  
@@ -4512,7 +4462,7 @@ This study follows the successfully completed HOLOBalance project which was fund
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Feasibility of an Augmented Two-Day Step Test and Causal Modeling for Post-Exertional Symptom Exacerbation in Post Covid-19 Syndrome**  
@@ -4536,7 +4486,7 @@ This study aims to evaluate exercise capacity and identify causes of Post-Exerti
 
 **Relevance Tags:** Metabolic | Mitochondrial | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects os Physiotherapeutic Rehabilitation on Function Autonomic and Inflammatory in Patients With Long Covid**  
@@ -4559,7 +4509,7 @@ Introduction: Long COVID is characterized by persistent symptoms that persist fo
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Investigating the Effectiveness of Vimida**  
@@ -4582,7 +4532,7 @@ This randomized controlled trial (RCT) with 160 patients suffering from fatigue 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study Evaluating the Efficacy of the Vielight Neuro RX Gamma in the Treatment of Post COVID-19 Cognitive Impairment**  
@@ -4605,7 +4555,7 @@ Some people who have been infected with the virus that causes COVID-19 can exper
 
 **Relevance Tags:** Metabolic | Mitochondrial | Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Auricular Vagus Nerve Stimulation Combined With Slow-paced Breathing on Individuals With Postural Orthostatic Tachycardia Syndrome.**  
@@ -4631,7 +4581,7 @@ This randomized, controlle...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of an Active Coping Program in Patients With Persistent Post-Covid Pain.**  
@@ -4654,7 +4604,7 @@ Justification: among the sequelae of Covid-19 in clinical practice we frequently
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exploring the Therapeutic Effects of Creatine Supplementation for Long COVID-19**  
@@ -4677,7 +4627,7 @@ Individuals living with Long COVID often experiencing a degree of undue fatigue 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy and Safety Study of Efgartigimod in Adults With Post-COVID-19 POTS**  
@@ -4700,7 +4650,7 @@ The study aims to investigate the safety, tolerability, efficacy, pharmacodynami
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness and Acceptability of the Unified Protocol for the Transdiagnostic Treatment of Emotional Disorders in People With Long COVID-19.**  
@@ -4726,7 +4676,7 @@ In this study it wi...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Long COVID-19 Wearable Device Study**  
@@ -4749,7 +4699,7 @@ To further characterize Long COVID-19 by collecting data from individuals who al
 
 **Relevance Tags:** Neurological / Autonomic | NA | Very Large (1000+ participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Feasibility and Preliminary Efficacy of a Group-based Telerehabilitation Program in People With Post-COVID-19 Sequelae (TEPCO).**  
@@ -4775,7 +4725,7 @@ The goal of this study pilot randomized controlled study is to evaluate the feas
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effect of Smart Sensor Combined With APP for Individualized Precise Exercise Training in Long Covid-19**  
@@ -4799,7 +4749,7 @@ The coronavirus (COVID -19) has rapidly turned into a global pandemic. For patie
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Roles of Vitamin D and Microbiome in Children With Post-acute COVID-19 Syndromes (PACS) and Long COVID**  
@@ -4822,7 +4772,7 @@ A double-blind study to evaluate the role of human microbiome and vitamin D in t
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Statin TReatment for COVID-19 to Optimise NeuroloGical recovERy**  
@@ -4845,7 +4795,7 @@ STRONGER is an international, investigator initiated and conducted, pragmatic cl
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Physical Training in Patients With POTS After Covid-19**  
@@ -4868,7 +4818,7 @@ Covid-19 has the potential to affect physical, cognitive and psychological funct
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Developing an Integrative, Recovery-Based, Post-Acute COVID-19 Syndrome (PACS) Psychotherapeutic Intervention**  
@@ -4891,7 +4841,7 @@ Post-Acute COVID-19 Syndrome (PACS), colloquially known as Long COVID, is a prev
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Periodic Fasting for Treatment of Long Covid in Adults: a Pilot Study**  
@@ -4916,7 +4866,7 @@ Long COVID, characterized by persistent symptoms following acute COVID-19 infect
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Symptom-based Rehabilitation Compared to Usual Care in Post-COVID - a Randomized Controlled Trial**  
@@ -4939,7 +4889,7 @@ Inpatient, multimodal rehabilitation represents one of the most important interv
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cardiopulmonary Rehabilitation in Post-acute COVID-19 Syndrome**  
@@ -4962,7 +4912,7 @@ In 2022, though the optimized acute medical treatment of COVID-19 was determined
 
 **Relevance Tags:** General | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Human Umbilical Cord Blood (RegeneCyte) Infusion in Patients with Post-COVID Syndrome**  
@@ -4985,7 +4935,7 @@ REGENECYTE (HPC, Cord Blood, hUCB) for treatment in patients with post-COVID.
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A MHealth System for Patients with POTS**  
@@ -5008,7 +4958,7 @@ Postural Orthostatic Tachycardia Syndrome (POTS) affects approximately 500,000 -
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Osteopathic Manipulative Therapy Effects on Post-Acute Sequelae of COVID-19 (PASC) or Long COVID**  
@@ -5037,7 +4987,7 @@ The questions this study is trying to answer are:
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **NENCA Study on Neurological Complications of Long COVID-19 in Children and Adolescents; Neurophysiological, Electroencephalographic and Neuroradiological Investigation**  
@@ -5060,7 +5010,7 @@ The study seeks to investigate the neurological effects caused by Covid-19 in ch
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dual Sympathetic Blocks for Patients Experiencing Sympathetically-Mediated Symptoms From Long COVID**  
@@ -5083,7 +5033,7 @@ The main purpose of this study is to gather data and assess changes in patient-r
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Telerehabilitation in People With Long COVID**  
@@ -5106,7 +5056,7 @@ The aim of our study is to investigate the effectiveness of telerehabilitation i
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of Testofen Compared to Placebo on Long COVID Symptoms**  
@@ -5130,7 +5080,7 @@ This is a double blind, randomised, placebo-controlled trial to evaluate orally-
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Post-COVID-19 Chronic Fatigue Syndrome**  
@@ -5153,7 +5103,7 @@ Fatigue is recognized as one of the most commonly presented long-term complaints
 
 **Relevance Tags:** General | Phase 4 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of L-ARGinine and Liposomal Vitamin C Supplementation On Physical Performance**  
@@ -5176,7 +5126,7 @@ In older age, reduced mobility is associated with an increased risk of reduced q
 
 **Relevance Tags:** Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluating Immunomodulatory Interventions in Post-Acute Sequelae of SARS-CoV-2 InfEction**  
@@ -5202,7 +5152,7 @@ This study is a prospective, randomized controlled, basket trial. Patients diagn
 
 **Relevance Tags:** Immunomodulatory | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Web-based Platform to Improve Physical Function, Nutrition, and Mindfulness in Patients With Long COVID**  
@@ -5225,7 +5175,7 @@ Patients with COVID-19 may experience prolonged physical and psychological sympt
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Brain and Gut Plasticity in Mild TBI or Post-acute COVID Syndrome Following Growth Hormone Therapy**  
@@ -5248,7 +5198,7 @@ Patients with a history of mild traumatic brain injury (mTBI) or post acute sequ
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Lithium Therapy on Long COVID Symptoms**  
@@ -5271,7 +5221,7 @@ This study will assess low-dose lithium's effects on several different symptoms 
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **CISCO-21 Prevent and Treat Long COVID-19.**  
@@ -5294,7 +5244,7 @@ Many people have long-lasting symptoms after COVID-19, such as breathlessness, f
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Group Psychotherapy in Long COVID**  
@@ -5317,7 +5267,7 @@ The aim of the present study was to establish a single-arm group psychotherapy a
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Yogic Breathing and Guided Meditation for Long Covid Symptoms**  
@@ -5341,7 +5291,7 @@ This study aims to assess the impact of brief digitally delivered breathing prac
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **REGAIN: RCT of Oxaloacetate for Fatigue in Long COVID**  
@@ -5367,7 +5317,7 @@ A "Proof...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Antiviral Strategies in the Prevention of Long-term Cardiovascular Outcomes Following COVID-19: The paxloviD/Remdesivir Effectiveness For the prEvention of loNg coviD Clinical Trial**  
@@ -5391,7 +5341,7 @@ The DEFEND trial will be the world's first clinical trial to study the effective
 
 **Relevance Tags:** Persistence / Antiviral | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cognitive Rehabilitation for Long COVID**  
@@ -5414,7 +5364,7 @@ The investigators are comparing two different methods for helping adults with Lo
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Research of the Long-COVID-19 Syndrome in the Children**  
@@ -5437,7 +5387,7 @@ During the pandemic of the new coronavirus infection COVID-19 in the world commu
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Evaluate the Efficacy and Safety of Ampligen in Patients With Post-COVID Conditions**  
@@ -5460,7 +5410,7 @@ The purpose of this study is to assess the efficacy and safety of Ampligen® adm
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Valacyclovir Plus Celecoxib for Post-Acute Sequelae of SARS-CoV-2**  
@@ -5484,7 +5434,7 @@ To explore the safety and efficacy of daily doses of celecoxib + valacyclovir in
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Optimising General Practice Long COVID Care - an Educational Intervention.**  
@@ -5509,7 +5459,7 @@ Our first objective is to conduct focus groups with key stakeholders (GPs, other
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of a Home-Based Exercise Intervention in Subjects with Long COVID**  
@@ -5532,7 +5482,7 @@ The current Coronavirus Disease 2019 (COVID-19) pandemic is the most severe heal
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Narrative Intervention for Long COVID-19 (NICO)**  
@@ -5555,7 +5505,7 @@ This T1 proof of concept trial is designed to test the Narrative Intervention fo
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Obesity, Insulin Resistance, and PASC: Persistent SARS-CoV-2**  
@@ -5579,7 +5529,7 @@ The investigators are studying the pathophysiologic links between obesity, insul
 
 **Relevance Tags:** Persistence / Antiviral | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **ImPROving Quality of LIFe in the Long COVID Patient**  
@@ -5602,7 +5552,7 @@ The purpose of this study is to investigate the efficacy of orally administered 
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Combined Pulmonary Rehabilitation and PMR for Long-Term COVID-19 Symptoms: A RCT**  
@@ -5626,7 +5576,7 @@ Our study aimed to evaluate the effectiveness of a 21-day program combining pulm
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Post-Acute Sequelae of Coronavirus-19 (COVID-19) With Dyspnea on Exertion And Associated TaChycardia TrEatment Study**  
@@ -5649,7 +5599,7 @@ Most patients with acute COVID-19 (Coronavirus 19) recover within weeks, however
 
 **Relevance Tags:** General | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Decentralized, Randomized Phase 2 Efficacy and Safety Study of Nirmatrelvir/Ritonavir in Adults with Long COVID.**  
@@ -5673,7 +5623,7 @@ This decentralized trial is a Phase 2, 1:1 randomized, double-blind, superiority
 
 **Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Covid-19 Long Haul Preventative and Health Promotion Care Clinical Trial Acceleration Program.**  
@@ -5702,7 +5652,7 @@ Investigators are conducting a study on alternative treatments for patients who 
 
 **Relevance Tags:** Persistence / Antiviral | Neurological / Autonomic | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Network
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Virtual Physical Rehabilitation for Patients Living with Long COVID**  
@@ -5725,7 +5675,7 @@ The purpose of this study is to investigate whether a timely, virtual home-based
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Phase 2 Study to Evaluate the Efficacy and Safety of TNX-102 SL in Patients With Multi-Site Pain Associated With Post-Acute Sequelae of SARS-CoV-2 Infection**  
@@ -5748,7 +5698,7 @@ This is a Phase 2, randomized, parallel-group, double-blind, placebo-controlled,
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Self-Management Interventions for Long COVID-19**  
@@ -5771,7 +5721,7 @@ The purpose of this study is to investigate and compare the feasibility and effi
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fascial Tissue Response to Manual Therapy: Implications in Long COVID-19**  
@@ -5795,7 +5745,7 @@ According to the World Health Organization (WHO), as of mid-September 2022, more
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Acupuncture for Post COVID-19 Condition (Long COVID) Neuropsychiatric Symptoms**  
@@ -5818,7 +5768,7 @@ In this study, a 12-week pragmatic, randomized, double-blinded clinical trial wi
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **VNS for Long-COVID-19**  
@@ -5843,7 +5793,7 @@ This will be a placebo controlled, randomized controlled trial with a crossover 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Role of Glutathione Deficiency and MSIDS Variables in Long COVID-19**  
@@ -5866,7 +5816,7 @@ The purpose of this research study is to assess if glutathione, along with NAC (
 
 **Relevance Tags:** General | EARLY_Phase 1 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cardiopulmonary Rehabilitation in Long COVID-19 Patients With Persistent Breathlessness and Fatigue**  
@@ -5889,7 +5839,7 @@ The objective of this project is to assess the effects of a 2-month cardiopulmon
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Stellate Ganglion Block With Lidocaine for the Treatment of COVID-19-Induced Parosmia**  
@@ -5912,7 +5862,7 @@ Chronic olfactory dysfunction, both hyposmia and parosmia, from the COVID-19 pan
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Lithium Long COVID Dose-finding Study**  
@@ -5935,7 +5885,7 @@ This open-label study will assess if lithium dosages of 30-45mg/day are associat
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Randomised Study to Investigate the Effectiveness of Acupuncture for the Relief of Long COVID-19 Related Fatigue**  
@@ -5958,7 +5908,7 @@ The Covid pandemic has left us with a significant number of people suffering fro
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Utilizing Novel Blood RNA Biomarkers as a Diagnostic Tool in the Identification of Long COVID-19**  
@@ -5981,7 +5931,7 @@ The Primary objective of this study is to determine, using unblinded samples, if
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Uninterrupted and Interrupted Sitting in Long COVID-19**  
@@ -6004,7 +5954,7 @@ People who sit uninterrupted for prolonged periods time have been shown to have 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **BIO 300 Oral Suspension in Previously Hospitalized Long COVID Patients**  
@@ -6027,7 +5977,7 @@ This is a randomized, double-blinded, placebo-controlled, two-arm study to evalu
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Cacao Flavonoids in Long COVID-19 Patients (FLALOC)**  
@@ -6050,7 +6000,7 @@ The study use a triple blind, placebo-controlled design enrolling male and femal
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pulmonary Rehabilitation for Long COVID (Post COVID-19 Condition)**  
@@ -6075,7 +6025,7 @@ In the PuRe COVID study (a randomized, controlled, multicenter, pragmatic trial)
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pilot Study of Vitamin K2 (MK-7) and Vitamin D3 Supplementation and the Effects on PASC Symptomatology and Inflammatory Biomarkers**  
@@ -6099,7 +6049,7 @@ Participants are being asked to take part in this research study because they ha
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Feasibility Pilot Clinical Trial of Omega-3 Supplement vs. Placebo for Post Covid-19 Recovery Among Health Care Workers**  
@@ -6122,7 +6072,7 @@ This is a two-arm, double blind randomized 12-week study to supplement omega-3 (
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Impact of Chiropractic on Long COVID-19**  
@@ -6145,7 +6095,7 @@ The purpose of this waitlist-controlled, single-blind, one-way crossover, pilot 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of COVID-19 Post-acute Cognitive Impairment Sequelae With tDCS**  
@@ -6170,7 +6120,7 @@ This troubling scenario raises important questions about the impact of COVID-19 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Safety and Efficacy of Hyperbaric Oxygen Therapy for Long COVID Syndrome**  
@@ -6193,7 +6143,7 @@ Long COVID Syndrome (Long COVID), Post Acute COVID-19 Syndrome (PACS) or Post CO
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of Lactobacillus Paracasei PS23 for Patients With Post-COVID-19 Syndrome**  
@@ -6216,7 +6166,7 @@ To evaluate whether probiotics PS23 can improve the symptoms of patients with lo
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Red Beetroot Juice Intake in Adults With Long COVID-19**  
@@ -6239,7 +6189,7 @@ Red beetroot juice may have positive effects on multiple pathways involved in lo
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Resonance Breathing Training for Long Covid-related Myocardial Injury**  
@@ -6262,7 +6212,7 @@ An investigation of the efficacy of resonance breathing training in the rehabili
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Addressing Cognitive Fog in Long-COVID-19 Patients**  
@@ -6286,7 +6236,7 @@ This study will assess two options to help patients better manage the cognitive 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Transcutaneous Electrical Nerve Stimulation (TENS) in Patients With Postacute Sequelae of Sars-CoV-2**  
@@ -6310,7 +6260,7 @@ The purpose of the pilot study is to examine acceptability and proof of concept 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Glutamatergic Modulation as a Treatment for Depressive Symptoms Among Patients With Post-acute Sequelae of COVID (PASC): A Pilot Trial**  
@@ -6334,7 +6284,7 @@ Post-acute sequelae of SARS-CoV2 (PASC), colloquially known as "long-COVID," is 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Examining the Function of Cs4 on Post-COVID-19 Disorders**  
@@ -6357,7 +6307,7 @@ Cordyceps is a medicinal Chinese medicine. The benefits of cordyceps-related the
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness and Safety of Mesenchymal Stem Cell Therapy in Long COVID Patients**  
@@ -6385,7 +6335,7 @@ Participants' demographics, chief complaints, and vital signs will be collected 
 
 **Relevance Tags:** General | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pilot Randomized Study of RD-X19 Tx Device in Subjects With PCC (Long Covid) in the Outpatient Setting**  
@@ -6410,7 +6360,7 @@ Following Randomization on Week 1 Day 1, Subjects will continue to have televisi
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of Montelukast in Mild-moderate Respiratory Symptoms in Patients With Long-COVID-19:**  
@@ -6433,7 +6383,7 @@ Recently, a new clinical presentation called "long covid" has been reported, for
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Enhancing COVID Rehabilitation With Technology**  
@@ -6456,7 +6406,7 @@ In March 2020, the World Health Organization (WHO) declared the novel coronaviru
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cognitive Rehabilitation for People With Cognitive Covid19**  
@@ -6481,7 +6431,7 @@ This study will focus on helping people recover from cognitive Covid. This will 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mindfulness in Post Acute Sequelae of SARS-CoV-2 Infection (PASC) Dysautonomia**  
@@ -6504,7 +6454,7 @@ The current pilot study will recruit participants experiencing new, returning, o
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of Non-invasive Neuromodulation in Patients With Long-COVID**  
@@ -6527,7 +6477,7 @@ Sleep quality and duration are critical to cognitive, emotional and physical wel
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RCT Long COVID-19 Rehabilitation**  
@@ -6551,7 +6501,7 @@ The Coronavirus 2019 (COVID-19) pandemic has resulted in at least four million i
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Restoring Energy With Sub-symptom Threshold Optimized Rehabilitation Exercise for Long COVID**  
@@ -6575,7 +6525,7 @@ The overall goal of this study is to find out if rehabilitation exercise can hel
 
 **Relevance Tags:** Metabolic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Physiotherapy Via Telerehabilitation in Patients With COVID-19**  
@@ -6598,7 +6548,7 @@ This study aims to evaluate the effects of Physiotherapy Via Video Calls on Card
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Phase 2 Study of RSLV-132 in Subjects With Long COVID**  
@@ -6621,7 +6571,7 @@ The purpose of this study is to assess the efficacy (decrease in profound fatigu
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of Photobiomodulation in the Rehabilitation of Olfactory Dysfunctions Induced by Long COVID-19**  
@@ -6644,7 +6594,7 @@ On January 30, 2020, the WHO (World Health Organization) declared the new corona
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Temelimab as a Disease Modifying Therapy in Patients With Neuropsychiatric Symptoms in Post-COVID 19 or PASC Syndrome**  
@@ -6667,7 +6617,7 @@ This study is a Phase 2, 24-week, randomized, prospective, double-blind, multice
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Merging Yoga and Self-Management Skills for Symptoms of Long COVID**  
@@ -6690,7 +6640,7 @@ Long COVID patients experience high symptom burden for many months after initial
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Efficacy of Aerobic Exercise in the Rehabilitation of Patients With COVID-19-Related Myocardial Injury**  
@@ -6714,7 +6664,7 @@ A study of the efficacy of aerobic exercise based on cardiopulmonary exercise te
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Prevention of Long Covid Syndrome**  
@@ -6740,7 +6690,7 @@ The main objective of the study is to verify the feasibility of an HVR biofeedba
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exercise Interventions in Post-acute Sequelae of Covid-19**  
@@ -6763,7 +6713,7 @@ The COVID-19 pandemic severely impacted the medical system both directly but als
 
 **Relevance Tags:** Immunomodulatory | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Nutrition and LOComotoric Rehabilitation in Long COVID-19**  
@@ -6788,7 +6738,7 @@ The aim of this pilot-study is to learn about which complaints patients continue
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Electro-acupuncture for Long Covid Neuropsychiatric Symptoms**  
@@ -6811,7 +6761,7 @@ In this study, a 16-week randomized, sham-controlled, double-blinded clinical tr
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Digital Cognition Study During Long-COVID**  
@@ -6836,7 +6786,7 @@ When we refer to cognition, we refer to everything associated with knowledge,...
 
 **Relevance Tags:** Persistence / Antiviral | Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **tDCS in the Management of Post-COVID Disorders**  
@@ -6861,7 +6811,7 @@ Different physical and mental morbidities such as pain, fatigue, depressed mood 
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Multi-systemic Rehabilitative Interventions in Long COVID-19 Patients in Two Different Settings: a Randomized Controlled Trial**  
@@ -6886,7 +6836,7 @@ Design: Randomized controlled trial. Settings: Health resort and home-based. Par
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Virtual Reality in Patients With Long Covid-19**  
@@ -6913,7 +6863,7 @@ Covid-19 infection is transmitted through droplets during coughing and sneezing 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Probiotic Strain Lactobacillus Paracasei PS23 on Brain Fog in People With Long COVID**  
@@ -6941,7 +6891,7 @@ Researchers will compare the probiotic group and the placebo to see if probiotic
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of a Dietary Supplementation in Reducing Hospital Admissions for COVID-19. Randomized Clinical Trial**  
@@ -6966,7 +6916,7 @@ We want to assess the need for hospital admission for severe acute respiratory s
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluation of the Efficacy of Respicure® (Resveratrol / Quercetin) in the Management of Respiratory Conditions Including Asthma,COPD and Long COVID.**  
@@ -6990,7 +6940,7 @@ Interventional, Prospective, National, Multicentre, Randomised, Open-label, Cont
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exercise for Health in Patients With Post-acute Sequelae of COVID-19**  
@@ -7013,7 +6963,7 @@ Background: Many patients with COVID-19 present the so-called post-acute sequela
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Use of Photobiomodulation in the Treatment of Oral Complaints of Long COVID-19.A Randomized Controlled Trial.**  
@@ -7037,7 +6987,7 @@ Coronavirus (COVID-19) is a newly emerging zoonotic agent that emerged in Decemb
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Sulfureous Water Therapy in Viral Respiratory Diseases**  
@@ -7065,7 +7015,7 @@ The main questions it aims to answer are:
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **High-definition Transcranial Direct Current Stimulation and Chlorella Pyrenoidosa to Reduce Cardiovascular Risk**  
@@ -7089,7 +7039,7 @@ Recent investigations have shown that of the patients who were affected by SARCo
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Metformin in Reducing Fatigue in Long COVID in Adolescents**  
@@ -7112,7 +7062,7 @@ Long Covid is a multisystem condition comprising often severe symptoms that foll
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of Post-COVID-19 With Hyperbaric Oxygen Therapy: a Randomized, Controlled Trial**  
@@ -7140,7 +7090,7 @@ The main questions it aims to answer are:
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pre-probiotic Supplementation for Post-covid Fatigue Syndrome**  
@@ -7163,7 +7113,7 @@ The goal of this randomized controlled double-blind parallel-group interventiona
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study on the Effect of Incentive Spirometer-based Respiratory Training on the Long COVID-19**  
@@ -7186,7 +7136,7 @@ The COVID-19 pandemic has emerged as the most significant public health crisis o
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hyperbaric Oxygen for Long COVID-19 Pulmonary Sequela**  
@@ -7209,7 +7159,7 @@ This is a pilot study in 24 subjects where half will be randomized to 10 treatme
 
 **Relevance Tags:** General | Phase 2 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagus Nerve Stimulation as Treatment for Long Covid**  
@@ -7232,7 +7182,7 @@ Many patients do not recover following Covid infection. The resulting illness is
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagus Nerve Stimulation for Post-COVID Syndrome**  
@@ -7259,7 +7209,7 @@ Question 2:Is b...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **IMMUNERECOV CONTRIBUTES TO IMPROVEMENT OF RESPIRATORY AND IMMUNOLOGICAL RESPONSE IN POST-COVID-19 PATIENTS.**  
@@ -7282,7 +7232,7 @@ Background: COVID-19 left consequences in different organs from months to years 
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Inhaled Hydroxy Gas on Long COVID Symptoms**  
@@ -7305,7 +7255,7 @@ The goal of this clinical trial is to see if several weeks of self-administered,
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Stem Cell Study for Long COVID-19 Neurological Symptoms**  
@@ -7328,7 +7278,7 @@ The purpose of this research study is to test the safety and benefit of a human 
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Kinesio Tape Versus Diaphragmatic Breathing Exercise In Post COVID-19**  
@@ -7354,7 +7304,7 @@ According to WHO, current evidence suggests some people experience a variety of 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Enhanced External Counterpulsation to Treat Long COVID-19 Fatigue**  
@@ -7382,7 +7332,7 @@ The main question\[s\] it aims to answer are:
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Inspiratory Muscle Training in People With Long COVID-19- A Pilot Investigation.**  
@@ -7405,7 +7355,7 @@ This pilot investigation will recruit people with Long COVID to participate in a
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Ivabradine for Long-Term Effects of COVID-19 With POTS Cohort**  
@@ -7428,7 +7378,7 @@ The purpose of the study is three-fold. The primary aim is to identify the propo
 
 **Relevance Tags:** Neurological / Autonomic | Phase 4 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of Two Therapeutic Exercise Modalities for Patients With Persistent COVID**  
@@ -7451,7 +7401,7 @@ Symptoms of long-standing sequelae and complications of COVID-19, termed Long CO
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy and Safety of Umbilical Cord Mesenchymal Stem Cells in the Treatment of Long COVID-19**  
@@ -7474,7 +7424,7 @@ To explore the efficacy and safety of Umbilical cord mesenchymal stem cells in t
 
 **Relevance Tags:** General | Phase 2 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **WHO COVID-19 - Evaluation of the Efficacy of Probiotics to Reduce the Occurrence of Long COVID**  
@@ -7497,7 +7447,7 @@ Probiotics may be considered as an option of treatment for long COVID since they
 
 **Relevance Tags:** Immunomodulatory | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **FMT for Post-acute COVID-19 Syndrome**  
@@ -7522,7 +7472,7 @@ In a recent study, the five most common ...
 
 **Relevance Tags:** Immunomodulatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Practical RCT of TCM in the Treatment of LCOVID and Analysis of Syndrome Types and Medication Characteristics.**  
@@ -7548,7 +7498,7 @@ Totally 162 patients with long COVID recruited into the study will be randomly a
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Magnesium and Vitamin D Combination for Post-COVID Syndrome**  
@@ -7574,7 +7524,7 @@ The participants will be integrated: a) Intervention group that will receive 1 g
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study to Evaluate Ampion in Patients With Prolonged Respiratory Symptoms Due to COVID-19 (Long COVID)**  
@@ -7597,7 +7547,7 @@ This is a phase I study to evaluate the safety and efficacy of inhaled Ampion on
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Non-pharmacological and TCM-based Treatment for Long COVID Symptoms**  
@@ -7620,7 +7570,7 @@ Cognitive impairment is one of the commonly reported Long COVID symptoms, mainly
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Connecting Breath and Mind for CYP With Long COVID**  
@@ -7647,7 +7597,7 @@ Methods: Phase I: Co-design Design and setting The intervention will be co-desig
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Exercise Training on Patients With Long COVID-19**  
@@ -7670,7 +7620,7 @@ Effects of Exercise training on Patients With Long COVID-19, is a single-center,
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Pilot Study of a PhysiOthErapy-based Tailored Intervention for Long COVID (COVID-19)**  
@@ -7693,7 +7643,7 @@ The purpose of this study is to determine the benefits and feasibility of physio
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Plasmapheresis on Clinical Improvement and Biological Parameters of Patients With Long-haul COVID**  
@@ -7723,7 +7673,7 @@ According to the literature, the pathophysiological mechanisms involved in post-
 
 **Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Neurological / Autonomic | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Feasibility of Personalised Health Behaviour Coaching to Support Symptoms and Activities of Daily Living in Those With Long COVID-19.**  
@@ -7748,7 +7698,7 @@ Participants will be randomised to receive an 8-week physical activity behaviour
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Investigation of the Use of a Probiotic Supplement in People With Long COVID**  
@@ -7771,7 +7721,7 @@ This study is a double-blinded randomised trial to assess the efficacy of a prob
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Telerehabilitation for Post COVID-19 Condition**  
@@ -7794,7 +7744,7 @@ Telerehabilitation is a great alternative to offering care during a global pande
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Feasibility Study of Adhera® Fatigue Digital Program for Patients With Long COVID-related Fatigue**  
@@ -7819,7 +7769,7 @@ The digital health solution is designed to be used for 3 months, and includes a 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of a Psychological Intervention on Mental Health and Sleep.**  
@@ -7842,7 +7792,7 @@ Background: The COVID-19 pandemic represented a global public health problem tha
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exercise and Post-COVID/ Long-COVID: Effects of Different Training Modalities on Various Parameters in People Affected by the Sequelae of COVID-19**  
@@ -7866,7 +7816,7 @@ The current COVID-19 pandemic is the most severe health crisis of the 21st centu
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Safety, Efficacy, and Dosing of VIX001 in Patients With Neurological Symptoms of Post Acute COVID-19 Syndrome (PACS).**  
@@ -7889,7 +7839,7 @@ The study, identified as VIX001-PACS-01, is a Phase 1, open-label, dose-escalati
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Multimodal Investigation of Post COVID-19 in Females**  
@@ -7912,7 +7862,7 @@ The purpose of this study is to investigate the effects of transcutaneous vagus 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Multimodal Long Covid19**  
@@ -7935,7 +7885,7 @@ Due to the COVID-19 pandemic, the world has seen the need to identify groups of 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cognitive-behavioral Therapy for Mental Disorder in COVID-19 Survivors**  
@@ -7960,7 +7910,7 @@ Among the ex-covid patients discharged from our Intensive Care Unit and with at 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Efficacy and Safety of a Chinese Herbal Medicine for Long COVID Associated Fatigue**  
@@ -7983,7 +7933,7 @@ This is a randomized, double-blinded, placebo-controlled clinical trial to deter
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagus Stimulation in Female Long COVID Patients.**  
@@ -8008,7 +7958,7 @@ For this purpose, a total of 45 female Long COVID patients will participate in t
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of Long COVID Symptoms Utilizing Autologous Stem Cells Following COVID-19 Infection**  
@@ -8032,7 +7982,7 @@ The project is described as a Phase 1 Clinical Safety Study intended to provide 
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Plasma Exchange Therapy for Post- COVID-19 Condition: A Pilot, Randomized Double-Blind Study**  
@@ -8055,7 +8005,7 @@ PAX is a prospective, randomized (1:1), double-blind, placebo-controlled study, 
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Physiotherapy for Persistent Function by Superficial Neuromodulation**  
@@ -8084,7 +8034,7 @@ This trial can be a tool for patients affected by CP who present pain and fatigu
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **VSL#3® vs Placebo in the Treatment of Fatigue and Other Symptoms in Long Covid (DELong#3)**  
@@ -8107,7 +8057,7 @@ This study aims to evaluate the effectiveness of VSL#3® in reducing Fatigue and
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Post Covid-19 Dysautonomia Rehabilitation Randomized Controlled Trial**  
@@ -8131,7 +8081,7 @@ Dysautonomia in post-covid-19 condition appears to affect a significant number o
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Osteopathy and Physiotherapy Compared to Physiotherapy Alone on Fatigue and Functional Status in Long COVID**  
@@ -8157,7 +8107,7 @@ Methods: This is a study protocol for a two-arm, assessor-blinded, pragmatic ran
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Amygdala Insula Retraining in the Management of Long COVID Symptoms**  
@@ -8185,7 +8135,7 @@ Our research questions include
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Biosound Therapy as a Treatment for Long COVID Patients**  
@@ -8212,7 +8162,7 @@ The goal of this clinical trial is to learn about Biosound Therapy System's impa
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Telerehabilitation Practice in Long COVID-19 Patients**  
@@ -8238,7 +8188,7 @@ Participants will receive 12 weeks of telerehabilitation practice Researchers wi
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Safety and Efficacy of Umbilical Cord Mesenchymal Stem Cell Exosomes in Treating Chronic Cough After COVID-19**  
@@ -8263,7 +8213,7 @@ Participants will be asked to complete a questionnaire to help researchers ev...
 
 **Relevance Tags:** General | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Inspiratory Muscle Training in ME/CFS and COVID-19 Survivors**  
@@ -8286,7 +8236,7 @@ Coronavirus-2019 (COVID-19) is a viral disease leading to respiratory dysfunctio
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID-19 Intervention Using Digital Health & Technology**  
@@ -8309,7 +8259,7 @@ The current study seeks to pilot test the iENDURE (Enhancing Distress tolerance 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **TDCS-potentiated Generalization of Cognitive Training in the Rehabilitation of Long COVID Symptoms**  
@@ -8332,7 +8282,7 @@ The overarching goals of this study are to employ cognitive testing to understan
 
 **Relevance Tags:** Neurological / Autonomic | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **COVID-19 Sequelae: Treatment and Monitoring. A Dietary Supplement Based on Sea Urchin Eggs With Echinochroma A**  
@@ -8355,7 +8305,7 @@ The aim of this study is to assess the efficacy and efficiency of a nutraceutica
 
 **Relevance Tags:** Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **TaiChi-DTx for Treating Long Covid Symptoms**  
@@ -8378,7 +8328,7 @@ The randomized controlled trial will be conducted to evaluate the effectiveness 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exercise Intervention Using mHealth in Patients With Post-Acute COVID-19 Syndrome: a Randomized Clinical Trial**  
@@ -8401,7 +8351,7 @@ Post-Acute Syndrome COVID-19 is a disease resulting from infection by the severe
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Phase 2/Phase 3 Study To Evaluate The Efficacy And Safety Of Ramatroban Along With The Standard Of Care In Subjects Hospitalized For COVID Pneumonia**  
@@ -8434,7 +8384,7 @@ To evaluate the safety of Ramatroban 75 mg tablet...
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pilot Study Into LDN and NAD+ for Treatment of Patients With Post-COVID-19 Syndrome**  
@@ -8458,7 +8408,7 @@ Pilot study into low dose naltrexone (LDN) and NAD+ for treatment of patients wi
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Acupressure and Qigong in Chronic Fatigue Post COVID-19.**  
@@ -8483,7 +8433,7 @@ International observational studies confirm the high incidence of post-infectiou
 
 **Relevance Tags:** Anti-inflammatory | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Feasibility of Cannabidiol for the Treatment of Long COVID**  
@@ -8506,7 +8456,7 @@ This is an open label, phase 2 clinical trial to assess the feasibility of a can
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **BREATHE: Virtual Self-management for Long COVID-19**  
@@ -8529,7 +8479,7 @@ A mixed-methods evaluation of a virtual self-management program for people livin
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of IMT on Functional Capacity in Patients With Chronic COVID After Hospital Discharge**  
@@ -8552,7 +8502,7 @@ Exercise intolerance and fatigue are the most common symptoms in patients with c
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Differential Diagnosis of Persistent COVID-19 by Artificial Intelligence**  
@@ -8577,7 +8527,7 @@ Common symptoms include fatigue, shortness of breath, and cognitive dysfunction,
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of a Physical and Respiratory Rehabilitation Program for Patients With Persistent COVID-19 (SARS-CoV-2).**  
@@ -8600,7 +8550,7 @@ The pandemic caused by SARS-CoV-2 infection has resulted, in addition to the wel
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Digital Physiotherapy Practice in Long Covid-19 Patients**  
@@ -8623,7 +8573,7 @@ The COVID-19 can cause important sequels in the respiratory system by bilateral 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Nivolumab/Ipilimumab and Chemotherapy Combination in Advanced NSCLC Patients With HIV, HBV, HCV and Long Covid Syndrome**  
@@ -8646,7 +8596,7 @@ Study type: Phase 2 - Interventional Trial Number of patients to be enrolled: 10
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **HEART Rate Variability Biofeedback in LOng COVID-19 (HEARTLOC)**  
@@ -8669,7 +8619,7 @@ Long COVID is a common but highly debilitating illness which develops after infe
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy, Safety, Tolerability of AXA1125 in Fatigue After COVID-19 Infection**  
@@ -8692,7 +8642,7 @@ This study will compare the effects of AXA1125, an orally active mixture of amin
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Safety and Dosage of a Computerized Cognitive Training Program for Cognitive Dysfunction After COVID-19**  
@@ -8715,7 +8665,7 @@ The goal of this Phase I/II clinical trial is to assess the safety and maximum t
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Telerehabilitation Program in Persistent COVID-19**  
@@ -8739,7 +8689,7 @@ The syndrome characterized by the persistence of symptoms typical of COVID-19, b
 
 **Relevance Tags:** Persistence / Antiviral | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Personalized Computerized Training Program for Cognitive Dysfunction After COVID-19**  
@@ -8762,7 +8712,7 @@ This before-and-after study aims to evaluate the usefulness and efficacy of a pe
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of the Link Between Structural Alterations in the Hypothalamus and Cardiac Dysautonomia in Drug-resistant Epilepsy**  
@@ -8786,7 +8736,7 @@ Patients with drug-resistant epilepsy may have cardiac dysautonomia, with reduce
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Ivabradine on Adolescent Dysautonomia**  
@@ -8809,7 +8759,7 @@ Dysautonomia of Adolescence (dysautonomia) is an umbrella term used to describe 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Intravenous (IV) Saline and Exercise in Postural Tachycardia Syndrome (POTS)**  
@@ -8832,7 +8782,7 @@ The investigators will test whether an intravenous infusion of saline (salt wate
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pathophysiology of Orthostatic Intolerance**  
@@ -8857,7 +8807,7 @@ The purpose of this study is to describe the mechanism of orthostatic intoleranc
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Restoring Iron Deficiency in POTS**  
@@ -8880,7 +8830,7 @@ People with postural orthostatic tachycardia syndrome (POTS) often have low red 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Guanfacine and Cromolyn Sodium for POTS: The DBPOTS Trial**  
@@ -8908,7 +8858,7 @@ Does treatment with guanfacine or cromolyn sodium improve physical functioning i
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cervicothoracic Sympathetic Block Evaluation for Post COVID Condition**  
@@ -8933,7 +8883,7 @@ A key mechanism underlying many treatment-resistant PCC symptoms appears to be d
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **NORTHERA (DROXIDOPA) for Dysautonomia in Pediatric Survivors of Menkes Disease**  
@@ -8956,7 +8906,7 @@ This clinical trial will evaluate the safety, tolerability, dosing, and efficacy
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cardiac Involvement in Wilson's Disease**  
@@ -8979,7 +8929,7 @@ Heart damage by copper accumulation has been reported in Wilson's Disease. Howev
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Network
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RESET-POTS: Multimodal Phenotyping and Stellate Ganglion Block in Postural Orthostatic Tachycardia Syndrome**  
@@ -9002,7 +8952,7 @@ RESET-POTS is a pilot study for adults with postural orthostatic tachycardia syn
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **fMRI in Postural Tachycardia Syndrome**  
@@ -9025,7 +8975,7 @@ Postural tachycardia syndrome (POTS) is one of the most common forms of chronic 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Impact of Improved Vagal Function on Periaqueductal Gray Connectivity**  
@@ -9048,7 +8998,7 @@ This study is being to see if participating in breathing exercise training and p
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effect of Physical Activity on Postural Orthostatic Tachycardia Syndrome**  
@@ -9071,7 +9021,7 @@ Postural orthostatic tachycardia syndrome (POTS) is a disorder of unknown origin
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Blood Pressure Effects on Cognition and Brain Blood Flow in PD**  
@@ -9094,7 +9044,7 @@ Parkinson's disease (PD) is the second most common neurodegenerative disorder wo
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Autoimmune Basis for Postural Tachycardia Syndrome**  
@@ -9117,7 +9067,7 @@ The purpose of this study is to test the hypothesis that an antibody-mediated au
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of Natriuretic Peptide Receptor 1 (NPR1) Antagonist in Adult Patients With Postural Orthostatic Tachycardia Syndrome (POTS)**  
@@ -9148,7 +9098,7 @@ The study is looking at several other research questions, including:
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagal Stimulation in POTS**  
@@ -9173,7 +9123,7 @@ The purpose of this study is to investigate how the electrical stimulation of a 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluation of Medical Cannabis and Prescription Opioid Taper Support for Reduction of Pain and Opioid Dose in Patients With Chronic Non-Cancer Pain**  
@@ -9197,7 +9147,7 @@ This study will use a randomized controlled design to test whether medical marij
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Beta-3 Enhanced Autonomic Therapy for POTS**  
@@ -9220,7 +9170,7 @@ The study will test the hypothesis that mirabegron is more effective than a plac
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Non-invasive Vagus Nerve Stimulation for Chronic Musculoskeletal Pain**  
@@ -9243,7 +9193,7 @@ Chronic musculoskeletal (MSK) pain affects an estimated 20-33% of the global pop
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Breathing Retraining Exercises in Pregnant Females With Postural Orthostatic Tachycardia Syndrome.**  
@@ -9266,7 +9216,7 @@ Postural orthostatic tachycardia POTS is characterized by excessive increase in 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effects of Chiropractic in a Population With High Central Adiposity**  
@@ -9289,7 +9239,7 @@ Since 1980, the global prevalence of obesity, commonly defined as a body mass in
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Compression Garments in the Community With POTS**  
@@ -9314,7 +9264,7 @@ Compression Garments are a commonly prescribed treatment in Postural Orthostatic
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hypercapnia and Orthostatic Tolerance in Postural Orthostatic Tachycardia Syndrome**  
@@ -9339,7 +9289,7 @@ The purpose of this research study is to determine if higher CO2 levels have any
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **CAlgary SAlt for POTS**  
@@ -9362,7 +9312,7 @@ Many patients with postural orthostatic tachycardia syndrome (POTS) have decreas
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Low Dose Naltrexone Use in Patients With POTS**  
@@ -9386,7 +9336,7 @@ Many patients with Postural Orthostatic Tachycardia Syndrome (POTS) experience d
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Paediatric Syncope in the Emergency Department**  
@@ -9409,7 +9359,7 @@ The investigators will assess the efficacy of clinically recommended counterpres
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Postural Sway and Counterpressure Maneuvers for Pediatric Syncope**  
@@ -9433,7 +9383,7 @@ The investigators are interested in whether discrete counterpressure maneuvers, 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Periaqueductal Gray-vagus Nerve Interface Malfunction Explain the Natural History With Its Numerous Co-morbidities?**  
@@ -9456,7 +9406,7 @@ This study is being conducted to see how people with Postural tachycardia syndro
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Definition of Autonomic Nervous System Involvement in Patients With Multiple Sclerosis**  
@@ -9485,7 +9435,7 @@ The main questions it aims to answer are:
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Double-blind, Randomized, Placebo-controlled Study Evaluating Efficacy and Safety of IgPro20 in Post-COVID-19 POTS**  
@@ -9508,7 +9458,7 @@ This is a prospective, phase 3, multicenter, double-blind, randomized placebo-co
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **NORTHERA (DROXIDOPA) for Dysautonomia in Adult Survivors of Menkes Disease and Occipital Horn Syndrome**  
@@ -9531,7 +9481,7 @@ The purpose of this study is to evaluate whether Northera (Droxidopa) is safe an
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dexmedetomidine Sublingual Film for the Ambulatory Treatment of Hyperadrenergic Autonomic Crisis in Patients With Familial Dysautonomia**  
@@ -9556,7 +9506,7 @@ Funding Source- FDA OOPD
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Using Mirabegron to Increase BP in Patients With POTS**  
@@ -9580,7 +9530,7 @@ This is a pilot dose-finding study to test the hypothesis that mirabegron increa
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Programming Aquatic Therapy for POTS**  
@@ -9607,7 +9557,7 @@ Does aquatic occupational therapy reduce orthostatic tachycardia and POTS sympto
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Better Understanding of Fatigue After STroke**  
@@ -9632,7 +9582,7 @@ Stroke is worldwide the second most common cause of death following heart attack
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Autonomic Determinants of POTS - Pilot1**  
@@ -9655,7 +9605,7 @@ Postural tachycardia syndrome (POTS) is a relatively common condition affecting 
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Transdermal Vagal Stimulation for POTS**  
@@ -9680,7 +9630,7 @@ These patient are disabled and can't be in upright position for a longer time. T
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Autonomic Determinants of POTS - Pilot 2**  
@@ -9705,7 +9655,7 @@ The purpose of this study is to determine the importance of sympathetic activati
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Whole-body Electrical Muscle Stimulation Exercise on Adults With Neuromuscular Disease**  
@@ -9728,7 +9678,7 @@ This single-arm pilot study evaluates the effects of whole-body electrical muscl
 
 **Relevance Tags:** Metabolic | Mitochondrial | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dysautonomia in Children With Type 1 Diabetes**  
@@ -9751,7 +9701,7 @@ Some physiological factors, such as physical activity, or pathological factors, 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study of Pyridostigmine in Postural Tachycardia Syndrome**  
@@ -9774,7 +9724,7 @@ This is a 3-day study comparing pyridostigmine versus placebo in the treatment o
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pilot Study of Dexmedetomidine Sublingual Film for the Ambulatory Treatment of Hyperadrenergic Autonomic Crisis in Patients With Familial Dysautonomia**  
@@ -9797,7 +9747,7 @@ This is a pilot open-label study to evaluate the feasibility of conducting a cli
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Personalized Brain Stimulation to Treat Chronic Concussive Symptoms**  
@@ -9821,7 +9771,7 @@ The goal of this study is to investigate a new treatment for chronic symptoms af
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Auricular Vagal Nerve Stimulation for Hypermobile Ehlers-Danlos Syndrome**  
@@ -9845,7 +9795,7 @@ Hypermobile Ehlers-Danlos Syndrome (hEDS) is a connective tissue disorder charac
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Autonomic Reactivity and Personalized Neurostimulation**  
@@ -9869,7 +9819,7 @@ Disorders of gut-brain interaction (DGBI) affect up to 25% of U.S. children. Pat
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Modafinil and Cognitive Function in POTS**  
@@ -9895,7 +9845,7 @@ The purpose of this study is to better understand the cognitive dysfunction asso
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Aldosterone & Sodium Regulation in Postural Tachycardia Syndrome - Screening**  
@@ -9921,7 +9871,7 @@ The purpose of the study is to determine whether patients meet criteria for Post
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Screening for Alterations in the Autonomic Nervous System**  
@@ -9944,7 +9894,7 @@ Dysautonomia is an alteration of the autonomic nervous system that manifests its
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Breathing Device in Postural Orthostatic Tachycardia Syndrome (POTS)**  
@@ -9967,7 +9917,7 @@ The investigators will test whether breathing through an inspiratory resistance 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Splanchnic Venous Capacitance in Postural Tachycardia Syndrome**  
@@ -9993,7 +9943,7 @@ The splanchnic circula...
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Autoimmune Basis for Postural Tachycardia Syndrome**  
@@ -10024,7 +9974,7 @@ The purpose of this study is to see if some people with postural tachycardia syn
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Non-invasive Vagal Neurostimulation (nVNS) in Adolescents With Postural Orthostatic Tachycardia Syndrome (POTS)**  
@@ -10048,7 +9998,7 @@ The purpose of this study is to determine if nVNS will decrease autonomic sympto
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Ultrasound Guided Stellate Ganglion Block in Postural Tachycardia Syndrome**  
@@ -10073,7 +10023,7 @@ This single-center study aims to evaluate both immediate and long-term outcomes 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Renin-Aldosterone Axis in Postural Tachycardia Syndrome**  
@@ -10096,7 +10046,7 @@ The purpose of this study is to determine the role of the renin-angiotensin-aldo
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Low Sodium Oxybate (LXB) on Autonomic Symptom Burden in Idiopathic Hypersomnia Patients With Postural Tachycardia Syndrome**  
@@ -10119,7 +10069,7 @@ The investigators hope to learn if low sodium oxybate (LXB) is an effective trea
 
 **Relevance Tags:** Neurological / Autonomic | Phase 4 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **POTS-FLOW: Interplay Between Gut Hormones and Autonomic Postprandial Blood Flow Regulation in Patients With POTS**  
@@ -10144,7 +10094,7 @@ This study will describe the interplay between the gut hormones GIP and CCK and 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Northera Improves Postural Tachycardia Syndrome (POTS) and Postural Vasovagal Syncope (VVS)**  
@@ -10167,7 +10117,7 @@ Vasovagal syncope (VVS, simple faint) is the most common cause of transient loss
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mechanisms of Vasovagal Syncope**  
@@ -10191,7 +10141,7 @@ Vasovagal Syncope (simple postural faint) is the most common cause of acute loss
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Counterpressure Maneuvers in Postural Orthostatic Tachycardia Syndrome**  
@@ -10215,7 +10165,7 @@ The present study evaluates whether performing a 14-days counter pressure maneuv
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluation of Urinary Dysfunction in CANVAS Patients**  
@@ -10240,7 +10190,7 @@ As much as one third of patients living with CANVAS experience symptoms of urina
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Muscular and Cutaneous Dysfunction in POTS**  
@@ -10263,7 +10213,7 @@ POTS patients seem to experience orthostasis-dependent muscle weakness and pain 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Shared Medical Appointment Intervention for Quality of Life Improvement in POTS**  
@@ -10286,7 +10236,7 @@ Postural orthostatic tachycardia syndrome (POTS) is a clinical syndrome encompas
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effect of Neural Therapy on Heart Rate Recovery, Cardiac Parameters and Pain in Fibromyalgia**  
@@ -10310,7 +10260,7 @@ Background: Autonomic dysfunction has been observed in patients with fibromyalgi
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **POTS Stroke Volume**  
@@ -10333,7 +10283,7 @@ the investigators propose studies of a tiny, wearable, wireless, beat-to-beat bl
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Stellate Ganglion Block on ME/CFS**  
@@ -10360,7 +10310,7 @@ Participants will receive a total of six blocks over three weeks (one block on e
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Novel Noninvasive Thermoregulatory Device for Postural Tachycardia Syndrome**  
@@ -10383,7 +10333,7 @@ The investigators hope to learn the feasibility and preliminary efficacy of the 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **IVIG (Gamunex-C) Treatment Study for POTS Subjects**  
@@ -10407,7 +10357,7 @@ The purpose of this trial is to evaluate the symptomatic benefits of immunomodul
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study to Systematically Assess the Efficacy and Safety of Intravenous Albumin Infusions in Severe POTS**  
@@ -10430,7 +10380,7 @@ POTS is a relatively common condition that affects millions of patients around t
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Phenotyping Mitochondrial and Immune Dysfunction in POTS With Targeted Clinical Intervention.**  
@@ -10453,7 +10403,7 @@ The mechanisms underlying POTS are not well understood. Though heterogeneous in 
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Mitochondrial | Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Osteopathic Technique on Autonomic Nervous System Activity**  
@@ -10478,7 +10428,7 @@ Cranial osteopathic manipulation technique for brain and cranial nerve function,
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Telerehabilitation for Dysautonomia in Parkinson's Disease**  
@@ -10501,7 +10451,7 @@ People diagnosed with Parkinson's Disease (PD) exhibit a combination of motor an
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Crossover Study of Propranolol vs Ivabradine in POTS**  
@@ -10525,7 +10475,7 @@ People diagnosed with Parkinson's Disease (PD) exhibit a combination of motor an
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Single-center Pathophysiological Study of the Role of Inflammation, Changes in the Intestinal Epithelial Barrier and the Intestinal Microbiota in Parkinson's Disease**  
@@ -10549,7 +10499,7 @@ Converging evidence from the literature suggests that digestive inflammation may
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vagus Nerve Stimulation in Treatment of Postural Orthostatic Tachycardia Syndrome**  
@@ -10574,7 +10524,7 @@ The investigator has shown that patients with POTS have higher cardiovascular an
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Increasing Seat Belt Wearing and Decreasing Handheld Phone Use While Driving**  
@@ -10602,7 +10552,7 @@ The study team is proposing to conduct a randomized controlled trial to determin
 
 **Relevance Tags:** Neurological / Autonomic | NA | Very Large (1000+ participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Chemoreflex and Baroreflex Alterations Causing Postural Tachycardia Syndrome With Orthostatic Hyperpnea and Hypocapnia**  
@@ -10627,7 +10577,7 @@ Postural tachycardia syndrome (POTS) is the most common chronic cause of postura
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Concentration and Attentional Deficits in POTS and Other Autonomic Neuropathies**  
@@ -10650,7 +10600,7 @@ People with POTS, autoimmune autonomic neuropathy (AAN), pure autonomic failure 
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Iron Sucrose in Patients With Iron Deficiency and POTS**  
@@ -10674,7 +10624,7 @@ This study aims to investigate whether the treatment of non-anemic iron deficien
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Brainstem and Prematurity**  
@@ -10701,7 +10651,7 @@ Although significant advances in neonatal care have increased survival rates of 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Myalgic Encephalomyelitis Chronic Fatigue at the National Institutes of Health**  
@@ -10734,7 +10684,7 @@ Adults ages 18-60 years who have finished at least 7th grade education...
 
 **Relevance Tags:** Metabolic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Nih
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Anomalies of Nocturnal Gaz Exchanges in Patients With Down Syndrome**  
@@ -10757,7 +10707,7 @@ Recently, retrospective studies have shown that Down Syndrome children have a hi
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vitamin D Deficiency and Dysautonomia**  
@@ -10780,7 +10730,7 @@ In previous work the investigator identified a group of children between the age
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Breathing Exercises With And Without Aerobic Training In Patients With Postural Orthostatic Tachycardia Syndrome**  
@@ -10804,7 +10754,7 @@ Postural orthostatic tachycardia syndrome (POTS) is a chronic, multifactorial sy
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Exercise Response to Pharmacologic Cholinergic Stimulation in Myalgic Encephalomyelitis / Chronic Fatigue Syndrome**  
@@ -10827,7 +10777,7 @@ Myalgic encephalomyelitis/Chronic fatigue syndrome (ME/CFS), otherwise known as 
 
 **Relevance Tags:** Immunomodulatory | Repurposed | Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Electrophysiological Findings in Fibromyalgia Patients**  
@@ -10850,7 +10800,7 @@ Fibromyalgia Syndrome (FMS); It is a chronic condition characterized by widespre
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cardiovagal Baroreflex Deficits Impair Neurovascular Coupling and Cognition in POTS**  
@@ -10874,7 +10824,7 @@ Postural tachycardia syndrome (POTS), is the chronic form of orthostatic intoler
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Coenzyme Q10 Plus NADH Supplementation in Chronic Fatigue Syndrome/Myalgic Encephalomyelitis**  
@@ -10898,7 +10848,7 @@ The main aim of the study is to examine the effect of oral CoQ10 plus NADH (Reco
 
 **Relevance Tags:** Mitochondrial | Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Phlebotomy and Polycystic Ovary Syndrome**  
@@ -10926,7 +10876,7 @@ Open label, controlled, parallel, pros...
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Melatonin and Zinc Administration on Cardinal Symptoms in Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -10950,7 +10900,7 @@ The aim of the study is to investigate the effects of oral melatonin and zinc su
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Alterations of Attention in POTS Depending on Body Position and Hydration**  
@@ -10973,7 +10923,7 @@ The Postural Tachycardia-Syndrome (POTS) is a form of autonomic dysregulation, t
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long-term Effects of Transcutaneous Vagal Nerve Stimulation on Postural Orthostatic Tachycardia Syndrome (POTS)**  
@@ -10999,7 +10949,7 @@ The aims of the present research study are to test whether a daily transcutaneou
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Using Telehealth to Improve Outcomes in Veterans at Risk for Suicide**  
@@ -11023,7 +10973,7 @@ Overview. The investigators will randomize 120 Veterans in this 3-site trial ove
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Adrenocorticotropic Hormone Stimulation in Postural Orthostatic Tachycardia Syndrome (POTS)**  
@@ -11046,7 +10996,7 @@ This study is to determine different chemical levels in the blood during a low s
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Remote Self-training Program for Patients With Postural Orthostatic Tachycardia Syndrome**  
@@ -11069,7 +11019,7 @@ The purpose of this research is to evaluate if a hybrid semi-supervised remote e
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dietary Salt in Postural Tachycardia Syndrome**  
@@ -11095,7 +11045,7 @@ Patients with POTS may not adequately expand their plasma volume in response to 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Carbidopa for the Treatment of Excessive Blood Pressure Variability**  
@@ -11119,7 +11069,7 @@ The overall study objectives are to determine whether carbidopa (Lodosyn®) is s
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Dietary Sodium's Effect on Urinary Sodium and Dopamine Excretion in Patients With Postural Tachycardia Syndrome**  
@@ -11144,7 +11094,7 @@ Patients with Postural Tachycardia Syndrome (POTS) may not adequately expand the
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Peripheral Dopamine in Postural Tachycardia Syndrome**  
@@ -11167,7 +11117,7 @@ The purpose of the proposed research is to determine how changes in kidney dopam
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Dietary Sodium Intake on Vascular Endothelium**  
@@ -11192,7 +11142,7 @@ The investigators will test the hypothesis that markers of vascular endothelial 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Physical Activity as a Complementary Treatment in POTS**  
@@ -11215,7 +11165,7 @@ Postural orthostatic tachycardia syndrome (POTS) is a disorder of unknown origin
 
 **Relevance Tags:** Neurological / Autonomic | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hemodynamic Effects of Compression in POTS**  
@@ -11240,7 +11190,7 @@ One commonly prescribed treatment for POTS is compression garments. Compression 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Ivabradine on Patients With Postural Orthostatic Tachycardia Syndrome**  
@@ -11263,7 +11213,7 @@ Postural orthostatic tachycardia syndrome (POTS) occurs in approximately 500,000
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Local Vasoconstriction in Postural Tachycardia Syndrome**  
@@ -11288,7 +11238,7 @@ The investigators study will determine how often blood flow regulation abnormali
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Reducing Orthostatic Intolerance With Oral Rehydration in Myalgic Encephalomyelitis/Chronic Fatigue Syndrome Patients**  
@@ -11312,7 +11262,7 @@ We and others have shown that many younger patients with Myalgic Encephalomyelit
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of Abnormalities of the Nervous System in the Occurrence of Intradialytic Arterial Hypotension**  
@@ -11335,7 +11285,7 @@ Intradialytic hypotension is a common complication of hemodialysis sessions in p
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Temporary Celiac Ganglion Block as a Test Before Celiac Ganglion Resection for Dysautonomia-Related Bowel Dysmotility**  
@@ -11359,7 +11309,7 @@ Dysautonomia is malfunction of the autonomic nervous system. It usually results 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Anti-Cholinergic Receptors Antibodies, Autonomic Profile and Dysautonomia Symptoms in PAF, ALS and POTS (DISAUT-AB)**  
@@ -11382,7 +11332,7 @@ Anti alfa-3 and alfa-7 ganglionic cholinergic receptors (anti-AChRs) antibodies 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Standing Cognition and Co-morbidities of POTS Evaluation**  
@@ -11406,7 +11356,7 @@ The purpose of this study is to evaluate cognition in patients with postural tac
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Verapamil as Therapy for Children and Young Adults With Dravet Syndrome**  
@@ -11429,7 +11379,7 @@ This study will assess how well the drug verapamil can improve control of seizur
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Nutritional Supplement Phosphatidylserine in Patients With Familial Dysautonomia**  
@@ -11454,7 +11404,7 @@ Phosphatidylserine is an FDA approved food supplement that was shown recently to
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study Evaluating the Effect of UCB8600 on Mast Cell Activation in the Human Gut**  
@@ -11481,7 +11431,7 @@ Recently, we were able to demonstrate that mast cells play an active role in IBS
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Inhaled Cromolyn Sodium in Patients With Locally Advanced Lung Cancer**  
@@ -11508,7 +11458,7 @@ Cromolyn sodium is an FDA-approved mast cell stabilizer with an established safe
 
 **Relevance Tags:** Immunomodulatory | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Safety and Efficacy of FSD201 for the Treatment of Chronic Pain Associated With Idiopathic MCAS (MCAD)**  
@@ -11531,7 +11481,7 @@ This study will determine if FSD201 reduces the average daily 24-hour recall pai
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mast Cell Treatment in Post-tick Bite Illness (PTBI)**  
@@ -11556,7 +11506,7 @@ This is a Phase II double-blinded study to assess the safety, tolerability, and 
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Measuring Nerve Activity in Small Human Intestinal Biopsies in IBS (Irritable Bowel Syndrome)**  
@@ -11586,7 +11536,7 @@ On the basis of these observations, the general aim of the study is to move a si
 
 **Relevance Tags:** Metabolic | NA | Very Large (1000+ participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Improved Diagnostics in Food Allergy Study**  
@@ -11610,7 +11560,7 @@ The investigators will conduct low-dose intranasal allergen challenges on childr
 
 **Relevance Tags:** Immunomodulatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Clinical Impact of the Basophil Activation Test to Diagnose Food Allergy**  
@@ -11634,7 +11584,7 @@ The BAT Impact study is a prospective multicentre study in the UK using a biomar
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Masitinib for the Treatment of Severe Mast Cell Activation Syndrome**  
@@ -11659,7 +11609,7 @@ To evaluate the efficacy and safety of two dosing schemes of oral masitinib vers
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Ocular and Palpebral Manifestations of Mastocytosis (MOOMA)**  
@@ -11686,7 +11636,7 @@ To date, there are only a few cases reporting ocular and orbital mani...
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Confocal Laser Endomicroscopy, IBS and Stress**  
@@ -11713,7 +11663,7 @@ Thereafter, either 10 ml...
 
 **Relevance Tags:** General | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hydroxychloroquine in Isolated Cutaneous Mastocytosis Patients or Indolent Systemic Mastocytosis With Associated Skin Involvement Patients**  
@@ -11741,7 +11691,7 @@ There is no standard treatment and no treatment has a marketing authorization fo
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Tranexamic Acid and Spontaneous Chronic Urticaria**  
@@ -11765,7 +11715,7 @@ Spontaneous chronic urticaria (UCS) is a disease that affects 1% of the general 
 
 **Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Intravesical Injection of Dextrose to Improve Lower Urinary Tract Symptoms Caused by Chronic Cystitis**  
@@ -11788,7 +11738,7 @@ The pathogenesis of bladder pain syndrome/interstitial cystitis (BPS/IC) is curr
 
 **Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Designated Education Session on Patellofemoral Pain**  
@@ -11813,7 +11763,7 @@ Outcome Measures: The primary outcome measure is the Knee Osteoarth...
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy and Safety Study of Omalizumab (Xolair®) to Treat Chronic Urticaria**  
@@ -11836,7 +11786,7 @@ Chronic urticaria can be defined as the occurrence of widespread daily or almost
 
 **Relevance Tags:** Immunomodulatory | Repurposed | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mesalazine for the Treatment of Diarrhoea-predominant Irritable Bowel Syndrome (IBS-D)**  
@@ -11861,7 +11811,7 @@ The investigators will therefore evaluate symptoms (primarily bowel frequency) a
 
 **Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Low-Dose Naltrexone For ME/CFS: Dose-Finding**  
@@ -11884,7 +11834,7 @@ This exploratory clinical trial tests low-dose naltrexone (LDN) for the treatmen
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Photobiomodulation in Chronic Fatigue Syndrome**  
@@ -11911,7 +11861,7 @@ Does photobiomodulation therapy significantly reduce fatigue levels as measured 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fighting Fatigue in Multiple Sclerosis: TMS vs. tDCS Efficacy.**  
@@ -11935,7 +11885,7 @@ Multiple Sclerosis (MS) is a chronic neurological disease impacting 2.8 million 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RCT of Efficacy and Safety of CP003 on CFS/ME or Post COVID-19 Fatigue**  
@@ -11962,7 +11912,7 @@ The investigators will compare people taking the Lingzhi supplement to tho...
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Functional Neuroimaging to Detect the Neural Signatures of the Unpleasantness of Pain and Effort**  
@@ -11988,7 +11938,7 @@ The way the brain processes rewards and punishments may play a role in some diso
 
 **Relevance Tags:** General | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Nih
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study to Evaluate the Efficacy of 2LEBV® and 2LXFS® on Asthenia in Patients With an Epstein-Barr Virus Infection**  
@@ -12011,7 +11961,7 @@ Worldwide, 95% of adults are infected with Epstein-Barr Virus (EBV). These infec
 
 **Relevance Tags:** Immunomodulatory | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hyperbaric Oxygen Therapy for Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS)**  
@@ -12034,7 +11984,7 @@ This study evaluates the effects of hyperbaric oxygen therapy (HBOT) in patients
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **ME/CFS Brain Fog: Cognitive Rehabilitation Trial**  
@@ -12064,7 +12014,7 @@ The purpose of this study is to compare two approaches to cognitive rehabilitati
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Controlled Trial of Hydrogen Water as a Treatment for Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -12087,7 +12037,7 @@ This is a 16-week controlled treatment trial of an over-the -counter supplement,
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Assessment of N-Acetylcysteine as Therapy for Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -12110,7 +12060,7 @@ Chronic fatigue syndrome/myalgic encephalomyelitis (ME/CFS) is an unexplained mu
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **PASCA-MM Study. Impact of the PASCA (PArcours de Santé au Cours du CAncer) Program on Complications Associated With Multiple Myeloma and/or Its Treatments in the Context of a First Hematopoietic Stem Cell Autograft, in Adults Aged 18 to 70.**  
@@ -12143,7 +12093,7 @@ For both the 7 complications of interest (primary objective)...
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Is Post-exertional Symptom Exacerbation Specific to Patients With Myalgic Encephalomyelitis / Chronic Fatigue Syndrome? A Study Comparing Patients With Myalgic Encephalomyelitis / Chronic Fatigue Syndrome and Patients With Cardiac Diseases Who Underwent an Exercise Test.**  
@@ -12167,7 +12117,7 @@ Myalgic Encephalomyelitis / Chronic Fatigue Syndrome (ME/CFS) is a disease chara
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Assessment of Neuroinflammation in Central Inflammatory Disorders Using [F-18]DPA-714.**  
@@ -12190,7 +12140,7 @@ The primary objective of this study is to measure the concentration and the regi
 
 **Relevance Tags:** Metabolic | Mitochondrial | Anti-inflammatory | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Tracking Peripheral Immune Cell Infiltration of the Brain in Central Inflammatory Disorders Using [Zr-89]Oxinate-4-labeled Leukocytes.**  
@@ -12213,7 +12163,7 @@ This study will use brain Positron Emission Tomography/ Magnetic Resonance Imagi
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Functional and Affective Effects of a Brief tDCS Intervention in Fibromyalgia and Chronic Fatigue Syndrome**  
@@ -12237,7 +12187,7 @@ Functional and Affective Effects of a brief tDCS Intervention in Fibromyalgia an
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness and Safety of a Tele-Rehabilitation Program on Fatigue and Related Variables in Chronic Fatigue Syndrome and Post COVID Syndrome**  
@@ -12261,7 +12211,7 @@ This is a randomized, single-blind clinical trial that aims to evaluate the effe
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Vestibulodynia: Understanding Pathophysiology and Determining Appropriate Treatments**  
@@ -12284,7 +12234,7 @@ Vestibulodynia (VBD) is a complex chronic vulvar pain condition that impairs the
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Physical Exercise and Neuromodulation on Pain, Sleep and Fatigue in Patients With Fibromyalgia**  
@@ -12311,7 +12261,7 @@ Par...
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Network
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of a Rehabilitation Programme Focused on Energy Management in People With Myalgic Encephalomyelitis / Chronic Fatigue Syndrome**  
@@ -12334,7 +12284,7 @@ The study focuses on rehabilitation nursing care for adults diagnosed with Myalg
 
 **Relevance Tags:** Metabolic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effect of Acupuncture Therapy on Cognitive Function in Post-COVID-19 Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -12359,7 +12309,7 @@ Myalgic encephalomyelitis/chronic fatigue syndrome (ME/CFS) is a common sequela 
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **OutreAch MediCal Care for HousEbound Patients With Post-COVID-19 Syndrome or ME/CFS of Any Cause (ACCESS)**  
@@ -12382,7 +12332,7 @@ The significance of the Post-COVID Syndrome (PCS) has been widely acknowledged. 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effects of Yiqi Fuyuan Paste Formula in Chronic Fatigue Syndrome: A Randomized Double-Blind Controlled Clinical Trial.**  
@@ -12405,7 +12355,7 @@ The goal of this clinical trial is to learn if "Yiqi Fuyuan Paste Formula" (a tr
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cardiovascular Analysis of PEM**  
@@ -12428,7 +12378,7 @@ The purpose of this study is to examine cardiopulmonary function in Chronic Fati
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **FMRI Study on DC/TMD Patients**  
@@ -12451,7 +12401,7 @@ Temporomandibular disorders (TMD) are among the most common causes of chronic pa
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A 3-day Course for CFS/ME**  
@@ -12477,7 +12427,7 @@ In recent years, a doubling of the number of patients with a CFS/ME diagnoses ha
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Compound Ciwujia Granules Treat Chronic Fatigue Syndrome**  
@@ -12500,7 +12450,7 @@ To observe the improvement of Chalder scale score in patients with chronic fatig
 
 **Relevance Tags:** General | Phase 4 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Application of Direct Current Transcranial stImulation, Remotely superVised in Chronic fATiguE**  
@@ -12523,7 +12473,7 @@ It is a one-arm open-label interventional study with transcranial direct current
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Retraining of the Amygdala and Insula for the Treatment of Persistent Covid**  
@@ -12547,7 +12497,7 @@ Prolonged COVID, also known as post-COVID or Sar-CoV-2 infection with post-acute
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy and Safety of Lisdexamfetamine Dimesylate in Adults With Chronic Fatigue Syndrome**  
@@ -12572,7 +12522,7 @@ Treatment of these patients in our clinic has revealed that when their underlyin
 
 **Relevance Tags:** Neurological / Autonomic | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hydrogen Water Intervention With Heart Rate Variability as an Outcome Biomarker in ME/CFS**  
@@ -12597,7 +12547,7 @@ Does the OTC supplement, hydrogen water, work to ...
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Complementary Treatment of PG2 to Improve Clinical Benefit Response and Quality of Life in Fatigue**  
@@ -12620,7 +12570,7 @@ The objective of this study is to evaluate the efficacy and safety of PG2 as a c
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Research for Pathophysiology of Cancer Related Fatigue (CRF) and Chronic Fatigue (CFS/ME)**  
@@ -12643,7 +12593,7 @@ Research for Pathophysiology of Cancer Related Fatigue (CRF) and Chronic Fatigue
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Creatine Supplementation in Chronic Fatigue Syndrome**  
@@ -12666,7 +12616,7 @@ This study evaluates the effectiveness of medium-term supplementation with creat
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study of the Efficacy and Safety for Rituximab in Myalgia Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS)**  
@@ -12689,7 +12639,7 @@ The efficacy and safety of rituximab on ME/CFS symptoms after administration to 
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Proof-of-Concept Trial on the Effect of Ketamine on Fatigue**  
@@ -12723,7 +12673,7 @@ Adults be...
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Nih
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Breathing Therapy for Patients in General Practice**  
@@ -12746,7 +12696,7 @@ Medically unexplained physical symptoms (MUPS) capture conditions characterized 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Trial of Solriamfetol in the Treatment of Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -12769,7 +12719,7 @@ This study is an 8-week single center, randomized, double-blind, placebo-control
 
 **Relevance Tags:** General | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **e-COGRAT: A Blended eHealth Intervention for Fatigue Following Acquired Brain Injury**  
@@ -12792,7 +12742,7 @@ Fatigue is a common, persistent consequence of acquired brain injury (ABI). Rese
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Chronic Fatigue Etiology and Recovery in Covid-19 Patients: the Role of Fatigability**  
@@ -12822,7 +12772,7 @@ The aim of the pres...
 
 **Relevance Tags:** Persistence / Antiviral | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **IC PaIN Trial: Interstitial Cystitis Pain Improvement With Naltrexone**  
@@ -12847,7 +12797,7 @@ Several treatments exist for IC/PBS; some are not effective, o...
 
 **Relevance Tags:** Immunomodulatory | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Use of Directed Probiotics in ME/CFS: Myalgic Encephalomyelitis/Chronic Fatigue Syndrome**  
@@ -12873,7 +12823,7 @@ This clinical study aims to evaluate the use of i3.1 probiotic in participants w
 
 **Relevance Tags:** Anti-inflammatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Strength Training Protocol in Fibromyalgia Women**  
@@ -12897,7 +12847,7 @@ Physical exercise is an effective tool for the prevention of various chronic dis
 
 **Relevance Tags:** Immunomodulatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **RESTORE ME -- RCT of Oxaloacetate on Improving Fatigue in ME/CFS**  
@@ -12922,7 +12872,7 @@ This randomized, double blinded, placebo controlled trial will seek to further e
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness and Health Benefits of a Nutritional, Chronobiological and Physical Exercise Intervention in Fibromyalgia and Chronic Fatigue Syndrome (SYNCHRONIZE +)**  
@@ -12945,7 +12895,7 @@ Chronic pain, fatigue and insomnia are classical symptoms of Fibromyalgia and Ch
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of Acceptance Commitment Therapy or Micro Breaks in Patients with Chronic Fatigue Syndrome/ Myalgic Encephalomyelitis**  
@@ -12973,7 +12923,7 @@ Diagnosis requires that the patient have the following three symptoms:
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Qigong Exercise on Fatigue and Postural Imbalance in Lower Limb Burn Injury**  
@@ -12996,7 +12946,7 @@ Diagnosis requires that the patient have the following three symptoms:
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Bright Light Therapy in ME/CFS Patients**  
@@ -13019,7 +12969,7 @@ In this study patients with Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Psychoneuromentalism Disorder: A Medical Condition That Affects People With Psychological Impairments From Health Issues**  
@@ -13051,7 +13001,7 @@ Psychoneuromentalism Disorder is a new condition resulting from behavioral impai
 
 **Relevance Tags:** General | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Feasibility Study: Assessing Photobiomodulation in Myalgic Encephalomyelitis**  
@@ -13076,7 +13026,7 @@ The primary site of red light absorption in cells is the mitochondria. Mitochond
 
 **Relevance Tags:** Metabolic | Mitochondrial | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Complex Intervention for Chronically Fatigued Lymphoma Survivors**  
@@ -13099,7 +13049,7 @@ The present study is a randomized controlled trial (RCT) with an overall objecti
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Health Psychological Group Rehabilitation for Patients With Chronic Fatigue Syndrome (ME/CFS)**  
@@ -13124,7 +13074,7 @@ The purpose of this research (doctoral study) is to produce a health psychologic
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **B-cell Depletion Using the Monoclonal Anti-CD20 Antibody Rituximab in Very Severe Chronic Fatigue Syndrome**  
@@ -13149,7 +13099,7 @@ The hypothesis is that at least a subset of chronic fatigue syndrome (CFS) patie
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Comeback Study**  
@@ -13173,7 +13123,7 @@ This is a single-center stratified (on gender and donor), block randomized, plac
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hydrogen Water Dosing Study for ME/CFS**  
@@ -13196,7 +13146,7 @@ The aim of this 16-week pilot randomized trial is to explore the potential benef
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluation of an Integrative Medicine Outpatient Clinical Setting for Post-COVID-19 Patients**  
@@ -13220,7 +13170,7 @@ The study aims to identify whether a multimodal integrative naturopathy outpatie
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Epigenetics of Post-exertional Malaise in Patients With ME/CFS**  
@@ -13246,7 +13196,7 @@ The investigators designed a randomised controlled trial and will enrol 70 patie
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Randomized, Double-blind, Placebo-controlled Trial of the Efficacy and Safety of Tianeptine in the Treatment of Covid Fog Symptoms in Patients After COVID-19.**  
@@ -13271,7 +13221,7 @@ Prevalence of CF may be eve...
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Analysis of Post-exertional Malaise Using a Two-day CPET in People With ME/CFS**  
@@ -13294,7 +13244,7 @@ This study aims to collect and identify key outcome measures or disease paramete
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Chronic Fatigue Etiology in Intensive Care Unit Survivors: the Role of Neuromuscular Function**  
@@ -13322,7 +13272,7 @@ The aim of the present project is to determine whether deteriorated n...
 
 **Relevance Tags:** Persistence / Antiviral | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Clinical Trial to Assess the Improvement of Fatigue, Sleep Problems, Anxiety / Depression, Neurovegetatives Alterations and Quality of Life After the Administration of ImmunoVita® in Chronic Fatigue Syndrome Patients**  
@@ -13345,7 +13295,7 @@ Chronic Fatigue Syndrome, also known as Myalgic Encephalomyelitis (CFS / MS) is 
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Mitochondrial | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **'Activity Pacing' in PLWH With Fatigue Symptoms.**  
@@ -13368,7 +13318,7 @@ Physical activity helps to improve health and prevent chronic diseases. However,
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Web-based Rehabilitation for Persistent Physical Symptoms.**  
@@ -13393,7 +13343,7 @@ This study aims to assess the effectiveness o...
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Sodium Oxybate in Patients With Chronic Fatigue Syndrome.**  
@@ -13416,7 +13366,7 @@ Chronic fatigue syndrome (CFS) is a disabling, unexplained disorder characterize
 
 **Relevance Tags:** General | Phase 4 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Long COVID-19 Syndrome in Primary Care: A Novel Protocol of Exercise Intervention "CON-VIDA Clinical Trial"**  
@@ -13439,7 +13389,7 @@ This is a randomized controlled trial of the efficacy of an individualized, prog
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Rehabilitation Therapy for Post COVID 19 Chronic Fatigue Syndrome**  
@@ -13462,7 +13412,7 @@ The aim of this study is to investigate the effect of intensive combined rehabil
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Immune Effects of Low-dose Naltrexone in ME/CFS**  
@@ -13485,7 +13435,7 @@ The main objective of this study is to test if naltrexone, when taken in low dos
 
 **Relevance Tags:** Immunomodulatory | Anti-inflammatory | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Biofeedback and Hydrogen Water as Treatments for Chronic Fatigue Syndrome**  
@@ -13510,7 +13460,7 @@ The aim of this 10-week pilot study is to explore the potential benefit of two r
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Valganciclovir (Valcyte) for Chronic Fatigue Syndrome Patients Who Have Elevated Antibody Titers Against Human Herpes Virus 6 (HHV-6)and Epstein-Barr Virus (EBV)**  
@@ -13535,7 +13485,7 @@ In addition, to characterize a quantifiable biological marker in these patients 
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Evaluation of the Effects of Treatment With Bioarginin C in Adult Subjects Belonging to the Post-Covid Day Hospital**  
@@ -13560,7 +13510,7 @@ On the duration and resolution of this syndrome, now recognized as a highly debi
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Intestinal Microbiota and Chronic Fatigue Syndrome**  
@@ -13585,7 +13535,7 @@ Up to 40 patients with chronic fatigue syndrome are randomized to receive either
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Reconditioning Exercise for COVID-19 Patients Experiencing Residual sYmptoms**  
@@ -13608,7 +13558,7 @@ Individuals who had COVID-19 and are thought to have recovered from the disease 
 
 **Relevance Tags:** General | NA | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Mental Training for CFS Following EBV Infection in Adolescents**  
@@ -13631,7 +13581,7 @@ The general aim of this study is to investigate the effect of an individually ta
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effectiveness of VIRTUAL SFCAMINA STUDY**  
@@ -13655,7 +13605,7 @@ The main objective of this study is to analyse the effectiveness of the VIRTUAL 
 
 **Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of CoQ10 Plus Selenium Supplementation on Clinical Outcomes and Biochemical Markers in ME/CFS (CoSeME Study)**  
@@ -13678,7 +13628,7 @@ In recent years, it has been suggested that nutritional deficiencies may be of c
 
 **Relevance Tags:** Metabolic | Immunomodulatory | Mitochondrial | Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Probiotics in Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS)**  
@@ -13702,7 +13652,7 @@ Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS) is a neurological di
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of Fibromyalgia With Recovery Factors**  
@@ -13725,7 +13675,7 @@ Treatment of Fibromyalgia and CFS with Recovery Factors
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **SingStrong: Strong Lungs Through Song - Long COVID-19 Study**  
@@ -13748,7 +13698,7 @@ Evidence is emerging that many individuals who recover from Covid-19 are experie
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hydrogen Water Treatment for Chronic Fatigue Syndrome**  
@@ -13771,7 +13721,7 @@ The proposed placebo-controlled pilot study will examine hydrogen water as a tre
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Effect of Acupressure on Fatigue in Individuals With Chronic Fatigue Syndrome**  
@@ -13794,7 +13744,7 @@ Chronic fatigue syndrome is a common problem in society. The treatment of this p
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Drug Intervention in Chronic Fatigue Syndrome**  
@@ -13819,7 +13769,7 @@ The hypothesis is that at least a subset of CFS patients have an activated immun
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **B-lymphocyte Depletion Using Rituximab in Chronic Fatigue Syndrome/ Myalgic Encephalopathy (CFS/ME). A Randomized Phase-III Study.**  
@@ -13842,7 +13792,7 @@ The hypothesis is that a subgroup of patients with Chronic Fatigue Syndrome/ Mya
 
 **Relevance Tags:** Immunomodulatory | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cyclophosphamide in Myalgic Encephalopathy/ Chronic Fatigue Syndrome (ME/CFS)**  
@@ -13869,7 +13819,7 @@ The h...
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Yan Nian Jiu Zhuan Fa Improve Chronic Fatigue Syndromes**  
@@ -13892,7 +13842,7 @@ This study is to disclose the mechanism of characteristic Tao yin exercises regu
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **SWS And Daytime Functioning in Chronic FatiguE Syndrome (SAFFE)**  
@@ -13917,7 +13867,7 @@ The investigators will study 12 patients diagnosed with CFS using international 
 
 **Relevance Tags:** General | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of CFS and Fibromyalgia With HRG 80 Red Ginseng**  
@@ -13940,7 +13890,7 @@ Will a unique form of ginseng be clinically helpful in those with chronic fatigu
 
 **Relevance Tags:** General | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of CFS & Fibromyalgia With Recovery Factors**  
@@ -13963,7 +13913,7 @@ The study will explore if Recovery Factors improve symptoms in fibromyalgia and 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Molecular Response to Custom Manual Physiotherapy Treatment of Fibromyalgia & Chronic Fatigue Syndrome (CFS)**  
@@ -13988,7 +13938,7 @@ The main goal of this study is to assess the molecular changes associating to me
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Rehabilitation of Adolescents Living With Chronic Fatigue**  
@@ -14012,7 +13962,7 @@ Previous studies have shown that health-related quality of life (HRQoL) in adole
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Survey and Cognitive Behavior Therapy for Chronic Fatigue Syndrome/Myalgic Encephalomyelitis**  
@@ -14035,7 +13985,7 @@ The purpose of this study is to analyze income variables in Chronic Fatigue Synd
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Clinical Trial to Investigate CT38 in the Treatment of Myalgic Encephalomyelitis / Chronic Fatigue Syndrome**  
@@ -14058,7 +14008,7 @@ This study seeks to investigate the safety, tolerability and efficacy of CT38, a
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Double Blind Randomised Placebo-controlled Trial to Assess the Role of Iron Repletion in Glucose Homeostasis.**  
@@ -14081,7 +14031,7 @@ In this study the investigators aim at addressing potential relationships betwee
 
 **Relevance Tags:** Metabolic | Anti-inflammatory | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Acupuncture for the Sleep Disorder of Chronic Fatigue Syndrome**  
@@ -14104,7 +14054,7 @@ The investigators will conduct acupuncture for participants with chronic fatigue
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy and Safety of Fermented Velvet Antler Extract on Fatigue Recovery After Exercise**  
@@ -14127,7 +14077,7 @@ The investigators performed a 12-week, randomized, double-blind, placebo-control
 
 **Relevance Tags:** Metabolic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exertional Exhaustion in Chronic Fatigue Syndrome**  
@@ -14150,7 +14100,7 @@ Post-exertional malaise was modeled by having Chronic Fatigue Syndrome (CFS) and
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Patient-Partner Stress Management Effects on Chronic Fatigue Syndrome Symptoms and Neuroimmune Process**  
@@ -14174,7 +14124,7 @@ The purpose of this study is to test the effects of a videotelephone-delivered p
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Feasibility, Acceptability and Clinical Utility of a New Remote-mobile Technology Intervention (ASARM) for CFS/ME in a Paediatric Population**  
@@ -14197,7 +14147,7 @@ This study aims to improve on the delivery of treatment for people with Chronic 
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other Gov
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Oral Melatonin Plus Zinc Supplementation in Chronic Fatigue Syndrome/Myalgic Encephalomyelitis (CFS/ME)**  
@@ -14220,7 +14170,7 @@ The purpose of this study is to evaluate the effects of oral melatonin plus zinc
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Study to Investigate the Safety, Tolerability, Pharmacokinetics and Efficacy of BC 007 in Healthy Subjects**  
@@ -14246,7 +14196,7 @@ The first part of the study (part A) is designed to evaluate the safety and tole
 
 **Relevance Tags:** General | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **ACT for ME/CFS - an Open Case Trial**  
@@ -14269,7 +14219,7 @@ The goal of this research project is to evaluate if our well-researched behavior
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Noradrenergic and Stress-Related Etiologies of Chronic Fatigue Syndrome**  
@@ -14292,7 +14242,7 @@ The objective of this study is to measure sympathetic nervous system function an
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **New MRT Imaging Biomarkers and Treatment With Kinetic Oscillatory Stimulation (KOS) in Nasal Cavity for Myalgic Encephalomyelitis/Chronic Fatigue Syndrome (ME/CFS)**  
@@ -14316,7 +14266,7 @@ Placebo controlled trial study of efficacy of Kinetic Oscillation Stimulation (K
 
 **Relevance Tags:** Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Acupressure for Pain Management and Fatigue Relief in Gulf War Veterans**  
@@ -14340,7 +14290,7 @@ This study will provide symptomatic veterans with acupressure treatment and dete
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of Amygdala Retraining With Mindfulness (ART+MF) vs Compassion Therapy (CT) for the Treatment of Patients With Fibromyalgia**  
@@ -14367,7 +14317,7 @@ Other therapy that has been assessed in many psychiatric and medical di...
 
 **Relevance Tags:** Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Use of Sildenafil (Viagra) to Alter Fatigue, Functional Status and Impaired Cerebral Blood Flow in Patients With CFS**  
@@ -14390,7 +14340,7 @@ Use of Viagra to Alter Symptoms in Patients with Chronic Fatigue Syndrome (CFS)
 
 **Relevance Tags:** General | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Neural Tensioner Exercise on Conditioned Pain Modulation**  
@@ -14415,7 +14365,7 @@ Objectives: The purpose of this study is to measure t...
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Giardia Induced Fatigue and Functional Gastrointestinal Diseases**  
@@ -14442,7 +14392,7 @@ A giardiasis outbreak in Bergen has given us the opportunity to approach two bas
 
 **Relevance Tags:** Neurological / Autonomic | Phase 4 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Guanidinoacetic Acid Loading for Chronic Fatigue Syndrome**  
@@ -14465,7 +14415,7 @@ Chronic fatigue syndrome (CFS) is a debilitating condition of unknown etiology. 
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Autonomic Nervous System and Chronic Fatigue Syndrome**  
@@ -14491,7 +14441,7 @@ The investigators propose to test the hypothesis that the sympathetic nervous sy
 
 **Relevance Tags:** Neurological / Autonomic | Phase 1 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Thunder-Fire Moxibustion Therapy for Chronic Fatigue Syndrome on Shenque Acupoint: a Randomized Controlled Trial**  
@@ -14515,7 +14465,7 @@ Chronic fatigue syndrome is a group of syndrome and is prevalent in adult. Thund
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **High-tech Acupuncture for Treatment of Chronic Fatigue Syndrome**  
@@ -14540,7 +14490,7 @@ Chronic fatigue syndrome is a group of syndrome and is prevalent in adult. Thund
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Clinical Study About Improvement of Chronic Fatigue After Taking Red Ginseng**  
@@ -14563,7 +14513,7 @@ The purpose of this study is to verify the efficacy of taking red ginseng for ch
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Effect of Ginko and Cistanche Against Fatigue Symptoms**  
@@ -14587,7 +14537,7 @@ To evaluate the efficacy of Nutrilite® ginkgo biloba cistanche tablets in relie
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Cytokine Inhibition in Chronic Fatigue Syndrome Patients**  
@@ -14610,7 +14560,7 @@ Rationale: Chronic fatigue syndrome (CFS) is a medically unexplained syndrome fo
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Use of Xyrem to Improve Sleep in Chronic Fatigue Syndrome**  
@@ -14633,7 +14583,7 @@ Chronic fatigue syndrome is a disabling illness for which there is no specific t
 
 **Relevance Tags:** Neurological / Autonomic | Phase 4 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Biopsychological Intervention in Chronic Fatigue Syndrome - a Pilot Study**  
@@ -14658,7 +14608,7 @@ The aim of this pilot study is to explore a) patients' experiences and b) possib
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pacing Activity Self-management for Patients With Chronic Fatigue Syndrome**  
@@ -14682,7 +14632,7 @@ Given the lack of evidence in support of pacing self-management for patients wit
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Tumor Necrosis Factor-alpha Inhibition Using Etanercept in Chronic Fatigue Syndrome**  
@@ -14705,7 +14655,7 @@ The hypothesis is that a subset of patients with chronic fatigue syndrome/ myalg
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Rehabilitation Program for Adolescents With Chronic Fatigue Syndrome**  
@@ -14728,7 +14678,7 @@ The aim of the programme is to develop a treatment model for adolescents with Ch
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Double Blind Trial of Duloxetine in Chronic Fatigue Syndrome**  
@@ -14751,7 +14701,7 @@ The purpose of this study is to determine the safety and efficacy of duloxetine 
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Exercise and Behavioral Therapy Trial (EBT).**  
@@ -14775,7 +14725,7 @@ This trial is a study of Gulf War era veterans who have unexplained chronic medi
 
 **Relevance Tags:** Neurological / Autonomic | Phase 3 | Very Large (1000+ participants) | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Chronic Fatigue Syndrome: A Presumptive Mitochondrial Disorder**  
@@ -14798,7 +14748,7 @@ The pathogenesis of chronic fatigue syndrome (CFS) is poorly understood and no e
 
 **Relevance Tags:** Metabolic | Mitochondrial | Phase 2 | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Clinical Trial to Measure the Maximun HR After ReConnect ® Supplementation vs. Placebo in CFS.**  
@@ -14821,7 +14771,7 @@ The main objective is evaluate to safety and efficacy of oral Reconnect ® (food
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Computer-Based Intervention for Medically Unexplained Physical Symptoms**  
@@ -14845,7 +14795,7 @@ In this study 60 people with medically unexplained physical symptoms (MUPS) will
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Sleep Disordered Breathing in Gulf War Illness and the Effect of Nasal CPAP Treatment**  
@@ -14870,7 +14820,7 @@ The purpose of this study is to determine any sleep disordered breathing in vete
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Traditional African Healing Ceremony in a U.S. Population**  
@@ -14893,7 +14843,7 @@ Pre-agricultural societies almost universally used healing ceremonies that invol
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Synergy Trial: Methylphenidate Plus a CFS-Specific Nutrient Formula as a Treatment for Chronic Fatigue Syndrome**  
@@ -14916,7 +14866,7 @@ The Synergy Trial will evaluate the safety and efficacy of a currently available
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Neuroscience Education on Osteoarthritis**  
@@ -14940,7 +14890,7 @@ Osteoarthritis (OA) is a frequent chronic musculoskeletal pathology that usually
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **B-cell Depletion Using the Monoclonal Anti-CD20 Antibody Rituximab in Chronic Fatigue Syndrome**  
@@ -14965,7 +14915,7 @@ The hypothesis is that at least a subset of CFS patients have an activated immun
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Study To Assess The Clinical Benefit Of Droxidopa In Subjects With Chronic Fatigue Syndrome**  
@@ -14988,7 +14938,7 @@ A subset of patients suffering from chronic fatigue syndrome exhibit symptoms of
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Investigator Initiated Clinical Study to Explore the Efficacy and Safety of Human Placenta Hydrolysate in the Chronic Fatigue Patients**  
@@ -15011,7 +14961,7 @@ GCJBP Laennec Injection contains a variety of cytokines derived from human place
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Clinical Trial to Evaluate the Effectiveness of Acupuncture as a Treatment in Patients Diagnosed With CFS.**  
@@ -15040,7 +14990,7 @@ The investigators suggest the use of a clinical study protocol (PEC)...
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Efficacy of Web-based Cognitive Behavioural Treatment for Adolescents With Chronic Fatigue Syndrome**  
@@ -15063,7 +15013,7 @@ The aim of this study is to determine the efficacy of FITNET (web-based cognitiv
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Study of the Safety and Efficacy of Ampligen in Chronic Fatigue Syndrome**  
@@ -15086,7 +15036,7 @@ multi-center, double-blind, randomized, placebo-controlled study of the safety a
 
 **Relevance Tags:** General | Phase 3 | Large (200-999 participants) | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Behavioral Insomnia Therapy With Chronic Fatigue Syndrome**  
@@ -15109,7 +15059,7 @@ The purpose of this study is to determine how best to manage the sleep problems 
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of Chronic Fatigue Syndrome (CFS) With Iodinated Activated Charcoal (IodoCarb®)**  
@@ -15134,7 +15084,7 @@ This study will examine if the mercury binding substance IodoCarb(r) can improve
 
 **Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Norwegian Study of Chronic Fatigue Syndrome in Adolescents: Pathophysiology and Intervention Trial**  
@@ -15161,7 +15111,7 @@ The purpose of this study IS to
 
 **Relevance Tags:** Neurological / Autonomic | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **The Immune and Clinical Impacts of Vitamin D in Patients With Chronic Musculo-skeletal Pain**  
@@ -15184,7 +15134,7 @@ Vitamin D3 is produced in the skin following exposure to UVB light from the sun 
 
 **Relevance Tags:** Immunomodulatory | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Fatigue Self-Management in Primary Care**  
@@ -15208,7 +15158,7 @@ This study will evaluate, in a primary care setting, the effectiveness of a brie
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Humoral and Cellular Immune Responses After Influenza Vaccination in Patients With Postcancer Fatigue and in Patients With Chronic Fatigue Syndrome**  
@@ -15231,7 +15181,7 @@ Postcancer fatigue (PCF) is a frequently occurring, severe and invalidating prob
 
 **Relevance Tags:** Immunomodulatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Acupressure for Post-Treatment Cancer Fatigue**  
@@ -15256,7 +15206,7 @@ The investigators perfo...
 
 **Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **An Explorative Study on Physiological and Neurophysiological Determinants of Fatigue in Cancer Survivors**  
@@ -15280,7 +15230,7 @@ Postcancer fatigue is a severe and invalidating problem, impairing quality of li
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **A Pilot Study of Amygdala Retraining Program in Patients With Chronic Fatigue Syndrome, Chronic Fatigue and Fibromyalgia**  
@@ -15305,7 +15255,7 @@ CFS, CF and FM are incapacitating disorders characterized by profound fatigue, m
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pilot Study for the NorCAPITAL Trial**  
@@ -15330,7 +15280,7 @@ A possible ben...
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Pain Inhibition in Patients With Rheumatoid Arthritis and Central Sensitivity Syndromes**  
@@ -15354,7 +15304,7 @@ Both patients with peripheral structural pathologies, like rheumatoid arthritis 
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Treatment of Chronic Fatigue Syndrome and Fibromyalgia With D-ribose- a Multicenter Study**  
@@ -15377,7 +15327,7 @@ To determine whether adding Ribose 5 grams 3 x day would improve quality of life
 
 **Relevance Tags:** Metabolic | Neurological / Autonomic | NA | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 **Hyporeactivity and Gulf War Illness**  
@@ -15402,11 +15352,11 @@ This research project is a follow-up to the prior VA-funded study that found tha
 
 **Relevance Tags:** Neurological / Autonomic | NA | Sponsor Type: Fed
 
-**Extraction Date:** 2026-10-24
+**Extraction Date:** 2026-10-25
 
 ---
 
 ---
 
-*Report generated on 2026-10-24 using ClinicalTrials.gov v2 API.*  
+*Report generated on 2026-10-25 using ClinicalTrials.gov v2 API.*  
 *Next scheduled run: weekly (GitHub Actions recommended)*
