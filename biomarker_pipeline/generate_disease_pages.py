@@ -146,6 +146,22 @@ def _query_terms(label: str) -> list[str]:
 
 
 def _fetch_trials(disease_name: str, max_results: int = 15) -> list[dict]:
+    """Drug/biologic treatment trials whose main condition matches the page.
+
+    The plain query.cond search below returned registry noise (mitral-valve
+    and infant-feeding studies on the GERD page, caregiver and imaging
+    studies on Alzheimer's), so the shared filter in
+    scripts/disease_page_quality.py is used; the old search is the fallback
+    if that module cannot be loaded."""
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "disease_page_quality", Path(__file__).resolve().parent.parent / "scripts" / "disease_page_quality.py")
+        dpq = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dpq)
+        return dpq.fetch_drug_trials(disease_name, max_results)
+    except Exception as e:  # pragma: no cover - fallback keeps the generator usable
+        log.warning("shared trial filter unavailable (%s); using unfiltered search", e)
     best: list[dict] = []
     best_term = disease_name
     for term in _query_terms(disease_name):
@@ -377,6 +393,15 @@ def _disease_agents_section(candidates: list[dict], gene_first_names: set[str]) 
         return re.sub(r"[^a-z0-9]+", "", name.lower())
 
     rows_html = ""
+    try:  # placebo / vehicle / device / procedure arms are not medicines
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "disease_page_quality", Path(__file__).resolve().parent.parent / "scripts" / "disease_page_quality.py")
+        dpq = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dpq)
+        candidates = [c for c in candidates if not dpq.is_non_drug(c.get("agent_name", ""))]
+    except Exception as e:  # pragma: no cover
+        log.warning("NON_DRUG filter unavailable: %s", e)
     shown = [c for c in candidates if c.get("approval_status") == "Approved" or c.get("trial_evidence")][:60]
     for c in shown:
         name = _esc(c["agent_name"])

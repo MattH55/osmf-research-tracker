@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import os
 import re
 from datetime import date
 from pathlib import Path
@@ -30,7 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PAGES = ROOT / "chronic-disease-interventions"
 ORIGIN = "https://research.opensourcemed.info"
 
-MAX_TITLE = 65
+MAX_TITLE = 60
 MAX_DESC = 155
 
 # Long H1s need a short search-friendly name for the <title>.
@@ -110,7 +111,9 @@ CANONICAL_TWINS = {
 
 
 NOTE_START, NOTE_END = "<!-- OSMF_NOTE_LINK_START -->", "<!-- OSMF_NOTE_LINK_END -->"
-MAIN_NOTES = ROOT.parent / "research-notes"
+# Main-site checkout (opensourcemed.info) holding research-notes/; set
+# OSMF_MAIN_SITE when the tracker is not checked out inside it.
+MAIN_NOTES = Path(os.environ["OSMF_MAIN_SITE"]) / "research-notes" if os.environ.get("OSMF_MAIN_SITE") else ROOT.parent / "research-notes"
 MAIN_SITE = "https://opensourcemed.info"
 
 
@@ -149,51 +152,72 @@ def counts(markup: str) -> tuple[int, int, int]:
     return genes, agents, trials
 
 
+# Tracker pages own the data-intent searches ("<disease> pipeline 2026",
+# "<disease> drugs in clinical trials"); the main site's research notes own
+# "new treatments for <disease>" (SEO strategy, Oct 2026). Pages with
+# Search Console impressions get the wording proposed for them; {agents} is
+# the page's own count, {y} the current year.
+TITLE_OVERRIDES = {
+    "Inflammatory Bowel Disease (Crohn's/UC)": "Crohn's & UC Pipeline {y}: Drugs in Clinical Trials",
+    "Inflammatory Bowel Disease (Crohn's / UC)": "Crohn's & UC Pipeline {y}: Drugs in Clinical Trials",
+    "Alzheimer's Disease and Other Dementias": "Alzheimer's & Dementia Drugs in Trials: {agents} Ranked ({y})",
+    "NAFLD / MASH (Metabolic-Associated Steatohepatitis)": "MASH / NAFLD Drug Pipeline {y}: Trials & Targets",
+    "Chronic Kidney Disease": "Chronic Kidney Disease Drugs in Trials ({y} List)",
+}
+# How the condition reads inside a description sentence.
+DESC_WHO = {
+    "Inflammatory Bowel Disease (Crohn's/UC)": "Crohn's and ulcerative colitis",
+    "Inflammatory Bowel Disease (Crohn's / UC)": "Crohn's and ulcerative colitis",
+    "Alzheimer's Disease and Other Dementias": "Alzheimer's and other dementias",
+    "NAFLD / MASH (Metabolic-Associated Steatohepatitis)": "MASH (NASH / NAFLD)",
+    "Chronic Kidney Disease": "chronic kidney disease (CKD)",
+    "GERD (Gastroesophageal Reflux Disease)": "GERD (acid reflux)",
+}
+
+
 def build_title(name: str, agents: int = 0, trials: int = 0) -> str:
-    """Patient-intent first ("<disease> drugs", "new drugs for <disease>"),
-    with the candidate count up front because numbers lift CTR.  Search
-    Console (Oct 2026) showed these pages at positions 4-9 with zero clicks
-    under the researcher-jargon "Drug Targets" titles."""
+    """"<disease> Pipeline <year>: Drugs in Trials & Targets", shortened
+    until it fits MAX_TITLE. Every count in a title comes from the page."""
     short = SHORT_NAMES.get(name, name)
+    y = date.today().year
     patterns = []
-    if agents:
+    if name in TITLE_OVERRIDES and (agents or "{agents}" not in TITLE_OVERRIDES[name]):
+        patterns.append(TITLE_OVERRIDES[name].format(y=y, agents=agents))
+    if agents or trials:
         patterns += [
-            f"{short}: {agents} Approved & Investigational Drugs",
-            f"{short}: {agents} Approved & Trial Drugs",
-            f"{short}: {agents} Drug Candidates",
+            f"{short} Pipeline {y}: Drugs in Trials & Targets",
+            f"{short} Pipeline {y}: Drugs in Clinical Trials",
+            f"{short} Pipeline {y}: Drugs & Trials",
+            f"{short} Drug Pipeline {y}",
         ]
-    if trials:
-        patterns += [f"{short} Drugs & {trials} Clinical Trials"]
-    for pattern in patterns + [
-        f"{short}: Drug Targets, Repurposed Drugs & Trials | OSMF",
-        f"{short}: Drug Targets, Repurposed Drugs & Trials",
-        f"{short}: Drug Targets & Repurposed Drugs",
-        f"{short} Drug Targets & Trials",
-    ]:
+    patterns += [f"{short}: Drug Targets & Repurposed Drugs", f"{short} Drug Targets"]
+    for pattern in patterns:
         if len(pattern) <= MAX_TITLE:
             return pattern
-    return f"{short} Drug Targets"[:MAX_TITLE]
+    # never cut mid-word: drop whole words until it fits
+    words = patterns[-1].split()
+    while len(" ".join(words)) > MAX_TITLE and len(words) > 1:
+        words.pop()
+    return " ".join(words)
 
 
 def build_desc(name: str, genes: int, agents: int, trials: int) -> str:
-    """Question-led snippet that mirrors the searcher's question, then the
-    concrete counts.  Longest variant that fits MAX_DESC wins."""
+    """Counts first, then what the page offers. Longest variant that fits
+    MAX_DESC wins; nothing is truncated mid-word."""
     stamp = f"{date.today():%B %Y}"
     short = SHORT_NAMES.get(name, name)
-    facts = []
-    if agents:
-        facts.append(f"{agents} candidates ranked by evidence")
-    if trials:
-        facts.append(f"{trials} clinical trials")
-    if genes:
-        facts.append(f"{genes} drug targets")
-    if facts:
-        for who in (name, short):
-            for n_facts in range(len(facts), 0, -1):
-                f = facts[:n_facts]
-                joined = ", ".join(f[:-1]) + (" and " if len(f) > 1 else "") + f[-1]
-                for tail in (f", each with sources. Updated {stamp}.", ", each with sources.", "."):
-                    desc = f"Which drugs are approved or being tested for {who}? {joined[0].upper() + joined[1:]}{tail}"
+    if not agents:
+        return build_desc_legacy(name, genes, agents, trials)
+    whos = [w for w in (DESC_WHO.get(name), name, short) if w]
+    trial_bits = [f"{trials} registered drug trials", "registered trials"] if trials else [""]
+    gene_bits = [f"{genes} gene targets", "gene targets"] if genes else [""]
+    for who in whos:
+        for tb in trial_bits:
+            for gb in gene_bits + [""]:
+                extras = " and ".join(b for b in (tb, gb) if b)
+                body = f"{agents} approved and investigational drugs for {who}, ranked by evidence" + (f", with {extras}" if extras else "")
+                for tail in (f". Free, sourced, updated {stamp}.", f". Updated {stamp}.", "."):
+                    desc = body + tail
                     if len(desc) <= MAX_DESC:
                         return desc
     return build_desc_legacy(name, genes, agents, trials)
@@ -222,7 +246,11 @@ def build_desc_legacy(name: str, genes: int, agents: int, trials: int) -> str:
             desc = f"{lead} for {who}, {tail}"
             if len(desc) <= MAX_DESC:
                 return desc
-    return f"{lead} for {short}."[:MAX_DESC]
+    desc = f"{lead} for {short}."
+    words = desc.split()
+    while len(" ".join(words)) > MAX_DESC and len(words) > 1:  # whole words only
+        words.pop()
+    return " ".join(words)
 
 
 def build_lede(name: str, genes: int, agents: int, trials: int) -> str:
@@ -326,7 +354,7 @@ def process(page: Path, dry: bool) -> list[str]:
         if note and not empty:
             url, question = note
             block = (f'{NOTE_START}<p class="note-link" style="margin:.75rem 0 0;font-size:.95rem">'
-                     f'Plain-language summary: <a href="{esc(url)}">{esc(question)}</a></p>{NOTE_END}')
+                     f'<a href="{esc(url)}">Plain-language summary &rarr;</a> {esc(question)}</p>{NOTE_END}')
         if NOTE_START in markup:
             new_markup = re.sub(re.escape(NOTE_START) + r".*?" + re.escape(NOTE_END), lambda _m: block, markup, count=1, flags=re.S)
         elif block:
