@@ -477,7 +477,11 @@ def build_rss(manifest: List[Dict[str, Any]], issues: Dict[str, Dict[str, Any]],
         ET.SubElement(it, "description").text = render_issue_body(issue, None, None, for_feed=True)
     xml_bytes = ET.tostring(rss, encoding="utf-8", xml_declaration=True)
     ET.fromstring(xml_bytes)  # validate well-formedness before writing
-    return xml_bytes.decode("utf-8")
+    xml = xml_bytes.decode("utf-8")
+    # Browsers that open the feed URL directly render it as a page via feeds/feed.xsl; readers ignore it.
+    head, nl, rest = xml.partition("\n")
+    pi = '<?xml-stylesheet type="text/xsl" href="/feeds/feed.xsl"?>'
+    return (head + nl + pi + "\n" + rest) if head.startswith("<?xml") else (pi + "\n" + xml)
 
 
 def build_jsonfeed(manifest: List[Dict[str, Any]], issues: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:

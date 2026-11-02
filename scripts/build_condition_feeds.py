@@ -179,7 +179,16 @@ def build_rss(key: str, meta: Dict[str, Any], rows: List[Dict[str, Any]], now: d
         ET.SubElement(it, "description").text = item_description(r)
     xml_bytes = ET.tostring(rss, encoding="utf-8", xml_declaration=True)
     ET.fromstring(xml_bytes)  # validate well-formedness before writing
-    return xml_bytes.decode("utf-8")
+    return add_stylesheet(xml_bytes.decode("utf-8"))
+
+
+def add_stylesheet(xml: str) -> str:
+    """Browsers that open the feed URL directly render it as a page via feeds/feed.xsl; readers ignore it."""
+    pi = '<?xml-stylesheet type="text/xsl" href="/feeds/feed.xsl"?>'
+    head, nl, rest = xml.partition("\n")
+    if head.startswith("<?xml"):
+        return head + nl + pi + "\n" + rest
+    return pi + "\n" + xml
 
 
 def build_jsonfeed(key: str, meta: Dict[str, Any], rows: List[Dict[str, Any]]) -> Dict[str, Any]:
