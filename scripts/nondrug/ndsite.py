@@ -55,7 +55,7 @@ details.nd-trials summary{cursor:pointer;color:#bf360c;font-weight:600;font-size
 .nd-matrix thead th{font-size:11px;line-height:1.3;vertical-align:bottom;width:68px}
 .nd-matrix td{text-align:center;padding:6px 4px;border-radius:6px;min-width:56px;font-variant-numeric:tabular-nums}
 .nd-matrix td.z{background:#f6f7fb;color:#8a90a6}
-.nd-matrix td.l1{background:#fff3e0;color:#7a3300}.nd-matrix td.l2{background:#ffd9a8;color:#6b2c00}.nd-matrix td.l3{background:#f8a95c;color:#3d1800}.nd-matrix td.l4{background:#d9631b;color:#fff}
+.nd-matrix td.l1{background:#fff3e0;color:#7a3300}.nd-matrix td.l2{background:#ffd9a8;color:#6b2c00}.nd-matrix td.l3{background:#f8a95c;color:#3d1800}.nd-matrix td.l4{background:#9a3412;color:#fff}
 .nd-matrix td small{display:block;font-size:10.5px;opacity:.85}
 .nd-legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.82rem;color:#525a73;margin:10px 0 18px}
 .nd-legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px}

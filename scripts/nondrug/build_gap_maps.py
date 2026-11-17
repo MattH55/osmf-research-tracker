@@ -104,7 +104,7 @@ def build() -> None:
 {DISCLAIMER}
 <h2>Evidence-gap matrix</h2>
 <p class="nd-method">Each number is the count of trials; "results" is how many of them have posted results on ClinicalTrials.gov. A trial is counted once per group and per outcome domain it covers. The number in brackets after each group is its total trials for this condition.{cap_note}</p>
-<div class="nd-legend"><span><i style="background:#f6f7fb"></i>none</span><span><i style="background:#fff3e0"></i>1–2</span><span><i style="background:#ffd9a8"></i>3–9</span><span><i style="background:#f8a95c"></i>10–29</span><span><i style="background:#d9631b"></i>30 or more</span></div>
+<div class="nd-legend"><span><i style="background:#f6f7fb"></i>none</span><span><i style="background:#fff3e0"></i>1–2</span><span><i style="background:#ffd9a8"></i>3–9</span><span><i style="background:#f8a95c"></i>10–29</span><span><i style="background:#9a3412"></i>30 or more</span></div>
 <div class="tbl-wrap" role="region" tabindex="0" aria-label="Evidence-gap matrix, scrolls sideways"><table class="nd-matrix"><caption class="sr-only">Registered non-drug trials for {esc(cm['name'])} by intervention group and primary outcome domain</caption>
 <thead><tr><th scope="col">Intervention group</th>{head}</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div>
 <div class="box"><h2>Where the gaps are</h2>{gaps_html}
