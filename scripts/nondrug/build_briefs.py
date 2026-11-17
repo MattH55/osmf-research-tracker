@@ -59,7 +59,7 @@ PRINT_CSS = """
 .brief-print{margin:0 0 14px}
 @media (max-width:700px){.brief-grid{grid-template-columns:1fr}.brief-head{flex-direction:column}}
 @media print{
-  @page{size:A4;margin:11mm 12mm}
+  @page{margin:11mm 12mm}  /* no forced size: fits the paper the reader selects (checked on A4 and US Letter) */
   body{background:#fff!important}
   header,nav,footer,.osmf-header,.osmf-footer,.skip,.crumbs,.page-hero,.brief-print,.no-print,#osmf-ui-header,#osmf-ui-footer{display:none!important}
   .main-section,.section-inner{padding:0!important;margin:0!important;max-width:none!important}
@@ -168,7 +168,7 @@ def build() -> None:
 
         meds = medicines_from_condition_page(slug)
         if meds:
-            secs.append(("Medicines with registered trials", "Scale: number of registered trials on ClinicalTrials.gov for this condition. A trial means the medicine is being studied, not that it works.",
+            secs.append(("Medicines with registered trials", "Scale: trials listed for each medicine on the tracker's condition page, a snapshot of ClinicalTrials.gov. A trial means it is being studied, not that it works.",
                          [li(esc(a["name"]), f"{a['trials']} trial{'s' if a['trials'] != 1 else ''}{' · approved medicine' if a['approved'] else ''}") for a in meds[:6]]))
 
         catch_all = {"behavioural-other", "supplement-other"}  # vague buckets go last
@@ -195,9 +195,11 @@ def build() -> None:
         short = lambda x: x if len(x) <= 85 else x[:84].rsplit(" ", 1)[0] + "…"
         rec = [li(esc(short(t["title"])), t["nct"]) for t in rec_drug] + [li(esc(short(mine[n]["t"])), n) for n in rec_nd]
         if rec:
-            secs.append(("Trials recruiting now", "From ClinicalTrials.gov; check eligibility and status on the registry.", rec))
+            secs.append(("Trials recruiting", f"Status as recorded on ClinicalTrials.gov when searched ({cm.get('fetched_at') or built}); check the registry for current status and eligibility.", rec))
 
-        gaps = [li(f"No {esc(gl.lower())} trial has measured {esc(dl.lower())}", f"{n} trials of other approaches have") for n, gl, dl in g["unmeasured"][:3]]
+        capped = (cm.get("total") or 0) > (cm.get("fetched") or 0)
+        gaps = [] if capped else [li(f"Among {gn} {esc(gl.lower())} trials found, none measured {esc(dl.lower())}", f"{n} trials of other approaches did")
+                                  for n, gl, dl, gn in g["unmeasured"][:3]]
         gaps += [li(f"{esc(gl)}: {esc(dl.lower())}", f"{n} trials, no results posted yet") for n, gl, dl, _ in g["unreported"][:2]]
         if gaps:
             secs.append(("What we don't know yet", "Gaps in registered trials, from the evidence-gap map. A gap is not a recommendation.", gaps))
@@ -217,7 +219,7 @@ def build() -> None:
 <article class="brief" aria-label="Evidence brief: {esc(name)}">
   <div class="brief-head">
     <div><h2>{esc(name)}: evidence brief</h2>
-    <p>Open Source Medicine Foundation · compiled {esc(stamp)} from public registries and databases · {esc(url)}</p>
+    <p>Open Source Medicine Foundation · page built {esc(stamp)} · trial data searched {esc(cm.get('fetched_at') or built)}{(' (capped at 1,000 of ' + format(cm['total'], ',') + ' matching trials)') if capped else ''} · {esc(url)}</p>
     <p><strong>Research information, not medical advice.</strong> Prepared to support a conversation with a clinician, not to choose a treatment.</p></div>
     <div class="brief-qr">{qr_svg(url)}Live version</div>
   </div>
@@ -240,6 +242,11 @@ def build() -> None:
                                      eyebrow="Research Tracker · evidence briefs", h1="Evidence", h1_span="briefs",
                                      lede=f"{len(idx_rows)} conditions, updated {esc(stamp)}.", body=body,
                                      crumbs=[("Evidence briefs", f"{SITE}/briefs/index.html")]))
+    written = {r.split('href="/briefs/')[1].split('.html')[0] for r in idx_rows}
+    for f in (ROOT / "briefs").glob("*.html"):  # remove briefs for conditions that no longer have data
+        if f.stem != "index" and f.stem not in written:
+            f.unlink()
+            print(f"  removed stale brief {f.name}")
     print(f"briefs: {len(idx_rows)} briefs + index")
 
 

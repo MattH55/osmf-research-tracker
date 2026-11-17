@@ -80,6 +80,7 @@ details.nd-trials summary{cursor:pointer;color:#bf360c;font-weight:600;font-size
 .nd-matrix tbody th .meta,.nd-tlist .meta{color:#4a5170}
 .tbl-wrap[tabindex]:focus-visible{outline:3px solid #bf360c;outline-offset:2px}
 .brief-head p{overflow-wrap:anywhere}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 """
 
 

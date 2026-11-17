@@ -179,10 +179,10 @@ CLASSES: list[Klass] = [
           r"vitamin b|\bb12\b|cobalamin|folate|folic acid|thiamin|riboflavin|niacin\b|pyridox|\bb6\b|biotin|methylfolate",
           "B vitamins and folate taken as supplements."),
     Klass("curcumin-polyphenols", "Curcumin and other polyphenols", "supplement",
-          r"curcumin|turmeric|quercetin|resveratrol|polyphenol|flavonoid|luteolin|\begcg\b|pycnogenol|anthocyanin|sulforaphane|hesperidin|rutin",
+          r"curcumin|turmeric|quercetin|resveratrol|polyphenol|flavonoid|luteolin|\begcg\b|pycnogenol|anthocyanin|sulforaphane|hesperidin|\brutin\b",
           "Plant compounds such as curcumin, quercetin and resveratrol, taken as supplements."),
     Klass("amino-acids-protein", "Amino acids and protein supplements", "supplement",
-          r"amino acid|arginine|citrulline|glutamine|glycine|taurine|carnitine|leucine|\bbcaa\b|whey|protein supplement|collagen|serine|tryptophan|ornithine|theanine",
+          r"amino acid|arginine|citrulline|glutamine|glycine|taurine|carnitine|leucine|\bbcaa\b|whey|protein supplement|collagen|\bl-?serine\b|phosphoserine|tryptophan|ornithine|theanine",
           "Individual amino acids or protein powders taken as supplements."),
     Klass("herbal-tcm", "Herbal medicines and traditional formulas", "supplement",
           r"herbal|\bherb\b|traditional chinese|\btcm\b|granule|decoction|kampo|ayurved|extract|ginseng|ginkgo|ashwagandha|saffron|berberine|tincture|rhodiola|astragalus|echinacea|cannabidiol|velvet antler|mushroom|reishi|cordyceps|lion'?s mane",
@@ -244,8 +244,13 @@ DRUG_NAME = re.compile(
 # For these clearly named, specific supplement classes a DRUG/BIOLOGICAL registry type is accepted.
 # Herbal extracts and "other supplements" registered as drugs are NOT, since those are often
 # investigational botanical medicines.
-SUPPLEMENT_OVERRIDE = {"vitamin-d", "omega-3", "probiotics", "coq10", "nad-precursors", "nac", "magnesium", "zinc",
-                       "melatonin", "creatine", "vitamin-c", "b-vitamins", "curcumin-polyphenols", "amino-acids-protein"}
+# Not vitamin C, magnesium, zinc, NAC or amino acids: registered as drugs, those are often intravenous or
+# prescription uses (magnesium sulfate for acute asthma, IV ascorbate in cancer, IV NAC), checked 2026-11-16.
+SUPPLEMENT_OVERRIDE = {"vitamin-d", "omega-3", "probiotics", "coq10", "nad-precursors", "melatonin", "creatine",
+                       "b-vitamins", "curcumin-polyphenols"}
+# A drug-registered "supplement" is rejected if its name also names a medicine, a salt form or an injectable route.
+OVERRIDE_REJECT = re.compile(r"sulfate|sulphate|chloride|intravenous|iv|infusion|injection|inject|nebuli|parenteral|"
+                             r"\+|plus |with |combined|combination|and (?!fish)", re.I)
 
 
 def classify(name: str, itype: str) -> Klass | None:
@@ -253,7 +258,7 @@ def classify(name: str, itype: str) -> Klass | None:
     itype = (itype or "").upper()
     if itype in DRUG_TYPES:
         n = " ".join((name or "").split())
-        if itype in ("DRUG", "BIOLOGICAL") and not EXCLUDE_NAME.search(n):
+        if itype in ("DRUG", "BIOLOGICAL") and not EXCLUDE_NAME.search(n) and not DRUG_NAME.search(n) and not OVERRIDE_REJECT.search(n):
             for k, rx in _COMPILED:
                 if k.id in SUPPLEMENT_OVERRIDE and rx.search(n):
                     return k

@@ -20,7 +20,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from outcomes import DOMAIN_LABEL  # noqa: E402
-from ndsite import DISCLAIMER, SITE, dataset_ld, esc, load_dataset, shell, trial_li, write, write_csv  # noqa: E402
+from ndsite import DISCLAIMER, ROOT, SITE, dataset_ld, esc, load_dataset, shell, trial_li, write, write_csv  # noqa: E402
 from taxonomy import ALL_CLASSES, GROUP_LABEL, GROUPS  # noqa: E402
 
 SHOW_PER_CONDITION = 15
@@ -42,6 +42,7 @@ def method_box(d: dict) -> str:
     return f"""<div class="box" id="method"><h2>How this map is built</h2><ol class="nd-method">
 <li><strong>Source.</strong> For each condition, ClinicalTrials.gov is searched for interventional studies with a behavioural, device, dietary-supplement, "other" or procedure intervention, plus a second search for named supplements that registries often record as drugs (vitamin D, omega-3, probiotics, melatonin and similar). Results are sorted by last update; up to 1,000 trials per search are kept.</li>
 <li><strong>Which interventions count.</strong> The registry's own intervention type decides first: medicines and biologicals are excluded, except clearly named supplements. Behavioural and supplement interventions are included; devices, procedures and "other" interventions are included only when their name matches one of the classes on this page (so stents, catheters and surgery are left out).</li>
+<li><strong>On-topic only.</strong> The registry's condition search expands terms loosely (a Long COVID search also returns post-stroke fatigue trials), so a trial counts for a condition only when its registered conditions or title name that condition or a listed synonym. {fmt(ex.get('off-topic for the searched condition (registry search expanded the term)', 0))} off-topic matches were removed.</li>
 <li><strong>Controls are not counted.</strong> An intervention that appears only in placebo, sham, active-comparator or no-intervention arms is a control, not the thing being tested, and is excluded.</li>
 <li><strong>Excluded in this build:</strong> {fmt(ex.get('medicine or biological (registry type)', 0))} medicine or biological interventions, {fmt(ex.get('only in a placebo, sham, comparator or no-intervention arm', 0))} control-only interventions and {fmt(ex.get('not a non-drug intervention (control, assessment, procedure or unmatched name)', 0))} other entries (assessments, usual care, procedures and devices that match no class).</li>
 <li><strong>No efficacy grades.</strong> Status labels describe the trial record only. "Results posted" means the sponsor uploaded results to ClinicalTrials.gov; it does not mean the intervention worked.</li>
@@ -112,7 +113,7 @@ def build() -> None:
   <div><b>{stats['conditions']}</b><span>conditions</span></div>
   <div><b>{fmt(stats['completed'])}</b><span>completed</span></div>
   <div><b>{fmt(stats['results'])}</b><span>with results posted</span></div>
-  <div><b>{fmt(stats['recruiting'])}</b><span>recruiting now</span></div>
+  <div><b>{fmt(stats['recruiting'])}</b><span>recruiting as of {esc(built)}</span></div>
 </div>
 {DISCLAIMER}
 <h2>Trials by condition</h2>
@@ -168,7 +169,7 @@ def build() -> None:
   <div><b>{len(class_stats)}</b><span>intervention classes</span></div>
   <div><b>{fmt(stats_all['completed'])}</b><span>completed</span></div>
   <div><b>{fmt(stats_all['results'])}</b><span>with results posted</span></div>
-  <div><b>{fmt(stats_all['recruiting'])}</b><span>recruiting now</span></div>
+  <div><b>{fmt(stats_all['recruiting'])}</b><span>recruiting as of {esc(built)}</span></div>
 </div>
 {DISCLAIMER}
 <div class="nd-groups">{''.join(groups_html)}</div>
@@ -187,6 +188,10 @@ def build() -> None:
                                       body=body, crumbs=[("Non-drug evidence map", f"{SITE}/nondrug/index.html")],
                                       jsonld=[dataset_ld("Non-drug interventions in registered clinical trials", desc, f"{SITE}/nondrug/index.html",
                                                          f"{SITE}/nondrug/data/nondrug-trials.csv", built)], modified=built))
+    for f in (ROOT / "nondrug").glob("*.html"):  # remove pages for classes that no longer have trials
+        if f.stem != "index" and f.stem not in class_stats:
+            f.unlink()
+            print(f"  removed stale class page {f.name}")
     print(f"nondrug: {len(class_stats)} class pages + hub, {total} trials")
 
 

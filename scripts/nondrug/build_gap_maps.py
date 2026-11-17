@@ -69,8 +69,11 @@ def build() -> None:
         write_csv(f"evidence-gaps/data/{slug}.csv",
                   ["group_id", "group", "domain_id", "domain", "trials", "completed", "results_posted", "recruiting"], csv_rows)
         # gaps (shared with the condition briefs)
-        unmeasured = [(n, f"No {gl.lower()} trial has used <strong>{esc(dl.lower())}</strong> as a primary outcome ({n} trials of other approaches have).")
-                      for n, gl, dl in g["unmeasured"]]
+        capped = (cm.get("total") or 0) > (cm.get("fetched") or 0)
+        # Absence can only be claimed when the search was not capped.
+        unmeasured = [] if capped else [
+            (n, f"Among the {gn} {gl.lower()} trials found, none used <strong>{esc(dl.lower())}</strong> as a primary outcome "
+                f"({n} trials of other approaches did).") for n, gl, dl, gn in g["unmeasured"]]
         unreported = [(n, f"<strong>{esc(gl)} × {esc(dl.lower())}</strong>: {n} trials registered, none with results posted"
                           + (f" ({rec} still recruiting)" if rec else "")) for n, gl, dl, rec in g["unreported"]]
         gaps_html = ""
@@ -78,12 +81,14 @@ def build() -> None:
             gaps_html += "<h3>Outcomes a whole group has never measured</h3><ul class=\"nd-gaps\">" + "".join(f"<li>{h}</li>" for _, h in unmeasured[:14]) + "</ul>"
         if unreported:
             gaps_html += "<h3>Questions studied but with no results posted</h3><ul class=\"nd-gaps\">" + "".join(f"<li>{h}</li>" for _, h in unreported[:14]) + "</ul>"
+        if capped:
+            gaps_html = (f"<p class=\"nd-method\">This condition has {cm['total']:,} matching trials, more than the 1,000 this map covers, "
+                         "so it cannot show that an outcome was never measured. Only studied-but-unreported questions are listed.</p>") + gaps_html
         if not gaps_html:
             gaps_html = "<p>Too few registered trials to identify gaps with these rules.</p>"
         top = sorted(class_tot.items(), key=lambda kv: -kv[1]["n"])[:12]
         top_rows = "".join(f'<tr><th scope="row"><a href="/nondrug/{c}.html">{esc(ALL_CLASSES[c].label)}</a></th><td class="n">{v["n"]}</td>'
                            f'<td class="n">{v["r"]}</td><td class="n">{v["rec"]}</td></tr>' for c, v in top)
-        capped = (cm.get("total") or 0) > (cm.get("fetched") or 0)
         cap_note = (f" The registry search returned {cm['total']:,} trials, more than the 1,000-trial cap, so this map covers the most recently updated 1,000."
                     if capped else "")
         unc = dom_tot.get("unclassified", 0)
@@ -98,7 +103,7 @@ def build() -> None:
 <div class="nd-numbers">
   <div><b>{len(mine):,}</b><span>registered non-drug trials</span></div>
   <div><b>{sum(t['r'] for t in mine.values()):,}</b><span>with results posted</span></div>
-  <div><b>{sum(t['g'] == 'recruiting' for t in mine.values()):,}</b><span>recruiting now</span></div>
+  <div><b>{sum(t['g'] == 'recruiting' for t in mine.values()):,}</b><span>recruiting as of {esc(cm.get('fetched_at') or built)}</span></div>
   <div><b>{sum(1 for k, v in cell.items() if v['n'] and k[1] != 'unclassified')}</b><span>group × outcome cells with at least one trial</span></div>
 </div>
 {DISCLAIMER}
@@ -109,7 +114,7 @@ def build() -> None:
 <thead><tr><th scope="col">Intervention group</th>{head}</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div>
 <div class="box"><h2>Where the gaps are</h2>{gaps_html}
 <p class="nd-actions"><a class="btn" href="{DECENTRIAL}" target="_blank" rel="noopener">Design a trial with DecenTrial (beta)</a> <a href="{SUPPORT}">Fund a component of this work</a></p>
-<p class="nd-method">A gap here means no registered trial, not that an approach would work. Some gaps are gaps for good reason.</p></div>
+<p class="nd-method">A gap here means no matching trial was found among those searched, not that an approach would work. About one trial in six has primary outcomes the rules cannot classify, so a few gaps may be measured under another name. Some gaps are gaps for good reason.</p></div>
 <h2>Most-studied approaches for {esc(cm['name'])}</h2>
 <div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Class</th><th scope="col" class="n">Trials</th><th scope="col" class="n">Results posted</th><th scope="col" class="n">Recruiting</th></tr></thead><tbody>{top_rows}</tbody></table></div>
 <p class="nd-actions"><a class="btn" href="/evidence-gaps/data/{slug}.csv">Download this matrix (CSV)</a> {' '.join(links)}</p>
@@ -125,7 +130,7 @@ def build() -> None:
                           body=body, crumbs=[("Evidence-gap maps", f"{SITE}/evidence-gaps/index.html"), (cm["name"], f"{SITE}/{path}")],
                           jsonld=[dataset_ld(f"{cm['name']} non-drug evidence-gap matrix", desc, f"{SITE}/{path}", f"{SITE}/evidence-gaps/data/{slug}.csv", built)],
                           modified=built))
-        top_gap = unmeasured[0][1] if unmeasured else ""
+        top_gap = unmeasured[0][1] if unmeasured else ("not shown: search capped" if capped else "")
         index_rows.append(f'<tr><th scope="row"><a href="/evidence-gaps/{slug}.html">{esc(cm["name"])}</a></th><td class="n">{len(mine):,}</td>'
                           f'<td class="n">{sum(t["r"] for t in mine.values()):,}</td><td>{top_gap or "–"}</td></tr>')
     body = f"""

@@ -19,7 +19,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from conditions import load_conditions  # noqa: E402
+from conditions import load_conditions, on_topic  # noqa: E402
 from outcomes import domains_for_trial  # noqa: E402
 from taxonomy import ALL_CLASSES, DRUG_TYPES, classify, is_studied_arm  # noqa: E402
 
@@ -65,6 +65,9 @@ def main() -> None:
             ps = s.get("protocolSection", {})
             nct = ps.get("identificationModule", {}).get("nctId")
             if not nct:
+                continue
+            if not on_topic(c, ps.get("conditionsModule", {}).get("conditions", []), ps.get("identificationModule", {}).get("briefTitle", "")):
+                excluded["off-topic for the searched condition (registry search expanded the term)"] += 1
                 continue
             if nct in trials:
                 if slug not in trials[nct]["c"]:

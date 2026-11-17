@@ -33,13 +33,13 @@ def compute(mine: dict) -> dict:
         for dom in t["d"]:
             dom_tot[dom] += 1
     measured = {dom for dom, n in dom_tot.items() if n >= 3 and dom not in ("unclassified", "feasibility")}
-    unmeasured = []  # (other trials measuring it, group label, domain label)
+    unmeasured = []  # (other trials measuring it, group label, domain label, trials found in this group)
     for gid, glabel in GROUPS:
         if group_tot.get(gid, 0) < 3:
             continue
         for dom, dlabel in DOMAIN_COLS:
             if dom in measured and cell[(gid, dom)]["n"] == 0:
-                unmeasured.append((dom_tot[dom], glabel, dlabel))
+                unmeasured.append((dom_tot[dom], glabel, dlabel, group_tot[gid]))
     unmeasured.sort(key=lambda x: -x[0])
     unreported = sorted(
         [(cell[(gid, dom)]["n"], gl, dl, cell[(gid, dom)]["rec"]) for gid, gl in GROUPS for dom, dl in DOMAIN_COLS
