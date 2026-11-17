@@ -43,8 +43,8 @@ def compute(mine: dict) -> dict:
         for dom, dlabel in DOMAIN_COLS:
             if dom in measured and cell[(gid, dom)]["n"] == 0:
                 unmeasured.append((dom_tot[dom], glabel, dlabel, group_tot[gid]))
-    # Larger groups first: a gap in a group with many trials says more than one in a group with few.
-    unmeasured.sort(key=lambda x: (-x[3], -x[0]))
+    # Outcomes most often measured by other approaches first; larger groups break ties.
+    unmeasured.sort(key=lambda x: (-x[0], -x[3]))
     unreported = sorted(
         [(cell[(gid, dom)]["n"], gl, dl, cell[(gid, dom)]["rec"]) for gid, gl in GROUPS for dom, dl in DOMAIN_COLS
          if dom != "unclassified" and gid not in CATCHALL_GROUPS and cell[(gid, dom)]["n"] >= 3 and cell[(gid, dom)]["r"] == 0],

@@ -43,14 +43,14 @@ EXTRA_CSS = """
 @media (max-width:600px){
 .nd-jump{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
 .nd-jump a{white-space:nowrap;flex:0 0 auto}
-#nd-cond-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-#nd-cond-table,#nd-cond-table tbody{display:block}
-#nd-cond-table tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 2px;border-bottom:1px solid rgba(14,20,68,.08)}
-#nd-cond-table tr[hidden]{display:none}
-#nd-cond-table th,#nd-cond-table td{border:0;padding:0}
-#nd-cond-table td:nth-child(2)::after{content:" trials";color:#4a5170;font-size:.8rem}
-#nd-cond-table td:nth-child(3){display:none}
-#nd-cond-table td:last-child{grid-column:1/-1;font-size:.82rem}
+.nd-compact thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.nd-compact,.nd-compact tbody{display:block}
+.nd-tbl.nd-compact tr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;padding:8px 4px;border-bottom:1px solid rgba(14,20,68,.08)}
+.nd-tbl.nd-compact tr[hidden]{display:none}
+.nd-tbl.nd-compact th,.nd-tbl.nd-compact td{border:0;padding:0;text-align:left;font-size:.8rem;line-height:1.35}
+.nd-tbl.nd-compact th{flex:1 1 auto;font-size:.9rem}
+.nd-compact td[data-label]::before{content:attr(data-label) ": ";color:#4a5170}
+.nd-tbl.nd-compact td.wide{flex:1 1 100%}
 .nd-tbl th{white-space:normal}
 }
 .nd-card{display:block;border:1px solid rgba(14,20,68,.1);border-radius:12px;padding:12px 14px;text-decoration:none!important;color:#0e1444;background:#fff}
@@ -111,6 +111,17 @@ details.nd-trials summary{cursor:pointer;color:#bf360c;font-weight:600;font-size
 def status_badge(status: str, group: str) -> str:
     cls = {"recruiting": "recruiting", "planned": "recruiting", "completed": "completed", "stopped": "stopped"}.get(group, "")
     return f'<span class="nd-st {cls}">{esc(STATUS_TEXT.get(status, status.replace("_", " ").title()))}</span>'
+
+
+def filter_box(table_id: str, what: str = "condition", example: str = "fibromyalgia") -> tuple[str, str]:
+    """Search box above a table whose rows carry data-name, plus the script that filters it. Returns (box, script)."""
+    box = (f'<label class="nd-filter"><span>Find a {what}</span><input type="search" id="{table_id}-q" placeholder="e.g. {example}" autocomplete="off"></label>'
+           f'<p class="nd-filter-count" id="{table_id}-n" aria-live="polite"></p>')
+    js = ('<script>(function(){var i=document.getElementById("%s-q"),c=document.getElementById("%s-n"),r=document.querySelectorAll("#%s tbody tr");'
+          'if(!i)return;i.addEventListener("input",function(){var q=i.value.trim().toLowerCase(),n=0;r.forEach(function(x){'
+          'var s=!q||(x.getAttribute("data-name")||"").indexOf(q)>-1;x.hidden=!s;if(s)n++;});c.textContent=q?n+" of "+r.length+" shown":"";});})();</script>'
+          % (table_id, table_id, table_id))
+    return box, js
 
 
 def trial_li(nct: str, t: dict, extra: str = "") -> str:

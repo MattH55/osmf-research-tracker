@@ -37,16 +37,16 @@ DOMAINS = [
     ("symptoms", "Symptom severity and disease activity",
      r"symptom|severity|disease activity|\bdas-?28\b|flare|relapse|remission|seizure|exacerbation|attack|(frequency|quantity|days) of (alcohol|drinking|smoking|use)|abstinen|clinical global|\bcgi\b|response rate|endoscopic|tinnitus|severity score|\bhaq\b|\bacr ?20\b|pasi|easi|scorad|itch|pruritus|nausea|bowel|\bibs-?sss\b|rating scale|activity score|\buas7?\b|incontinence|urgency"),
     ("events", "Clinical events, survival and healthcare use",
-     r"surviv|mortality|death|hospitali|admission|readmission|length of (hospital )?stay|incidence|infection|composite (end ?point|outcome)|\bevent\b|events\b|recurrence|progression|time to (first|recurrence|progression|event)|chest tube|emergency|intensive care|\bicu\b|amputation|fracture|stroke|myocardial infarction|reintervention|complete remission|overall response|(opioid|analgesic|medication) (consumption|use|requirement)"),
+     r"surviv|mortality|death|hospitali|admission|readmission|length of (hospital )?stay|incidence|infection|composite (end ?point|outcome)|(cardiovascular|cardiac|vascular|thromboembolic|thrombotic|clinical|cerebrovascular|coronary|major) events?\b|\bmace\b|\bmarce\b|recurrence|progression|time to (first|recurrence|progression|event)|chest tube|emergency|intensive care|\bicu\b|amputation|fracture|stroke|myocardial infarction|reintervention|complete remission|overall response|(opioid|analgesic|medication) (consumption|use|requirement)"),
     ("feasibility", "Feasibility, adherence and safety",
-     r"feasib|adherence|acceptab|recruitment|retention|attrition|compliance|completion rate|dropout|drop-out|safety|adverse|tolerab|usability|satisfaction|fidelity|uptake|engagement|sessions? (completed|attended)|attendance|number of sessions|frequency of use|\buse of\b|sustainment|implementation|working alliance|complication|\bmace\b|\bmarce\b|usage|participants who completed|completed the (study|intervention|program)"),
+     r"feasib|adherence|acceptab|recruitment|retention|attrition|compliance|completion rate|dropout|drop-out|safety|adverse|tolerab|usability|satisfaction|fidelity|uptake|engagement|sessions? (completed|attended)|attendance|number of sessions|frequency of use|\buse of\b|sustainment|implementation|working alliance|complication|usage|participants who completed|completed the (study|intervention|program)"),
 ]
 DOMAIN_LABEL = {d: label for d, label, _ in DOMAINS}
 DOMAIN_LABEL["unclassified"] = "Not classified by the rules"
 _RX = [(d, re.compile(p, re.I)) for d, _, p in DOMAINS]
 
 
-_PRIORITY = re.compile(r"adverse|safety|complication|tolerab|\bmace\b|\bmarce\b|feasib|adherence|acceptab|retention|recruitment|attendance|sessions? (completed|attended)|frequency of use|usage|who completed", re.I)
+_PRIORITY = re.compile(r"adverse|safety|complication|tolerab|feasib|adherence|acceptab|retention|recruitment|attendance|sessions? (completed|attended)|frequency of use|usage|who completed", re.I)
 
 
 def domains_for_outcome(measure: str, description: str = "") -> list[str]:

@@ -33,7 +33,7 @@ import segno
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from gaps import compute  # noqa: E402
-from ndsite import ROOT, SITE, esc, load_dataset, shell, write  # noqa: E402
+from ndsite import filter_box, ROOT, SITE, esc, load_dataset, shell, write  # noqa: E402
 from taxonomy import ALL_CLASSES, classify, is_catchall  # noqa: E402
 
 BIOMARKER_ALIASES = {
@@ -240,10 +240,13 @@ def build() -> None:
                           h1=name, h1_span="evidence brief", lede="One page, every section sourced. Print it or bring it on your phone.",
                           body=body, crumbs=[("Evidence briefs", f"{SITE}/briefs/index.html"), (name, url)], modified=today.isoformat())
               .replace("</style>", PRINT_CSS + "</style>", 1))
-        idx_rows.append(f'<tr><th scope="row"><a href="/briefs/{slug}.html">{esc(name)}</a></th><td>{esc(", ".join(t for t, _, _ in secs))}</td></tr>')
+        idx_rows.append(f'<tr data-name="{esc(name.lower())}"><th scope="row"><a href="/briefs/{slug}.html">{esc(name)}</a></th><td class="wide" data-label="Sections">{esc(", ".join(t for t, _, _ in secs))}</td></tr>')
+    fbox, fjs = filter_box("brief-index")
     body = f"""<p class="lede">A printable one-page brief per condition: medicines and non-drug approaches in registered trials, natural products, biomarkers, recruiting trials and the evidence gaps. Each section names its scale and links to its source.</p>
 <div class="disclaimer"><span>⚠️</span><div><strong>Research information, not medical advice.</strong> A brief summarises what is being studied. It does not recommend any treatment.</div></div>
-<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Condition</th><th scope="col">Sections with data</th></tr></thead><tbody>{''.join(idx_rows)}</tbody></table></div>"""
+{fbox}
+<div class="tbl-wrap"><table class="nd-tbl nd-compact" id="brief-index"><thead><tr><th scope="col">Condition</th><th scope="col">Sections with data</th></tr></thead><tbody>{''.join(idx_rows)}</tbody></table></div>
+{fjs}"""
     write("briefs/index.html", shell(path="briefs/index.html", title="Printable evidence briefs by condition",
                                      description="One-page printable evidence briefs for chronic and post-viral conditions, built from public trial and research data.",
                                      eyebrow="Research Tracker · evidence briefs", h1="Evidence", h1_span="briefs",

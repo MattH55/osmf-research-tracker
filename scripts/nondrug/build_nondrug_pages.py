@@ -20,7 +20,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from outcomes import DOMAIN_LABEL  # noqa: E402
-from ndsite import DISCLAIMER, ROOT, SITE, dataset_ld, esc, load_dataset, shell, trial_li, write, write_csv  # noqa: E402
+from ndsite import filter_box, DISCLAIMER, ROOT, SITE, dataset_ld, esc, load_dataset, shell, trial_li, write, write_csv  # noqa: E402
 from taxonomy import ALL_CLASSES, GROUP_LABEL, GROUPS, is_catchall  # noqa: E402
 
 SHOW_PER_CONDITION = 15
@@ -158,9 +158,10 @@ def build() -> None:
             links.append(f'<a href="/briefs/{slug}.html">Evidence brief</a>')
         if c.get("page"):
             links.append(f'<a href="{esc(c["page"])}">Condition page</a>')
-        cond_rows.append(f'<tr data-name="{esc(c["name"].lower())}"><th scope="row">{esc(c["name"])}</th><td class="n">{fmt(kept)}</td>'
-                         f'<td class="n">{fmt(c.get("total") or 0)}{" *" if capped else ""}</td><td>{" · ".join(links)}</td></tr>')
+        cond_rows.append(f'<tr data-name="{esc(c["name"].lower())}"><th scope="row">{esc(c["name"])}</th><td class="n" data-label="Non-drug trials">{fmt(kept)}</td>'
+                         f'<td class="n" data-label="Registry matches">{fmt(c.get("total") or 0)}{" *" if capped else ""}</td><td class="wide">{" · ".join(links)}</td></tr>')
     total = len(trials)
+    fbox, fjs = filter_box("nd-cond-table")
     stats_all = {"results": sum(t["r"] for t in trials.values()), "recruiting": sum(t["g"] == "recruiting" for t in trials.values()),
                  "completed": sum(t["g"] == "completed" for t in trials.values())}
     body = f"""
@@ -177,11 +178,10 @@ def build() -> None:
 <div class="nd-groups">{''.join(groups_html)}</div>
 <h2 id="conditions">By condition</h2>
 <p class="nd-method">Trials counts are after the exclusions described below. "Registry matches" is how many trials the ClinicalTrials.gov search returned; * marks searches that hit the 1,000-trial cap.</p>
-<label class="nd-filter"><span>Find a condition</span><input type="search" id="nd-cond-filter" placeholder="e.g. fibromyalgia" autocomplete="off"></label>
-<p class="nd-filter-count" id="nd-cond-count" aria-live="polite"></p>
-<div class="tbl-wrap"><table class="nd-tbl" id="nd-cond-table"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Non-drug trials</th><th scope="col" class="n">Registry matches</th><th scope="col">Open</th></tr></thead>
+{fbox}
+<div class="tbl-wrap"><table class="nd-tbl nd-compact" id="nd-cond-table"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Non-drug trials</th><th scope="col" class="n">Registry matches</th><th scope="col">Open</th></tr></thead>
 <tbody>{''.join(cond_rows)}</tbody></table></div>
-<script>(function(){{var i=document.getElementById("nd-cond-filter"),c=document.getElementById("nd-cond-count"),r=document.querySelectorAll("#nd-cond-table tbody tr");if(!i)return;i.addEventListener("input",function(){{var q=i.value.trim().toLowerCase(),n=0;r.forEach(function(x){{var s=!q||x.getAttribute("data-name").indexOf(q)>-1;x.hidden=!s;if(s)n++;}});c.textContent=q?n+" of "+r.length+" conditions":"";}});}})();</script>
+{fjs}
 <p class="nd-actions"><a class="btn" href="/nondrug/data/nondrug-trials.csv">Download all {fmt(total)} trials (CSV)</a> <a href="/supplement-safety/index.html">Supplement safety pages</a> <a href="/evidence-gaps/index.html">Evidence-gap maps</a></p>
 {method_box(d)}
 """

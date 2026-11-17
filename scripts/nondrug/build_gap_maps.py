@@ -6,7 +6,7 @@ Rows are intervention groups (taxonomy.GROUPS); columns are primary-outcome doma
 intervention falls in the group AND whose primary outcomes fall in the domain.
 
 Gaps are reported two ways, both computed from the counts:
-  * unmeasured: a domain other groups have measured (>= 3 trials) that a group with >= 3 trials
+  * unmeasured: a domain other groups have measured (>= 3 trials) that a group with >= 8 trials (gaps.MIN_GROUP_TRIALS)
     in this condition has never used as a primary outcome;
   * unreported: cells with >= 3 trials but no posted results yet.
 
@@ -22,7 +22,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from ndsite import DISCLAIMER, ROOT, SITE, dataset_ld, esc, load_dataset, shell, write, write_csv  # noqa: E402
+from ndsite import filter_box, DISCLAIMER, ROOT, SITE, dataset_ld, esc, load_dataset, shell, write, write_csv  # noqa: E402
 from gaps import DOMAIN_COLS, compute  # noqa: E402
 from taxonomy import ALL_CLASSES, GROUPS  # noqa: E402
 
@@ -113,7 +113,7 @@ def build() -> None:
 </div>
 {DISCLAIMER}
 <h2>Evidence-gap matrix</h2>
-<p class="nd-method">Each number is the count of trials; "results" is how many of them have posted results on ClinicalTrials.gov. A trial is counted once per group and per outcome domain it covers. The number in brackets after each group is its total trials for this condition.{cap_note}</p>
+<p class="nd-method">Each number is the count of trials; "with results" is how many of them have posted results on ClinicalTrials.gov. A trial is counted once per group and per outcome domain it covers. The number in brackets after each group is its total trials for this condition.{cap_note}</p>
 <div class="nd-legend"><span><i style="background:#f6f7fb"></i>none</span><span><i style="background:#fff3e0"></i>1–2</span><span><i style="background:#ffd9a8"></i>3–9</span><span><i style="background:#f8a95c"></i>10–29</span><span><i style="background:#9a3412"></i>30 or more</span></div>
 <div class="tbl-wrap" role="region" tabindex="0" aria-label="Evidence-gap matrix, scrolls sideways"><table class="nd-matrix"><caption class="sr-only">Registered non-drug trials for {esc(cm['name'])} by intervention group and primary outcome domain</caption>
 <thead><tr><th scope="col">Intervention group</th>{head}</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div>
@@ -138,14 +138,17 @@ def build() -> None:
                           jsonld=[dataset_ld(f"{cm['name']} non-drug evidence-gap matrix", desc, f"{SITE}/{path}", f"{SITE}/evidence-gaps/data/{slug}.csv", built)],
                           modified=built))
         top_gap = unmeasured[0][1] if unmeasured else ("not shown: search capped" if capped else "")
-        index_rows.append(f'<tr><th scope="row"><a href="/evidence-gaps/{slug}.html">{esc(cm["name"])}</a></th><td class="n">{len(mine):,}</td>'
-                          f'<td class="n">{sum(t["r"] for t in mine.values()):,}</td><td>{top_gap or "–"}</td></tr>')
+        index_rows.append(f'<tr data-name="{esc(cm["name"].lower())}"><th scope="row"><a href="/evidence-gaps/{slug}.html">{esc(cm["name"])}</a></th><td class="n" data-label="Trials">{len(mine):,}</td>'
+                          f'<td class="n" data-label="Results posted">{sum(t["r"] for t in mine.values()):,}</td><td class="wide" data-label="Top possible gap">{top_gap or "–"}</td></tr>')
+    fbox, fjs = filter_box("gap-index")
     body = f"""
-<p class="lede">For each condition, a matrix of non-drug approaches against the outcomes trials have measured. Empty and weak cells show which questions have no registered trial or no posted results. Built from {len(trials):,} ClinicalTrials.gov records.</p>
+<p class="lede">For each condition, a matrix of non-drug approaches against the outcomes trials have measured. Empty cells show where no matching trial was found among those searched, and weak cells where trials have posted no results. Built from {len(trials):,} ClinicalTrials.gov records.</p>
 {DISCLAIMER}
-<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Trials</th><th scope="col" class="n">Results posted</th><th scope="col">Largest unmeasured outcome</th></tr></thead>
+{fbox}
+<div class="tbl-wrap"><table class="nd-tbl nd-compact" id="gap-index"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Trials</th><th scope="col" class="n">Results posted</th><th scope="col">Top possible gap</th></tr></thead>
 <tbody>{''.join(index_rows)}</tbody></table></div>
-<p class="nd-method">Method: <a href="/nondrug/index.html#method">how trials are selected</a>. Gaps mean "no registered trial", not "this would work".</p>
+{fjs}
+<p class="nd-method">Method: <a href="/nondrug/index.html#method">how trials are selected</a>. A gap means no matching trial was found among those searched, not that an approach would work.</p>
 """
     desc = f"Evidence-gap maps for non-drug interventions across {len(conds)} conditions: which approaches and outcomes have registered trials, and which do not."
     write("evidence-gaps/index.html", shell(path="evidence-gaps/index.html", title="Evidence-gap maps for non-drug interventions", description=desc,
