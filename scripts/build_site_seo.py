@@ -24,6 +24,7 @@ SITE_NAME = "Open Source Medicine — Research Tracker"
 PUBLIC_DIRS = (
     "pais-cohorts", "chronic-disease-interventions", "disease-intelligence", "ntd",
     "biomarkers", "compare", "trials", "pairs", "digest", "reports", "tools", "embed", "peptideos",
+    "nondrug", "evidence-gaps", "supplement-safety", "briefs",
 )
 EXCLUDED_DIRS = {"hospital-ranking", "med-freedom-map", "data", "config", "files"}
 EXCLUDED_NAMES = {"agents-local.html", "clinical_trials-local.html"}

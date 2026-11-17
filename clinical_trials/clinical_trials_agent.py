@@ -392,6 +392,19 @@ def parse_study(study: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         agents = extract_agents(interventions)
         mapped_conditions = map_conditions(conditions)
 
+        # Registry intervention types and arm roles (added 2026-11-16). `agents` above stays as it was;
+        # these fields let downstream code tell drugs from behavioural/device/supplement arms and
+        # drop interventions that only appear in placebo, sham or no-intervention arms.
+        arm_roles = {(a.get("label") or "").strip(): a.get("type") or "" for a in arms.get("armGroups", []) or []}
+        interventions_typed = []
+        for interv in interventions or []:
+            iname = (interv.get("name") or "").strip()
+            if not iname:
+                continue
+            roles = sorted({arm_roles.get((lbl or "").strip(), "") for lbl in interv.get("armGroupLabels") or []} - {""})
+            interventions_typed.append({"name": iname, "type": interv.get("type") or "UNKNOWN", "arm_roles": roles})
+        has_results = bool(study.get("hasResults"))
+
         def _outcome_rows(module_key: str, outcome_type: str) -> List[Dict[str, str]]:
             rows = []
             for o in outcomes_mod.get(module_key, []) or []:
@@ -440,6 +453,8 @@ def parse_study(study: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "conditions_raw": conditions,
             "mapped_conditions": mapped_conditions,
             "agents": agents,
+            "interventions_typed": interventions_typed,
+            "has_results": has_results,
             "sponsor": sponsor,
             "sponsor_type": sponsor_type,
             "primary_purpose": primary_purpose,

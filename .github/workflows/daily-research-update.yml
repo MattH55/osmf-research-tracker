@@ -86,6 +86,12 @@ jobs:
           python scripts/prerender_feed_pages.py
           python scripts/build_reports.py
           python scripts/build_peptideos.py --refresh-trials
+          # Non-drug evidence map, evidence-gap maps, supplement safety, condition briefs. They render from
+          # committed data (data/nondrug/*.json) and need no network; a failure here must not stop the rest.
+          python scripts/nondrug/build_nondrug_pages.py || echo "::warning::non-drug evidence map not rebuilt"
+          python scripts/nondrug/build_gap_maps.py || echo "::warning::evidence-gap maps not rebuilt"
+          python scripts/nondrug/build_supplement_safety.py || echo "::warning::supplement safety pages not rebuilt"
+          python scripts/nondrug/build_briefs.py || echo "::warning::condition briefs not rebuilt"
           python scripts/apply_osmf_chrome.py
           python scripts/apply_osmf_ui.py
           python scripts/build_site_seo.py

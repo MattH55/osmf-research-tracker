@@ -25,7 +25,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_DIRS = ("biomarkers", "compare", "trials", "pairs", "digest", "reports", "tools", "embed",
-               "chronic-disease-interventions", "disease-intelligence", "ntd", "pais-cohorts", "agents", "feeds")
+               "chronic-disease-interventions", "disease-intelligence", "ntd", "pais-cohorts", "agents", "feeds",
+               "nondrug", "evidence-gaps", "supplement-safety", "briefs")
 EXCLUDED_NAMES = {"agents-local.html", "clinical_trials-local.html"}
 SKIP_PARTS = {"ntd-pipeline", "__pycache__", "hospital-ranking", "med-freedom-map", "data", "files"}
 # iframe-able / embedded documents keep their own minimal chrome
@@ -44,6 +45,7 @@ NAV = [  # href, label, section prefixes that mark it current, minor (hidden on 
     ("/agents.html", "Therapeutics", ("agents", "candidate-therapeutics", "therapeutic", "pairs/",
                                       "chronic-disease-interventions/", "disease-intelligence/"), False),
     ("/tools/repurposing-explorer.html", "Repurposing", ("tools/repurposing",), False),
+    ("/nondrug/index.html", "Non-drug", ("nondrug/", "evidence-gaps/", "supplement-safety/", "briefs/"), False),
     ("/pais-cohorts.html", "Cohorts", ("pais-",), True),
     ("/digest/index.html", "Digest", ("digest/", "reports/"), True),
 ]
@@ -120,6 +122,8 @@ FOOTER = f"""{FTR_START}
       <li><a href="/biomarker-atlas.html">Biomarker atlases</a></li><li><a href="/biomarkers/index.html">Marker pages</a></li>
       <li><a href="/trials/index.html">Recruiting trials</a></li><li><a href="/agents.html">Therapeutic agents</a></li>
       <li><a href="/chronic-disease-interventions/index.html">Chronic disease drugs</a></li><li><a href="/pais-cohorts.html">Cohort database</a></li>
+      <li><a href="/nondrug/index.html">Non-drug evidence map</a></li><li><a href="/evidence-gaps/index.html">Evidence-gap maps</a></li>
+      <li><a href="/supplement-safety/index.html">Supplement safety</a></li><li><a href="/briefs/index.html">Printable briefs</a></li>
     </ul></div>
     <div><h3>Tools</h3><ul>
       <li><a href="/tools/biomarker-lookup.html">Biomarker lookup</a></li><li><a href="/tools/repurposing-explorer.html">Repurposing explorer</a></li>
