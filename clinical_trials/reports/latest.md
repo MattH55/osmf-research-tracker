@@ -8,10 +8,35 @@
 
 ---
 
-## All Tracked Trials (Current)
+## New Trials This Week
+
+**Effects of Sodium Pyruvate Nasal Spray in COVID-19 Long Haulers.**  
+**NCT04871815** | **COMPLETED** | **PHASE2** | Last Updated: 2022-03-09
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Sodium Pyruvate Nasal Spray
+
+**Sponsor:** Cellular Sciences, inc. (INDUSTRY)
+
+**Key Focus / Interventions:**  
+There are approximately 12 million Americans with COVID-19 Long Hauler Symptoms, including athletes. The symptoms include hypoxemia (low SaO2), fatigue, coughing/sneezing, dyspnea, trouble breathing, body aches, headaches. This chronic disease is referred to as COVID-19 Long Haulers. 7-10% of COVID-19 long haulers are also at serious risk of developing Pulmonary Fibrosis. Conversely, patients with Pulmonary Fibrosis have an increased risk and sus...
+
+**Timeline:** Start: 2021-04-27 | Primary Completion: 2022-03-07 | Est. Completion: 2022-03-07
+**Enrollment:** 22 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT04871815
+
+**Relevance Tags:** Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
+
+**Extraction Date:** 2026-11-17
+
+---
+## Updated Trials This Week
 
 **Phase I Open-Label Safety Trial of Pembrolizumab for Neurological Post- Acute Sequelae of SARS-CoV-2 (PD1-PASC I)**  
-**NCT07388550** | **NOT_YET_RECRUITING** | **PHASE1** | Last Updated: 2026-11-16
+**NCT07388550** | **NOT_YET_RECRUITING** | **PHASE1** | Last Updated: 2026-11-17
 
 **Conditions:** Long COVID / PASC
 
@@ -25,7 +50,34 @@ Background:
 
 SARS-CoV-2 is the virus that causes COVID-19. Some people who recover from an acute COVID-19 infection may continue to have symptoms that persist for months or years. These can include neurological symptoms, such as headaches, loss of taste or smell, dizziness, or trouble walking. Pembrolizumab is a drug approved to treat certain cancers. Researchers think this drug might reduce long-term neurologic symptoms after a COVID-19 infectio...
 
-**Timeline:** Start: 2026-11-19 | Primary Completion: 2028-01-01 | Est. Completion: 2028-01-01
+**Timeline:** Start: 2026-11-22 | Primary Completion: 2028-01-01 | Est. Completion: 2028-01-01
+**Enrollment:** 15 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07388550
+
+**Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Nih
+
+**Extraction Date:** 2026-11-17
+
+---
+## All Tracked Trials (Current)
+
+**Phase I Open-Label Safety Trial of Pembrolizumab for Neurological Post- Acute Sequelae of SARS-CoV-2 (PD1-PASC I)**  
+**NCT07388550** | **NOT_YET_RECRUITING** | **PHASE1** | Last Updated: 2026-11-17
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Keytruda
+
+**Sponsor:** National Institute of Neurological Disorders and Stroke (NINDS) (NIH)
+
+**Key Focus / Interventions:**  
+Background:
+
+SARS-CoV-2 is the virus that causes COVID-19. Some people who recover from an acute COVID-19 infection may continue to have symptoms that persist for months or years. These can include neurological symptoms, such as headaches, loss of taste or smell, dizziness, or trouble walking. Pembrolizumab is a drug approved to treat certain cancers. Researchers think this drug might reduce long-term neurologic symptoms after a COVID-19 infectio...
+
+**Timeline:** Start: 2026-11-22 | Primary Completion: 2028-01-01 | Est. Completion: 2028-01-01
 **Enrollment:** 15 (ESTIMATED) | **Primary Purpose:** N/A
 
 **Link:** https://clinicaltrials.gov/study/NCT07388550
@@ -85,29 +137,6 @@ The study will also help to...
 **Extraction Date:** 2026-11-17
 
 ---
-**Observational Study With CICR-NAM as a Food for Special Medicinal Purposes in Post-COVID Syndrome (PCS)**  
-**NCT07798570** | **RECRUITING** | **NA** | Last Updated: 2026-11-10
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Cicr-Nam
-
-**Sponsor:** University Hospital Schleswig-Holstein (OTHER)
-
-**Key Focus / Interventions:**  
-In patients with post-COVID syndrome, changes in tryptophan metabolism, energy metabolism, and the gut microbiome may occur. In an earlier nutritional study, patients with COVID-19 recovered their physical performance more quickly when taking nicotinamide (vitamin B3). Patients who responded to nicotinamide also developed post-COVID syndrome less frequently. At the University Hospital Schleswig-Holstein in Kiel, special nicotinamide tablets (CICR...
-
-**Timeline:** Start: 2026-09-08 | Primary Completion: 2028-06-30 | Est. Completion: 2028-06-30
-**Enrollment:** 100 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07798570
-
-**Relevance Tags:** Metabolic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Immunotherapy for Neurological Post-Acute Sequelae of SARS-CoV-2**  
 **NCT05350774** | **ENROLLING_BY_INVITATION** | **PHASE2** | Last Updated: 2026-11-10
 
@@ -163,6 +192,29 @@ This study will test a treatment called immunoadsorption, which filters the bloo
 **Link:** https://clinicaltrials.gov/study/NCT07316127
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Observational Study With CICR-NAM as a Food for Special Medicinal Purposes in Post-COVID Syndrome (PCS)**  
+**NCT07798570** | **RECRUITING** | **NA** | Last Updated: 2026-11-10
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Cicr-Nam
+
+**Sponsor:** University Hospital Schleswig-Holstein (OTHER)
+
+**Key Focus / Interventions:**  
+In patients with post-COVID syndrome, changes in tryptophan metabolism, energy metabolism, and the gut microbiome may occur. In an earlier nutritional study, patients with COVID-19 recovered their physical performance more quickly when taking nicotinamide (vitamin B3). Patients who responded to nicotinamide also developed post-COVID syndrome less frequently. At the University Hospital Schleswig-Holstein in Kiel, special nicotinamide tablets (CICR...
+
+**Timeline:** Start: 2026-09-08 | Primary Completion: 2028-06-30 | Est. Completion: 2028-06-30
+**Enrollment:** 100 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07798570
+
+**Relevance Tags:** Metabolic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -294,6 +346,29 @@ This study will compare two approaches to cognitive rehabilitation in adults wit
 **Extraction Date:** 2026-11-17
 
 ---
+**Fareon Open Label Device Clinical Trial**  
+**NCT07600320** | **ENROLLING_BY_INVITATION** | **NA** | Last Updated: 2026-10-28
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Fareon Device
+
+**Sponsor:** Icahn School of Medicine at Mount Sinai (OTHER)
+
+**Key Focus / Interventions:**  
+The purpose of this study is to assess the safety and feasibility of an at-home MMT treatment in patients with cognitive dysfunction related to acquired brain injury, Long COVID, traumatic brain injury, myalgic encephalomyelitis (ME/CFS), and other neurodegenerative diagnoses including but not limited to Alzheimer's disease and to collect data on safety and efficacy to inform the design of larger clinical studies.
+
+**Timeline:** Start: 2026-05-11 | Primary Completion: 2027-04-30 | Est. Completion: 2027-04-30
+**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07600320
+
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **SARS-CoV-2 and Herpesvirus Inhibition for Ending Long COVID Dysfunction**  
 **NCT07597902** | **RECRUITING** | **PHASE2** | Last Updated: 2026-10-28
 
@@ -315,29 +390,6 @@ The purpose of this research study is to test if the combination of three drugs,
 **Link:** https://clinicaltrials.gov/study/NCT07597902
 
 **Relevance Tags:** Persistence / Antiviral | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**Fareon Open Label Device Clinical Trial**  
-**NCT07600320** | **ENROLLING_BY_INVITATION** | **NA** | Last Updated: 2026-10-28
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Fareon Device
-
-**Sponsor:** Icahn School of Medicine at Mount Sinai (OTHER)
-
-**Key Focus / Interventions:**  
-The purpose of this study is to assess the safety and feasibility of an at-home MMT treatment in patients with cognitive dysfunction related to acquired brain injury, Long COVID, traumatic brain injury, myalgic encephalomyelitis (ME/CFS), and other neurodegenerative diagnoses including but not limited to Alzheimer's disease and to collect data on safety and efficacy to inform the design of larger clinical studies.
-
-**Timeline:** Start: 2026-05-11 | Primary Completion: 2027-04-30 | Est. Completion: 2027-04-30
-**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07600320
-
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -388,29 +440,6 @@ This is a 24-week open trial. We will enroll long-COVID patients with cognitive 
 **Extraction Date:** 2026-11-17
 
 ---
-**Transcraneal Magnetic Stimulation for Treatment of Non-nociceptive Pain in Chronic Diseases**  
-**NCT07888673** | **COMPLETED** | **NA** | Last Updated: 2026-10-22
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Transcraneal Magnetic Stimulation
-
-**Sponsor:** Hospital Donostia (OTHER)
-
-**Key Focus / Interventions:**  
-Background: Chronic non-nociceptive or nociplastic pain and neurological sequelae following stroke are associated with substantial functional impairment and reduced quality of life. Repetitive transcranial magnetic stimulation (rTMS) is a non-invasive neuromodulation technique capable of modulating cortical excitability and functional brain networks involved in pain processing and neurological recovery. However, its clinical response may vary acc...
-
-**Timeline:** Start: 2025-10-01 | Primary Completion: 2026-05-02 | Est. Completion: 2026-06-01
-**Enrollment:** 47 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07888673
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Effect of Hi-OxSR for the Treatment of Post COVID Condition**  
 **NCT06928506** | **RECRUITING** | **NA** | Last Updated: 2026-10-22
 
@@ -431,6 +460,29 @@ The RECLAIM study platform will be used to explore whether the use of the Hi-OxS
 **Link:** https://clinicaltrials.gov/study/NCT06928506
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Transcraneal Magnetic Stimulation for Treatment of Non-nociceptive Pain in Chronic Diseases**  
+**NCT07888673** | **COMPLETED** | **NA** | Last Updated: 2026-10-22
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Transcraneal Magnetic Stimulation
+
+**Sponsor:** Hospital Donostia (OTHER)
+
+**Key Focus / Interventions:**  
+Background: Chronic non-nociceptive or nociplastic pain and neurological sequelae following stroke are associated with substantial functional impairment and reduced quality of life. Repetitive transcranial magnetic stimulation (rTMS) is a non-invasive neuromodulation technique capable of modulating cortical excitability and functional brain networks involved in pain processing and neurological recovery. However, its clinical response may vary acc...
+
+**Timeline:** Start: 2025-10-01 | Primary Completion: 2026-05-02 | Est. Completion: 2026-06-01
+**Enrollment:** 47 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07888673
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -557,31 +609,6 @@ This study aims to verify the efficacy/effectiveness of treatment with transcran
 **Extraction Date:** 2026-11-17
 
 ---
-**Study to Evaluate the Efficacy and Safety of Plitidepsin in Adults With Post-COVID-19 Condition (PCC)**  
-**NCT06766825** | **COMPLETED** | **PHASE2** | Last Updated: 2026-10-08
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Plitidepsin 1.5 Mg/Day
-
-**Sponsor:** Fundación FLS de Lucha Contra el Sida, las Enfermedades Infecciosas y la Promoción de la Salud y la Ciencia (OTHER)
-
-**Key Focus / Interventions:**  
-The study aims to prove that plitidepsin could be an efficacious, safe, and well-tolerated therapy for PCC. To this end, we will perform a randomized, double-blind study comparing the clinical and laboratory benefits of plitidepsin vs. placebo in 90 subjects with moderate to severe functional disability. The study consists of an intervention period and a follow-up period, with a total of 135 +/-3 days approximately between both periods.
-
-During t...
-
-**Timeline:** Start: 2025-02-07 | Primary Completion: 2026-09-29 | Est. Completion: 2026-09-29
-**Enrollment:** 90 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06766825
-
-**Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Effectiveness of a Personalized In-home Telerehabilitation Program on Self-Care in Patients With Long COVID**  
 **NCT06822179** | **COMPLETED** | **PHASE2** | Last Updated: 2026-10-08
 
@@ -610,6 +637,31 @@ The main questions it aims to answer are:
 **Extraction Date:** 2026-11-17
 
 ---
+**Study to Evaluate the Efficacy and Safety of Plitidepsin in Adults With Post-COVID-19 Condition (PCC)**  
+**NCT06766825** | **COMPLETED** | **PHASE2** | Last Updated: 2026-10-08
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Plitidepsin 1.5 Mg/Day
+
+**Sponsor:** Fundación FLS de Lucha Contra el Sida, las Enfermedades Infecciosas y la Promoción de la Salud y la Ciencia (OTHER)
+
+**Key Focus / Interventions:**  
+The study aims to prove that plitidepsin could be an efficacious, safe, and well-tolerated therapy for PCC. To this end, we will perform a randomized, double-blind study comparing the clinical and laboratory benefits of plitidepsin vs. placebo in 90 subjects with moderate to severe functional disability. The study consists of an intervention period and a follow-up period, with a total of 135 +/-3 days approximately between both periods.
+
+During t...
+
+**Timeline:** Start: 2025-02-07 | Primary Completion: 2026-09-29 | Est. Completion: 2026-09-29
+**Enrollment:** 90 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06766825
+
+**Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Fluvoxamine for Long COVID-19**  
 **NCT05874037** | **COMPLETED** | **PHASE2** | Last Updated: 2026-10-07
 
@@ -629,6 +681,31 @@ This clinical trial aims to test the effects of fluvoxamine as a treatment for L
 **Link:** https://clinicaltrials.gov/study/NCT05874037
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**PERCEIVE-Outreach: A Scalable, Risk-Based Model for Managing Persistent Cardiovascular Impact in Long COVID**  
+**NCT07661862** | **RECRUITING** | **NA** | Last Updated: 2026-10-06
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Perceive-Outreach Disease Management Program
+
+**Sponsor:** University of Tasmania (OTHER)
+
+**Key Focus / Interventions:**  
+Some people who had COVID-19 continue to have symptoms for weeks, months, or even years after their infection. This is often called "Long COVID" or Post-Acute Sequelae of SARS-CoV-2 (PASC). For some people, Long COVID can affect the heart and lungs, making it harder to exercise or carry out daily activities. It can also affect mental health and quality of life.
+
+This study is testing a new care model called PERCEIVE-Outreach, designed to help peo...
+
+**Timeline:** Start: 2026-04-01 | Primary Completion: 2029-04-01 | Est. Completion: 2029-04-01
+**Enrollment:** 577 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07661862
+
+**Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -682,27 +759,26 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 **Extraction Date:** 2026-11-17
 
 ---
-**PERCEIVE-Outreach: A Scalable, Risk-Based Model for Managing Persistent Cardiovascular Impact in Long COVID**  
-**NCT07661862** | **RECRUITING** | **NA** | Last Updated: 2026-10-06
+**Diaphragmatic Breathing Exercises With KOTS Currents in Patients With Long COVID**  
+**NCT07621588** | **COMPLETED** | **NA** | Last Updated: 2026-09-29
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Perceive-Outreach Disease Management Program
+- Diaphragmatic Electrostimulation Using Kots Currents
+- Diaphragmatic Breathing Exercises
 
-**Sponsor:** University of Tasmania (OTHER)
+**Sponsor:** Universidad Pontificia de Salamanca (OTHER)
 
 **Key Focus / Interventions:**  
-Some people who had COVID-19 continue to have symptoms for weeks, months, or even years after their infection. This is often called "Long COVID" or Post-Acute Sequelae of SARS-CoV-2 (PASC). For some people, Long COVID can affect the heart and lungs, making it harder to exercise or carry out daily activities. It can also affect mental health and quality of life.
+This study will evaluate the effects of diaphragmatic breathing exercises combined with diaphragmatic electrostimulation using KOTS currents in patients with Long COVID. Participants will be randomly assigned to one of two groups. The control group will perform diaphragmatic breathing exercises, while the intervention group will perform diaphragmatic breathing exercises combined with diaphragmatic electrostimulation using KOTS currents. The inter...
 
-This study is testing a new care model called PERCEIVE-Outreach, designed to help peo...
+**Timeline:** Start: 2026-06-14 | Primary Completion: 2026-07-31 | Est. Completion: 2026-08-07
+**Enrollment:** 9 (ACTUAL) | **Primary Purpose:** N/A
 
-**Timeline:** Start: 2026-04-01 | Primary Completion: 2029-04-01 | Est. Completion: 2029-04-01
-**Enrollment:** 577 (ESTIMATED) | **Primary Purpose:** N/A
+**Link:** https://clinicaltrials.gov/study/NCT07621588
 
-**Link:** https://clinicaltrials.gov/study/NCT07661862
-
-**Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -726,30 +802,6 @@ This placebo-controlled, randomized, blinded, two-arm phase II study will test t
 **Link:** https://clinicaltrials.gov/study/NCT07021794
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**Diaphragmatic Breathing Exercises With KOTS Currents in Patients With Long COVID**  
-**NCT07621588** | **COMPLETED** | **NA** | Last Updated: 2026-09-29
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Diaphragmatic Electrostimulation Using Kots Currents
-- Diaphragmatic Breathing Exercises
-
-**Sponsor:** Universidad Pontificia de Salamanca (OTHER)
-
-**Key Focus / Interventions:**  
-This study will evaluate the effects of diaphragmatic breathing exercises combined with diaphragmatic electrostimulation using KOTS currents in patients with Long COVID. Participants will be randomly assigned to one of two groups. The control group will perform diaphragmatic breathing exercises, while the intervention group will perform diaphragmatic breathing exercises combined with diaphragmatic electrostimulation using KOTS currents. The inter...
-
-**Timeline:** Start: 2026-06-14 | Primary Completion: 2026-07-31 | Est. Completion: 2026-08-07
-**Enrollment:** 9 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07621588
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -778,29 +830,6 @@ Post-acute sequelae of SARS-CoV-2 infection (PASC) is becoming a major risk fact
 **Extraction Date:** 2026-11-17
 
 ---
-**QEEG-NEUROFEEDBACK FOR COGNITIVE REHABILITATION IN LONG COVID-19 SURVIVORS WITH BRAIN FOG**  
-**NCT07005921** | **COMPLETED** | **NA** | Last Updated: 2026-09-25
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Qeeg-Neurofeedback
-
-**Sponsor:** Jade Carvalho Da Silva (OTHER)
-
-**Key Focus / Interventions:**  
-The pandemic has highlighted social, economic, educational, and political issues that have affected the health and quality of life of millions of Brazilians. Currently, attention and memory impairment remains predominant among the cognitive symptoms of Coronavirus observed in adults. The persistance of the reffered impairment after 12 weeks of COVID-19 is known as cognitive impairment in post-COVID-19 syndrome. Despite studies indicating the nega...
-
-**Timeline:** Start: 2025-06-10 | Primary Completion: 2026-08-14 | Est. Completion: 2026-08-14
-**Enrollment:** 40 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07005921
-
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Randomized Double-Blind Placebo-Controlled Trial EValuating Baricitinib on PERSistent NEurologic and Cardiopulmonary Symptoms of Long COVID**  
 **NCT06631287** | **RECRUITING** | **PHASE3** | Last Updated: 2026-09-25
 
@@ -820,6 +849,29 @@ The overarching goal of this study is to determine if baricitinib, as compared t
 **Link:** https://clinicaltrials.gov/study/NCT06631287
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**QEEG-NEUROFEEDBACK FOR COGNITIVE REHABILITATION IN LONG COVID-19 SURVIVORS WITH BRAIN FOG**  
+**NCT07005921** | **COMPLETED** | **NA** | Last Updated: 2026-09-25
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Qeeg-Neurofeedback
+
+**Sponsor:** Jade Carvalho Da Silva (OTHER)
+
+**Key Focus / Interventions:**  
+The pandemic has highlighted social, economic, educational, and political issues that have affected the health and quality of life of millions of Brazilians. Currently, attention and memory impairment remains predominant among the cognitive symptoms of Coronavirus observed in adults. The persistance of the reffered impairment after 12 weeks of COVID-19 is known as cognitive impairment in post-COVID-19 syndrome. Despite studies indicating the nega...
+
+**Timeline:** Start: 2025-06-10 | Primary Completion: 2026-08-14 | Est. Completion: 2026-08-14
+**Enrollment:** 40 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07005921
+
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -1086,29 +1138,6 @@ Long COVID, also referred to as post-acute sequela of COVID-19 (PASC), is presen
 **Extraction Date:** 2026-11-17
 
 ---
-**Micro-choice-based Intervention for Multicausal Fatigue**  
-**NCT07726082** | **RECRUITING** | **NA** | Last Updated: 2026-08-18
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Micro-Choice-Based Intervention
-
-**Sponsor:** University Hospital, Basel, Switzerland (OTHER)
-
-**Key Focus / Interventions:**  
-This proof-of-concept study aims to evaluate the feasibility, acceptability, and potential benefits of a novel multimodal approach: the micro-choice-based intervention.
-
-**Timeline:** Start: 2026-08-13 | Primary Completion: 2027-08 | Est. Completion: 2027-08
-**Enrollment:** 24 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07726082
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **AT1001 for the Treatment of Long COVID**  
 **NCT05747534** | **COMPLETED** | **PHASE2** | Last Updated: 2026-08-18
 
@@ -1128,6 +1157,29 @@ The primary objective of this study is to evaluate the safety and efficacy of La
 **Link:** https://clinicaltrials.gov/study/NCT05747534
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Micro-choice-based Intervention for Multicausal Fatigue**  
+**NCT07726082** | **RECRUITING** | **NA** | Last Updated: 2026-08-18
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Micro-Choice-Based Intervention
+
+**Sponsor:** University Hospital, Basel, Switzerland (OTHER)
+
+**Key Focus / Interventions:**  
+This proof-of-concept study aims to evaluate the feasibility, acceptability, and potential benefits of a novel multimodal approach: the micro-choice-based intervention.
+
+**Timeline:** Start: 2026-08-13 | Primary Completion: 2027-08 | Est. Completion: 2027-08
+**Enrollment:** 24 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07726082
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -1306,29 +1358,6 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 **Extraction Date:** 2026-11-17
 
 ---
-**Effects of Immulina TM Supplements With PASC Patients**  
-**NCT05524532** | **COMPLETED** | **PHASE3** | Last Updated: 2026-07-31
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Immulina Tm
-
-**Sponsor:** University of Mississippi Medical Center (OTHER)
-
-**Key Focus / Interventions:**  
-This is a multi-site study that will try to determine the effects of Immulina ™, a natural dietary supplement, on blood chemicals associated with inflammation that are often increased in patients with long COVID (also called PASC).
-
-**Timeline:** Start: 2023-07-20 | Primary Completion: 2025-07-29 | Est. Completion: 2025-07-29
-**Enrollment:** 101 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05524532
-
-**Relevance Tags:** Anti-inflammatory | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **RECOVER-AUTONOMIC: Platform Protocol, Appendix A (IVIG)**  
 **NCT06305793** | **COMPLETED** | **PHASE2** | Last Updated: 2026-07-31
 
@@ -1351,6 +1380,29 @@ This protocol is a prospective, multi-center, multi-arm, randomized, controlled 
 **Link:** https://clinicaltrials.gov/study/NCT06305793
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Effects of Immulina TM Supplements With PASC Patients**  
+**NCT05524532** | **COMPLETED** | **PHASE3** | Last Updated: 2026-07-31
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Immulina Tm
+
+**Sponsor:** University of Mississippi Medical Center (OTHER)
+
+**Key Focus / Interventions:**  
+This is a multi-site study that will try to determine the effects of Immulina ™, a natural dietary supplement, on blood chemicals associated with inflammation that are often increased in patients with long COVID (also called PASC).
+
+**Timeline:** Start: 2023-07-20 | Primary Completion: 2025-07-29 | Est. Completion: 2025-07-29
+**Enrollment:** 101 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05524532
+
+**Relevance Tags:** Anti-inflammatory | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -1525,25 +1577,50 @@ The goal of this clinical trial is to learn about in brain "fog" complaints asso
 **Extraction Date:** 2026-11-17
 
 ---
-**Effects of Individual Tailored Physical Exercise in Patients With POTS After COVID-19 - a Randomized Controlled Study**  
-**NCT05877534** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-07-15
+**Cardiovascular Autonomic and Immune Mechanism of Post COVID-19 Tachycardia Syndrome**  
+**NCT05421208** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-07-15
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Individual Tailored Exercise
+- Effect On Inflammation After Chronic Pns Stimulation
 
-**Sponsor:** Karolinska Institutet (OTHER)
+**Sponsor:** Vanderbilt University Medical Center (OTHER)
 
 **Key Focus / Interventions:**  
-Covid-19 has the potential to affect physical, cognitive and psychological functions in multiple ways. It has been clear that a significant proportion of patients with Covid-19 develop long-term symptoms. The term post COVID-19 condition (defined by WHO) is used to describe the wide range of prolonged symptoms following the infection. Patients may need specialized rehabilitation to be able to meet the complex symptoms and problems that may arise....
+The term post-acute COVID-19 syndrome or Long COVID is a disabling syndrome that persists beyond the 3-month convalescence period after COVID-19 infections.
 
-**Timeline:** Start: 2023-05-25 | Primary Completion: 2025-10-01 | Est. Completion: 2026-11-01
-**Enrollment:** 60 (ESTIMATED) | **Primary Purpose:** N/A
+This syndrome affects mostly women (\~80%), present with chronic tachycardia and Orthostatic intolerance symptoms without any identifiable cause. In addition, non-specific symptoms such as fatigue, headache, and "brain fog", commonly described in POTS patients are also present in this novel ...
 
-**Link:** https://clinicaltrials.gov/study/NCT05877534
+**Timeline:** Start: 2022-06-01 | Primary Completion: 2026-07-13 | Est. Completion: 2027-06-30
+**Enrollment:** 60 (ACTUAL) | **Primary Purpose:** N/A
 
-**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Link:** https://clinicaltrials.gov/study/NCT05421208
+
+**Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Cognitive Rehabilitation Therapy for COVID-19**  
+**NCT06086379** | **ENROLLING_BY_INVITATION** | **NA** | Last Updated: 2026-07-15
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Compensatory Cognitive Training For Covid-19
+
+**Sponsor:** VA Office of Research and Development (FED)
+
+**Key Focus / Interventions:**  
+Cognitive dysfunction, psychiatric symptoms, functional impairment, and disability following COVID-19 negatively impact Veterans' community functioning and quality of life, contribute to significant human suffering, and are costly to VHA. Rehabilitation is a critical priority for Veterans with long COVID. One promising treatment to improve functioning in Veterans with post-COVID-19 cognitive symptoms is Compensatory Cognitive Training (CCT). Prev...
+
+**Timeline:** Start: 2024-07-01 | Primary Completion: 2027-06-30 | Est. Completion: 2029-03-31
+**Enrollment:** 70 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06086379
+
+**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
 
 **Extraction Date:** 2026-11-17
 
@@ -1573,50 +1650,48 @@ The goal of this clinical trial is to test whether a type of rapid outpatient br
 **Extraction Date:** 2026-11-17
 
 ---
-**Cognitive Rehabilitation Therapy for COVID-19**  
-**NCT06086379** | **ENROLLING_BY_INVITATION** | **NA** | Last Updated: 2026-07-15
+**Effects of Individual Tailored Physical Exercise in Patients With POTS After COVID-19 - a Randomized Controlled Study**  
+**NCT05877534** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-07-15
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Compensatory Cognitive Training For Covid-19
+- Individual Tailored Exercise
 
-**Sponsor:** VA Office of Research and Development (FED)
+**Sponsor:** Karolinska Institutet (OTHER)
 
 **Key Focus / Interventions:**  
-Cognitive dysfunction, psychiatric symptoms, functional impairment, and disability following COVID-19 negatively impact Veterans' community functioning and quality of life, contribute to significant human suffering, and are costly to VHA. Rehabilitation is a critical priority for Veterans with long COVID. One promising treatment to improve functioning in Veterans with post-COVID-19 cognitive symptoms is Compensatory Cognitive Training (CCT). Prev...
+Covid-19 has the potential to affect physical, cognitive and psychological functions in multiple ways. It has been clear that a significant proportion of patients with Covid-19 develop long-term symptoms. The term post COVID-19 condition (defined by WHO) is used to describe the wide range of prolonged symptoms following the infection. Patients may need specialized rehabilitation to be able to meet the complex symptoms and problems that may arise....
 
-**Timeline:** Start: 2024-07-01 | Primary Completion: 2027-06-30 | Est. Completion: 2029-03-31
-**Enrollment:** 70 (ESTIMATED) | **Primary Purpose:** N/A
+**Timeline:** Start: 2023-05-25 | Primary Completion: 2025-10-01 | Est. Completion: 2026-11-01
+**Enrollment:** 60 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Link:** https://clinicaltrials.gov/study/NCT06086379
+**Link:** https://clinicaltrials.gov/study/NCT05877534
 
-**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
+**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
 ---
-**Cardiovascular Autonomic and Immune Mechanism of Post COVID-19 Tachycardia Syndrome**  
-**NCT05421208** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-07-15
+**Kisspeptin to Quantify GnRH Neuronal Function in Health and Disease**  
+**NCT07224490** | **RECRUITING** | **PHASE1** | Last Updated: 2026-07-13
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Effect On Inflammation After Chronic Pns Stimulation
+- Kisspeptin 112-121
 
-**Sponsor:** Vanderbilt University Medical Center (OTHER)
+**Sponsor:** Stephanie B. Seminara, MD (OTHER)
 
 **Key Focus / Interventions:**  
-The term post-acute COVID-19 syndrome or Long COVID is a disabling syndrome that persists beyond the 3-month convalescence period after COVID-19 infections.
+The objective of this protocol is to use a case-control paradigm to compare the response to an intravenous administration of kisspeptin in individuals with and without post-covid-19 syndrome. The study subjects will receive a single bolus of kisspeptin.
 
-This syndrome affects mostly women (\~80%), present with chronic tachycardia and Orthostatic intolerance symptoms without any identifiable cause. In addition, non-specific symptoms such as fatigue, headache, and "brain fog", commonly described in POTS patients are also present in this novel ...
+**Timeline:** Start: 2026-03-10 | Primary Completion: 2030-05 | Est. Completion: 2030-05
+**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Timeline:** Start: 2022-06-01 | Primary Completion: 2026-07-13 | Est. Completion: 2027-06-30
-**Enrollment:** 60 (ACTUAL) | **Primary Purpose:** N/A
+**Link:** https://clinicaltrials.gov/study/NCT07224490
 
-**Link:** https://clinicaltrials.gov/study/NCT05421208
-
-**Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+**Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -1643,29 +1718,6 @@ The goal of this trial is to compare two treatments for people with long COVID t
 **Link:** https://clinicaltrials.gov/study/NCT07697261
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**Kisspeptin to Quantify GnRH Neuronal Function in Health and Disease**  
-**NCT07224490** | **RECRUITING** | **PHASE1** | Last Updated: 2026-07-13
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Kisspeptin 112-121
-
-**Sponsor:** Stephanie B. Seminara, MD (OTHER)
-
-**Key Focus / Interventions:**  
-The objective of this protocol is to use a case-control paradigm to compare the response to an intravenous administration of kisspeptin in individuals with and without post-covid-19 syndrome. The study subjects will receive a single bolus of kisspeptin.
-
-**Timeline:** Start: 2026-03-10 | Primary Completion: 2030-05 | Est. Completion: 2030-05
-**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07224490
-
-**Relevance Tags:** General | Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2020,29 +2072,6 @@ Patients will be assessed in the clinic at scree...
 **Extraction Date:** 2026-11-17
 
 ---
-**Evaluating the Effects of a Fermented Diet on Microbiome Diversity in Individuals With Long COVID**  
-**NCT06560554** | **ENROLLING_BY_INVITATION** | **NA** | Last Updated: 2026-06-03
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Fermented Foods
-
-**Sponsor:** Mayo Clinic (OTHER)
-
-**Key Focus / Interventions:**  
-The purpose of this study is to evaluate the effects of fermented foods on bacterial gut microbiome diversity of long-COVID subjects.
-
-**Timeline:** Start: 2024-09-05 | Primary Completion: 2025-09-30 | Est. Completion: 2026-12-30
-**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06560554
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **RECOVER-SLEEP: Platform Protocol, Appendix_A (Hypersomnia)**  
 **NCT06404099** | **COMPLETED** | **PHASE2** | Last Updated: 2026-06-03
 
@@ -2063,6 +2092,29 @@ The platform protocol is designed to be flexible so that it is suitable for a ra
 **Link:** https://clinicaltrials.gov/study/NCT06404099
 
 **Relevance Tags:** General | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Evaluating the Effects of a Fermented Diet on Microbiome Diversity in Individuals With Long COVID**  
+**NCT06560554** | **ENROLLING_BY_INVITATION** | **NA** | Last Updated: 2026-06-03
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Fermented Foods
+
+**Sponsor:** Mayo Clinic (OTHER)
+
+**Key Focus / Interventions:**  
+The purpose of this study is to evaluate the effects of fermented foods on bacterial gut microbiome diversity of long-COVID subjects.
+
+**Timeline:** Start: 2024-09-05 | Primary Completion: 2025-09-30 | Est. Completion: 2026-12-30
+**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06560554
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2164,29 +2216,6 @@ This study uses total-body \[¹⁸F\]F-AraG PET/CT imaging to investigate immune
 **Extraction Date:** 2026-11-17
 
 ---
-**Fatigability in Long COVID-19**  
-**NCT05699538** | **COMPLETED** | **NA** | Last Updated: 2026-05-18
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Minimal-Dose Home-Based Resistance Exercise
-
-**Sponsor:** VA Office of Research and Development (FED)
-
-**Key Focus / Interventions:**  
-The overall goal of this project is to advance the understanding of underlying mechanisms impacting performance fatigability and perceived fatigability in Veterans with post-COVID-19 fatigue and explore the safety and feasibility of a home-based "minimal-dose" resistance exercise program in this population. The central hypothesis is that declines in force capacity, skeletal muscle oxygen extraction, and affective responses to physical activity of...
-
-**Timeline:** Start: 2023-07-31 | Primary Completion: 2025-07-04 | Est. Completion: 2025-09-30
-**Enrollment:** 21 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05699538
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Fed
-
-**Extraction Date:** 2026-11-17
-
----
 **Low Dose Sirolimus in People With Post-Acute Sequelae of COVID-19 (PASC) Long COVID-19**  
 **NCT06960928** | **RECRUITING** | **PHASE3** | Last Updated: 2026-05-18
 
@@ -2210,6 +2239,29 @@ This study aims to evaluate the efficacy of Sirolimus in adults with Long COVID.
 **Link:** https://clinicaltrials.gov/study/NCT06960928
 
 **Relevance Tags:** Immunomodulatory | Repurposed | Phase 3 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Fatigability in Long COVID-19**  
+**NCT05699538** | **COMPLETED** | **NA** | Last Updated: 2026-05-18
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Minimal-Dose Home-Based Resistance Exercise
+
+**Sponsor:** VA Office of Research and Development (FED)
+
+**Key Focus / Interventions:**  
+The overall goal of this project is to advance the understanding of underlying mechanisms impacting performance fatigability and perceived fatigability in Veterans with post-COVID-19 fatigue and explore the safety and feasibility of a home-based "minimal-dose" resistance exercise program in this population. The central hypothesis is that declines in force capacity, skeletal muscle oxygen extraction, and affective responses to physical activity of...
+
+**Timeline:** Start: 2023-07-31 | Primary Completion: 2025-07-04 | Est. Completion: 2025-09-30
+**Enrollment:** 21 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05699538
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Fed
 
 **Extraction Date:** 2026-11-17
 
@@ -2333,30 +2385,6 @@ Patients with Postural Orthostatic Tachycardia Syndrome (POTS) and Post-Acute Se
 **Extraction Date:** 2026-11-17
 
 ---
-**Cognitive Muscular Therapy for Patients With Long-COVID and Breathing Pattern Disorder**  
-**NCT06503913** | **COMPLETED** | **NA** | Last Updated: 2026-05-06
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Cognitive Muscular Therapy
-- Breathing Visualisation
-
-**Sponsor:** University of Salford (OTHER)
-
-**Key Focus / Interventions:**  
-The aim of the study is to test a treatment known as "Cognitive Muscular Therapy (CMT)" for reducing breathlessness and improving autonomic function in patients with long-COVID.
-
-**Timeline:** Start: 2024-08-01 | Primary Completion: 2026-03-01 | Est. Completion: 2026-03-01
-**Enrollment:** 18 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06503913
-
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Transcutaneous Vagus Nerve Stimulation as a Complementary Therapy to Exercise in Chronic Fatigue**  
 **NCT06170645** | **RECRUITING** | **NA** | Last Updated: 2026-05-06
 
@@ -2377,6 +2405,30 @@ Chronic fatigue is enhanced by adapted physical activity (APA) programs. Patient
 **Link:** https://clinicaltrials.gov/study/NCT06170645
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Cognitive Muscular Therapy for Patients With Long-COVID and Breathing Pattern Disorder**  
+**NCT06503913** | **COMPLETED** | **NA** | Last Updated: 2026-05-06
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Cognitive Muscular Therapy
+- Breathing Visualisation
+
+**Sponsor:** University of Salford (OTHER)
+
+**Key Focus / Interventions:**  
+The aim of the study is to test a treatment known as "Cognitive Muscular Therapy (CMT)" for reducing breathlessness and improving autonomic function in patients with long-COVID.
+
+**Timeline:** Start: 2024-08-01 | Primary Completion: 2026-03-01 | Est. Completion: 2026-03-01
+**Enrollment:** 18 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06503913
+
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2548,29 +2600,6 @@ The Harnessing Optimism and Perseverance in the Face of Long COVID (HOPE-LC) pro
 **Extraction Date:** 2026-11-17
 
 ---
-**Study to Investigate the Efficacy of Abrocitinib in Adult Participants With Severe Fatigue From Post COVID Condition/Long COVID**  
-**NCT06597396** | **ACTIVE_NOT_RECRUITING** | **PHASE2** | Last Updated: 2026-04-20
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Abrocitinib
-
-**Sponsor:** Beth Israel Deaconess Medical Center (OTHER)
-
-**Key Focus / Interventions:**  
-The primary purpose of this phase 2a study is to compare the efficacy of abrocitinib to placebo in improving severe fatigue in non-hospitalized adults with symptomatic Post-COVID Condition (PCC) (also called Long COVID). We are also interested in learning if abrocitinib is effective in improving overall health status in people suffering from severe fatigue from PCC. Eligible participants with a confirmed history of COVID19 infection who also have...
-
-**Timeline:** Start: 2024-12-27 | Primary Completion: 2026-03-27 | Est. Completion: 2026-09-30
-**Enrollment:** 46 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06597396
-
-**Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Prospective, Open-label Study of Seraph 100 in Patients With Prolonged COVID (PC)**  
 **NCT06637800** | **WITHDRAWN** | **NA** | Last Updated: 2026-04-20
 
@@ -2594,28 +2623,25 @@ This study will use a prospective, open, single-arm design, in which a group of 
 **Extraction Date:** 2026-11-17
 
 ---
-**A Multicenter, Adaptive, Randomized, doublE-blinded, Placebo-controlled Study in Participants With Long COVID-19: The REVIVE Trial**  
-**NCT06128967** | **COMPLETED** | **PHASE3** | Last Updated: 2026-04-13
+**Study to Investigate the Efficacy of Abrocitinib in Adult Participants With Severe Fatigue From Post COVID Condition/Long COVID**  
+**NCT06597396** | **ACTIVE_NOT_RECRUITING** | **PHASE2** | Last Updated: 2026-04-20
 
-**Conditions:** Long COVID / PASC / ME/CFS
+**Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Fluvoxamine Maleate 100 Mg
-- Metformin
+- Abrocitinib
 
-**Sponsor:** Cardresearch (OTHER)
+**Sponsor:** Beth Israel Deaconess Medical Center (OTHER)
 
 **Key Focus / Interventions:**  
-IRB approval date 14-APR-2024 and public at https://plataformabrasil.saude.gov.br/login.jsf since IURB approval
+The primary purpose of this phase 2a study is to compare the efficacy of abrocitinib to placebo in improving severe fatigue in non-hospitalized adults with symptomatic Post-COVID Condition (PCC) (also called Long COVID). We are also interested in learning if abrocitinib is effective in improving overall health status in people suffering from severe fatigue from PCC. Eligible participants with a confirmed history of COVID19 infection who also have...
 
-Long COVID is a multi-systemic condition comprising often severe and persistent symptoms (longer than 12 weeks) that follow a known episode of COVID-19 and cannot be explained by another medical condition. This condition is observed in up to 15% of all individuals after an acute episode of COVID-19, even in those who had a mild and oli...
+**Timeline:** Start: 2024-12-27 | Primary Completion: 2026-03-27 | Est. Completion: 2026-09-30
+**Enrollment:** 46 (ACTUAL) | **Primary Purpose:** N/A
 
-**Timeline:** Start: 2023-10-18 | Primary Completion: 2025-07-01 | Est. Completion: 2025-08-01
-**Enrollment:** 399 (ACTUAL) | **Primary Purpose:** N/A
+**Link:** https://clinicaltrials.gov/study/NCT06597396
 
-**Link:** https://clinicaltrials.gov/study/NCT06128967
-
-**Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
+**Relevance Tags:** General | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2646,26 +2672,28 @@ Researchers will compare a structured rehabilitation program to informational su
 **Extraction Date:** 2026-11-17
 
 ---
-**Improving Attention in Individuals With Long COVID-19**  
-**NCT06503874** | **COMPLETED** | **NA** | Last Updated: 2026-04-02
+**A Multicenter, Adaptive, Randomized, doublE-blinded, Placebo-controlled Study in Participants With Long COVID-19: The REVIVE Trial**  
+**NCT06128967** | **COMPLETED** | **PHASE3** | Last Updated: 2026-04-13
 
-**Conditions:** Long COVID / PASC
+**Conditions:** Long COVID / PASC / ME/CFS
 
 **Therapeutic Agents Being Tested:**
-- Attention Training
-- Music Group
+- Fluvoxamine Maleate 100 Mg
+- Metformin
 
-**Sponsor:** Shirley Ryan AbilityLab (OTHER)
+**Sponsor:** Cardresearch (OTHER)
 
 **Key Focus / Interventions:**  
-This study is to find out if the Attention Processing Training program is a potential treatment for brain fog symptoms, reported by people with Long-Covid. Also investigating the feasibility of completing this program virtually.
+IRB approval date 14-APR-2024 and public at https://plataformabrasil.saude.gov.br/login.jsf since IURB approval
 
-**Timeline:** Start: 2024-03-22 | Primary Completion: 2026-03-13 | Est. Completion: 2026-03-13
-**Enrollment:** 58 (ACTUAL) | **Primary Purpose:** N/A
+Long COVID is a multi-systemic condition comprising often severe and persistent symptoms (longer than 12 weeks) that follow a known episode of COVID-19 and cannot be explained by another medical condition. This condition is observed in up to 15% of all individuals after an acute episode of COVID-19, even in those who had a mild and oli...
 
-**Link:** https://clinicaltrials.gov/study/NCT06503874
+**Timeline:** Start: 2023-10-18 | Primary Completion: 2025-07-01 | Est. Completion: 2025-08-01
+**Enrollment:** 399 (ACTUAL) | **Primary Purpose:** N/A
 
-**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+**Link:** https://clinicaltrials.gov/study/NCT06128967
+
+**Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 3 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2713,6 +2741,30 @@ Persistent viral infection with viral reservoirs and detection of circulating sp
 **Link:** https://clinicaltrials.gov/study/NCT06161688
 
 **Relevance Tags:** Persistence / Antiviral | Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Improving Attention in Individuals With Long COVID-19**  
+**NCT06503874** | **COMPLETED** | **NA** | Last Updated: 2026-04-02
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Attention Training
+- Music Group
+
+**Sponsor:** Shirley Ryan AbilityLab (OTHER)
+
+**Key Focus / Interventions:**  
+This study is to find out if the Attention Processing Training program is a potential treatment for brain fog symptoms, reported by people with Long-Covid. Also investigating the feasibility of completing this program virtually.
+
+**Timeline:** Start: 2024-03-22 | Primary Completion: 2026-03-13 | Est. Completion: 2026-03-13
+**Enrollment:** 58 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06503874
+
+**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2767,30 +2819,6 @@ Individuals with ME/CFS experience profound exercise intolerance and post-exerti
 **Extraction Date:** 2026-11-17
 
 ---
-**RECOVER-VITAL: Platform Protocol, Appendix to Measure the Effects of Paxlovid on Long COVID Symptoms**  
-**NCT05965726** | **COMPLETED** | **PHASE2** | Last Updated: 2026-03-27
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Paxlovid (Nirmatrelvir/Ritonavir)
-- Ritonavir
-
-**Sponsor:** Kanecia Obie Zimmerman (OTHER)
-
-**Key Focus / Interventions:**  
-This is an appendix of master protocol (NCT05595369) designed to be flexible so that it is suitable for a wide range of settings within health care systems and in community settings where it can be integrated into COVID-19 programs and subsequent treatment plans. This sub-study is a prospective, multi-center, double-blind, randomized, controlled trial evaluating nirmatrelvir/ritonavir (Paxlovid) in two dosing durations for the treatment of Post-A...
-
-**Timeline:** Start: 2023-07-26 | Primary Completion: 2024-12-05 | Est. Completion: 2025-03-13
-**Enrollment:** 964 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05965726
-
-**Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Assessing Safety of Coronavirus Infection (COVID-19) Messenger RNA (mRNA) Vaccine Administration in the Setting of a Previous Adverse Reaction**  
 **NCT05212610** | **COMPLETED** | **PHASE4** | Last Updated: 2026-03-27
 
@@ -2811,6 +2839,30 @@ This study will evaluate the safety of administering an additional dose of an mR
 **Link:** https://clinicaltrials.gov/study/NCT05212610
 
 **Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**RECOVER-VITAL: Platform Protocol, Appendix to Measure the Effects of Paxlovid on Long COVID Symptoms**  
+**NCT05965726** | **COMPLETED** | **PHASE2** | Last Updated: 2026-03-27
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Paxlovid (Nirmatrelvir/Ritonavir)
+- Ritonavir
+
+**Sponsor:** Kanecia Obie Zimmerman (OTHER)
+
+**Key Focus / Interventions:**  
+This is an appendix of master protocol (NCT05595369) designed to be flexible so that it is suitable for a wide range of settings within health care systems and in community settings where it can be integrated into COVID-19 programs and subsequent treatment plans. This sub-study is a prospective, multi-center, double-blind, randomized, controlled trial evaluating nirmatrelvir/ritonavir (Paxlovid) in two dosing durations for the treatment of Post-A...
+
+**Timeline:** Start: 2023-07-26 | Primary Completion: 2024-12-05 | Est. Completion: 2025-03-13
+**Enrollment:** 964 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05965726
+
+**Relevance Tags:** Immunomodulatory | Persistence / Antiviral | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -2972,29 +3024,6 @@ Interventions will las...
 **Extraction Date:** 2026-11-17
 
 ---
-**An Open-label, Clinical Feasibility Study of the Efficacy of Remdesivir for Long-COVID.**  
-**NCT05911906** | **COMPLETED** | **PHASE4** | Last Updated: 2026-02-20
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Remdesivir
-
-**Sponsor:** University of Derby (OTHER)
-
-**Key Focus / Interventions:**  
-Following an infection with Severe Acute Respiratory Syndrome coronavirus 2 (SARS-CoV2), one in ten people will experience persisting symptoms, or develop symptoms which can last for months and even years. These symptoms affect people in different ways and have been demonstrated to broadly impact physical, mental, and cognitive health. This is called Long COVID. Currently, there are no treatments available to address the issues that patients expe...
-
-**Timeline:** Start: 2024-10-08 | Primary Completion: 2025-09-17 | Est. Completion: 2025-09-17
-**Enrollment:** 73 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05911906
-
-**Relevance Tags:** Persistence / Antiviral | Neurological / Autonomic | Phase 4 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **HOBSCOTCH for People With Post Acute COVID-19 Syndrome (PACS)**  
 **NCT06391489** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-02-20
 
@@ -3020,6 +3049,29 @@ Will people with PACS experience improved quality of life similar to that found 
 **Link:** https://clinicaltrials.gov/study/NCT06391489
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**An Open-label, Clinical Feasibility Study of the Efficacy of Remdesivir for Long-COVID.**  
+**NCT05911906** | **COMPLETED** | **PHASE4** | Last Updated: 2026-02-20
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Remdesivir
+
+**Sponsor:** University of Derby (OTHER)
+
+**Key Focus / Interventions:**  
+Following an infection with Severe Acute Respiratory Syndrome coronavirus 2 (SARS-CoV2), one in ten people will experience persisting symptoms, or develop symptoms which can last for months and even years. These symptoms affect people in different ways and have been demonstrated to broadly impact physical, mental, and cognitive health. This is called Long COVID. Currently, there are no treatments available to address the issues that patients expe...
+
+**Timeline:** Start: 2024-10-08 | Primary Completion: 2025-09-17 | Est. Completion: 2025-09-17
+**Enrollment:** 73 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05911906
+
+**Relevance Tags:** Persistence / Antiviral | Neurological / Autonomic | Phase 4 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -3123,28 +3175,27 @@ Chronic olfactory dysfunction from the COVID-19 pandemic is a growing public hea
 **Extraction Date:** 2026-11-17
 
 ---
-**A Trial of Shengmai Liquid for Long COVID Fatigue.**  
-**NCT06980636** | **RECRUITING** | **PHASE4** | Last Updated: 2026-02-09
+**Clinical Trial on a Natural Compound to Improve Chronic Inflammation After SARS-CoV-2 Infection**  
+**NCT07397910** | **NOT_YET_RECRUITING** | **NA** | Last Updated: 2026-02-09
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Shengmai Liquid
+- Experimental Product
+- Physical Exercise
+- No Physical Exercise
 
-**Sponsor:** Beijing University of Chinese Medicine (OTHER)
+**Sponsor:** Universidad Católica San Antonio de Murcia (OTHER)
 
 **Key Focus / Interventions:**  
-The goal of this clinical trial is to learn if Shengmai liquid works to treat Long Covid fatigue. It will also learn about the safety of Shengmai liquid. The main questions it aims to answer are:
+A controlled, randomized clinical trial is proposed to demonstrate the effectiveness of the experimental product in controlling hepato-pulmonary inflammation and neurovascular encephalic inflammation, which may constitute the etiopathogenic basis of persistent COVID. In addition, an individualized training program will be implemented for each participant in order to improve chronic symptoms and, consequently, their quality of life.
 
-* Dose the Shengmai liquid will reduce the level of fatigue in the participants and reduce the fatigue scale score of the participants?
-* Dose the Shengmai liquid will reduce the level of anxiety and depression in the participants and improve the sleep ...
+**Timeline:** Start: 2026-02-23 | Primary Completion: 2026-07-06 | Est. Completion: 2026-08-03
+**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Timeline:** Start: 2025-12-01 | Primary Completion: 2026-10-30 | Est. Completion: 2026-11-30
-**Enrollment:** 100 (ESTIMATED) | **Primary Purpose:** N/A
+**Link:** https://clinicaltrials.gov/study/NCT07397910
 
-**Link:** https://clinicaltrials.gov/study/NCT06980636
-
-**Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -3172,6 +3223,32 @@ This single-center, randomized, controlled, single-blind clinical trial evaluate
 **Extraction Date:** 2026-11-17
 
 ---
+**A Trial of Shengmai Liquid for Long COVID Fatigue.**  
+**NCT06980636** | **RECRUITING** | **PHASE4** | Last Updated: 2026-02-09
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Shengmai Liquid
+
+**Sponsor:** Beijing University of Chinese Medicine (OTHER)
+
+**Key Focus / Interventions:**  
+The goal of this clinical trial is to learn if Shengmai liquid works to treat Long Covid fatigue. It will also learn about the safety of Shengmai liquid. The main questions it aims to answer are:
+
+* Dose the Shengmai liquid will reduce the level of fatigue in the participants and reduce the fatigue scale score of the participants?
+* Dose the Shengmai liquid will reduce the level of anxiety and depression in the participants and improve the sleep ...
+
+**Timeline:** Start: 2025-12-01 | Primary Completion: 2026-10-30 | Est. Completion: 2026-11-30
+**Enrollment:** 100 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06980636
+
+**Relevance Tags:** General | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Inspiratory Muscle Pressure and Diaphragmatic Strength in Women With Long COVID-19: A Pressure Biofeedback-Guided Training Study**  
 **NCT07397130** | **COMPLETED** | **NA** | Last Updated: 2026-02-09
 
@@ -3193,31 +3270,6 @@ In women after COVID-19, ...
 **Link:** https://clinicaltrials.gov/study/NCT07397130
 
 **Relevance Tags:** Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**Clinical Trial on a Natural Compound to Improve Chronic Inflammation After SARS-CoV-2 Infection**  
-**NCT07397910** | **NOT_YET_RECRUITING** | **NA** | Last Updated: 2026-02-09
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Experimental Product
-- Physical Exercise
-- No Physical Exercise
-
-**Sponsor:** Universidad Católica San Antonio de Murcia (OTHER)
-
-**Key Focus / Interventions:**  
-A controlled, randomized clinical trial is proposed to demonstrate the effectiveness of the experimental product in controlling hepato-pulmonary inflammation and neurovascular encephalic inflammation, which may constitute the etiopathogenic basis of persistent COVID. In addition, an individualized training program will be implemented for each participant in order to improve chronic symptoms and, consequently, their quality of life.
-
-**Timeline:** Start: 2026-02-23 | Primary Completion: 2026-07-06 | Est. Completion: 2026-08-03
-**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07397910
-
-**Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -3814,30 +3866,6 @@ This proposal aims to understand the neurobiological mechanisms of fatigue in in
 **Extraction Date:** 2026-11-17
 
 ---
-**Modulation of the Brain Fog Scale by Eicosapentaenoic Acid Monoglycerides (MAG-EPA).**  
-**NCT06695910** | **RECRUITING** | **PHASE4** | Last Updated: 2025-12-11
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Monoglyceride Eicosapentaenoic Acid
-- Sunflower Oil
-
-**Sponsor:** Samuel Fortin (INDUSTRY)
-
-**Key Focus / Interventions:**  
-A growing body of studies shows that omega-3s act directly in molecular signaling pathways that reduce inflammation and are thought to have a positive effect on cognitive health. Brain fog is a term that has been popularized in the medical world in the wake of the COVID-19 pandemic. A significant proportion of patients with long COVID reported having cognitive sequelae that were like fogginess. It is defined as a cognitive impairment with charact...
-
-**Timeline:** Start: 2024-11-06 | Primary Completion: 2027-05-01 | Est. Completion: 2027-07-01
-**Enrollment:** 48 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06695910
-
-**Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 4 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
-
-**Extraction Date:** 2026-11-17
-
----
 **Design and Validation of Innovative Strategies Based on Dual-Task Approach**  
 **NCT07254377** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2025-12-11
 
@@ -3858,6 +3886,30 @@ People affected by Stroke, Multiple Sclerosis (MS), and Parkinson's disease (PD)
 **Link:** https://clinicaltrials.gov/study/NCT07254377
 
 **Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Modulation of the Brain Fog Scale by Eicosapentaenoic Acid Monoglycerides (MAG-EPA).**  
+**NCT06695910** | **RECRUITING** | **PHASE4** | Last Updated: 2025-12-11
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Monoglyceride Eicosapentaenoic Acid
+- Sunflower Oil
+
+**Sponsor:** Samuel Fortin (INDUSTRY)
+
+**Key Focus / Interventions:**  
+A growing body of studies shows that omega-3s act directly in molecular signaling pathways that reduce inflammation and are thought to have a positive effect on cognitive health. Brain fog is a term that has been popularized in the medical world in the wake of the COVID-19 pandemic. A significant proportion of patients with long COVID reported having cognitive sequelae that were like fogginess. It is defined as a cognitive impairment with charact...
+
+**Timeline:** Start: 2024-11-06 | Primary Completion: 2027-05-01 | Est. Completion: 2027-07-01
+**Enrollment:** 48 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06695910
+
+**Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 4 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
 **Extraction Date:** 2026-11-17
 
@@ -5132,29 +5184,6 @@ The aim of our study is to investigate the effectiveness of telerehabilitation i
 **Extraction Date:** 2026-11-17
 
 ---
-**Post-COVID-19 Chronic Fatigue Syndrome**  
-**NCT05642923** | **COMPLETED** | **PHASE4** | Last Updated: 2025-03-10
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Synthetic Vitamin B1
-
-**Sponsor:** ClinAmygate (OTHER)
-
-**Key Focus / Interventions:**  
-Fatigue is recognized as one of the most commonly presented long-term complaints in individuals previously infected with SARS-CoV-2.
-
-**Timeline:** Start: 2023-01-08 | Primary Completion: 2024-06-01 | Est. Completion: 2025-03-05
-**Enrollment:** 528 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05642923
-
-**Relevance Tags:** General | Phase 4 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Effectiveness of Testofen Compared to Placebo on Long COVID Symptoms**  
 **NCT05795816** | **COMPLETED** | **PHASE3** | Last Updated: 2025-03-10
 
@@ -5175,6 +5204,29 @@ This is a double blind, randomised, placebo-controlled trial to evaluate orally-
 **Link:** https://clinicaltrials.gov/study/NCT05795816
 
 **Relevance Tags:** General | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Industry
+
+**Extraction Date:** 2026-11-17
+
+---
+**Post-COVID-19 Chronic Fatigue Syndrome**  
+**NCT05642923** | **COMPLETED** | **PHASE4** | Last Updated: 2025-03-10
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Synthetic Vitamin B1
+
+**Sponsor:** ClinAmygate (OTHER)
+
+**Key Focus / Interventions:**  
+Fatigue is recognized as one of the most commonly presented long-term complaints in individuals previously infected with SARS-CoV-2.
+
+**Timeline:** Start: 2023-01-08 | Primary Completion: 2024-06-01 | Est. Completion: 2025-03-05
+**Enrollment:** 528 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05642923
+
+**Relevance Tags:** General | Phase 4 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -5202,6 +5254,29 @@ In older age, reduced mobility is associated with an increased risk of reduced q
 **Extraction Date:** 2026-11-17
 
 ---
+**A Web-based Platform to Improve Physical Function, Nutrition, and Mindfulness in Patients With Long COVID**  
+**NCT05422924** | **COMPLETED** | **NA** | Last Updated: 2025-03-06
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Web-Based Platform.
+
+**Sponsor:** University of Alberta (OTHER)
+
+**Key Focus / Interventions:**  
+Patients with COVID-19 may experience prolonged physical and psychological symptoms after weeks or months of the infection. This may be caused by a combination of factors including poor nutrition, low physical activity, and lack of emotional support. Leading to poor overall health and low quality of life. This evidence indicated that people with long COVID-19 need a personalized intervention. Our objective is to determine if the use of an online ...
+
+**Timeline:** Start: 2023-08-25 | Primary Completion: 2023-10-31 | Est. Completion: 2025-01-31
+**Enrollment:** 45 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05422924
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Evaluating Immunomodulatory Interventions in Post-Acute Sequelae of SARS-CoV-2 InfEction**  
 **NCT06597682** | **NOT_YET_RECRUITING** | **NA** | Last Updated: 2025-03-06
 
@@ -5224,29 +5299,6 @@ This study is a prospective, randomized controlled, basket trial. Patients diagn
 **Link:** https://clinicaltrials.gov/study/NCT06597682
 
 **Relevance Tags:** Immunomodulatory | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**A Web-based Platform to Improve Physical Function, Nutrition, and Mindfulness in Patients With Long COVID**  
-**NCT05422924** | **COMPLETED** | **NA** | Last Updated: 2025-03-06
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Web-Based Platform.
-
-**Sponsor:** University of Alberta (OTHER)
-
-**Key Focus / Interventions:**  
-Patients with COVID-19 may experience prolonged physical and psychological symptoms after weeks or months of the infection. This may be caused by a combination of factors including poor nutrition, low physical activity, and lack of emotional support. Leading to poor overall health and low quality of life. This evidence indicated that people with long COVID-19 need a personalized intervention. Our objective is to determine if the use of an online ...
-
-**Timeline:** Start: 2023-08-25 | Primary Completion: 2023-10-31 | Est. Completion: 2025-01-31
-**Enrollment:** 45 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05422924
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -5417,29 +5469,6 @@ The DEFEND trial will be the world's first clinical trial to study the effective
 **Extraction Date:** 2026-11-17
 
 ---
-**Cognitive Rehabilitation for Long COVID**  
-**NCT05676047** | **COMPLETED** | **NA** | Last Updated: 2025-01-23
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Cognitive Rehabilitation
-
-**Sponsor:** McMaster University (OTHER)
-
-**Key Focus / Interventions:**  
-The investigators are comparing two different methods for helping adults with Long Coronavirus (COVID) also known as Post-Coronavirus Syndrome or Post-Coronavirus Condition manage everyday cognitive challenges. Cognitive rehabilitation is a type of therapy that helps people who have challenges with everyday thinking because of a brain injury. One of the investigators on this project along with colleagues in the United States (US) have developed a...
-
-**Timeline:** Start: 2023-05-01 | Primary Completion: 2025-01-21 | Est. Completion: 2025-01-21
-**Enrollment:** 100 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05676047
-
-**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Research of the Long-COVID-19 Syndrome in the Children**  
 **NCT05817006** | **COMPLETED** | **NA** | Last Updated: 2025-01-23
 
@@ -5459,6 +5488,29 @@ During the pandemic of the new coronavirus infection COVID-19 in the world commu
 **Link:** https://clinicaltrials.gov/study/NCT05817006
 
 **Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Cognitive Rehabilitation for Long COVID**  
+**NCT05676047** | **COMPLETED** | **NA** | Last Updated: 2025-01-23
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Cognitive Rehabilitation
+
+**Sponsor:** McMaster University (OTHER)
+
+**Key Focus / Interventions:**  
+The investigators are comparing two different methods for helping adults with Long Coronavirus (COVID) also known as Post-Coronavirus Syndrome or Post-Coronavirus Condition manage everyday cognitive challenges. Cognitive rehabilitation is a type of therapy that helps people who have challenges with everyday thinking because of a brain injury. One of the investigators on this project along with colleagues in the United States (US) have developed a...
+
+**Timeline:** Start: 2023-05-01 | Primary Completion: 2025-01-21 | Est. Completion: 2025-01-21
+**Enrollment:** 100 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05676047
+
+**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -5581,6 +5633,29 @@ This T1 proof of concept trial is designed to test the Narrative Intervention fo
 **Extraction Date:** 2026-11-17
 
 ---
+**ImPROving Quality of LIFe in the Long COVID Patient**  
+**NCT05823896** | **COMPLETED** | **PHASE2** | Last Updated: 2024-12-04
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Paxlovid (Nirmatrelvir/Ritonavir)
+
+**Sponsor:** Karolinska Institutet (OTHER)
+
+**Key Focus / Interventions:**  
+The purpose of this study is to investigate the efficacy of orally administered nirmatrelvir/ritonavir compared with placebo/ritonavir to improve quality of life in non-hospitalized adult participants suffering from post-acute COVID-19 syndrome.
+
+**Timeline:** Start: 2023-05-01 | Primary Completion: 2024-11-28 | Est. Completion: 2024-11-28
+**Enrollment:** 219 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05823896
+
+**Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Obesity, Insulin Resistance, and PASC: Persistent SARS-CoV-2**  
 **NCT05833217** | **RECRUITING** | **NA** | Last Updated: 2024-12-04
 
@@ -5601,29 +5676,6 @@ The investigators are studying the pathophysiologic links between obesity, insul
 **Link:** https://clinicaltrials.gov/study/NCT05833217
 
 **Relevance Tags:** Persistence / Antiviral | Anti-inflammatory | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**ImPROving Quality of LIFe in the Long COVID Patient**  
-**NCT05823896** | **COMPLETED** | **PHASE2** | Last Updated: 2024-12-04
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Paxlovid (Nirmatrelvir/Ritonavir)
-
-**Sponsor:** Karolinska Institutet (OTHER)
-
-**Key Focus / Interventions:**  
-The purpose of this study is to investigate the efficacy of orally administered nirmatrelvir/ritonavir compared with placebo/ritonavir to improve quality of life in non-hospitalized adult participants suffering from post-acute COVID-19 syndrome.
-
-**Timeline:** Start: 2023-05-01 | Primary Completion: 2024-11-28 | Est. Completion: 2024-11-28
-**Enrollment:** 219 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05823896
-
-**Relevance Tags:** Neurological / Autonomic | Anti-inflammatory | Phase 2 | Large (200-999 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -5699,6 +5751,29 @@ This decentralized trial is a Phase 2, 1:1 randomized, double-blind, superiority
 **Extraction Date:** 2026-11-17
 
 ---
+**Virtual Physical Rehabilitation for Patients Living with Long COVID**  
+**NCT05298878** | **COMPLETED** | **NA** | Last Updated: 2024-11-27
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Intervention Group: Virtual Home-Based Rehabilitation Plus Usual Outpatient Care
+
+**Sponsor:** McGill University Health Centre/Research Institute of the McGill University Health Centre (OTHER)
+
+**Key Focus / Interventions:**  
+The purpose of this study is to investigate whether a timely, virtual home-based physical rehabilitation program for patients living with long COVID can improve functional mobility compared to usual care.
+
+**Timeline:** Start: 2022-08-01 | Primary Completion: 2023-09-22 | Est. Completion: 2024-03-28
+**Enrollment:** 132 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05298878
+
+**Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Covid-19 Long Haul Preventative and Health Promotion Care Clinical Trial Acceleration Program.**  
 **NCT06441955** | **RECRUITING** | **PHASE4** | Last Updated: 2024-11-27
 
@@ -5724,29 +5799,6 @@ Investigators are conducting a study on alternative treatments for patients who 
 **Link:** https://clinicaltrials.gov/study/NCT06441955
 
 **Relevance Tags:** Persistence / Antiviral | Neurological / Autonomic | Phase 4 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Network
-
-**Extraction Date:** 2026-11-17
-
----
-**Virtual Physical Rehabilitation for Patients Living with Long COVID**  
-**NCT05298878** | **COMPLETED** | **NA** | Last Updated: 2024-11-27
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Intervention Group: Virtual Home-Based Rehabilitation Plus Usual Outpatient Care
-
-**Sponsor:** McGill University Health Centre/Research Institute of the McGill University Health Centre (OTHER)
-
-**Key Focus / Interventions:**  
-The purpose of this study is to investigate whether a timely, virtual home-based physical rehabilitation program for patients living with long COVID can improve functional mobility compared to usual care.
-
-**Timeline:** Start: 2022-08-01 | Primary Completion: 2023-09-22 | Est. Completion: 2024-03-28
-**Enrollment:** 132 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05298878
-
-**Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -5961,29 +6013,6 @@ This open-label study will assess if lithium dosages of 30-45mg/day are associat
 **Extraction Date:** 2026-11-17
 
 ---
-**Utilizing Novel Blood RNA Biomarkers as a Diagnostic Tool in the Identification of Long COVID-19**  
-**NCT06311435** | **UNKNOWN** | **NA** | Last Updated: 2024-10-18
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Rna Biomarker Blood Test
-
-**Sponsor:** MaxWell Clinic, PLC (INDUSTRY)
-
-**Key Focus / Interventions:**  
-The Primary objective of this study is to determine, using unblinded samples, if it is possible to develop an algorithm for the classification of specific blood RNA from patients with long COVID together and separately from the apparent health normal controls and other medical conditions that share the signs and symptoms of long COVID.
-
-**Timeline:** Start: 2024-03-15 | Primary Completion: 2026-03-15 | Est. Completion: 2026-03-15
-**Enrollment:** 224 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06311435
-
-**Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Industry
-
-**Extraction Date:** 2026-11-17
-
----
 **Randomised Study to Investigate the Effectiveness of Acupuncture for the Relief of Long COVID-19 Related Fatigue**  
 **NCT05212688** | **COMPLETED** | **PHASE2** | Last Updated: 2024-10-18
 
@@ -6003,6 +6032,29 @@ The Covid pandemic has left us with a significant number of people suffering fro
 **Link:** https://clinicaltrials.gov/study/NCT05212688
 
 **Relevance Tags:** General | Phase 2 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Utilizing Novel Blood RNA Biomarkers as a Diagnostic Tool in the Identification of Long COVID-19**  
+**NCT06311435** | **UNKNOWN** | **NA** | Last Updated: 2024-10-18
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Rna Biomarker Blood Test
+
+**Sponsor:** MaxWell Clinic, PLC (INDUSTRY)
+
+**Key Focus / Interventions:**  
+The Primary objective of this study is to determine, using unblinded samples, if it is possible to develop an algorithm for the classification of specific blood RNA from patients with long COVID together and separately from the apparent health normal controls and other medical conditions that share the signs and symptoms of long COVID.
+
+**Timeline:** Start: 2024-03-15 | Primary Completion: 2026-03-15 | Est. Completion: 2026-03-15
+**Enrollment:** 224 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06311435
+
+**Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Industry
 
 **Extraction Date:** 2026-11-17
 
@@ -6312,30 +6364,6 @@ This study will assess two options to help patients better manage the cognitive 
 **Extraction Date:** 2026-11-17
 
 ---
-**Glutamatergic Modulation as a Treatment for Depressive Symptoms Among Patients With Post-acute Sequelae of COVID (PASC): A Pilot Trial**  
-**NCT05690503** | **ACTIVE_NOT_RECRUITING** | **PHASE2** | Last Updated: 2024-07-16
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Ci-581A
-- Ci-581B
-
-**Sponsor:** New York State Psychiatric Institute (OTHER)
-
-**Key Focus / Interventions:**  
-Post-acute sequelae of SARS-CoV2 (PASC), colloquially known as "long-COVID," is thought to affect between 10-30% of all COVID-19 survivors. Patients with PASC also report worsening behavioral health symptoms over time that include new-onset depression, anxiety, and even suicidal behavior. The purpose of this randomized, double-blind, controlled trial is to test the efficacy of a glutamate modulator among PASC patients suffering from new-onset or ...
-
-**Timeline:** Start: 2023-03-20 | Primary Completion: 2025-06-30 | Est. Completion: 2025-12-31
-**Enrollment:** 12 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05690503
-
-**Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Transcutaneous Electrical Nerve Stimulation (TENS) in Patients With Postacute Sequelae of Sars-CoV-2**  
 **NCT05200858** | **COMPLETED** | **NA** | Last Updated: 2024-07-16
 
@@ -6356,6 +6384,30 @@ The purpose of the pilot study is to examine acceptability and proof of concept 
 **Link:** https://clinicaltrials.gov/study/NCT05200858
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Glutamatergic Modulation as a Treatment for Depressive Symptoms Among Patients With Post-acute Sequelae of COVID (PASC): A Pilot Trial**  
+**NCT05690503** | **ACTIVE_NOT_RECRUITING** | **PHASE2** | Last Updated: 2024-07-16
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Ci-581A
+- Ci-581B
+
+**Sponsor:** New York State Psychiatric Institute (OTHER)
+
+**Key Focus / Interventions:**  
+Post-acute sequelae of SARS-CoV2 (PASC), colloquially known as "long-COVID," is thought to affect between 10-30% of all COVID-19 survivors. Patients with PASC also report worsening behavioral health symptoms over time that include new-onset depression, anxiety, and even suicidal behavior. The purpose of this randomized, double-blind, controlled trial is to test the efficacy of a glutamate modulator among PASC patients suffering from new-onset or ...
+
+**Timeline:** Start: 2023-03-20 | Primary Completion: 2025-06-30 | Est. Completion: 2025-12-31
+**Enrollment:** 12 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05690503
+
+**Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -6693,26 +6745,28 @@ This study is a Phase 2, 24-week, randomized, prospective, double-blind, multice
 **Extraction Date:** 2026-11-17
 
 ---
-**The Efficacy of Aerobic Exercise in the Rehabilitation of Patients With COVID-19-Related Myocardial Injury**  
-**NCT06404411** | **UNKNOWN** | **NA** | Last Updated: 2024-05-13
+**Prevention of Long Covid Syndrome**  
+**NCT05793736** | **COMPLETED** | **NA** | Last Updated: 2024-05-13
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Assigned Interventions
-- Conventional Rehabilitation
+- Biofeedback Training
+- Treatment As Usual
 
-**Sponsor:** Chengdu Sport University (OTHER)
+**Sponsor:** University of Cagliari (OTHER)
 
 **Key Focus / Interventions:**  
-A study of the efficacy of aerobic exercise based on cardiopulmonary exercise test in the rehabilitation of patients with COVID-19-related myocardial injury
+Biofeedback equipment is classified by the Food and Drug Administration (FDA) as medical device class II and this type of equipment/treatment has shown evidence regarding stress management in post-Covid-19 syndrome.
 
-**Timeline:** Start: 2024-06-30 | Primary Completion: 2025-06-30 | Est. Completion: 2025-12-30
-**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
+The main objective of the study is to verify the feasibility of an HVR biofeedback training protocol in patients with long covid, and also to verify improvement induced by the technique in relation to: cognitive performance; pain per...
 
-**Link:** https://clinicaltrials.gov/study/NCT06404411
+**Timeline:** Start: 2023-02-02 | Primary Completion: 2023-10-30 | Est. Completion: 2023-10-30
+**Enrollment:** 17 (ACTUAL) | **Primary Purpose:** N/A
 
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Link:** https://clinicaltrials.gov/study/NCT05793736
+
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -6740,28 +6794,26 @@ Long COVID patients experience high symptom burden for many months after initial
 **Extraction Date:** 2026-11-17
 
 ---
-**Prevention of Long Covid Syndrome**  
-**NCT05793736** | **COMPLETED** | **NA** | Last Updated: 2024-05-13
+**The Efficacy of Aerobic Exercise in the Rehabilitation of Patients With COVID-19-Related Myocardial Injury**  
+**NCT06404411** | **UNKNOWN** | **NA** | Last Updated: 2024-05-13
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Biofeedback Training
-- Treatment As Usual
+- Assigned Interventions
+- Conventional Rehabilitation
 
-**Sponsor:** University of Cagliari (OTHER)
+**Sponsor:** Chengdu Sport University (OTHER)
 
 **Key Focus / Interventions:**  
-Biofeedback equipment is classified by the Food and Drug Administration (FDA) as medical device class II and this type of equipment/treatment has shown evidence regarding stress management in post-Covid-19 syndrome.
+A study of the efficacy of aerobic exercise based on cardiopulmonary exercise test in the rehabilitation of patients with COVID-19-related myocardial injury
 
-The main objective of the study is to verify the feasibility of an HVR biofeedback training protocol in patients with long covid, and also to verify improvement induced by the technique in relation to: cognitive performance; pain per...
+**Timeline:** Start: 2024-06-30 | Primary Completion: 2025-06-30 | Est. Completion: 2025-12-30
+**Enrollment:** 40 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Timeline:** Start: 2023-02-02 | Primary Completion: 2023-10-30 | Est. Completion: 2023-10-30
-**Enrollment:** 17 (ACTUAL) | **Primary Purpose:** N/A
+**Link:** https://clinicaltrials.gov/study/NCT06404411
 
-**Link:** https://clinicaltrials.gov/study/NCT05793736
-
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -7380,6 +7432,29 @@ According to WHO, current evidence suggests some people experience a variety of 
 **Extraction Date:** 2026-11-17
 
 ---
+**Inspiratory Muscle Training in People With Long COVID-19- A Pilot Investigation.**  
+**NCT06091358** | **UNKNOWN** | **NA** | Last Updated: 2023-11-30
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Pro2
+
+**Sponsor:** University of Bath (OTHER)
+
+**Key Focus / Interventions:**  
+This pilot investigation will recruit people with Long COVID to participate in a 4 week individualized inspiratory muscle training intervention with pre and post spirometry testing and additional functional outcomes to assess the effectiveness of the intervention.
+
+**Timeline:** Start: 2023-10-20 | Primary Completion: 2024-03-29 | Est. Completion: 2024-04-20
+**Enrollment:** 16 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT06091358
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Enhanced External Counterpulsation to Treat Long COVID-19 Fatigue**  
 **NCT05668039** | **UNKNOWN** | **NA** | Last Updated: 2023-11-30
 
@@ -7404,29 +7479,6 @@ The main question\[s\] it aims to answer are:
 **Link:** https://clinicaltrials.gov/study/NCT05668039
 
 **Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
-
-**Extraction Date:** 2026-11-17
-
----
-**Inspiratory Muscle Training in People With Long COVID-19- A Pilot Investigation.**  
-**NCT06091358** | **UNKNOWN** | **NA** | Last Updated: 2023-11-30
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Pro2
-
-**Sponsor:** University of Bath (OTHER)
-
-**Key Focus / Interventions:**  
-This pilot investigation will recruit people with Long COVID to participate in a 4 week individualized inspiratory muscle training intervention with pre and post spirometry testing and additional functional outcomes to assess the effectiveness of the intervention.
-
-**Timeline:** Start: 2023-10-20 | Primary Completion: 2024-03-29 | Est. Completion: 2024-04-20
-**Enrollment:** 16 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT06091358
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -7845,6 +7897,29 @@ The digital health solution is designed to be used for 3 months, and includes a 
 **Extraction Date:** 2026-11-17
 
 ---
+**Effectiveness of a Psychological Intervention on Mental Health and Sleep.**  
+**NCT05951803** | **UNKNOWN** | **NA** | Last Updated: 2023-07-19
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Brief Behavioral Intervention In Insomnia
+
+**Sponsor:** Hospital General de Mexico (OTHER_GOV)
+
+**Key Focus / Interventions:**  
+Background: The COVID-19 pandemic represented a global public health problem that brought considerable consequences to the physical and mental health of the entire population. Objective: To compare the effectiveness of the brief behavioral intervention for insomnia by teleconsultation (BBII-TC) with the brief behavioral intervention for face-to-face insomnia (BBII) on symptoms of insomnia, anxiety, depression, quality of sleep and life in a sampl...
+
+**Timeline:** Start: 2023-06-23 | Primary Completion: 2023-12-20 | Est. Completion: 2024-02-01
+**Enrollment:** 36 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05951803
+
+**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
+
+**Extraction Date:** 2026-11-17
+
+---
 **Exercise and Post-COVID/ Long-COVID: Effects of Different Training Modalities on Various Parameters in People Affected by the Sequelae of COVID-19**  
 **NCT05204511** | **COMPLETED** | **NA** | Last Updated: 2023-07-19
 
@@ -7865,29 +7940,6 @@ The current COVID-19 pandemic is the most severe health crisis of the 21st centu
 **Link:** https://clinicaltrials.gov/study/NCT05204511
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**Effectiveness of a Psychological Intervention on Mental Health and Sleep.**  
-**NCT05951803** | **UNKNOWN** | **NA** | Last Updated: 2023-07-19
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Brief Behavioral Intervention In Insomnia
-
-**Sponsor:** Hospital General de Mexico (OTHER_GOV)
-
-**Key Focus / Interventions:**  
-Background: The COVID-19 pandemic represented a global public health problem that brought considerable consequences to the physical and mental health of the entire population. Objective: To compare the effectiveness of the brief behavioral intervention for insomnia by teleconsultation (BBII-TC) with the brief behavioral intervention for face-to-face insomnia (BBII) on symptoms of insomnia, anxiety, depression, quality of sleep and life in a sampl...
-
-**Timeline:** Start: 2023-06-23 | Primary Completion: 2023-12-20 | Est. Completion: 2024-02-01
-**Enrollment:** 36 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05951803
-
-**Relevance Tags:** General | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other Gov
 
 **Extraction Date:** 2026-11-17
 
@@ -8157,32 +8209,6 @@ Dysautonomia in post-covid-19 condition appears to affect a significant number o
 **Extraction Date:** 2026-11-17
 
 ---
-**Osteopathy and Physiotherapy Compared to Physiotherapy Alone on Fatigue and Functional Status in Long COVID**  
-**NCT05012826** | **UNKNOWN** | **NA** | Last Updated: 2023-05-10
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Osteopathic Manipulative Treatment In Addition To Physiotherapy
-- Physiotherapy
-
-**Sponsor:** Centro Universitário Augusto Motta (OTHER)
-
-**Key Focus / Interventions:**  
-Background: Fatigue is among the most common symptoms of the long-term effects of coronavirus (long COVID). This study aims to compare the effectiveness of osteopathic manipulative treatment (OMT) combined with physiotherapy treatment (PT) compared to PT alone on fatigue and functional limitations after two months post randomization in adults with long COVID.
-
-Methods: This is a study protocol for a two-arm, assessor-blinded, pragmatic randomized...
-
-**Timeline:** Start: 2021-09-20 | Primary Completion: 2023-06-06 | Est. Completion: 2023-07-06
-**Enrollment:** 104 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05012826
-
-**Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Amygdala Insula Retraining in the Management of Long COVID Symptoms**  
 **NCT05851846** | **UNKNOWN** | **NA** | Last Updated: 2023-05-10
 
@@ -8207,6 +8233,32 @@ Our research questions include
 **Link:** https://clinicaltrials.gov/study/NCT05851846
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Fed
+
+**Extraction Date:** 2026-11-17
+
+---
+**Osteopathy and Physiotherapy Compared to Physiotherapy Alone on Fatigue and Functional Status in Long COVID**  
+**NCT05012826** | **UNKNOWN** | **NA** | Last Updated: 2023-05-10
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Osteopathic Manipulative Treatment In Addition To Physiotherapy
+- Physiotherapy
+
+**Sponsor:** Centro Universitário Augusto Motta (OTHER)
+
+**Key Focus / Interventions:**  
+Background: Fatigue is among the most common symptoms of the long-term effects of coronavirus (long COVID). This study aims to compare the effectiveness of osteopathic manipulative treatment (OMT) combined with physiotherapy treatment (PT) compared to PT alone on fatigue and functional limitations after two months post randomization in adults with long COVID.
+
+Methods: This is a study protocol for a two-arm, assessor-blinded, pragmatic randomized...
+
+**Timeline:** Start: 2021-09-20 | Primary Completion: 2023-06-06 | Est. Completion: 2023-07-06
+**Enrollment:** 104 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05012826
+
+**Relevance Tags:** General | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -8578,29 +8630,6 @@ Exercise intolerance and fatigue are the most common symptoms in patients with c
 **Extraction Date:** 2026-11-17
 
 ---
-**Efficacy of a Physical and Respiratory Rehabilitation Program for Patients With Persistent COVID-19 (SARS-CoV-2).**  
-**NCT05629884** | **UNKNOWN** | **NA** | Last Updated: 2022-11-29
-
-**Conditions:** Long COVID / PASC
-
-**Therapeutic Agents Being Tested:**
-- Coperia-Rehab
-
-**Sponsor:** Fundacin Biomedica Galicia Sur (OTHER)
-
-**Key Focus / Interventions:**  
-The pandemic caused by SARS-CoV-2 infection has resulted, in addition to the well-known acute symptoms, in the emergence of a plethora of persistent, diffuse and heterogeneous symptoms such as fatigue, shortness of breath and cognitive dysfunction among others, that have come to be called persistent COVID. Patients have reported that physical activity, stress and sleep disturbances often trigger exacerbations of their symptoms related by some aut...
-
-**Timeline:** Start: 2022-12-14 | Primary Completion: 2023-11-14 | Est. Completion: 2023-11-14
-**Enrollment:** 56 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05629884
-
-**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Differential Diagnosis of Persistent COVID-19 by Artificial Intelligence**  
 **NCT05629793** | **UNKNOWN** | **NA** | Last Updated: 2022-11-29
 
@@ -8620,6 +8649,29 @@ Common symptoms include fatigue, shortness of breath, and cognitive dysfunction,
 **Enrollment:** 136 (ESTIMATED) | **Primary Purpose:** N/A
 
 **Link:** https://clinicaltrials.gov/study/NCT05629793
+
+**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Efficacy of a Physical and Respiratory Rehabilitation Program for Patients With Persistent COVID-19 (SARS-CoV-2).**  
+**NCT05629884** | **UNKNOWN** | **NA** | Last Updated: 2022-11-29
+
+**Conditions:** Long COVID / PASC
+
+**Therapeutic Agents Being Tested:**
+- Coperia-Rehab
+
+**Sponsor:** Fundacin Biomedica Galicia Sur (OTHER)
+
+**Key Focus / Interventions:**  
+The pandemic caused by SARS-CoV-2 infection has resulted, in addition to the well-known acute symptoms, in the emergence of a plethora of persistent, diffuse and heterogeneous symptoms such as fatigue, shortness of breath and cognitive dysfunction among others, that have come to be called persistent COVID. Patients have reported that physical activity, stress and sleep disturbances often trigger exacerbations of their symptoms related by some aut...
+
+**Timeline:** Start: 2022-12-14 | Primary Completion: 2023-11-14 | Est. Completion: 2023-11-14
+**Enrollment:** 56 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05629884
 
 **Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
@@ -9061,29 +9113,6 @@ Heart damage by copper accumulation has been reported in Wilson's Disease. Howev
 **Extraction Date:** 2026-11-17
 
 ---
-**RESET-POTS: Multimodal Phenotyping and Stellate Ganglion Block in Postural Orthostatic Tachycardia Syndrome**  
-**NCT07837804** | **NOT_YET_RECRUITING** | **NA** | Last Updated: 2026-09-24
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Bilateral Sequential Stellate Ganglion Block
-
-**Sponsor:** University Medical Centre Ljubljana (OTHER)
-
-**Key Focus / Interventions:**  
-RESET-POTS is a pilot study for adults with postural orthostatic tachycardia syndrome (POTS), a condition that can cause a rapid increase in heart rate, dizziness, weakness, fatigue and other symptoms when standing. The study has two parts. In the first part, patients with POTS and healthy volunteers will undergo several tests to better understand how POTS affects heart rate and blood pressure, the autonomic nervous system, hormones, metabolism, ...
-
-**Timeline:** Start: 2026-10-01 | Primary Completion: 2027-10-01 | Est. Completion: 2027-12
-**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT07837804
-
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **fMRI in Postural Tachycardia Syndrome**  
 **NCT04137757** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-09-24
 
@@ -9103,6 +9132,29 @@ Postural tachycardia syndrome (POTS) is one of the most common forms of chronic 
 **Link:** https://clinicaltrials.gov/study/NCT04137757
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**RESET-POTS: Multimodal Phenotyping and Stellate Ganglion Block in Postural Orthostatic Tachycardia Syndrome**  
+**NCT07837804** | **NOT_YET_RECRUITING** | **NA** | Last Updated: 2026-09-24
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Bilateral Sequential Stellate Ganglion Block
+
+**Sponsor:** University Medical Centre Ljubljana (OTHER)
+
+**Key Focus / Interventions:**  
+RESET-POTS is a pilot study for adults with postural orthostatic tachycardia syndrome (POTS), a condition that can cause a rapid increase in heart rate, dizziness, weakness, fatigue and other symptoms when standing. The study has two parts. In the first part, patients with POTS and healthy volunteers will undergo several tests to better understand how POTS affects heart rate and blood pressure, the autonomic nervous system, hormones, metabolism, ...
+
+**Timeline:** Start: 2026-10-01 | Primary Completion: 2027-10-01 | Est. Completion: 2027-12
+**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT07837804
+
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -9371,25 +9423,27 @@ Since 1980, the global prevalence of obesity, commonly defined as a body mass in
 **Extraction Date:** 2026-11-17
 
 ---
-**CAlgary SAlt for POTS**  
-**NCT05924646** | **RECRUITING** | **NA** | Last Updated: 2026-05-07
+**Compression Garments in the Community With POTS**  
+**NCT04881318** | **RECRUITING** | **NA** | Last Updated: 2026-05-07
 
 **Conditions:** Unspecified / Overlap
 
 **Therapeutic Agents Being Tested:**
-- Microcystalline Cellulose Capsules
+- Waist-High Compression Tights
+- Abdominal Compression Garments
+- Medications That Modulate Heart Rate And Blood Pressure
 
 **Sponsor:** University of Calgary (OTHER)
 
 **Key Focus / Interventions:**  
-Many patients with postural orthostatic tachycardia syndrome (POTS) have decreased plasma volume. Current POTS guidelines recommend \~10 g of salt and 2-3 L of fluid per day. Despite this recommendation, there is no long term data evaluating the use of salt in POTS. This randomized, placebo-controlled cross-over trial will evaluate a high salt diet, compared to a normal salt diet over a period of 3 months. Participants will complete 3 in lab eval...
+Compression Garments are a commonly prescribed treatment in Postural Orthostatic Tachycardia Syndrome (POTS). The effectiveness of a proof-of-concept compression garment has been demonstrated in an acute laboratory setting. It is not known if commercially available compression garments that participants wear in their every day lives are effective at improving heart rate and reducing symptoms in POTS. This trial will evaluate the use of commercial...
 
-**Timeline:** Start: 2024-05-07 | Primary Completion: 2028-06-30 | Est. Completion: 2028-12-31
-**Enrollment:** 50 (ESTIMATED) | **Primary Purpose:** N/A
+**Timeline:** Start: 2021-05-17 | Primary Completion: 2026-12-31 | Est. Completion: 2026-12-31
+**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Link:** https://clinicaltrials.gov/study/NCT05924646
+**Link:** https://clinicaltrials.gov/study/NCT04881318
 
-**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -9419,27 +9473,25 @@ The purpose of this research study is to determine if higher CO2 levels have any
 **Extraction Date:** 2026-11-17
 
 ---
-**Compression Garments in the Community With POTS**  
-**NCT04881318** | **RECRUITING** | **NA** | Last Updated: 2026-05-07
+**CAlgary SAlt for POTS**  
+**NCT05924646** | **RECRUITING** | **NA** | Last Updated: 2026-05-07
 
 **Conditions:** Unspecified / Overlap
 
 **Therapeutic Agents Being Tested:**
-- Waist-High Compression Tights
-- Abdominal Compression Garments
-- Medications That Modulate Heart Rate And Blood Pressure
+- Microcystalline Cellulose Capsules
 
 **Sponsor:** University of Calgary (OTHER)
 
 **Key Focus / Interventions:**  
-Compression Garments are a commonly prescribed treatment in Postural Orthostatic Tachycardia Syndrome (POTS). The effectiveness of a proof-of-concept compression garment has been demonstrated in an acute laboratory setting. It is not known if commercially available compression garments that participants wear in their every day lives are effective at improving heart rate and reducing symptoms in POTS. This trial will evaluate the use of commercial...
+Many patients with postural orthostatic tachycardia syndrome (POTS) have decreased plasma volume. Current POTS guidelines recommend \~10 g of salt and 2-3 L of fluid per day. Despite this recommendation, there is no long term data evaluating the use of salt in POTS. This randomized, placebo-controlled cross-over trial will evaluate a high salt diet, compared to a normal salt diet over a period of 3 months. Participants will complete 3 in lab eval...
 
-**Timeline:** Start: 2021-05-17 | Primary Completion: 2026-12-31 | Est. Completion: 2026-12-31
-**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
+**Timeline:** Start: 2024-05-07 | Primary Completion: 2028-06-30 | Est. Completion: 2028-12-31
+**Enrollment:** 50 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Link:** https://clinicaltrials.gov/study/NCT04881318
+**Link:** https://clinicaltrials.gov/study/NCT05924646
 
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Relevance Tags:** Neurological / Autonomic | NA | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -9468,6 +9520,29 @@ Many patients with Postural Orthostatic Tachycardia Syndrome (POTS) experience d
 **Extraction Date:** 2026-11-17
 
 ---
+**Paediatric Syncope in the Emergency Department**  
+**NCT05555771** | **RECRUITING** | **NA** | Last Updated: 2026-04-23
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Counterpressure Maneuvers
+
+**Sponsor:** Dr. Victoria Claydon (OTHER)
+
+**Key Focus / Interventions:**  
+The investigators will assess the efficacy of clinically recommended counterpressure maneuvers (CPM) in preventing syncope for paediatric patients. Participants presenting to the emergency department (ED) will first provide written informed consent. In stage I, they will be asked to complete a brief survey documenting the presentation of their syncopal episode, and any prodromal symptoms they experienced. Participants that consent to the second s...
+
+**Timeline:** Start: 2022-09-03 | Primary Completion: 2027-09-30 | Est. Completion: 2027-09-30
+**Enrollment:** 300 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT05555771
+
+**Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Postural Sway and Counterpressure Maneuvers for Pediatric Syncope**  
 **NCT05633693** | **RECRUITING** | **NA** | Last Updated: 2026-04-23
 
@@ -9488,29 +9563,6 @@ The investigators are interested in whether discrete counterpressure maneuvers, 
 **Link:** https://clinicaltrials.gov/study/NCT05633693
 
 **Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**Paediatric Syncope in the Emergency Department**  
-**NCT05555771** | **RECRUITING** | **NA** | Last Updated: 2026-04-23
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Counterpressure Maneuvers
-
-**Sponsor:** Dr. Victoria Claydon (OTHER)
-
-**Key Focus / Interventions:**  
-The investigators will assess the efficacy of clinically recommended counterpressure maneuvers (CPM) in preventing syncope for paediatric patients. Participants presenting to the emergency department (ED) will first provide written informed consent. In stage I, they will be asked to complete a brief survey documenting the presentation of their syncopal episode, and any prodromal symptoms they experienced. Participants that consent to the second s...
-
-**Timeline:** Start: 2022-09-03 | Primary Completion: 2027-09-30 | Est. Completion: 2027-09-30
-**Enrollment:** 300 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT05555771
-
-**Relevance Tags:** General | NA | Large (200-999 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -9714,27 +9766,25 @@ Stroke is worldwide the second most common cause of death following heart attack
 **Extraction Date:** 2026-11-17
 
 ---
-**Transdermal Vagal Stimulation for POTS**  
-**NCT02281097** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-03-27
+**Autonomic Determinants of POTS - Pilot1**  
+**NCT04050410** | **ACTIVE_NOT_RECRUITING** | **EARLY_PHASE1** | Last Updated: 2026-03-27
 
 **Conditions:** Unspecified / Overlap
 
 **Therapeutic Agents Being Tested:**
-- Stimulation
+- Moxonidine
 
-**Sponsor:** Vanderbilt University (OTHER)
+**Sponsor:** Vanderbilt University Medical Center (OTHER)
 
 **Key Focus / Interventions:**  
-Some patients experience high heart rates and symptoms of light-headedness, fatigue, headache during standing despite well maintained blood pressure.
+Postural tachycardia syndrome (POTS) is a relatively common condition affecting mostly otherwise healthy young women. It is the cause of significant disability and an impairment in quality of life. These patients have high heart rate and symptoms during standing. Many of these patients are disabled and have a poor quality of life. The sympathetic nerves are part of the nervous system that helps to maintain normal blood pressures and heart rates d...
 
-These patient are disabled and can't be in upright position for a longer time. The purpose of this study is to test whether electrical stimulation of a nerve through a skin of the ear may improve heart rate response and reduce disabling symptoms.
+**Timeline:** Start: 2019-08-27 | Primary Completion: 2025-12-31 | Est. Completion: 2026-12-31
+**Enrollment:** 48 (ESTIMATED) | **Primary Purpose:** N/A
 
-**Timeline:** Start: 2013-06 | Primary Completion: 2017-04 | Est. Completion: 2026-12-31
-**Enrollment:** 18 (ACTUAL) | **Primary Purpose:** N/A
+**Link:** https://clinicaltrials.gov/study/NCT04050410
 
-**Link:** https://clinicaltrials.gov/study/NCT02281097
-
-**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+**Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -9764,25 +9814,27 @@ The purpose of this study is to determine the importance of sympathetic activati
 **Extraction Date:** 2026-11-17
 
 ---
-**Autonomic Determinants of POTS - Pilot1**  
-**NCT04050410** | **ACTIVE_NOT_RECRUITING** | **EARLY_PHASE1** | Last Updated: 2026-03-27
+**Transdermal Vagal Stimulation for POTS**  
+**NCT02281097** | **ACTIVE_NOT_RECRUITING** | **NA** | Last Updated: 2026-03-27
 
 **Conditions:** Unspecified / Overlap
 
 **Therapeutic Agents Being Tested:**
-- Moxonidine
+- Stimulation
 
-**Sponsor:** Vanderbilt University Medical Center (OTHER)
+**Sponsor:** Vanderbilt University (OTHER)
 
 **Key Focus / Interventions:**  
-Postural tachycardia syndrome (POTS) is a relatively common condition affecting mostly otherwise healthy young women. It is the cause of significant disability and an impairment in quality of life. These patients have high heart rate and symptoms during standing. Many of these patients are disabled and have a poor quality of life. The sympathetic nerves are part of the nervous system that helps to maintain normal blood pressures and heart rates d...
+Some patients experience high heart rates and symptoms of light-headedness, fatigue, headache during standing despite well maintained blood pressure.
 
-**Timeline:** Start: 2019-08-27 | Primary Completion: 2025-12-31 | Est. Completion: 2026-12-31
-**Enrollment:** 48 (ESTIMATED) | **Primary Purpose:** N/A
+These patient are disabled and can't be in upright position for a longer time. The purpose of this study is to test whether electrical stimulation of a nerve through a skin of the ear may improve heart rate response and reduce disabling symptoms.
 
-**Link:** https://clinicaltrials.gov/study/NCT04050410
+**Timeline:** Start: 2013-06 | Primary Completion: 2017-04 | Est. Completion: 2026-12-31
+**Enrollment:** 18 (ACTUAL) | **Primary Purpose:** N/A
 
-**Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Link:** https://clinicaltrials.gov/study/NCT02281097
+
+**Relevance Tags:** Neurological / Autonomic | NA | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -10147,29 +10199,6 @@ This study will describe the interplay between the gut hormones GIP and CCK and 
 **Extraction Date:** 2026-11-17
 
 ---
-**Northera Improves Postural Tachycardia Syndrome (POTS) and Postural Vasovagal Syncope (VVS)**  
-**NCT02558972** | **TERMINATED** | **PHASE2** | Last Updated: 2025-05-23
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Northera
-
-**Sponsor:** New York Medical College (OTHER)
-
-**Key Focus / Interventions:**  
-Vasovagal syncope (VVS, simple faint) is the most common cause of transient loss of consciousness and represents the acute episodic form of orthostatic intolerance (OI). Postural tachycardia syndrome (POTS) is the common chronic form of OI. Both are defined by debilitating symptoms and signs while upright relieved by recumbency. Northera should therefore improve both sympathetic splanchnic arterial vasoconstriction and sympathetic splanchnic veno...
-
-**Timeline:** Start: 2015-09 | Primary Completion: 2022-12 | Est. Completion: 2022-12
-**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT02558972
-
-**Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Mechanisms of Vasovagal Syncope**  
 **NCT01791816** | **COMPLETED** | **EARLY_PHASE1** | Last Updated: 2025-05-23
 
@@ -10190,6 +10219,29 @@ Vasovagal Syncope (simple postural faint) is the most common cause of acute loss
 **Link:** https://clinicaltrials.gov/study/NCT01791816
 
 **Relevance Tags:** Neurological / Autonomic | EARLY_Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Northera Improves Postural Tachycardia Syndrome (POTS) and Postural Vasovagal Syncope (VVS)**  
+**NCT02558972** | **TERMINATED** | **PHASE2** | Last Updated: 2025-05-23
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Northera
+
+**Sponsor:** New York Medical College (OTHER)
+
+**Key Focus / Interventions:**  
+Vasovagal syncope (VVS, simple faint) is the most common cause of transient loss of consciousness and represents the acute episodic form of orthostatic intolerance (OI). Postural tachycardia syndrome (POTS) is the common chronic form of OI. Both are defined by debilitating symptoms and signs while upright relieved by recumbency. Northera should therefore improve both sympathetic splanchnic arterial vasoconstriction and sympathetic splanchnic veno...
+
+**Timeline:** Start: 2015-09 | Primary Completion: 2022-12 | Est. Completion: 2022-12
+**Enrollment:** 30 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT02558972
+
+**Relevance Tags:** Neurological / Autonomic | Phase 2 | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -10386,29 +10438,6 @@ The investigators hope to learn the feasibility and preliminary efficacy of the 
 **Extraction Date:** 2026-11-17
 
 ---
-**A Study to Systematically Assess the Efficacy and Safety of Intravenous Albumin Infusions in Severe POTS**  
-**NCT03365414** | **WITHDRAWN** | **PHASE3** | Last Updated: 2024-09-19
-
-**Conditions:** Unspecified / Overlap
-
-**Therapeutic Agents Being Tested:**
-- Albumin (Human) 5%, Usp
-
-**Sponsor:** University of Alberta (OTHER)
-
-**Key Focus / Interventions:**  
-POTS is a relatively common condition that affects millions of patients around the globe. It has an estimated prevalence of 170/100,000 with approximately 80% of patients being women of childbearing age. POTS is characterized by an excessive heart rate increase on assuming an upright posture, either standing or even sitting and leading to disabling palpitations, light-headedness, and even in syncope in severe cases. More than 95% patients with PO...
-
-**Timeline:** Start: 2022-01 | Primary Completion: 2023-10 | Est. Completion: 2024-03
-**Enrollment:** 0 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT03365414
-
-**Relevance Tags:** Neurological / Autonomic | Phase 3 | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **IVIG (Gamunex-C) Treatment Study for POTS Subjects**  
 **NCT03919773** | **COMPLETED** | **PHASE1** | Last Updated: 2024-09-19
 
@@ -10429,6 +10458,29 @@ The purpose of this trial is to evaluate the symptomatic benefits of immunomodul
 **Link:** https://clinicaltrials.gov/study/NCT03919773
 
 **Relevance Tags:** Immunomodulatory | Neurological / Autonomic | Phase 1 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**A Study to Systematically Assess the Efficacy and Safety of Intravenous Albumin Infusions in Severe POTS**  
+**NCT03365414** | **WITHDRAWN** | **PHASE3** | Last Updated: 2024-09-19
+
+**Conditions:** Unspecified / Overlap
+
+**Therapeutic Agents Being Tested:**
+- Albumin (Human) 5%, Usp
+
+**Sponsor:** University of Alberta (OTHER)
+
+**Key Focus / Interventions:**  
+POTS is a relatively common condition that affects millions of patients around the globe. It has an estimated prevalence of 170/100,000 with approximately 80% of patients being women of childbearing age. POTS is characterized by an excessive heart rate increase on assuming an upright posture, either standing or even sitting and leading to disabling palpitations, light-headedness, and even in syncope in severe cases. More than 95% patients with PO...
+
+**Timeline:** Start: 2022-01 | Primary Completion: 2023-10 | Est. Completion: 2024-03
+**Enrollment:** 0 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT03365414
+
+**Relevance Tags:** Neurological / Autonomic | Phase 3 | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -12265,29 +12317,6 @@ Myalgic Encephalomyelitis / Chronic Fatigue Syndrome (ME/CFS) is a disease chara
 **Extraction Date:** 2026-11-17
 
 ---
-**Tracking Peripheral Immune Cell Infiltration of the Brain in Central Inflammatory Disorders Using [Zr-89]Oxinate-4-labeled Leukocytes.**  
-**NCT03807973** | **SUSPENDED** | **PHASE1** | Last Updated: 2026-06-02
-
-**Conditions:** ME/CFS
-
-**Therapeutic Agents Being Tested:**
-- [Zr-89]Oxine-Labeled Leukocytes Pet/Mri
-
-**Sponsor:** University of Alabama at Birmingham (OTHER)
-
-**Key Focus / Interventions:**  
-This study will use brain Positron Emission Tomography/ Magnetic Resonance Imaging (PET/MRI) and an investigational radioactive drug called \[Zr-89\]oxine to track the location of white blood cells (also called leukocytes) in the body. PET/MRI will be used to visualize labeled white blood cells and determine if they enter the central nervous system in conditions associated with brain inflammation (also called neuroinflammation). By better underst...
-
-**Timeline:** Start: 2021-10-05 | Primary Completion: 2028-10 | Est. Completion: 2028-10
-**Enrollment:** 120 (ESTIMATED) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT03807973
-
-**Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
 **Assessment of Neuroinflammation in Central Inflammatory Disorders Using [F-18]DPA-714.**  
 **NCT03759522** | **RECRUITING** | **PHASE1** | Last Updated: 2026-06-02
 
@@ -12307,6 +12336,29 @@ The primary objective of this study is to measure the concentration and the regi
 **Link:** https://clinicaltrials.gov/study/NCT03759522
 
 **Relevance Tags:** Metabolic | Mitochondrial | Anti-inflammatory | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
+**Tracking Peripheral Immune Cell Infiltration of the Brain in Central Inflammatory Disorders Using [Zr-89]Oxinate-4-labeled Leukocytes.**  
+**NCT03807973** | **SUSPENDED** | **PHASE1** | Last Updated: 2026-06-02
+
+**Conditions:** ME/CFS
+
+**Therapeutic Agents Being Tested:**
+- [Zr-89]Oxine-Labeled Leukocytes Pet/Mri
+
+**Sponsor:** University of Alabama at Birmingham (OTHER)
+
+**Key Focus / Interventions:**  
+This study will use brain Positron Emission Tomography/ Magnetic Resonance Imaging (PET/MRI) and an investigational radioactive drug called \[Zr-89\]oxine to track the location of white blood cells (also called leukocytes) in the body. PET/MRI will be used to visualize labeled white blood cells and determine if they enter the central nervous system in conditions associated with brain inflammation (also called neuroinflammation). By better underst...
+
+**Timeline:** Start: 2021-10-05 | Primary Completion: 2028-10 | Est. Completion: 2028-10
+**Enrollment:** 120 (ESTIMATED) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT03807973
+
+**Relevance Tags:** Immunomodulatory | Anti-inflammatory | Phase 1 | Medium (50-199 participants) | Enrollment: Estimated | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -13823,6 +13875,29 @@ The proposed placebo-controlled pilot study will examine hydrogen water as a tre
 **Extraction Date:** 2026-11-17
 
 ---
+**B-lymphocyte Depletion Using Rituximab in Chronic Fatigue Syndrome/ Myalgic Encephalopathy (CFS/ME). A Randomized Phase-III Study.**  
+**NCT02229942** | **COMPLETED** | **PHASE3** | Last Updated: 2021-05-11
+
+**Conditions:** ME/CFS
+
+**Therapeutic Agents Being Tested:**
+- Rituximab
+
+**Sponsor:** Haukeland University Hospital (OTHER)
+
+**Key Focus / Interventions:**  
+The hypothesis is that a subgroup of patients with Chronic Fatigue Syndrome/ Myalgic Encephalopathy (CFS/ME) have a chronically activated immune system and may benefit from B-lymphocyte treatment using the monoclonal anti-CD20 antibody rituximab with induction and maintenance treatment.
+
+**Timeline:** Start: 2014-09 | Primary Completion: 2017-09 | Est. Completion: 2017-11
+**Enrollment:** 151 (ACTUAL) | **Primary Purpose:** N/A
+
+**Link:** https://clinicaltrials.gov/study/NCT02229942
+
+**Relevance Tags:** Immunomodulatory | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
+
+**Extraction Date:** 2026-11-17
+
+---
 **Cyclophosphamide in Myalgic Encephalopathy/ Chronic Fatigue Syndrome (ME/CFS)**  
 **NCT02444091** | **COMPLETED** | **PHASE2** | Last Updated: 2021-05-11
 
@@ -13871,29 +13946,6 @@ The hypothesis is that at least a subset of CFS patients have an activated immun
 **Link:** https://clinicaltrials.gov/study/NCT00848692
 
 **Relevance Tags:** Immunomodulatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Other
-
-**Extraction Date:** 2026-11-17
-
----
-**B-lymphocyte Depletion Using Rituximab in Chronic Fatigue Syndrome/ Myalgic Encephalopathy (CFS/ME). A Randomized Phase-III Study.**  
-**NCT02229942** | **COMPLETED** | **PHASE3** | Last Updated: 2021-05-11
-
-**Conditions:** ME/CFS
-
-**Therapeutic Agents Being Tested:**
-- Rituximab
-
-**Sponsor:** Haukeland University Hospital (OTHER)
-
-**Key Focus / Interventions:**  
-The hypothesis is that a subgroup of patients with Chronic Fatigue Syndrome/ Myalgic Encephalopathy (CFS/ME) have a chronically activated immune system and may benefit from B-lymphocyte treatment using the monoclonal anti-CD20 antibody rituximab with induction and maintenance treatment.
-
-**Timeline:** Start: 2014-09 | Primary Completion: 2017-09 | Est. Completion: 2017-11
-**Enrollment:** 151 (ACTUAL) | **Primary Purpose:** N/A
-
-**Link:** https://clinicaltrials.gov/study/NCT02229942
-
-**Relevance Tags:** Immunomodulatory | Phase 3 | Medium (50-199 participants) | Enrollment: Actual | Sponsor Type: Other
 
 **Extraction Date:** 2026-11-17
 
@@ -15431,25 +15483,25 @@ This research project is a follow-up to the prior VA-funded study that found tha
 **Extraction Date:** 2026-11-17
 
 ---
-**The Effect of Micellized Food Supplements on Health-related Quality of Life in Patients With Post-acute COVID-19 Syndrome.**  
-**NCT05150782** | **UNKNOWN** | **NA** | Last Updated: 2022-01-11
+**Effects of Sodium Pyruvate Nasal Spray in COVID-19 Long Haulers.**  
+**NCT04871815** | **COMPLETED** | **PHASE2** | Last Updated: 2022-03-09
 
 **Conditions:** Long COVID / PASC
 
 **Therapeutic Agents Being Tested:**
-- Curcumin/Boswellia Serrata/Ascorbic Acid Mixture
+- Sodium Pyruvate Nasal Spray
 
-**Sponsor:** PhysioMetrics (OTHER)
+**Sponsor:** Cellular Sciences, inc. (INDUSTRY)
 
 **Key Focus / Interventions:**  
-Food supplements like curcumin and boswellia serrata have been used traditionally for anti-inflammatory purposes. A well-known problem of these substances in their natural form is the low bioavailability. Micellization of these substances has been shown to increase the bioavailability significantly and thereby the clinical efficacy. The clinical value of these micellized substances has been presented in numerous clinical studies and in particular...
+There are approximately 12 million Americans with COVID-19 Long Hauler Symptoms, including athletes. The symptoms include hypoxemia (low SaO2), fatigue, coughing/sneezing, dyspnea, trouble breathing, body aches, headaches. This chronic disease is referred to as COVID-19 Long Haulers. 7-10% of COVID-19 long haulers are also at serious risk of developing Pulmonary Fibrosis. Conversely, patients with Pulmonary Fibrosis have an increased risk and sus...
 
-**Timeline:** Start: 2022-01-17 | Primary Completion: 2022-10-10 | Est. Completion: 2022-10-10
-**Enrollment:** 32 (ESTIMATED) | **Primary Purpose:** N/A
+**Timeline:** Start: 2021-04-27 | Primary Completion: 2022-03-07 | Est. Completion: 2022-03-07
+**Enrollment:** 22 (ACTUAL) | **Primary Purpose:** N/A
 
-**Link:** https://clinicaltrials.gov/study/NCT05150782
+**Link:** https://clinicaltrials.gov/study/NCT04871815
 
-**Relevance Tags:** Anti-inflammatory | NA | Small (<50 participants) | Enrollment: Estimated | Sponsor Type: Other
+**Relevance Tags:** Anti-inflammatory | Phase 2 | Small (<50 participants) | Enrollment: Actual | Sponsor Type: Industry
 
 **Extraction Date:** 2026-11-17
 
