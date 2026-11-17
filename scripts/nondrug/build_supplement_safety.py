@@ -82,23 +82,50 @@ def fetch(url: str, cache_name: str, binary: bool = False) -> str:
     raise RuntimeError(f"fetch failed: {url}")
 
 
-def caers(terms: list[str]) -> dict:
-    """Suspect-only CAERS reports whose suspect product brand contains one of the terms."""
+# Other names for the same ingredient: removed from a product name before looking for other ingredients.
+OWN_NAMES = {"vitamin-d": ["CHOLECALCIFEROL", "ERGOCALCIFEROL", "D3", "D-3", "D2"], "omega-3": ["DHA", "EPA", "KRILL", "FISH", "OMEGA"],
+             "vitamin-c": ["ASCORBIC ACID", "ASCORBATE"], "vitamin-b12": ["CYANOCOBALAMIN", "METHYLCOBALAMIN"],
+             "folate": ["FOLIC", "METHYLFOLATE"], "turmeric-curcumin": ["TURMERIC", "CURCUMIN", "CURCUMINOIDS"],
+             "nac": ["NAC", "N-A-C"], "nad-precursors": ["NAD", "NIAGEN", "NICOTINAMIDE"], "coq10": ["UBIQUINOL"]}
+# Words in a product name that point to a second active ingredient, making it a combination product.
+OTHER_INGREDIENT = re.compile(
+    r"CALCIUM|CALTRATE|CITRACAL|OS-CAL|VITAMIN\s*[A-Z]|\bB-?\d+\b|\bK2\b|ZINC|MAGNESIUM|IRON|SELENIUM|POTASSIUM|MULTI|COMPLEX|ELECTROLYTE|"
+    r"PRENATAL|AREDS|LUTEIN|GLUCOSAMINE|CHONDROITIN|ECHINACEA|ELDERBERRY|MELATONIN|ASCORBIC|FOLIC|BIOTIN|EMERGEN|FIBER|BENEFIBER|"
+    r"COQ-?10|CO Q10|TURMERIC|CURCUMIN|CREATINE|PROTEIN|CAFFEINE|GREEN TEA|ASHWAGANDHA|COLLAGEN|GINKGO|GINSENG|PROBIOTIC|FISH OIL|OMEGA|"
+    r"\+|&|\bPLUS\b|\bWITH\b")
+
+
+def is_combination(brand: str, own: list[str]) -> bool:
+    s = brand.upper()
+    for t in sorted(own, key=len, reverse=True):
+        s = s.replace(t.upper(), " ")
+    return bool(OTHER_INGREDIENT.search(s))
+
+
+def caers(terms: list[str], sid: str = "") -> dict:
+    """Suspect-only CAERS reports whose suspect product brand contains one of the terms. Reports are split by whether
+    a matched product is named for this ingredient alone or for a combination (judged from the product name)."""
+    own = [t.strip() for t in terms] + OWN_NAMES.get(sid, [])
     rx = re.compile("|".join(re.escape(t.strip()) for t in terms), re.I)
     q = " OR ".join(f'products.name_brand:"{t.strip()}"' for t in terms)
     search = f"({q}) AND products.industry_code:54"
-    seen, reactions, outcomes, years = set(), Counter(), Counter(), []
+    seen, reactions, outcomes, years, single, products = set(), Counter(), Counter(), [], 0, Counter()
     skip = 0
     while skip <= 25000:
         url = "https://api.fda.gov/food/event.json?" + urllib.parse.urlencode({"search": search, "limit": 1000, "skip": skip})
         page = json.loads(fetch(url, f"caers-{re.sub('[^a-z0-9]', '', '-'.join(terms).lower())[:60]}-{skip}.json"))
         res = page.get("results") or []
         for r in res:
-            if any(p.get("role") == "SUSPECT" and rx.search(p.get("name_brand") or "") for p in r.get("products") or []):
+            hits = [p["name_brand"] for p in r.get("products") or [] if p.get("role") == "SUSPECT" and rx.search(p.get("name_brand") or "")]
+            if hits:
                 rid = r.get("report_number")
                 if rid in seen:
                     continue
                 seen.add(rid)
+                products.update({re.sub(r"\s*\(.*$", "", h).strip().upper() for h in hits})
+                if all(is_combination(h, own) for h in hits):
+                    continue
+                single += 1
                 reactions.update({x.strip().capitalize() for x in r.get("reactions") or [] if x.strip()})
                 outcomes.update({x.strip() for x in r.get("outcomes") or [] if x.strip()})
                 if (r.get("date_created") or "")[:4].isdigit():
@@ -106,7 +133,7 @@ def caers(terms: list[str]) -> dict:
         if len(res) < 1000:
             break
         skip += 1000
-    return {"reports": len(seen), "top_reactions": reactions.most_common(12), "outcomes": outcomes.most_common(8),
+    return {"reports": len(seen), "single": single, "top_products": products.most_common(6), "top_reactions": reactions.most_common(12), "outcomes": outcomes.most_common(8),
             "years": [min(years), max(years)] if years else None, "terms": terms}
 
 
@@ -164,7 +191,7 @@ def do_fetch() -> None:
     for sid, label, cls, terms, src in SUPPLEMENTS:
         entry = {"label": label, "class": cls}
         if terms:
-            entry["caers"] = caers(terms)
+            entry["caers"] = caers(terms, sid)
         if src:
             entry["nih"] = nih_quote(*src)
         out["supplements"][sid] = entry
@@ -177,6 +204,11 @@ CALLOUT = ('<div class="nd-callout"><strong>Reports are not rates.</strong> CAER
            'clinicians and companies. A report means someone linked a health problem to a product, not that the product caused it. '
            'There is no denominator: how many people took the product is unknown, so these numbers cannot show how common a problem is, '
            'and they cannot be compared between products. Popular products attract more reports.</div>')
+
+
+def in_sentence(label: str) -> str:
+    """'Vitamin D' -> 'vitamin D'; 'N-acetylcysteine (NAC)' stays as written."""
+    return label[:1].lower() + label[1:] if len(label) > 1 and label[1].islower() else label
 
 
 def render() -> None:
@@ -196,9 +228,10 @@ def render() -> None:
             react = "".join(f"<tr><th scope=\"row\">{esc(r)}</th><td class=\"n\">{n:,}</td></tr>" for r, n in cz["top_reactions"])
             outc = ", ".join(f"{esc(o)} ({n:,})" for o, n in cz["outcomes"])
             caers_html = f"""<h2>FDA adverse-event reports (CAERS)</h2>{CALLOUT}
-<div class="nd-numbers"><div><b>{cz['reports']:,}</b><span>reports naming it as the suspect product</span></div><div><b>{yrs}</b><span>years covered</span></div></div>
-<p class="nd-method"><strong>Matching rule:</strong> reports in the dietary-supplement category where a product marked "suspect" has a brand name containing {', '.join('“' + esc(t.strip()) + '”' for t in cz['terms'])}. Products that contain it without naming it are missed; products named for it may contain other ingredients. Reports where it was only taken alongside the suspect product are not counted.</p>
-<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Most reported reactions</th><th scope="col" class="n">Reports</th></tr></thead><tbody>{react}</tbody></table></div>
+<div class="nd-numbers"><div><b>{cz['reports']:,}</b><span>reports naming it in a suspect product</span></div><div><b>{cz['single']:,}</b><span>where the product is named for it alone</span></div><div><b>{yrs}</b><span>years covered, single-ingredient reports</span></div></div>
+<p class="nd-method"><strong>Matching rule:</strong> reports in the dietary-supplement category where a product marked "suspect" has a brand name containing {', '.join('“' + esc(t.strip()) + '”' for t in cz['terms'])}. Products that contain it without naming it are missed. Reports where it was only taken alongside the suspect product are not counted.</p>
+<p class="nd-method"><strong>Combination products:</strong> {cz['reports'] - cz['single']:,} of the reports involve only products whose name lists another ingredient, such as calcium or a multivitamin. Their reactions may come from that other ingredient or from the tablet itself, so the reactions below count only the {cz['single']:,} reports where a product is named for {esc(in_sentence(label))} alone. This split is made from product names and can misfile some products. Most-reported products: {esc('; '.join(f"{n.title()} ({c})" for n, c in cz['top_products']))}.</p>
+<div class="tbl-wrap"><table class="nd-tbl"><caption class="sr-only">Most reported reactions, single-ingredient reports</caption><thead><tr><th scope="col">Most reported reactions (single-ingredient products)</th><th scope="col" class="n">Reports</th></tr></thead><tbody>{react}</tbody></table></div>
 <p class="nd-method">Outcomes recorded in these reports (a report can have several): {outc or '–'}.</p>
 <p class="nd-method">Source: <a href="https://open.fda.gov/apis/food/event/">openFDA food and supplement adverse events (CAERS)</a>, retrieved {esc(doc['built'])}.</p>"""
         else:
@@ -215,10 +248,11 @@ def render() -> None:
         else:
             nih_html = ("<h2>Interactions and safety</h2><p>NIH does not publish a fact sheet for this supplement. "
                         "Ask a pharmacist or clinician to check it against any medicines you take.</p>")
-        tl = "".join(trial_li(n, trials[n]) for n in ncts[:20])
+        cnames = d["conditions"]
+        tl = "".join(trial_li(n, trials[n], " · " + esc(", ".join(cnames[c]["name"] for c in trials[n]["c"][:2] if c in cnames))) for n in ncts[:20])
         trials_html = (f"<h2>Registered trials</h2><p>{len(ncts):,} trials in the <a href=\"/nondrug/{cls}.html\">non-drug evidence map</a> test this class of supplement. "
-                       f"Trials with posted results are listed first.</p><ul class=\"nd-tlist\">{tl}</ul>" if ncts else "")
-        body = f"""<p class="lede">What public sources say about the safety of {esc(label.lower())}: FDA adverse-event reports, NIH guidance on interactions with medicines, and the registered trials that test it.</p>
+                       f"Trials with posted results are listed first; each shows the condition it was registered for. A trial testing it in one condition says nothing about another.</p><ul class=\"nd-tlist\">{tl}</ul>" if ncts else "")
+        body = f"""<p class="lede">What public sources say about the safety of {esc(in_sentence(label))}: FDA adverse-event reports, NIH guidance on interactions with medicines, and the registered trials that test it.</p>
 <div class="disclaimer"><span>⚠️</span><div><strong>Research information, not medical advice.</strong> Supplements can interact with prescription medicines and affect conditions. Check with a pharmacist or your own clinician before starting or stopping one. Nothing here is a dose recommendation.</div></div>
 {nih_html}
 {caers_html}
@@ -230,7 +264,7 @@ def render() -> None:
                           eyebrow="Supplement safety · public sources", h1=label, h1_span="safety",
                           lede="FDA adverse-event reports, NIH guidance on interactions, and registered trials.", body=body,
                           crumbs=[("Supplement safety", f"{SITE}/supplement-safety/index.html"), (label, f"{SITE}/{path}")], modified=doc["built"]))
-        n_rep = f"{cz['reports']:,} CAERS reports" if cz else "no CAERS count (generic name)"
+        n_rep = f"{cz['single']:,} single-ingredient CAERS reports" if cz else "no CAERS count (generic name)"
         cards.append(f'<a class="nd-card" href="/supplement-safety/{sid}.html"><strong>{esc(label)}</strong><span>{n_rep} · {len(ncts):,} trials'
                      f'{" · NIH interaction text" if nih and nih.get("paragraphs") else ""}</span></a>')
     body = f"""<p class="lede">Safety information from public sources for supplements that appear in registered non-drug trials. Each page quotes NIH's own text on interactions with medicines and shows FDA adverse-event reports with their limits stated.</p>
@@ -239,7 +273,7 @@ def render() -> None:
 <div class="nd-cards">{''.join(cards)}</div>
 <div class="box"><h2>Sources and limits</h2><ul class="nd-method">
 <li><strong>NIH text</strong> is quoted verbatim from the Office of Dietary Supplements health-professional fact sheets or, where none exists, the National Center for Complementary and Integrative Health. OSMF does not write interaction guidance.</li>
-<li><strong>CAERS</strong> is the FDA's database of adverse-event reports for foods, supplements and cosmetics. Only reports naming the product as the suspect are counted. Generic categories get no count.</li>
+<li><strong>CAERS</strong> is the FDA's database of adverse-event reports for foods, supplements and cosmetics. Only reports naming the product as the suspect are counted, and reactions are shown only for products named for that supplement alone, because combination products such as calcium with vitamin D dominate some counts. Generic categories get no count.</li>
 <li><strong>Not covered:</strong> curated interaction databases (most are not openly licensed), device adverse events, and NPxP drug-modifier interaction data, which is published separately on <a href="https://npxp.opensourcemed.info/">npxp.opensourcemed.info</a> and covers cancer cell lines.</li>
 </ul></div>"""
     write("supplement-safety/index.html", shell(path="supplement-safety/index.html", title="Supplement safety: interactions, adverse-event reports and trials",

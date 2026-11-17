@@ -56,12 +56,17 @@ def build() -> None:
         cell, group_tot, dom_tot, class_tot = g["cell"], g["group_tot"], g["dom_tot"], g["class_tot"]
         # matrix
         head = "".join(f'<th scope="col">{esc(lab)}</th>' for _, lab in DOMAIN_COLS)
-        body_rows, csv_rows = [], []
+        body_rows, csv_rows, empty_groups = [], [], []
         for gid, glabel in GROUPS:
+            if not group_tot.get(gid):
+                empty_groups.append(glabel)
+                for dom, dlabel in DOMAIN_COLS:
+                    csv_rows.append([gid, glabel, dom, dlabel, 0, 0, 0, 0])
+                continue
             tds = []
             for dom, dlabel in DOMAIN_COLS:
                 x = cell[(gid, dom)]
-                sub = f"<small>{x['r']} results</small>" if x["n"] and x["r"] else ""
+                sub = f"<small>{x['r']} with results</small>" if x["n"] and x["r"] else ""
                 aria = f"{glabel}, {dlabel}: {x['n']} trials, {x['r']} with results posted, {x['rec']} recruiting"
                 tds.append(f'<td class="{level(x["n"])}" title="{esc(aria)}" aria-label="{esc(aria)}">{x["n"] or "·"}{sub}</td>')
                 csv_rows.append([gid, glabel, dom, dlabel, x["n"], x["c"], x["r"], x["rec"]])
@@ -72,13 +77,13 @@ def build() -> None:
         capped = (cm.get("total") or 0) > (cm.get("fetched") or 0)
         # Absence can only be claimed when the search was not capped.
         unmeasured = [] if capped else [
-            (n, f"Among the {gn} {gl.lower()} trials found, none used <strong>{esc(dl.lower())}</strong> as a primary outcome "
+            (n, f"Among the {gn} trials of {gl[:1].lower() + gl[1:]} found, none used <strong>{esc(dl.lower())}</strong> as a primary outcome "
                 f"({n} trials of other approaches did).") for n, gl, dl, gn in g["unmeasured"]]
         unreported = [(n, f"<strong>{esc(gl)} × {esc(dl.lower())}</strong>: {n} trials registered, none with results posted"
                           + (f" ({rec} still recruiting)" if rec else "")) for n, gl, dl, rec in g["unreported"]]
         gaps_html = ""
         if unmeasured:
-            gaps_html += "<h3>Outcomes a whole group has never measured</h3><ul class=\"nd-gaps\">" + "".join(f"<li>{h}</li>" for _, h in unmeasured[:14]) + "</ul>"
+            gaps_html += "<h3>Outcomes not found as a primary outcome in a group's trials</h3><ul class=\"nd-gaps\">" + "".join(f"<li>{h}</li>" for _, h in unmeasured[:14]) + "</ul>"
         if unreported:
             gaps_html += "<h3>Questions studied but with no results posted</h3><ul class=\"nd-gaps\">" + "".join(f"<li>{h}</li>" for _, h in unreported[:14]) + "</ul>"
         if capped:
@@ -99,7 +104,7 @@ def build() -> None:
         if cm.get("page"):
             links.append(f'<a href="{esc(cm["page"])}">Condition page</a>')
         body = f"""
-<p class="lede">Which non-drug approaches have been tested for {esc(cm['name'])}, and which outcomes they were tested on. Empty cells are questions nobody has registered a trial for; they are the gaps.</p>
+<p class="lede">Which non-drug approaches have been tested for {esc(cm['name'])}, and which outcomes they were tested on. An empty cell means no matching trial was found among those searched: a possible gap, not proof that nobody has asked the question.</p>
 <div class="nd-numbers">
   <div><b>{len(mine):,}</b><span>registered non-drug trials</span></div>
   <div><b>{sum(t['r'] for t in mine.values()):,}</b><span>with results posted</span></div>
@@ -112,6 +117,8 @@ def build() -> None:
 <div class="nd-legend"><span><i style="background:#f6f7fb"></i>none</span><span><i style="background:#fff3e0"></i>1–2</span><span><i style="background:#ffd9a8"></i>3–9</span><span><i style="background:#f8a95c"></i>10–29</span><span><i style="background:#9a3412"></i>30 or more</span></div>
 <div class="tbl-wrap" role="region" tabindex="0" aria-label="Evidence-gap matrix, scrolls sideways"><table class="nd-matrix"><caption class="sr-only">Registered non-drug trials for {esc(cm['name'])} by intervention group and primary outcome domain</caption>
 <thead><tr><th scope="col">Intervention group</th>{head}</tr></thead><tbody>{''.join(body_rows)}</tbody></table></div>
+<p class="nd-scroll-hint">The table scrolls sideways: {len(DOMAIN_COLS)} outcome columns.</p>
+{('<p class="nd-method">No trials found for this condition in: ' + esc('; '.join(empty_groups)) + '.</p>') if empty_groups else ''}
 <div class="box"><h2>Where the gaps are</h2>{gaps_html}
 <p class="nd-actions"><a class="btn" href="{DECENTRIAL}" target="_blank" rel="noopener">Design a trial with DecenTrial (beta)</a> <a href="{SUPPORT}">Fund a component of this work</a></p>
 <p class="nd-method">A gap here means no matching trial was found among those searched, not that an approach would work. About one trial in six has primary outcomes the rules cannot classify, so a few gaps may be measured under another name. Some gaps are gaps for good reason.</p></div>

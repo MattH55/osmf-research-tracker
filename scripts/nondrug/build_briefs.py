@@ -34,7 +34,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from gaps import compute  # noqa: E402
 from ndsite import ROOT, SITE, esc, load_dataset, shell, write  # noqa: E402
-from taxonomy import ALL_CLASSES, classify  # noqa: E402
+from taxonomy import ALL_CLASSES, classify, is_catchall  # noqa: E402
 
 BIOMARKER_ALIASES = {
     "chronic-obstructive-pulmonary-disease": "copd", "myalgic-encephalomyelitis-chronic-fatigue-syndrome": "me-cfs",
@@ -101,14 +101,22 @@ def medicines_from_condition_page(slug: str) -> list[dict]:
             continue  # unnamed, overlong, no trial, or a non-drug arm
         out.append({"name": label, "approved": "Approved</span>" in meta, "trials": trials,
                      "ncts": list(dict.fromkeys(re.findall(r"study/(NCT\d+)", meta)))[:2]})
-    out.sort(key=lambda a: (-a["trials"], not a["approved"], a["name"].lower()))
+    out.sort(key=lambda a: (-a["trials"], a["name"].lower()))
+
+    def keys(name: str) -> set[str]:
+        # "pregabalin" and "Pregabalin capsule" are one medicine, and so are "AXS-14 (Esreboxetine)" and "Esreboxetine".
+        parts = [name] + re.findall(r"\(([^)]+)\)", name)
+        return {re.sub(r"[^a-z0-9]", "", x.lower().split()[0]) for x in parts if x.split()}
     seen, uniq = set(), []
-    for a in out:  # "pregabalin" and "Pregabalin capsule" are one medicine
-        key = re.sub(r"[^a-z0-9]", "", a["name"].lower().split()[0]) if a["name"].split() else a["name"].lower()
-        if key in seen:
+    for a in out:
+        k = keys(a["name"])
+        if k & seen:
             continue
-        seen.add(key)
-        uniq.append(a)
+        seen |= k
+        name = a["name"][:1].upper() + a["name"][1:]
+        if re.fullmatch(r"[A-Z0-9-]{2,6}", name) and a["ncts"]:
+            name += f" (see {a['ncts'][0]})"  # a bare code name means little without its trial
+        uniq.append({**a, "name": name})
     return uniq
 
 
@@ -169,11 +177,10 @@ def build() -> None:
         meds = medicines_from_condition_page(slug)
         if meds:
             secs.append(("Medicines with registered trials", "Scale: trials listed for each medicine on the tracker's condition page, a snapshot of ClinicalTrials.gov. A trial means it is being studied, not that it works.",
-                         [li(esc(a["name"]), f"{a['trials']} trial{'s' if a['trials'] != 1 else ''}{' · approved medicine' if a['approved'] else ''}") for a in meds[:6]]))
+                         [li(esc(a["name"]), f"{a['trials']} trial{'s' if a['trials'] != 1 else ''}") for a in meds[:6]]))
 
-        catch_all = {"behavioural-other", "supplement-other"}  # vague buckets go last
-        nd = sorted(((c, v) for c, v in g["class_tot"].items() if v["c"] or v["r"]),
-                    key=lambda kv: (kv[0] in catch_all, -kv[1]["r"], -kv[1]["c"], -kv[1]["n"]))
+        nd = sorted(((c, v) for c, v in g["class_tot"].items() if v["c"] or v["r"]),  # vague buckets go last
+                    key=lambda kv: (is_catchall(kv[0], ALL_CLASSES[kv[0]].label), -kv[1]["r"], -kv[1]["c"], -kv[1]["n"]))
         if nd:
             secs.append(("Non-drug approaches tested", "Scale: trial status on ClinicalTrials.gov (completed, results posted). Status is not a result.",
                          [li(esc(ALL_CLASSES[c].label), f"{v['n']} trials · {v['c']} completed · {v['r']} with results") for c, v in nd[:6]]))
@@ -198,7 +205,7 @@ def build() -> None:
             secs.append(("Trials recruiting", f"Status as recorded on ClinicalTrials.gov when searched ({cm.get('fetched_at') or built}); check the registry for current status and eligibility.", rec))
 
         capped = (cm.get("total") or 0) > (cm.get("fetched") or 0)
-        gaps = [] if capped else [li(f"Among {gn} {esc(gl.lower())} trials found, none measured {esc(dl.lower())}", f"{n} trials of other approaches did")
+        gaps = [] if capped else [li(f"Among {gn} trials of {esc(gl[:1].lower() + gl[1:])} found, none measured {esc(dl.lower())}", f"{n} trials of other approaches did")
                                   for n, gl, dl, gn in g["unmeasured"][:3]]
         gaps += [li(f"{esc(gl)}: {esc(dl.lower())}", f"{n} trials, no results posted yet") for n, gl, dl, _ in g["unreported"][:2]]
         if gaps:

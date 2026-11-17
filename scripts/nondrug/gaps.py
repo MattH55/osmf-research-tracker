@@ -4,7 +4,10 @@ from __future__ import annotations
 from collections import defaultdict
 
 from outcomes import DOMAINS
-from taxonomy import ALL_CLASSES, GROUPS
+from taxonomy import ALL_CLASSES, CATCHALL_GROUPS, GROUPS
+
+# A group needs this many trials before its empty cells are reported as gaps.
+MIN_GROUP_TRIALS = 8
 
 DOMAIN_COLS = [(d, label) for d, label, _ in DOMAINS] + [("unclassified", "Not classified")]
 
@@ -35,15 +38,16 @@ def compute(mine: dict) -> dict:
     measured = {dom for dom, n in dom_tot.items() if n >= 3 and dom not in ("unclassified", "feasibility")}
     unmeasured = []  # (other trials measuring it, group label, domain label, trials found in this group)
     for gid, glabel in GROUPS:
-        if group_tot.get(gid, 0) < 3:
+        if group_tot.get(gid, 0) < MIN_GROUP_TRIALS or gid in CATCHALL_GROUPS:
             continue
         for dom, dlabel in DOMAIN_COLS:
             if dom in measured and cell[(gid, dom)]["n"] == 0:
                 unmeasured.append((dom_tot[dom], glabel, dlabel, group_tot[gid]))
-    unmeasured.sort(key=lambda x: -x[0])
+    # Larger groups first: a gap in a group with many trials says more than one in a group with few.
+    unmeasured.sort(key=lambda x: (-x[3], -x[0]))
     unreported = sorted(
         [(cell[(gid, dom)]["n"], gl, dl, cell[(gid, dom)]["rec"]) for gid, gl in GROUPS for dom, dl in DOMAIN_COLS
-         if dom != "unclassified" and cell[(gid, dom)]["n"] >= 3 and cell[(gid, dom)]["r"] == 0],
+         if dom != "unclassified" and gid not in CATCHALL_GROUPS and cell[(gid, dom)]["n"] >= 3 and cell[(gid, dom)]["r"] == 0],
         key=lambda x: -x[0])
     return {"cell": cell, "group_tot": group_tot, "dom_tot": dom_tot, "class_tot": class_tot,
             "unmeasured": unmeasured, "unreported": unreported}

@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from outcomes import DOMAIN_LABEL  # noqa: E402
 from ndsite import DISCLAIMER, ROOT, SITE, dataset_ld, esc, load_dataset, shell, trial_li, write, write_csv  # noqa: E402
-from taxonomy import ALL_CLASSES, GROUP_LABEL, GROUPS  # noqa: E402
+from taxonomy import ALL_CLASSES, GROUP_LABEL, GROUPS, is_catchall  # noqa: E402
 
 SHOW_PER_CONDITION = 15
 
@@ -118,7 +118,7 @@ def build() -> None:
 {DISCLAIMER}
 <h2>Trials by condition</h2>
 <p class="nd-method">Sorted by number of trials. Within a condition, trials with posted results come first, then completed, recruiting and active ones. The condition name opens its evidence-gap map.</p>
-<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Trials</th><th scope="col" class="n">Completed</th><th scope="col" class="n">Results posted</th><th scope="col" class="n">Recruiting</th><th scope="col" class="n">Randomised</th><th scope="col" class="n">Largest</th></tr></thead>
+<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Trials</th><th scope="col" class="n">Completed</th><th scope="col" class="n">Results posted</th><th scope="col" class="n">Recruiting</th><th scope="col" class="n">Randomised</th><th scope="col" class="n">Largest trial (participants)</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
 <div class="box"><h2>What these trials measure</h2><p>Primary outcomes, grouped by keyword rules: {dom_html or 'not classified'}.</p>
 <h3>Names used for this class in the registry</h3><p class="nd-method">{examples}</p></div>
@@ -137,17 +137,18 @@ def build() -> None:
                           modified=built))
 
     # ---------- hub ----------
-    groups_html = []
+    groups_html, jump = [], []
     for gid, glabel in GROUPS:
         cards = [c for c in ALL_CLASSES.values() if c.group == gid and c.id in class_stats]
         if not cards:
             continue
-        cards.sort(key=lambda c: -class_stats[c.id]["trials"])
+        cards.sort(key=lambda c: (is_catchall(c.id, c.label), -class_stats[c.id]["trials"]))
+        jump.append(f'<a href="#g-{gid}">{esc(glabel)}</a>')
         items = "".join(
             f'<a class="nd-card" href="/nondrug/{c.id}.html"><strong>{esc(c.label)}</strong>'
             f'<span>{fmt(class_stats[c.id]["trials"])} trials · {class_stats[c.id]["conditions"]} conditions · '
             f'{fmt(class_stats[c.id]["results"])} with results</span></a>' for c in cards)
-        groups_html.append(f'<section class="nd-group"><h2>{esc(glabel)}</h2><div class="nd-cards">{items}</div></section>')
+        groups_html.append(f'<section class="nd-group" id="g-{gid}"><h2>{esc(glabel)}</h2><div class="nd-cards">{items}</div></section>')
     cond_rows = []
     for slug, c in sorted(conds.items(), key=lambda kv: kv[1]["name"].lower()):
         kept = sum(1 for t in trials.values() if slug in t["c"])
@@ -157,7 +158,7 @@ def build() -> None:
             links.append(f'<a href="/briefs/{slug}.html">Evidence brief</a>')
         if c.get("page"):
             links.append(f'<a href="{esc(c["page"])}">Condition page</a>')
-        cond_rows.append(f'<tr><th scope="row">{esc(c["name"])}</th><td class="n">{fmt(kept)}</td>'
+        cond_rows.append(f'<tr data-name="{esc(c["name"].lower())}"><th scope="row">{esc(c["name"])}</th><td class="n">{fmt(kept)}</td>'
                          f'<td class="n">{fmt(c.get("total") or 0)}{" *" if capped else ""}</td><td>{" · ".join(links)}</td></tr>')
     total = len(trials)
     stats_all = {"results": sum(t["r"] for t in trials.values()), "recruiting": sum(t["g"] == "recruiting" for t in trials.values()),
@@ -172,11 +173,15 @@ def build() -> None:
   <div><b>{fmt(stats_all['recruiting'])}</b><span>recruiting as of {esc(built)}</span></div>
 </div>
 {DISCLAIMER}
+<nav class="nd-jump" aria-label="Jump to a group">{''.join(jump)}<a href="#conditions">By condition</a></nav>
 <div class="nd-groups">{''.join(groups_html)}</div>
 <h2 id="conditions">By condition</h2>
 <p class="nd-method">Trials counts are after the exclusions described below. "Registry matches" is how many trials the ClinicalTrials.gov search returned; * marks searches that hit the 1,000-trial cap.</p>
-<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Non-drug trials</th><th scope="col" class="n">Registry matches</th><th scope="col">Open</th></tr></thead>
+<label class="nd-filter"><span>Find a condition</span><input type="search" id="nd-cond-filter" placeholder="e.g. fibromyalgia" autocomplete="off"></label>
+<p class="nd-filter-count" id="nd-cond-count" aria-live="polite"></p>
+<div class="tbl-wrap"><table class="nd-tbl" id="nd-cond-table"><thead><tr><th scope="col">Condition</th><th scope="col" class="n">Non-drug trials</th><th scope="col" class="n">Registry matches</th><th scope="col">Open</th></tr></thead>
 <tbody>{''.join(cond_rows)}</tbody></table></div>
+<script>(function(){{var i=document.getElementById("nd-cond-filter"),c=document.getElementById("nd-cond-count"),r=document.querySelectorAll("#nd-cond-table tbody tr");if(!i)return;i.addEventListener("input",function(){{var q=i.value.trim().toLowerCase(),n=0;r.forEach(function(x){{var s=!q||x.getAttribute("data-name").indexOf(q)>-1;x.hidden=!s;if(s)n++;}});c.textContent=q?n+" of "+r.length+" conditions":"";}});}})();</script>
 <p class="nd-actions"><a class="btn" href="/nondrug/data/nondrug-trials.csv">Download all {fmt(total)} trials (CSV)</a> <a href="/supplement-safety/index.html">Supplement safety pages</a> <a href="/evidence-gaps/index.html">Evidence-gap maps</a></p>
 {method_box(d)}
 """

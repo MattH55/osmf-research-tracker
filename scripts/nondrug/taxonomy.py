@@ -49,7 +49,11 @@ GROUPS = [
     ("supplement", "Supplements and nutraceuticals"),
     ("otherdevice", "Other devices and digital tools"),
     ("care", "Care delivery and health services"),
+    # Catch-all: behavioural trials whose intervention names match no specific class. Kept out of gap statements.
+    ("behavother", "Other behavioural, not yet classified"),
 ]
+# Groups too heterogeneous to make "never measured" or "unreported" claims about.
+CATCHALL_GROUPS = {"behavother"}
 GROUP_LABEL = dict(GROUPS)
 
 # Order matters: the first match wins, so specific classes come before broad ones.
@@ -90,7 +94,7 @@ CLASSES: list[Klass] = [
           r"massage|manual (therap|lymph)|osteopath|chiropract|spinal manipulat|myofascial|lymphatic drainage|reflexology|mobili[sz]ation|craniosacral",
           "Hands-on treatment such as massage, manipulation and lymphatic drainage."),
     Klass("shockwave-vibration", "Shock-wave and vibration therapy", "physical",
-          r"shock ?wave|eswt|whole[- ]body vibration|vibration therap|focal vibration",
+          r"shock ?wave|\beswt\b|whole[- ]body vibration|vibration therap|focal vibration",
           "Mechanical shock waves or vibration applied to the body."),
     Klass("compression-devices", "Compression and counterpulsation", "physical", r"compression|counterpulsation|\beecp\b|abdominal binder",
           "Garments or devices that apply external pressure to the limbs or abdomen."),
@@ -149,7 +153,7 @@ CLASSES: list[Klass] = [
           r"nutrition(al)? (counsel|education|intervention|therap|support|program)|dietitian|oral nutrition|nutritional (blend|drink|formula)|functional food|fortified|hydrogen[- ]rich water|hydrogen water|juice|fiber|fibre|bran|oats|nuts|olive oil|cocoa|dark chocolate|green tea|coffee|honey|kefir|yogurt|fermented food",
           "Dietitian support and specific foods or food-based products."),
     Klass("airway-pressure", "Positive airway pressure and oral appliances", "sleep",
-          r"cpap|apap|bipap|positive airway pressure|mandibular advancement|oral appliance|hypoglossal",
+          r"\bcpap\b|\bapap\b|\bbipap\b|positive airway pressure|mandibular advancement|oral appliance|hypoglossal",
           "Machines that keep the airway open during sleep, and mouth splints for sleep apnoea."),
     # sleep
     Klass("sleep", "Sleep and circadian interventions", "sleep",
@@ -195,7 +199,7 @@ CLASSES: list[Klass] = [
           "Supplements that do not fit a more specific class."),
     # care delivery
     Klass("care-delivery", "Care coordination, navigation and outreach", "care",
-          r"navigat|outreach|reminder|phone call|telephone|collaborative care|care coordinat|community health worker|chw|transition(al)? care|discharge|home visit|follow-up call|integrated care|stepped care|pharmacist|primary care",
+          r"navigat|outreach|reminder|phone call|telephone|collaborative care|care coordinat|community health worker|\bchw\b|transition(al)? care|discharge|home visit|follow-up call|integrated care|stepped care|pharmacist|primary care",
           "Ways of organising care, such as patient navigators, reminders, outreach and collaborative care."),
     # devices and digital
     Klass("virtual-reality", "Virtual reality", "otherdevice", r"virtual reality|\bvr\b|immersive", "Treatment or training delivered in virtual reality."),
@@ -205,11 +209,16 @@ CLASSES: list[Klass] = [
 ]
 
 FALLBACK_BY_TYPE = {
-    "BEHAVIORAL": Klass("behavioural-other", "Other behavioural interventions", "cognitive", r"$^",
+    "BEHAVIORAL": Klass("behavioural-other", "Other behavioural interventions", "behavother", r"$^",
                         "Behavioural interventions registered as such that do not fit a more specific class."),
     "DIETARY_SUPPLEMENT": Klass("supplement-other", "Other supplements and nutraceuticals", "supplement", r"$^",
                                 "Supplements that do not fit a more specific class."),
 }
+
+def is_catchall(cid: str, label: str = "") -> bool:
+    """Vague buckets (fallbacks, 'other ...', 'mixed or unspecified') that should be listed after specific classes."""
+    return cid in {k.id for k in FALLBACK_BY_TYPE.values()} or cid.endswith("-other") or label.startswith("Other ") or "mixed or unspecified" in label
+
 
 ALL_CLASSES = {k.id: k for k in CLASSES}
 for _k in FALLBACK_BY_TYPE.values():
@@ -249,7 +258,7 @@ DRUG_NAME = re.compile(
 SUPPLEMENT_OVERRIDE = {"vitamin-d", "omega-3", "probiotics", "coq10", "nad-precursors", "melatonin", "creatine",
                        "b-vitamins", "curcumin-polyphenols"}
 # A drug-registered "supplement" is rejected if its name also names a medicine, a salt form or an injectable route.
-OVERRIDE_REJECT = re.compile(r"sulfate|sulphate|chloride|intravenous|iv|infusion|injection|inject|nebuli|parenteral|"
+OVERRIDE_REJECT = re.compile(r"sulfate|sulphate|chloride|intravenous|\biv\b|infusion|injection|inject|nebuli|parenteral|"
                              r"\+|plus |with |combined|combination|and (?!fish)", re.I)
 
 
