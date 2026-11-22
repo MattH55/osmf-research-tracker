@@ -265,12 +265,42 @@ def patch_page(page: Path, check: bool) -> tuple[bool, bool]:
     return True, redirect
 
 
+# Generated sections held out of the sitemap so thin templated pages don't drag
+# down the rest of the host. Pages stay published and crawlable via links; they
+# are only left out of sitemap.xml. Release them in batches by adding path
+# prefixes (e.g. "pairs/long-covid/") to config/sitemap-release.txt.
+SITEMAP_HELD_PREFIXES = ("pairs/",)
+SITEMAP_ALWAYS_INCLUDE = {"pairs/index.html"}
+SITEMAP_RELEASE_FILE = ROOT / "config" / "sitemap-release.txt"
+
+
+def sitemap_released_prefixes() -> tuple[str, ...]:
+    if not SITEMAP_RELEASE_FILE.exists():
+        return ()
+    lines = SITEMAP_RELEASE_FILE.read_text(encoding="utf-8").splitlines()
+    return tuple(l.strip() for l in lines if l.strip() and not l.strip().startswith("#"))
+
+
+def held_from_sitemap(page: Path, released: tuple[str, ...]) -> bool:
+    rel = page.relative_to(ROOT).as_posix()
+    if rel in SITEMAP_ALWAYS_INCLUDE:
+        return False
+    if not rel.startswith(SITEMAP_HELD_PREFIXES):
+        return False
+    return not (released and rel.startswith(released))
+
+
 def build_sitemap(pages: list[Path], redirects: set[Path], check: bool) -> bool:
     today = date.today().isoformat()
     urls = []
     noindex_count = 0
+    held_count = 0
+    released = sitemap_released_prefixes()
     for page in pages:
         if page in redirects:
+            continue
+        if held_from_sitemap(page, released):
+            held_count += 1
             continue
         try:
             markup = page.read_text(encoding="utf-8")
@@ -282,6 +312,8 @@ def build_sitemap(pages: list[Path], redirects: set[Path], check: bool) -> bool:
         urls.append(page)
     if noindex_count:
         print(f"  sitemap: excluded {noindex_count} noindex-flagged page(s)")
+    if held_count:
+        print(f"  sitemap: held back {held_count} page(s) under {', '.join(SITEMAP_HELD_PREFIXES)}")
 
     def priority_for(page: Path) -> float:
         rel = page.relative_to(ROOT).as_posix()
