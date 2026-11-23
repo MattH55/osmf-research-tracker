@@ -66,7 +66,7 @@ MENUS = [
       ("/supplement-safety/index.html", "Supplement safety"), ("/peptideos/index.html", "PeptideOS")]),
     ("More", "/digest/index.html", ("pais-", "digest/", "reports/", "briefs/", "embed/", "genetics/", "maps/"),
      [("/pais-cohorts.html", "Cohort database"), ("/genetics/index.html", "Genetics explorer"),
-      ("/maps/index.html", "Access maps"), ("/digest/index.html", "Weekly digest"),
+      ("/maps/index.html", "Access maps"), ("https://open-pv.org/", "OpenPV drug safety signals"), ("/digest/index.html", "Weekly digest"),
       ("/reports/index.html", "Evidence reports"), ("/briefs/index.html", "Printable briefs"),
       ("/embed/index.html", "Embed widget"), ("https://opensourcemed.info/", "opensourcemed.info")]),
 ]
