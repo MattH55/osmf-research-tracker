@@ -350,7 +350,7 @@ NAV = """
       <li><a href="/trials/index.html" class="nav-active">Recruiting Trials</a></li>
       <li><a href="/agents.html">Agents</a></li>
       <li><a href="https://opensourcemed.info">opensourcemed.info</a></li>
-      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support Our Work</a></li>
+      <li><a href="https://opensourcemed.info/support.html" class="nav-support">Support Our Work</a></li>
     </ul>
   </div>
 </nav>

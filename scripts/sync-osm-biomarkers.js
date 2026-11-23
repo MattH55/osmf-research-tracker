@@ -57,7 +57,7 @@ function trackerNav(active) {
       ${link('biomarker-atlas.html', 'Biomarkers', 'biomarkers')}
       ${link('clinical_trials.html', 'Clinical Trials', 'trials')}
       ${link('agents.html', 'Agents', 'agents')}
-      <li><a href="https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C" class="nav-support">Support Our Work</a></li>
+      <li><a href="https://opensourcemed.info/support.html" class="nav-support">Support Our Work</a></li>
     </ul>
   </div>
 </nav>`;

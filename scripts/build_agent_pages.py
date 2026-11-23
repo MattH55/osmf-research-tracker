@@ -337,7 +337,7 @@ def build_agent_page(agent: dict, slug: str, disease_map: dict, carried: str = "
     fresh_meta = f"""<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>{name} — Mechanism, Trials & Evidence | OSMF</title>
-<meta name="description" content="Evidence review for {name}: mechanism, clinical trials, safety and dosing information from the Open Source Medicine Foundation therapeutic agent database.">
+<meta name="description" content="Evidence review for {name}: mechanism, clinical trials and safety evidence from the Open Source Medicine Foundation therapeutic agent database.">
 <link rel="canonical" href="https://research.opensourcemed.info/agents/{slug}/">"""
     return f"""<!DOCTYPE html>
 <html lang="en">

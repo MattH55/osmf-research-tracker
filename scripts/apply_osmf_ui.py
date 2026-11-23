@@ -32,26 +32,43 @@ SKIP_PARTS = {"ntd-pipeline", "__pycache__", "hospital-ranking", "med-freedom-ma
 # iframe-able / embedded documents keep their own minimal chrome
 SKIP_REL = {"embed/latest-research.html"}
 
-PAYPAL = "https://www.paypal.com/ncp/payment/A2MK3BCVE4X7C"
+DIGEST = "https://opensourcemed.substack.com/subscribe?utm_source=tracker&amp;utm_medium=header"
 
-NAV = [  # href, label, section prefixes that mark it current, minor (hidden on mid widths)
-    ("/", "Conditions", ("index.html", "long-covid.html", "me-cfs.html", "pacvs.html", "pots.html",
-                         "mcas.html", "lyme.html", "gulf-war-illness.html", "other-post-viral.html",
-                         "post-viral-illness.html", "compare/"), False),
-    ("/biomarker-atlas.html", "Biomarkers", ("biomarker", "biomarkers/", "-biomarkers.html", "long-covid-endotypes",
-                                             "long-covid-hypotheses", "long-covid-metabolites",
-                                             "long-covid-neurotransmitters", "long-covid-viral-persistence"), False),
-    ("/clinical_trials.html", "Trials", ("clinical_trials", "trials/"), False),
-    ("/agents.html", "Therapeutics", ("agents", "candidate-therapeutics", "therapeutic", "pairs/",
-                                      "chronic-disease-interventions/", "disease-intelligence/"), False),
-    ("/tools/repurposing-explorer.html", "Repurposing", ("tools/repurposing",), False),
-    ("/nondrug/index.html", "Non-drug", ("nondrug/", "evidence-gaps/", "supplement-safety/", "briefs/"), False),
-    ("/pais-cohorts.html", "Cohorts", ("pais-",), True),
-    ("/digest/index.html", "Digest", ("digest/", "reports/"), True),
+# label, landing href, path prefixes that mark the menu current, items (href, label)
+MENUS = [
+    ("Conditions", "/",
+     ("index.html", "long-covid.html", "me-cfs.html", "pacvs.html", "pots.html", "mcas.html", "lyme.html",
+      "gulf-war-illness.html", "other-post-viral.html", "post-viral-illness.html", "compare/",
+      "chronic-disease-interventions/", "disease-intelligence/"),
+     [("/long-covid.html", "Long COVID"), ("/me-cfs.html", "ME/CFS"), ("/pacvs.html", "PACVS"),
+      ("/pots.html", "POTS"), ("/mcas.html", "MCAS"), ("/lyme.html", "Lyme / PTLDS"),
+      ("/gulf-war-illness.html", "Gulf War Illness"),
+      ("/chronic-disease-interventions/index.html", "All chronic conditions"),
+      ("/compare/index.html", "Compare conditions")]),
+    ("Biomarkers", "/biomarker-atlas.html",
+     ("biomarker", "biomarkers/", "-biomarkers.html", "tools/biomarker-lookup", "long-covid-endotypes",
+      "long-covid-hypotheses", "long-covid-metabolites", "long-covid-neurotransmitters",
+      "long-covid-viral-persistence"),
+     [("/biomarker-atlas.html", "Biomarker atlases"), ("/biomarkers/index.html", "Marker pages"),
+      ("/tools/biomarker-lookup.html", "Biomarker lookup")]),
+    ("Trials", "/clinical_trials.html", ("clinical_trials", "trials/"),
+     [("/clinical_trials.html", "Trial finder"), ("/trials/index.html", "Recruiting trials")]),
+    ("Therapies", "/agents.html",
+     ("agents", "candidate-therapeutics", "therapeutic", "pairs/", "tools/repurposing", "nondrug/",
+      "evidence-gaps/", "supplement-safety/"),
+     [("/agents.html", "Therapeutic agents"), ("/tools/repurposing-explorer.html", "Repurposing explorer"),
+      ("/nondrug/index.html", "Non-drug evidence map"), ("/evidence-gaps/index.html", "Evidence-gap maps"),
+      ("/supplement-safety/index.html", "Supplement safety"), ("/peptideos/index.html", "PeptideOS")]),
+    ("More", "/digest/index.html", ("pais-", "digest/", "reports/", "briefs/", "embed/"),
+     [("/pais-cohorts.html", "Cohort database"), ("/genetics/index.html", "Genetics explorer"),
+      ("/maps/index.html", "Access maps"), ("/digest/index.html", "Weekly digest"),
+      ("/reports/index.html", "Evidence reports"), ("/briefs/index.html", "Printable briefs"),
+      ("/embed/index.html", "Embed widget"), ("https://opensourcemed.info/", "opensourcemed.info")]),
 ]
 
 MARK_SVG = ('<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z" '
             'fill="#ffb547"/><circle cx="12" cy="12" r="2.1" fill="#0e1444"/></svg>')
+CHEVRON = '<svg class="osmf-dd__chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
 HEAD_START, HEAD_END = "<!-- OSMF_UI_HEAD_START -->", "<!-- OSMF_UI_HEAD_END -->"
 HDR_START, HDR_END = "<!-- OSMF_UI_HEADER_START -->", "<!-- OSMF_UI_HEADER_END -->"
@@ -60,39 +77,41 @@ FTR_START, FTR_END = "<!-- OSMF_UI_FOOTER_START -->", "<!-- OSMF_UI_FOOTER_END -
 HEAD_BLOCK = f"""{HEAD_START}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,50;1,9..144,400..600,50&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/osmf-ui.css">
+<link rel="stylesheet" href="/css/osmf-ui.css?v=20261122">
 {HEAD_END}"""
 
 
-def current_href(rel: str) -> str | None:
+def current_menu(rel: str) -> str | None:
     def hit(p: str) -> bool:
         if p.startswith("-"):                 # suffix family, root pages only (e.g. -biomarkers.html)
             return "/" not in rel and rel.endswith(p)
         return rel.startswith(p)              # exact page, page-name prefix, or directory
-    for href, _label, prefixes, _minor in NAV:
+    for label, _href, prefixes, _items in MENUS:
         if any(hit(p) for p in prefixes):
-            return href
+            return label
     return None
 
 
 def header_html(rel: str) -> str:
-    cur = current_href(rel)
-    links, mobile = [], []
-    for href, label, _p, minor in NAV:
-        aria = ' aria-current="page"' if href == cur else ""
-        cls = ' class="osmf-nav__minor"' if minor else ""
-        links.append(f'<a href="{href}"{cls}{aria}>{label}</a>')
-        mobile.append(f'<a href="{href}"{aria}>{label}</a>')
+    cur = current_menu(rel)
+    here = "/" if rel == "index.html" else "/" + rel
+    desktop, mobile = [], []
+    for label, _href, _p, items in MENUS:
+        links = "".join(f'<a href="{h}"{" aria-current=" + chr(34) + "page" + chr(34) if h == here else ""}>{t}</a>'
+                        for h, t in items)
+        active = " is-current" if label == cur else ""
+        desktop.append(f'<div class="osmf-dd{active}"><button type="button" class="osmf-dd__btn" aria-haspopup="true">'
+                       f'{label}{CHEVRON}</button><div class="osmf-dd__panel">{links}</div></div>')
+        mobile.append(f'<div class="osmf-menu__group"><span class="osmf-menu__head">{label}</span>{links}</div>')
     brand = (f'<a class="osmf-brand" href="/" aria-label="Open Source Medicine Research Tracker home">'
              f'<span class="osmf-brand__mark">{MARK_SVG}</span>'
              f'<span class="osmf-brand__text"><span class="osmf-brand__name">Open Source Medicine</span>'
              f'<span class="osmf-brand__sub">Research Tracker</span></span></a>')
-    cta = f'<a class="osmf-cta" href="{PAYPAL}" rel="noopener">Support our work</a>'
+    cta = f'<a class="osmf-cta" href="{DIGEST}" rel="noopener">Get the weekly digest</a>'
     return (f'{HDR_START}\n<div class="osmf-header" role="banner"><div class="osmf-header__in">{brand}'
-            f'<div class="osmf-nav" role="navigation" aria-label="Primary">{"".join(links)}</div>{cta}'
+            f'<div class="osmf-nav" role="navigation" aria-label="Primary">{"".join(desktop)}</div>{cta}'
             f'<details class="osmf-menu"><summary aria-label="Open menu"><span></span></summary>'
-            f'<div class="osmf-menu__panel" role="navigation" aria-label="Mobile">{"".join(mobile)}'
-            f'<a href="https://opensourcemed.info/">opensourcemed.info</a>{cta}</div></details>'
+            f'<div class="osmf-menu__panel" role="navigation" aria-label="Mobile">{"".join(mobile)}{cta}</div></details>'
             f'</div></div>\n{HDR_END}')
 
 
@@ -105,13 +124,12 @@ FOOTER = f"""{FTR_START}
     </div>
     <div class="osmf-footer__actions">
       <a class="osmf-cta" href="https://opensourcemed.substack.com/subscribe?utm_source=tracker&amp;utm_medium=footer" rel="noopener">Get the weekly digest</a>
-      <a class="osmf-btn-ghost" href="{PAYPAL}" rel="noopener">Support our work</a>
     </div>
   </div>
   <div class="osmf-footer__grid">
     <div class="osmf-footer__about">
       <a class="osmf-brand" href="/"><span class="osmf-brand__mark">{MARK_SVG}</span><span class="osmf-brand__text"><span class="osmf-brand__name">Open Source Medicine</span><span class="osmf-brand__sub">Research Tracker</span></span></a>
-      <p>An independent nonprofit research foundation mapping biomarkers, trials and repurposed medicines for post-viral and chronic disease. Every claim links to its source.</p>
+      <p>An independent research initiative mapping biomarkers, trials and repurposed medicines for post-viral and chronic disease. Every claim links to its source.</p>
     </div>
     <div><h3>Conditions</h3><ul>
       <li><a href="/long-covid.html">Long COVID</a></li><li><a href="/me-cfs.html">ME/CFS</a></li>
