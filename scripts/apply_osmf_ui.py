@@ -77,7 +77,8 @@ FTR_START, FTR_END = "<!-- OSMF_UI_FOOTER_START -->", "<!-- OSMF_UI_FOOTER_END -
 HEAD_BLOCK = f"""{HEAD_START}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,50;1,9..144,400..600,50&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/osmf-ui.css?v=20261122">
+<link rel="stylesheet" href="/css/osmf-ui.css?v=20261123">
+<script defer src="/js/osmf-search.js?v=20261123"></script>
 {HEAD_END}"""
 
 
@@ -108,10 +109,13 @@ def header_html(rel: str) -> str:
              f'<span class="osmf-brand__text"><span class="osmf-brand__name">Open Source Medicine</span>'
              f'<span class="osmf-brand__sub">Research Tracker</span></span></a>')
     cta = f'<a class="osmf-cta" href="{DIGEST}" rel="noopener">Get the weekly digest</a>'
+    search = ('<div class="osmf-search" role="search"><input type="search" placeholder="Search the tracker" '
+              'aria-label="Search the tracker" autocomplete="off" spellcheck="false" aria-expanded="false">'
+              '<div class="osmf-search__results" role="listbox" hidden></div></div>')
     return (f'{HDR_START}\n<div class="osmf-header" role="banner"><div class="osmf-header__in">{brand}'
-            f'<div class="osmf-nav" role="navigation" aria-label="Primary">{"".join(desktop)}</div>{cta}'
+            f'<div class="osmf-nav" role="navigation" aria-label="Primary">{"".join(desktop)}</div>{search}{cta}'
             f'<details class="osmf-menu"><summary aria-label="Open menu"><span></span></summary>'
-            f'<div class="osmf-menu__panel" role="navigation" aria-label="Mobile">{"".join(mobile)}{cta}</div></details>'
+            f'<div class="osmf-menu__panel" role="navigation" aria-label="Mobile">{search}{"".join(mobile)}{cta}</div></details>'
             f'</div></div>\n{HDR_END}')
 
 
@@ -294,6 +298,9 @@ def main() -> int:
         pages = [p for p in pages if p.relative_to(ROOT).as_posix() in wanted]
     changed = sum(process(p, args.check) for p in pages)
     print(f"osmf-ui: {len(pages)} pages scanned, {changed} {'would change' if args.check else 'updated'}")
+    if not args.check and not args.only:      # keep the header search index in step with the pages
+        import build_search_index
+        build_search_index.main()
     return 0
 
 
