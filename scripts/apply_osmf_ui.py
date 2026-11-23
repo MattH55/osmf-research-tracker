@@ -31,6 +31,11 @@ EXCLUDED_NAMES = {"agents-local.html", "clinical_trials-local.html"}
 SKIP_PARTS = {"ntd-pipeline", "__pycache__", "hospital-ranking", "med-freedom-map", "data", "files"}
 # iframe-able / embedded documents keep their own minimal chrome
 SKIP_REL = {"embed/latest-research.html"}
+# Sections with their own design: they get the shared header (with a header-only
+# stylesheet, so their look is untouched) and keep their own menus and footers.
+HEADER_ONLY_DIRS = ("peptideos", "maps")
+# Sections on the tracker templates that keep their own footer (it carries a disclaimer).
+KEEP_FOOTER_DIRS = ("genetics",)
 
 DIGEST = "https://opensourcemed.substack.com/subscribe?utm_source=tracker&amp;utm_medium=header"
 
@@ -55,11 +60,11 @@ MENUS = [
      [("/clinical_trials.html", "Trial finder"), ("/trials/index.html", "Recruiting trials")]),
     ("Therapies", "/agents.html",
      ("agents", "candidate-therapeutics", "therapeutic", "pairs/", "tools/repurposing", "nondrug/",
-      "evidence-gaps/", "supplement-safety/"),
+      "evidence-gaps/", "supplement-safety/", "peptideos/"),
      [("/agents.html", "Therapeutic agents"), ("/tools/repurposing-explorer.html", "Repurposing explorer"),
       ("/nondrug/index.html", "Non-drug evidence map"), ("/evidence-gaps/index.html", "Evidence-gap maps"),
       ("/supplement-safety/index.html", "Supplement safety"), ("/peptideos/index.html", "PeptideOS")]),
-    ("More", "/digest/index.html", ("pais-", "digest/", "reports/", "briefs/", "embed/"),
+    ("More", "/digest/index.html", ("pais-", "digest/", "reports/", "briefs/", "embed/", "genetics/", "maps/"),
      [("/pais-cohorts.html", "Cohort database"), ("/genetics/index.html", "Genetics explorer"),
       ("/maps/index.html", "Access maps"), ("/digest/index.html", "Weekly digest"),
       ("/reports/index.html", "Evidence reports"), ("/briefs/index.html", "Printable briefs"),
@@ -77,9 +82,27 @@ FTR_START, FTR_END = "<!-- OSMF_UI_FOOTER_START -->", "<!-- OSMF_UI_FOOTER_END -
 HEAD_BLOCK = f"""{HEAD_START}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..600,50;1,9..144,400..600,50&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/osmf-ui.css?v=20261123">
+<link rel="stylesheet" href="/css/osmf-ui.css?v=20261123b">
 <script defer src="/js/osmf-search.js?v=20261123"></script>
 {HEAD_END}"""
+
+HEAD_BLOCK_LITE = f"""{HEAD_START}
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/css/osmf-header.css?v=20261123b">
+<script defer src="/js/osmf-search.js?v=20261123"></script>
+{HEAD_END}"""
+
+
+def write_header_css() -> None:
+    """css/osmf-header.css = the tokens and header rules of osmf-ui.css, nothing page-wide."""
+    css = (ROOT / "css" / "osmf-ui.css").read_text(encoding="utf-8")
+    tokens = css[css.index(":root {"):css.index("\nhtml {")]
+    header = css[css.index("/* 2 ── Header"):css.index("/* 3 ── Footer")]
+    out = "/* Generated from osmf-ui.css by scripts/apply_osmf_ui.py. Do not edit. */\n" + tokens + "\n" + header
+    target = ROOT / "css" / "osmf-header.css"
+    if not target.exists() or target.read_text(encoding="utf-8") != out:
+        target.write_text(out, encoding="utf-8", newline="\n")
 
 
 def current_menu(rel: str) -> str | None:
@@ -183,7 +206,7 @@ STATUS_BANNER_RE = re.compile(r"\s*<div style=\"background:#fef3c7;[^\"]*\">Stat
 
 def public_pages() -> list[Path]:
     pages = [p for p in ROOT.glob("*.html") if p.name not in EXCLUDED_NAMES]
-    for d in PUBLIC_DIRS:
+    for d in PUBLIC_DIRS + HEADER_ONLY_DIRS + KEEP_FOOTER_DIRS:
         base = ROOT / d
         if base.exists():
             pages.extend(p for p in base.rglob("*.html") if not (SKIP_PARTS & set(p.relative_to(ROOT).parts)))
@@ -245,10 +268,14 @@ def process(page: Path, check: bool) -> bool:
     if is_redirect(markup) or "<body" not in markup:
         return False
 
+    section = rel.split("/", 1)[0]
+    lite, keep_footer = section in HEADER_ONLY_DIRS, section in KEEP_FOOTER_DIRS
+    head_block = HEAD_BLOCK_LITE if lite else HEAD_BLOCK
+
     # 1. head assets (last thing in <head> so it wins the cascade)
-    markup, done = replace_block(markup, HEAD_START, HEAD_END, HEAD_BLOCK)
+    markup, done = replace_block(markup, HEAD_START, HEAD_END, head_block)
     if not done:
-        markup = markup.replace("</head>", HEAD_BLOCK + "\n</head>", 1)
+        markup = markup.replace("</head>", head_block + "\n</head>", 1)
 
     # 2. body class
     def add_class(m: re.Match) -> str:
@@ -258,18 +285,22 @@ def process(page: Path, check: bool) -> bool:
         if re.search(r'class="', tag):
             return re.sub(r'class="', 'class="osmf-ui ', tag, count=1)
         return tag[:-1] + ' class="osmf-ui">'
-    markup = re.sub(r"<body\b[^>]*>", add_class, markup, count=1)
+    if not lite:
+        markup = re.sub(r"<body\b[^>]*>", add_class, markup, count=1)
 
     # 3. header
     hdr = header_html(rel)
     markup, done = replace_block(markup, HDR_START, HDR_END, hdr)
     if not done:
         pre, body = re.split(r"(?<=>)", markup.split("<body", 1)[1], maxsplit=1)
-        body = strip_top_nav(body)
+        if not lite:
+            body = strip_top_nav(body)
         markup = markup.split("<body", 1)[0] + "<body" + pre + "\n" + hdr + body
 
     # 4. footer
-    markup, done = replace_block(markup, FTR_START, FTR_END, FOOTER)
+    done = lite or keep_footer
+    if not done:
+        markup, done = replace_block(markup, FTR_START, FTR_END, FOOTER)
     if not done:
         head, tail = markup.rsplit("</body>", 1)
         head = strip_footer(head)
@@ -292,6 +323,7 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--only", nargs="*")
     args = ap.parse_args()
+    write_header_css()
     pages = public_pages()
     if args.only:
         wanted = set(args.only)
