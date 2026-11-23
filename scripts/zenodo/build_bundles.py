@@ -200,7 +200,7 @@ def readme(rid: str, r: dict, commit: str, contents: list[str], fields: list[str
 
 {NOT_ADVICE}
 
-- **Publisher:** Open Source Medicine Foundation (OSMF), Tallinn, Estonia
+- **Publisher:** Open Source Medicine Foundation (OSMF)
 - **Creator:** Matthew T. J. Halma (ORCID 0000-0003-2487-0636)
 - **Version:** {VERSION}
 - **Live version:** {SITE}{r['landing']}
