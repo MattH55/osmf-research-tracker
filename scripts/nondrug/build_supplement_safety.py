@@ -206,6 +206,28 @@ CALLOUT = ('<div class="nd-callout"><strong>Reports are not rates.</strong> CAER
            'and they cannot be compared between products. Popular products attract more reports.</div>')
 
 
+# Published-study safety summaries, copied (text unchanged) from the main site's verified library:
+# data/nondrug/safety_library/<key>.json. Only entries that say something about the page's supplement are attached.
+LIBRARY = ROOT / "data" / "nondrug" / "safety_library"
+LIBRARY_KEYS = {"vitamin-d": "vitamin-d", "omega-3": "omega-3", "magnesium": "magnesium", "zinc": "zinc",
+                "probiotics": "probiotics", "melatonin": "melatonin", "coq10": "coq10", "turmeric-curcumin": "curcumin",
+                "creatine": "creatine", "nad-precursors": "nicotinamide-riboside"}
+
+
+def library_html(sid: str, label: str) -> str:
+    key = LIBRARY_KEYS.get(sid)
+    f = LIBRARY / f"{key}.json" if key else None
+    if not f or not f.exists():
+        return (f"<h2>Safety evidence from published studies</h2><p>No summary of published safety studies has been prepared for "
+                f"{esc(in_sentence(label))} yet. The NIH text and FDA reports on this page are the safety sources for now.</p>")
+    e = json.loads(f.read_text(encoding="utf-8"))
+    refs = "".join(f'<li><a href="https://pubmed.ncbi.nlm.nih.gov/{esc(c["id"])}/" target="_blank" rel="noopener">{esc(c["label"])}</a>'
+                   f'{(": " + esc(c["title"])) if c.get("title") else ""}</li>' for c in e["citations"])
+    return (f"<h2>Safety evidence from published studies</h2><p>{esc(e['text'])}</p><ol class=\"nd-tlist\">{refs}</ol>"
+            f"<p class=\"nd-method\">A summary of what the cited PubMed studies report, from studies in a range of people, not only one condition. "
+            f"Each statement is checked against a quoted sentence from the study's abstract; copied {esc(e.get('copied_on', ''))}.</p>")
+
+
 def in_sentence(label: str) -> str:
     """'Vitamin D' -> 'vitamin D'; 'N-acetylcysteine (NAC)' stays as written."""
     return label[:1].lower() + label[1:] if len(label) > 1 and label[1].islower() else label
@@ -255,6 +277,7 @@ def render() -> None:
         body = f"""<p class="lede">What public sources say about the safety of {esc(in_sentence(label))}: FDA adverse-event reports, NIH guidance on interactions with medicines, and the registered trials that test it.</p>
 <div class="disclaimer"><span>⚠️</span><div><strong>Research information, not medical advice.</strong> Supplements can interact with prescription medicines and affect conditions. Check with a pharmacist or your own clinician before starting or stopping one. Nothing here is a dose recommendation.</div></div>
 {nih_html}
+{library_html(sid, label)}
 {caers_html}
 {trials_html}
 <p class="nd-actions"><a href="/supplement-safety/index.html">All supplement safety pages</a> <a href="/nondrug/index.html">Non-drug evidence map</a></p>"""
@@ -272,7 +295,7 @@ def render() -> None:
 {CALLOUT}
 <div class="nd-cards">{''.join(cards)}</div>
 <div class="box"><h2>Sources and limits</h2><ul class="nd-method">
-<li><strong>NIH text</strong> is quoted verbatim from the Office of Dietary Supplements health-professional fact sheets or, where none exists, the National Center for Complementary and Integrative Health. OSMF does not write interaction guidance.</li>
+<li><strong>NIH text</strong> is quoted verbatim from the Office of Dietary Supplements health-professional fact sheets or, where none exists, the National Center for Complementary and Integrative Health. OSMF does not write its own interaction guidance: NIH text is quoted verbatim, and each page's &quot;Safety evidence from published studies&quot; section restates what cited PubMed studies report, with every statement checked against a quoted sentence from the abstract.</li>
 <li><strong>CAERS</strong> is the FDA's database of adverse-event reports for foods, supplements and cosmetics. Only reports naming the product as the suspect are counted, and reactions are shown only for products named for that supplement alone, because combination products such as calcium with vitamin D dominate some counts. Generic categories get no count.</li>
 <li><strong>Not covered:</strong> curated interaction databases (most are not openly licensed), device adverse events, and NPxP drug-modifier interaction data, which is published separately on <a href="https://npxp.opensourcemed.info/">npxp.opensourcemed.info</a> and covers cancer cell lines.</li>
 </ul></div>"""
