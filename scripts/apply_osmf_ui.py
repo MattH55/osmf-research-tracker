@@ -200,7 +200,7 @@ LEGACY_BLOCKS = [
 ]
 DONATE_RE = re.compile(r"<div class=\"donate-section\">(?:(?!<div class=\"donate-section\">).)*?<div class=\"donate-btns\">.*?</div>\s*</div>", re.S)
 SITE_FOOTER_RE = re.compile(r"<footer\s+class=\"?(?:osmf-network-footer|site|osmf)\"?>.*?</footer>", re.S)
-SCRIPT_RE = re.compile(r"<script[^>]*>(?:(?!</script>).)*</script>", re.S)
+SCRIPT_RE = re.compile(r"<script\b[^>]*>(?:(?!</script>).)*</script>", re.S)
 STATUS_BANNER_RE = re.compile(r"\s*<div style=\"background:#fef3c7;[^\"]*\">Status: In preparation\.[^<]*</div>", re.S)
 
 
@@ -254,7 +254,7 @@ def strip_footer(body: str) -> str:
         end = body.find("</footer>", idx)
         if end != -1:
             after = SCRIPT_RE.sub("", body[end + len("</footer>"):])
-            if len(re.sub(r"</?(?:div|main|section|body|html)[^>]*>|\s+", "", after)) < 400:
+            if len(re.sub(r"</?(?:div|main|section|body|html)\b[^>]*>|\s+", "", after)) < 400:
                 body = body[:idx] + body[end + len("</footer>"):]
     return body
 
