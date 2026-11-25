@@ -239,15 +239,16 @@ GRADE_CSS = ("<style>.np-g{display:inline-block;font-size:.78rem;font-weight:700
 def reviews_html(sid: str, label: str, include_drafts: bool = False) -> str:
     """Evidence-graded reviews of this supplement, one row per condition. Published reviews only unless previewing."""
     key = LIBRARY_KEYS.get(sid)
-    if not key or not COMPOUND_INDEX.exists():
+    src = (ROOT / "_np_preview" / "data" / "compounds" / "index.json") if include_drafts else COMPOUND_INDEX
+    if not key or not src.exists():
         return ""
-    doc = json.loads(COMPOUND_INDEX.read_text(encoding="utf-8"))
+    doc = json.loads(src.read_text(encoding="utf-8"))
     rows = [r for r in doc["compounds"].get(key, {}).get("rows", []) if include_drafts or r["status"] == "published"]
     if not rows:
         return ""
     trs = ""
     for r in rows:
-        how = "; ".join(x for x in ((("tested together with " + ", ".join(r["tested_with"])) if r["tested_with"] else "on its own"), r["route_note"]) if x)
+        how = "; ".join(x for x in ((("tested together with " + ", ".join(r["tested_with"])) if r["tested_with"] else "single ingredient"), r["route_note"]) if x)
         trs += (f'<tr><th scope="row"><a href="{esc(r["page"])}">{esc(r["condition"])}</a></th>'
                 f'<td><span class="np-g g-{esc(r["grade"])}" title="{esc(doc["grade_key"][r["grade"]])}">{esc(r["grade"])}</span></td>'
                 f'<td>{esc(how)}</td><td>{esc(r["summary"])}</td></tr>')

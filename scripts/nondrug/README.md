@@ -92,10 +92,10 @@ The next daily run regenerates the pages from the new data.
 
 ## Natural-products review on RepurpOS
 
-`scripts/add_np_review_section.py` adds an evidence-graded natural-products review above the Natural Products table on five RepurpOS pages: fibromyalgia, migraine-disorder, ME/CFS, alopecia-areata, and Alzheimer's disease and other dementias. Long COVID has no RepurpOS page, because its page is a redirect stub.
+`scripts/add_np_review_section.py` adds an evidence-graded natural-products review above the Natural Products table on ten RepurpOS pages (see `PAGE_FOR` in the script). Long COVID has no RepurpOS page, because its page is a redirect stub.
 
-- **Data:** `data/natural-products-review/<slug>.json`, exported read-only from opensourcemed.info by `tools/export_np_to_tracker.py`. Authoring and citation checks stay there.
-- **Draft gate:** a review shows only when its `status` is `published`. Drafts render nothing, and `--preview` writes draft copies to `_np_preview/`, which is gitignored.
-- **Separate grades:** the review grades (A–D, Negative, Insufficient) are a different scale from the pipeline's evidence tiers in the table. Each review card that matches a table row says so, and the pipeline tiers are never changed.
+- **Data:** exported read-only from opensourcemed.info by `tools/export_np_to_tracker.py`. Authoring and citation checks stay there.
+- **Drafts never enter the repository.** GitHub Pages serves every tracked file, raw data included. The export writes only *published* reviews to `data/natural-products-review/`. Drafts go to `_np_preview/data/`, which is gitignored. `--preview` (and `NP_PREVIEW=1` for the supplement-safety pages) renders drafts into `_np_preview/` for local checks.
+- **By compound:** `data/natural-products-review/compounds/index.json` lists each ingredient's published review rows. The supplement-safety pages show them under "Evidence reviews by condition".
+- **Separate grades:** the review grades (A–D, Negative, Insufficient) are a different scale from the pipeline's evidence tiers in the table. Each review card that matches a table row names that row and says so; combinations are not matched. The pipeline tiers are never changed.
 - **Rerun after regenerating:** the block sits between `<!-- OSMF_NP_REVIEW_START -->` and `END` markers. `disease_pipeline/publish_site.py` regenerates pages without it, so rerun this script afterwards.
-

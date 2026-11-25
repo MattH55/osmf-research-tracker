@@ -23,6 +23,7 @@ REVIEWS = ROOT / "data" / "natural-products-review"
 PAGES = ROOT / "disease-intelligence"
 PIPELINE = ROOT / "data" / "disease-intelligence"
 PREVIEW = ROOT / "_np_preview"
+DRAFTS = PREVIEW / "data"  # gitignored: every review, drafts included (written by the main-site export)
 START, END = "<!-- OSMF_NP_REVIEW_START -->", "<!-- OSMF_NP_REVIEW_END -->"
 BLOCK_RE = re.compile(r"[ \t]*" + re.escape(START) + r".*?" + re.escape(END) + r"\r?\n?", re.S)
 ANCHOR = '<section id="natural-products">'
@@ -85,17 +86,20 @@ def pipeline_tiers(page_slug: str) -> dict[str, tuple[str, str]]:
     for np_ in json.loads(f.read_text(encoding="utf-8")).get("natural_products") or []:
         for n in [np_.get("name") or ""] + (np_.get("common_names") or []):
             if n:
-                out.setdefault(norm(n), (np_.get("evidence_tier") or "", np_.get("evidence_tier_label") or ""))
+                out.setdefault(norm(n), (np_.get("evidence_tier") or "", np_.get("evidence_tier_label") or "", np_.get("name") or n))
     return out
 
 
 def compound_index() -> dict:
-    f = REVIEWS / "compounds" / "index.json"
+    f = DRAFTS / "compounds" / "index.json"  # ingredient names only are used here
+    if not f.exists():
+        f = REVIEWS / "compounds" / "index.json"
     return json.loads(f.read_text(encoding="utf-8"))["compounds"] if f.exists() else {}
 
 
-def match_tier(p: dict, tiers: dict) -> tuple[str, str] | None:
-    """Pipeline tier for a single-ingredient product. Combinations are not matched: the pipeline row is for one ingredient."""
+def match_tier(p: dict, tiers: dict) -> tuple[str, str, str] | None:
+    """(tier, label, pipeline row name) for a single-ingredient product. Combinations are not matched: the pipeline
+    row is for one ingredient. The product's own name is tried before the ingredient's other pipeline names."""
     comps = p.get("compounds") or []
     if len(comps) > 1:
         return None
@@ -128,7 +132,9 @@ def block(rev: dict, page_slug: str, scope: str) -> str:
                         f'{" · general safety source" if c.get("note") else ""}</li>' for c in p["citations"])
         general = "".join(f" <strong>General safety ({esc(g['name'])}):</strong> {esc(g['short'])}" for g in p["general_safety"])
         tier = match_tier(p, tiers)
-        xref = (f'<p class="np-rev-meta">Also in the <a href="#natural-products">Natural Products table</a> below, with pipeline evidence tier '
+        same = tier and norm(tier[2]) in {norm(n) for n in [p["name"]] + p.get("aliases", [])}
+        intro = ("Also in" if same else f"A related entry, “{esc(tier[2])}”, is in") if tier else ""
+        xref = (f'<p class="np-rev-meta">{intro} the <a href="#natural-products">Natural Products table</a> below, with pipeline evidence tier '
                 f'{esc(tier[0])}{" (" + esc(tier[1]) + ")" if tier[1] else ""}. That tier ranks registry and literature signals and is a different scale from this review grade.</p>') if tier and tier[0] else ""
         design = "No human studies found" if p["best_design"] == "none" else p["best_design"]
         rct = f" · {p['n_rcts']} randomized trial{'s' if p['n_rcts'] != 1 else ''} cited" if p["n_rcts"] else ""
@@ -167,22 +173,24 @@ def main() -> int:
     preview = "--preview" in sys.argv
     changed, shown = [], []
     for rslug, (page_slug, scope) in PAGE_FOR.items():
-        f = REVIEWS / f"{rslug}.json"
+        f = REVIEWS / f"{rslug}.json"  # present only when the review is published
+        d = DRAFTS / f"{rslug}.json"
         page = PAGES / f"{page_slug}.html"
-        if not f.exists() or not page.exists():
-            print(f"skip {rslug}: {'no review data' if not f.exists() else 'no RepurpOS page'}")
+        if not page.exists():
+            print(f"skip {rslug}: no RepurpOS page")
             continue
-        rev = json.loads(f.read_text(encoding="utf-8"))
+        pub = json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+        rev = pub or (json.loads(d.read_text(encoding="utf-8")) if d.exists() else {"status": "draft"})
         with open(page, encoding="utf-8", newline="") as fh:
             cur = fh.read()
-        live = apply(cur, rev if rev["status"] == "published" else None, page_slug, scope)
+        live = apply(cur, pub if pub and pub["status"] == "published" else None, page_slug, scope)
         if live != cur:
             with open(page, "w", encoding="utf-8", newline="") as fh:
                 fh.write(live)
             changed.append(page_slug)
         if rev["status"] == "published":
             shown.append(page_slug)
-        if preview:
+        if preview and "products" in rev:
             PREVIEW.mkdir(exist_ok=True)
             with open(PREVIEW / f"{page_slug}.html", "w", encoding="utf-8", newline="") as fh:
                 fh.write(apply(cur, rev, page_slug, scope))
