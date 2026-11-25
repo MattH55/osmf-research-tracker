@@ -35,6 +35,11 @@ PAGE_FOR = {
     "alopecia-areata": ("alopecia-areata", ""),
     "alzheimers-disease": ("alzheimers-disease-and-other-dementias",
                            "This review covers Alzheimer's disease and dementia prevention; this page covers Alzheimer's disease and other dementias."),
+    "major-depressive-disorder": ("major-depressive-disorder", ""),
+    "osteoarthritis": ("osteoarthritis", ""),
+    "rheumatoid-arthritis": ("rheumatoid-arthritis", ""),
+    "irritable-bowel-syndrome": ("irritable-bowel-syndrome", ""),
+    "insomnia": ("insomnia", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape

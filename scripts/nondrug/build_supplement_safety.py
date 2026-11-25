@@ -212,7 +212,8 @@ CALLOUT = ('<div class="nd-callout"><strong>Reports are not rates.</strong> CAER
 LIBRARY = ROOT / "data" / "nondrug" / "safety_library"
 LIBRARY_KEYS = {"vitamin-d": "vitamin-d", "omega-3": "omega-3", "magnesium": "magnesium", "zinc": "zinc",
                 "probiotics": "probiotics", "melatonin": "melatonin", "coq10": "coq10", "turmeric-curcumin": "curcumin",
-                "creatine": "creatine", "nad-precursors": "nicotinamide-riboside"}
+                "creatine": "creatine", "nad-precursors": "nicotinamide-riboside",
+                "vitamin-c": "vitamin-c", "nac": "n-acetylcysteine"}
 
 
 def library_html(sid: str, label: str) -> str:
