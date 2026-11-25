@@ -41,6 +41,11 @@ PAGE_FOR = {
     "rheumatoid-arthritis": ("rheumatoid-arthritis", ""),
     "irritable-bowel-syndrome": ("irritable-bowel-syndrome", ""),
     "insomnia": ("insomnia", ""),
+    "obesity": ("obesity", ""),
+    "schizophrenia": ("schizophrenia", ""),
+    "asthma": ("asthma", ""),
+    "type-1-diabetes": ("type-1-diabetes", ""),
+    "multiple-sclerosis": ("multiple-sclerosis", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
