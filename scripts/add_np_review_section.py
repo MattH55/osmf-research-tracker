@@ -84,12 +84,35 @@ def pipeline_tiers(page_slug: str) -> dict[str, tuple[str, str]]:
     return out
 
 
+def compound_index() -> dict:
+    f = REVIEWS / "compounds" / "index.json"
+    return json.loads(f.read_text(encoding="utf-8"))["compounds"] if f.exists() else {}
+
+
 def match_tier(p: dict, tiers: dict) -> tuple[str, str] | None:
-    for n in [p["name"]] + p.get("aliases", []):
+    """Pipeline tier for a single-ingredient product. Combinations are not matched: the pipeline row is for one ingredient."""
+    comps = p.get("compounds") or []
+    if len(comps) > 1:
+        return None
+    names = [p["name"]] + p.get("aliases", [])
+    for k in comps:
+        names += compound_index().get(k, {}).get("pipeline_names", [])
+    for n in names:
         k = norm(n)
         if k in tiers:
             return tiers[k]
     return None
+
+
+def how_tested(p: dict) -> str:
+    comps = p.get("compounds") or []
+    bits = []
+    if len(comps) > 1:
+        names = [compound_index().get(k, {}).get("name", k) for k in comps]
+        bits.append("a combination of " + ", ".join(names) + ", so the grade is for the combination")
+    if p.get("route_note"):
+        bits.append(p["route_note"])
+    return (" · Tested as: " + esc("; ".join(bits))) if bits else ""
 
 
 def block(rev: dict, page_slug: str, scope: str) -> str:
@@ -105,7 +128,7 @@ def block(rev: dict, page_slug: str, scope: str) -> str:
         design = "No human studies found" if p["best_design"] == "none" else p["best_design"]
         rct = f" · {p['n_rcts']} randomized trial{'s' if p['n_rcts'] != 1 else ''} cited" if p["n_rcts"] else ""
         items.append(f'''<article class="np-rev-item"><h3>{esc(p["name"])} <span class="np-g g-{esc(p["grade"])}" title="Review grade: {esc(rev["grade_key"][p["grade"]])}">Review grade {esc(p["grade"])}</span></h3>
-<p class="np-rev-meta">Best evidence: {esc(design)}{rct}</p>
+<p class="np-rev-meta">Best evidence: {esc(design)}{rct}{how_tested(p)}</p>
 <p>{esc(p["summary"])}</p>
 <p><strong>Safety and interactions:</strong> {esc(p["safety_interactions"])}{general}</p>
 {xref}{f'<details><summary>Sources ({len(p["citations"])})</summary><ol>{cites}</ol></details>' if cites else ''}</article>''')

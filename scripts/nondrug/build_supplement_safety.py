@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import html as htmllib
 import json
+import os
 import re
 import sys
 import time
@@ -228,6 +229,35 @@ def library_html(sid: str, label: str) -> str:
             f"Each statement is checked against a quoted sentence from the study's abstract; copied {esc(e.get('copied_on', ''))}.</p>")
 
 
+COMPOUND_INDEX = ROOT / "data" / "natural-products-review" / "compounds" / "index.json"
+GRADE_CSS = ("<style>.np-g{display:inline-block;font-size:.78rem;font-weight:700;border-radius:999px;padding:.1rem .6rem}"
+             ".g-A{background:#1b5e20;color:#fff}.g-B{background:#2e7d32;color:#fff}.g-C{background:#fff3cd;color:#5a4300}"
+             ".g-D{background:#ede7f6;color:#3c2a6b}.g-Negative{background:#fde2e1;color:#8a1c14}.g-Insufficient{background:#eceff1;color:#37474f}</style>")
+
+
+def reviews_html(sid: str, label: str, include_drafts: bool = False) -> str:
+    """Evidence-graded reviews of this supplement, one row per condition. Published reviews only unless previewing."""
+    key = LIBRARY_KEYS.get(sid)
+    if not key or not COMPOUND_INDEX.exists():
+        return ""
+    doc = json.loads(COMPOUND_INDEX.read_text(encoding="utf-8"))
+    rows = [r for r in doc["compounds"].get(key, {}).get("rows", []) if include_drafts or r["status"] == "published"]
+    if not rows:
+        return ""
+    trs = ""
+    for r in rows:
+        how = "; ".join(x for x in ((("tested together with " + ", ".join(r["tested_with"])) if r["tested_with"] else "on its own"), r["route_note"]) if x)
+        trs += (f'<tr><th scope="row"><a href="{esc(r["page"])}">{esc(r["condition"])}</a></th>'
+                f'<td><span class="np-g g-{esc(r["grade"])}" title="{esc(doc["grade_key"][r["grade"]])}">{esc(r["grade"])}</span></td>'
+                f'<td>{esc(how)}</td><td>{esc(r["summary"])}</td></tr>')
+    key_txt = "; ".join(f"{g} = {t}" for g, t in doc["grade_key"].items())
+    return (f"<h2>Evidence reviews by condition</h2>{GRADE_CSS}<p class=\"nd-method\">OSMF reviews of human studies of {esc(in_sentence(label))}, one condition per row. "
+            "A grade applies to that condition only. When it was tested together with other ingredients, the grade belongs to the combination.</p>"
+            '<div class="tbl-wrap"><table class="nd-tbl"><thead><tr><th scope="col">Condition</th><th scope="col">Review grade</th>'
+            f'<th scope="col">How it was tested</th><th scope="col">What was found</th></tr></thead><tbody>{trs}</tbody></table></div>'
+            f"<p class=\"nd-method\">Grades: {esc(key_txt)}.</p>")
+
+
 def in_sentence(label: str) -> str:
     """'Vitamin D' -> 'vitamin D'; 'N-acetylcysteine (NAC)' stays as written."""
     return label[:1].lower() + label[1:] if len(label) > 1 and label[1].islower() else label
@@ -274,10 +304,20 @@ def render() -> None:
         tl = "".join(trial_li(n, trials[n], " · " + esc(", ".join(cnames[c]["name"] for c in trials[n]["c"][:2] if c in cnames))) for n in ncts[:20])
         trials_html = (f"<h2>Registered trials</h2><p>{len(ncts):,} trials in the <a href=\"/nondrug/{cls}.html\">non-drug evidence map</a> test this class of supplement. "
                        f"Trials with posted results are listed first; each shows the condition it was registered for. A trial testing it in one condition says nothing about another.</p><ul class=\"nd-tlist\">{tl}</ul>" if ncts else "")
+        rv = reviews_html(sid, label)
+        reviews_block = ("\n" + rv) if rv else ""
+        if os.environ.get("NP_PREVIEW"):  # local check of draft reviews; _np_preview/ is gitignored
+            pv = reviews_html(sid, label, include_drafts=True)
+            if pv:
+                (ROOT / "_np_preview").mkdir(exist_ok=True)
+                (ROOT / "_np_preview" / f"supplement-safety-{sid}.html").write_text(
+                    shell(path=f"supplement-safety/{sid}.html", title=f"PREVIEW {label}", description="preview", eyebrow="Preview",
+                          h1=label, h1_span="draft reviews", lede="Local preview of draft reviews.", body=pv,
+                          crumbs=[(label, f"{SITE}/supplement-safety/{sid}.html")], modified=doc["built"]), encoding="utf-8")
         body = f"""<p class="lede">What public sources say about the safety of {esc(in_sentence(label))}: FDA adverse-event reports, NIH guidance on interactions with medicines, and the registered trials that test it.</p>
 <div class="disclaimer"><span>⚠️</span><div><strong>Research information, not medical advice.</strong> Supplements can interact with prescription medicines and affect conditions. Check with a pharmacist or your own clinician before starting or stopping one. Nothing here is a dose recommendation.</div></div>
 {nih_html}
-{library_html(sid, label)}
+{library_html(sid, label)}{reviews_block}
 {caers_html}
 {trials_html}
 <p class="nd-actions"><a href="/supplement-safety/index.html">All supplement safety pages</a> <a href="/nondrug/index.html">Non-drug evidence map</a></p>"""
