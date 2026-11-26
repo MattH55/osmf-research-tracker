@@ -92,7 +92,7 @@ The next daily run regenerates the pages from the new data.
 
 ## Natural-products review on RepurpOS
 
-`scripts/add_np_review_section.py` adds an evidence-graded natural-products review above the Natural Products table on twenty RepurpOS pages (see `PAGE_FOR` in the script). Long COVID has no RepurpOS page, because its page is a redirect stub.
+`scripts/add_np_review_section.py` adds an evidence-graded natural-products review above the Natural Products table on twenty-seven RepurpOS pages (see `PAGE_FOR` in the script). Long COVID has no RepurpOS page, because its page is a redirect stub.
 
 - **Data:** exported read-only from opensourcemed.info by `tools/export_np_to_tracker.py`. Authoring and citation checks stay there.
 - **Drafts never enter the repository.** GitHub Pages serves every tracked file, raw data included. The export writes only *published* reviews to `data/natural-products-review/`. Drafts go to `_np_preview/data/`, which is gitignored. `--preview` (and `NP_PREVIEW=1` for the supplement-safety pages) renders drafts into `_np_preview/` for local checks.

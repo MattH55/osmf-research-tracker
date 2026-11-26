@@ -51,6 +51,13 @@ PAGE_FOR = {
     "chronic-kidney-disease": ("chronic-kidney-disease", ""),
     "acne": ("acne", ""),
     "peripheral-arterial-disease": ("peripheral-arterial-disease", ""),
+    "bipolar-disorder": ("bipolar-disorder", ""),
+    "chronic-obstructive-pulmonary-disease": ("chronic-obstructive-pulmonary-disease", ""),
+    "psoriatic-arthritis": ("psoriatic-arthritis", ""),
+    "epilepsy": ("epilepsy", ""),
+    "diabetic-neuropathy": ("diabetic-neuropathy", ""),
+    "cystic-fibrosis": ("cystic-fibrosis", ""),
+    "parkinson-disease": ("parkinson-disease", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
@@ -146,7 +153,8 @@ def block(rev: dict, page_slug: str, scope: str) -> str:
         intro = ("Also in" if same else f"A related entry, “{esc(tier[2])}”, is in") if tier else ""
         xref = (f'<p class="np-rev-meta">{intro} the <a href="#natural-products">Natural Products table</a> below, with pipeline evidence tier '
                 f'{esc(tier[0])}{" (" + esc(tier[1]) + ")" if tier[1] else ""}. That tier ranks registry and literature signals and is a different scale from this review grade.</p>') if tier and tier[0] else ""
-        design = "No human studies found" if p["best_design"] == "none" else p["best_design"]
+        design = p["best_design"] if p["best_design"] != "none" else (
+            "No trials of benefit found; sources below are about safety" if p["citations"] else "No human studies found")
         rct = f" · {p['n_rcts']} randomized trial{'s' if p['n_rcts'] != 1 else ''} cited" if p["n_rcts"] else ""
         items.append(f'''<article class="np-rev-item"><h3>{esc(p["name"])} <span class="np-g g-{esc(p["grade"])}" title="Review grade: {esc(rev["grade_key"][p["grade"]])}">Review grade {esc(p["grade"])}</span></h3>
 <p class="np-rev-meta">Best evidence: {esc(design)}{rct}{how_tested(p)}</p>
