@@ -65,6 +65,13 @@ PAGE_FOR = {
     "chronic-venous-insufficiency": ("chronic-venous-insufficiency", ""),
     "hepatitis-c": ("hepatitis-c", ""),
     "inflammatory-bowel-disease": ("inflammatory-bowel-disease", ""),
+    "benign-prostatic-hyperplasia": ("benign-prostatic-hyperplasia", ""),
+    "endometriosis": ("endometriosis", ""),
+    "vitiligo": ("vitiligo", ""),
+    "glaucoma": ("glaucoma", ""),
+    "gout": ("gout", ""),
+    "hypothyroidism": ("hypothyroidism", ""),
+    "carpal-tunnel-syndrome": ("carpal-tunnel-syndrome", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
