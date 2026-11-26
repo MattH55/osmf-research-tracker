@@ -79,6 +79,13 @@ PAGE_FOR = {
     "ischemic-stroke": ("ischemic-stroke", ""),
     "hypertension": ("essential-hypertension", ""),
     "adhd": ("attention-deficit-hyperactivity-disorder", ""),
+    "atopic-eczema": ("atopic-eczema", ""),
+    "lupus": ("systemic-lupus-erythematosus", ""),
+    "als": ("amyotrophic-lateral-sclerosis", ""),
+    "pulmonary-arterial-hypertension": ("pulmonary-arterial-hypertension", ""),
+    "huntington-disease": ("huntington-disease", ""),
+    "kidney-stones": ("nephrolithiasis", ""),
+    "low-back-pain": ("low-back-pain", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
