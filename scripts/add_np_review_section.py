@@ -46,6 +46,11 @@ PAGE_FOR = {
     "asthma": ("asthma", ""),
     "type-1-diabetes": ("type-1-diabetes", ""),
     "multiple-sclerosis": ("multiple-sclerosis", ""),
+    "anxiety": ("anxiety", ""),
+    "heart-failure": ("heart-failure", ""),
+    "chronic-kidney-disease": ("chronic-kidney-disease", ""),
+    "acne": ("acne", ""),
+    "peripheral-arterial-disease": ("peripheral-arterial-disease", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
@@ -106,7 +111,7 @@ def match_tier(p: dict, tiers: dict) -> tuple[str, str, str] | None:
     """(tier, label, pipeline row name) for a single-ingredient product. Combinations are not matched: the pipeline
     row is for one ingredient. The product's own name is tried before the ingredient's other pipeline names."""
     comps = p.get("compounds") or []
-    if len(comps) > 1:
+    if len(comps) > 1 or p.get("no_pipeline_match"):  # flag set by hand when the family key would match a different substance
         return None
     names = [p["name"]] + p.get("aliases", [])
     for k in comps:
