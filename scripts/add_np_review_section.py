@@ -100,6 +100,13 @@ PAGE_FOR = {
     "sjogrens-syndrome": ("sjögrens-syndrome", ""),
     "immune-thrombocytopenia": ("autoimmune-thrombocytopenic-purpura", ""),
     "restless-legs-syndrome": ("restless-legs-syndrome", ""),
+    "polycystic-kidney-disease": ("polycystic-kidney-disease", ""),
+    "myasthenia-gravis": ("myasthenia-gravis", ""),
+    "interstitial-cystitis": ("interstitial-cystitis", ""),
+    "sleep-apnea": ("obstructive-sleep-apnea-syndrome", ""),
+    "measles": ("measles", ""),
+    "gastroparesis": ("gastroparesis", ""),
+    "chronic-pancreatitis": ("chronic-pancreatitis", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
