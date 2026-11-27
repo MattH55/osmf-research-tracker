@@ -114,6 +114,10 @@ PAGE_FOR = {
     "hepatitis-b": ("hepatitis-b-virus-infection", ""),
     "beta-thalassemia": ("beta-thalassemia", ""),
     "primary-sclerosing-cholangitis": ("sclerosing-cholangitis", ""),
+    "dermatomyositis": ("dermatomyositis", ""),
+    "alpha-1-antitrypsin-deficiency": ("alpha-1-antitrypsin-deficiency", ""),
+    "autoimmune-gastritis": ("autoimmune-gastritis", ""),
+    "hemophilia": ("hemophilia", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
