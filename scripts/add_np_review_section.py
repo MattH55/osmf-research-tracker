@@ -107,6 +107,13 @@ PAGE_FOR = {
     "measles": ("measles", ""),
     "gastroparesis": ("gastroparesis", ""),
     "chronic-pancreatitis": ("chronic-pancreatitis", ""),
+    "venous-thromboembolism": ("venous-thromboembolism", ""),
+    "pots": ("pots", ""),
+    "mast-cell-activation-syndrome": ("mcas", ""),
+    "chronic-urticaria": ("chronic-idiopathic-urticaria", ""),
+    "hepatitis-b": ("hepatitis-b-virus-infection", ""),
+    "beta-thalassemia": ("beta-thalassemia", ""),
+    "primary-sclerosing-cholangitis": ("sclerosing-cholangitis", ""),
     # long-covid: the RepurpOS long-covid page is a redirect stub, so there is no page to add the review to.
 }
 esc = html.escape
